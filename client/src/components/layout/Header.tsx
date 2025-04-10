@@ -42,35 +42,41 @@ const Header: React.FC = () => {
           >
             Home
           </Link>
-          <div className="relative group">
-            <button className="font-montserrat font-medium text-primary hover:text-[#E30D16] transition duration-200 flex items-center">
+          <div className="relative">
+            <button 
+              className="font-montserrat font-medium text-primary hover:text-[#E30D16] transition duration-200 flex items-center peer"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
               Brands <ChevronDownIcon className="ml-1 w-4 h-4" />
             </button>
-            <div className="absolute hidden group-hover:block hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-all duration-300 ease-in-out">
-              <Link 
-                href="/brands/bull-chassis" 
-                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1"
-              >
-                Bull Chassis
-              </Link>
-              <Link 
-                href="/brands/cheetah-chassis" 
-                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1"
-              >
-                Cheetah Chassis
-              </Link>
-              <Link 
-                href="/brands/pratt-chassis" 
-                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1"
-              >
-                Pratt Intermodal Chassis
-              </Link>
-              <Link 
-                href="/brands/stoughton-chassis" 
-                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1"
-              >
-                Stoughton Chassis
-              </Link>
+            <div className="absolute hidden peer-hover:block hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
+              <div className="py-1 px-2">
+                <Link 
+                  href="/brands/bull-chassis" 
+                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
+                >
+                  Bull Chassis
+                </Link>
+                <Link 
+                  href="/brands/cheetah-chassis" 
+                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
+                >
+                  Cheetah Chassis
+                </Link>
+                <Link 
+                  href="/brands/pratt-chassis" 
+                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
+                >
+                  Pratt Intermodal Chassis
+                </Link>
+                <Link 
+                  href="/brands/stoughton-chassis" 
+                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
+                >
+                  Stoughton Chassis
+                </Link>
+              </div>
             </div>
           </div>
           <Link 

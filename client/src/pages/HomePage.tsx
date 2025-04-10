@@ -6,6 +6,8 @@ import Hero from '@/components/home/Hero';
 import BrandShowcase from '@/components/home/BrandShowcase';
 import ProductGrid from '@/components/home/ProductGrid';
 import AboutSection from '@/components/home/AboutSection';
+import BusinessAdvantages from '@/components/home/BusinessAdvantages';
+import VideoSection from '@/components/home/VideoSection';
 import { MapPinIcon, PhoneIcon, EmailIcon } from '@/lib/icons';
 import { CONTACT_INFO } from '@/lib/constants';
 import ContactForm from '@/components/shared/ContactForm';
@@ -19,6 +21,8 @@ const HomePage: React.FC = () => {
         <Hero />
         <BrandShowcase />
         <ProductGrid />
+        <BusinessAdvantages />
+        <VideoSection />
         <AboutSection />
         
         {/* Contact Section */}
