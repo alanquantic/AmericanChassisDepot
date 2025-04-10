@@ -1,0 +1,195 @@
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import { BRANDS } from '@/lib/constants';
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+
+// Define form schema with validation
+const formSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  phone: z.string().optional(),
+  interest: z.string().optional(),
+  message: z.string().min(10, { message: "Message must be at least 10 characters" })
+});
+
+type ContactFormValues = z.infer<typeof formSchema>;
+
+interface ContactFormProps {
+  className?: string;
+}
+
+const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
+  const { toast } = useToast();
+  
+  // Initialize form
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      interest: "",
+      message: ""
+    }
+  });
+  
+  // Submit mutation
+  const mutation = useMutation({
+    mutationFn: (values: ContactFormValues) => {
+      return apiRequest('POST', '/api/contact', values);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Message Sent",
+        description: "Thank you for your message! We will get back to you soon.",
+      });
+      form.reset();
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "There was a problem sending your message. Please try again.",
+        variant: "destructive"
+      });
+      console.error("Form submission error:", error);
+    }
+  });
+  
+  const onSubmit = (data: ContactFormValues) => {
+    mutation.mutate(data);
+  };
+  
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={className}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-montserrat text-neutral-700">Full Name</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field} 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary" 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-montserrat text-neutral-700">Email Address</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field} 
+                    type="email"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary" 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem className="mb-6">
+              <FormLabel className="font-montserrat text-neutral-700">Phone Number</FormLabel>
+              <FormControl>
+                <Input 
+                  {...field} 
+                  type="tel"
+                  className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary" 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="interest"
+          render={({ field }) => (
+            <FormItem className="mb-6">
+              <FormLabel className="font-montserrat text-neutral-700">Interested In</FormLabel>
+              <Select 
+                onValueChange={field.onChange} 
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary">
+                    <SelectValue placeholder="Select a chassis brand" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {BRANDS.filter(brand => brand.value !== 'all').map((brand) => (
+                    <SelectItem key={brand.value} value={brand.value}>
+                      {brand.name}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="message"
+          render={({ field }) => (
+            <FormItem className="mb-6">
+              <FormLabel className="font-montserrat text-neutral-700">Message</FormLabel>
+              <FormControl>
+                <Textarea 
+                  {...field} 
+                  rows={4}
+                  className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary" 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <Button 
+          type="submit" 
+          className="bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-8 py-3 rounded transition duration-200"
+          disabled={mutation.isPending}
+        >
+          {mutation.isPending ? "Sending..." : "Send Message"}
+        </Button>
+      </form>
+    </Form>
+  );
+};
+
+export default ContactForm;
