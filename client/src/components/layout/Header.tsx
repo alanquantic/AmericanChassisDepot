@@ -46,28 +46,28 @@ const Header: React.FC = () => {
             <button className="font-montserrat font-medium text-primary hover:text-[#E30D16] transition duration-200 flex items-center">
               Brands <ChevronDownIcon className="ml-1 w-4 h-4" />
             </button>
-            <div className="absolute hidden group-hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10">
+            <div className="absolute hidden group-hover:block hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-all duration-300 ease-in-out">
               <Link 
                 href="/brands/bull-chassis" 
-                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition"
+                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1"
               >
                 Bull Chassis
               </Link>
               <Link 
                 href="/brands/cheetah-chassis" 
-                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition"
+                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1"
               >
                 Cheetah Chassis
               </Link>
               <Link 
                 href="/brands/pratt-chassis" 
-                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition"
+                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1"
               >
                 Pratt Intermodal Chassis
               </Link>
               <Link 
                 href="/brands/stoughton-chassis" 
-                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition"
+                className="block px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1"
               >
                 Stoughton Chassis
               </Link>
@@ -125,32 +125,32 @@ const Header: React.FC = () => {
             )}
           </button>
           {isMobileBrandsOpen && (
-            <div className="pl-4">
+            <div className="pl-4 animate-accordion-down">
               <Link 
                 href="/brands/bull-chassis" 
                 onClick={closeMobileMenu}
-                className="block py-2 text-primary hover:text-[#E30D16]"
+                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 Bull Chassis
               </Link>
               <Link 
                 href="/brands/cheetah-chassis" 
                 onClick={closeMobileMenu}
-                className="block py-2 text-primary hover:text-[#E30D16]"
+                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 Cheetah Chassis
               </Link>
               <Link 
                 href="/brands/pratt-chassis" 
                 onClick={closeMobileMenu}
-                className="block py-2 text-primary hover:text-[#E30D16]"
+                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 Pratt Intermodal Chassis
               </Link>
               <Link 
                 href="/brands/stoughton-chassis" 
                 onClick={closeMobileMenu}
-                className="block py-2 text-primary hover:text-[#E30D16]"
+                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 Stoughton Chassis
               </Link>

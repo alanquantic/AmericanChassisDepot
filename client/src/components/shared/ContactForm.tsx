@@ -23,7 +23,9 @@ import { Button } from '@/components/ui/button';
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
+  company: z.string().optional(),
   phone: z.string().optional(),
+  units: z.string().optional(),
   interest: z.string().optional(),
   message: z.string().min(10, { message: "Message must be at least 10 characters" })
 });
@@ -43,7 +45,9 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
     defaultValues: {
       name: "",
       email: "",
+      company: "",
       phone: "",
+      units: "",
       interest: "",
       message: ""
     }
@@ -115,52 +119,93 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
           />
         </div>
         
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem className="mb-6">
-              <FormLabel className="font-montserrat text-neutral-700">Phone Number</FormLabel>
-              <FormControl>
-                <Input 
-                  {...field} 
-                  type="tel"
-                  className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary" 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="interest"
-          render={({ field }) => (
-            <FormItem className="mb-6">
-              <FormLabel className="font-montserrat text-neutral-700">Interested In</FormLabel>
-              <Select 
-                onValueChange={field.onChange} 
-                defaultValue={field.value}
-              >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <FormField
+            control={form.control}
+            name="company"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-montserrat text-neutral-700">Company Name</FormLabel>
                 <FormControl>
-                  <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary">
-                    <SelectValue placeholder="Select a chassis brand" />
-                  </SelectTrigger>
+                  <Input 
+                    {...field} 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary" 
+                  />
                 </FormControl>
-                <SelectContent>
-                  {BRANDS.filter(brand => brand.value !== 'all').map((brand) => (
-                    <SelectItem key={brand.value} value={brand.value}>
-                      {brand.name}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-montserrat text-neutral-700">Phone Number</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field} 
+                    type="tel"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary" 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <FormField
+            control={form.control}
+            name="interest"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-montserrat text-neutral-700">Interested In</FormLabel>
+                <Select 
+                  onValueChange={field.onChange} 
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary">
+                      <SelectValue placeholder="Select a chassis brand" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {BRANDS.filter(brand => brand.value !== 'all').map((brand) => (
+                      <SelectItem key={brand.value} value={brand.value}>
+                        {brand.name}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="units"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-montserrat text-neutral-700">Number of Units</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field} 
+                    type="number"
+                    min="1"
+                    placeholder="How many units do you need?"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary" 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         
         <FormField
           control={form.control}
@@ -172,7 +217,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                 <Textarea 
                   {...field} 
                   rows={4}
-                  className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary" 
+                  className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary" 
                 />
               </FormControl>
               <FormMessage />
@@ -182,7 +227,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
         
         <Button 
           type="submit" 
-          className="bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-8 py-3 rounded transition duration-200"
+          className="bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-8 py-3 rounded transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
           disabled={mutation.isPending}
         >
           {mutation.isPending ? "Sending..." : "Send Message"}
