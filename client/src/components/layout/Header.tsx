@@ -25,10 +25,14 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link href="/" className="flex items-center">
           <div className="flex items-center">
-            <div className="bg-primary text-white font-montserrat font-bold text-xl p-2 rounded">
-              <span className="text-[#E30D16]">A</span>CD
+            <div className="h-12 w-12 relative">
+              <img 
+                src="/assets/logo.png" 
+                alt="American Chassis Depot Logo" 
+                className="object-contain h-full w-full"
+              />
             </div>
-            <span className="ml-2 font-montserrat font-semibold text-primary text-lg hidden md:block">
+            <span className="ml-3 font-montserrat font-semibold text-primary text-lg hidden md:block">
               American Chassis Depot
             </span>
           </div>
