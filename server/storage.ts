@@ -1,9 +1,9 @@
 import {
-  brands, 
+  conditions,
   chassisModels, 
   contactMessages,
-  type Brand, 
-  type InsertBrand, 
+  type Condition, 
+  type InsertCondition, 
   type ChassisModel, 
   type InsertChassisModel,
   type ContactMessage,
@@ -12,17 +12,17 @@ import {
 
 // Storage interface
 export interface IStorage {
-  // Brand operations
-  getAllBrands(): Promise<Brand[]>;
-  getBrandBySlug(slug: string): Promise<Brand | undefined>;
-  createBrand(brand: InsertBrand): Promise<Brand>;
+  // Condition operations (New/Used)
+  getAllConditions(): Promise<Condition[]>;
+  getConditionBySlug(slug: string): Promise<Condition | undefined>;
+  createCondition(condition: InsertCondition): Promise<Condition>;
   
   // Chassis model operations
   getAllChassisModels(): Promise<ChassisModel[]>;
-  getChassisModelsByBrand(brandId: number): Promise<ChassisModel[]>;
+  getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]>;
   getChassisModelBySlug(slug: string): Promise<ChassisModel | undefined>;
   createChassisModel(model: InsertChassisModel): Promise<ChassisModel>;
-  filterChassisModels(brandSlug?: string, size?: string): Promise<ChassisModel[]>;
+  filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string): Promise<ChassisModel[]>;
   
   // Contact message operations
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
@@ -30,18 +30,18 @@ export interface IStorage {
 
 // In-memory storage implementation
 export class MemStorage implements IStorage {
-  private brands: Map<number, Brand>;
+  private conditions: Map<number, Condition>;
   private chassisModels: Map<number, ChassisModel>;
   private contactMessages: Map<number, ContactMessage>;
-  private brandIdCounter: number;
+  private conditionIdCounter: number;
   private chassisIdCounter: number;
   private messageIdCounter: number;
 
   constructor() {
-    this.brands = new Map();
+    this.conditions = new Map();
     this.chassisModels = new Map();
     this.contactMessages = new Map();
-    this.brandIdCounter = 1;
+    this.conditionIdCounter = 1;
     this.chassisIdCounter = 1;
     this.messageIdCounter = 1;
     
@@ -49,20 +49,20 @@ export class MemStorage implements IStorage {
     this.seedData();
   }
 
-  // Brand operations
-  async getAllBrands(): Promise<Brand[]> {
-    return Array.from(this.brands.values());
+  // Condition operations
+  async getAllConditions(): Promise<Condition[]> {
+    return Array.from(this.conditions.values());
   }
 
-  async getBrandBySlug(slug: string): Promise<Brand | undefined> {
-    return Array.from(this.brands.values()).find(brand => brand.slug === slug);
+  async getConditionBySlug(slug: string): Promise<Condition | undefined> {
+    return Array.from(this.conditions.values()).find(condition => condition.slug === slug);
   }
 
-  async createBrand(insertBrand: InsertBrand): Promise<Brand> {
-    const id = this.brandIdCounter++;
-    const brand: Brand = { ...insertBrand, id };
-    this.brands.set(id, brand);
-    return brand;
+  async createCondition(insertCondition: InsertCondition): Promise<Condition> {
+    const id = this.conditionIdCounter++;
+    const condition: Condition = { ...insertCondition, id };
+    this.conditions.set(id, condition);
+    return condition;
   }
 
   // Chassis model operations
@@ -70,9 +70,9 @@ export class MemStorage implements IStorage {
     return Array.from(this.chassisModels.values());
   }
 
-  async getChassisModelsByBrand(brandId: number): Promise<ChassisModel[]> {
+  async getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]> {
     return Array.from(this.chassisModels.values())
-      .filter(model => model.brandId === brandId);
+      .filter(model => model.conditionId === conditionId);
   }
 
   async getChassisModelBySlug(slug: string): Promise<ChassisModel | undefined> {
@@ -92,18 +92,22 @@ export class MemStorage implements IStorage {
     return model;
   }
 
-  async filterChassisModels(brandSlug?: string, size?: string): Promise<ChassisModel[]> {
+  async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string): Promise<ChassisModel[]> {
     let models = Array.from(this.chassisModels.values());
     
-    if (brandSlug && brandSlug !== 'all') {
-      const brand = await this.getBrandBySlug(brandSlug);
-      if (brand) {
-        models = models.filter(model => model.brandId === brand.id);
+    if (conditionSlug && conditionSlug !== 'all') {
+      const condition = await this.getConditionBySlug(conditionSlug);
+      if (condition) {
+        models = models.filter(model => model.conditionId === condition.id);
       }
     }
     
     if (size && size !== 'all') {
       models = models.filter(model => model.size === size);
+    }
+    
+    if (manufacturer && manufacturer !== 'all') {
+      models = models.filter(model => model.manufacturer.toLowerCase() === manufacturer.toLowerCase());
     }
     
     return models;
@@ -126,33 +130,19 @@ export class MemStorage implements IStorage {
 
   // Seed initial data
   private seedData() {
-    // Seed brands
-    const bullChassis = this.createBrand({
-      name: "Bull Chassis",
-      slug: "bull-chassis",
-      description: "Rugged and reliable chassis solutions built to withstand the toughest conditions.",
+    // Seed conditions
+    const newCondition = this.createCondition({
+      name: "New Chassis",
+      slug: "new-chassis",
+      description: "Brand new chassis with full warranty and the latest features and technology.",
       imageUrl: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
     });
     
-    const cheetahChassis = this.createBrand({
-      name: "Cheetah Chassis",
-      slug: "cheetah-chassis",
-      description: "Innovative designs with superior performance for efficient transportation.",
+    const usedCondition = this.createCondition({
+      name: "Used Chassis",
+      slug: "used-chassis",
+      description: "Quality pre-owned chassis that have been thoroughly inspected and refurbished as needed.",
       imageUrl: "https://images.unsplash.com/photo-1573413005382-4b56a5092502?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-    });
-    
-    const prattChassis = this.createBrand({
-      name: "Pratt Intermodal Chassis",
-      slug: "pratt-chassis",
-      description: "Versatile intermodal solutions designed for maximum efficiency and durability.",
-      imageUrl: "https://images.unsplash.com/photo-1591768783525-68c1482d2058?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-    });
-    
-    const stoughtonChassis = this.createBrand({
-      name: "Stoughton Chassis",
-      slug: "stoughton-chassis",
-      description: "Premium quality chassis known for exceptional engineering and longevity.",
-      imageUrl: "https://images.unsplash.com/photo-1570942872213-11670c3632d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
     });
     
     // Seed chassis models

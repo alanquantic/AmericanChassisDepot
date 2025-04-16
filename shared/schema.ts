@@ -2,16 +2,16 @@ import { pgTable, text, serial, integer, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Brand schema
-export const brands = pgTable("brands", {
+// Condition schema (New or Used)
+export const conditions = pgTable("conditions", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull(), // "New" or "Used"
   slug: text("slug").notNull().unique(),
   description: text("description").notNull(),
   imageUrl: text("image_url").notNull(),
 });
 
-export const insertBrandSchema = createInsertSchema(brands).omit({
+export const insertConditionSchema = createInsertSchema(conditions).omit({
   id: true,
 });
 
@@ -20,7 +20,8 @@ export const chassisModels = pgTable("chassis_models", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
-  brandId: integer("brand_id").notNull(),
+  conditionId: integer("condition_id").notNull(), // New or Used
+  manufacturer: text("manufacturer").notNull(), // Bull, Cheetah, Pratt, Stoughton, etc.
   size: text("size").notNull(), // 20ft, 40ft, 45ft, 53ft
   dutyType: text("duty_type").notNull(), // Standard, Heavy, Extra Heavy
   description: text("description").notNull(),
@@ -51,8 +52,8 @@ export const insertContactMessageSchema = createInsertSchema(contactMessages).om
 });
 
 // Types
-export type Brand = typeof brands.$inferSelect;
-export type InsertBrand = z.infer<typeof insertBrandSchema>;
+export type Condition = typeof conditions.$inferSelect;
+export type InsertCondition = z.infer<typeof insertConditionSchema>;
 
 export type ChassisModel = typeof chassisModels.$inferSelect;
 export type InsertChassisModel = z.infer<typeof insertChassisModelSchema>;
