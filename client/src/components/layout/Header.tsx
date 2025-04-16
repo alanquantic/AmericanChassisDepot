@@ -48,33 +48,33 @@ const Header: React.FC = () => {
               aria-haspopup="true"
               aria-expanded="false"
             >
-              Brands <ChevronDownIcon className="ml-1 w-4 h-4" />
+              Sizes <ChevronDownIcon className="ml-1 w-4 h-4" />
             </button>
             <div className="absolute hidden peer-hover:block hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
               <div className="py-1 px-2">
                 <Link 
-                  href="/brands/bull-chassis" 
+                  href="/sizes/20ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  Bull Chassis
+                  20ft Chassis
                 </Link>
                 <Link 
-                  href="/brands/cheetah-chassis" 
+                  href="/sizes/40ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  Cheetah Chassis
+                  40ft Chassis
                 </Link>
                 <Link 
-                  href="/brands/pratt-chassis" 
+                  href="/sizes/45ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  Pratt Intermodal Chassis
+                  45ft Chassis
                 </Link>
                 <Link 
-                  href="/brands/stoughton-chassis" 
+                  href="/sizes/53ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  Stoughton Chassis
+                  53ft Chassis
                 </Link>
               </div>
             </div>
@@ -123,7 +123,7 @@ const Header: React.FC = () => {
             className="w-full text-left py-2 font-montserrat font-medium text-primary hover:text-[#E30D16] flex justify-between items-center" 
             onClick={toggleMobileBrandsMenu}
           >
-            Brands
+            Sizes
             {isMobileBrandsOpen ? (
               <ChevronUpIcon className="w-4 h-4" />
             ) : (
@@ -133,32 +133,32 @@ const Header: React.FC = () => {
           {isMobileBrandsOpen && (
             <div className="pl-4 animate-accordion-down">
               <Link 
-                href="/brands/bull-chassis" 
+                href="/sizes/20ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                Bull Chassis
+                20ft Chassis
               </Link>
               <Link 
-                href="/brands/cheetah-chassis" 
+                href="/sizes/40ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                Cheetah Chassis
+                40ft Chassis
               </Link>
               <Link 
-                href="/brands/pratt-chassis" 
+                href="/sizes/45ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                Pratt Intermodal Chassis
+                45ft Chassis
               </Link>
               <Link 
-                href="/brands/stoughton-chassis" 
+                href="/sizes/53ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                Stoughton Chassis
+                53ft Chassis
               </Link>
             </div>
           )}

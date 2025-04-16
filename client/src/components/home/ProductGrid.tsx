@@ -3,17 +3,16 @@ import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
-import { CONDITIONS, MANUFACTURERS, SIZES } from '@/lib/constants';
+import { CONDITIONS, SIZES } from '@/lib/constants';
 import type { ChassisModel } from '@shared/schema';
 
 const ProductGrid: React.FC = () => {
   const [conditionFilter, setConditionFilter] = useState('all');
   const [sizeFilter, setSizeFilter] = useState('all');
-  const [manufacturerFilter, setManufacturerFilter] = useState('all');
 
   // Fetch chassis models with filters
   const { data: models, isLoading, error } = useQuery<ChassisModel[]>({
-    queryKey: ['/api/chassis/filter', { condition: conditionFilter, size: sizeFilter, manufacturer: manufacturerFilter }],
+    queryKey: ['/api/chassis/filter', { condition: conditionFilter, size: sizeFilter, manufacturer: 'all' }],
   });
 
   // Handle filter changes
@@ -23,10 +22,6 @@ const ProductGrid: React.FC = () => {
 
   const handleSizeFilterChange = (value: string) => {
     setSizeFilter(value);
-  };
-  
-  const handleManufacturerFilterChange = (value: string) => {
-    setManufacturerFilter(value);
   };
 
   if (error) {
@@ -60,24 +55,6 @@ const ProductGrid: React.FC = () => {
               onClick={() => handleConditionFilterChange(condition.value)}
             >
               {condition.name}
-            </button>
-          ))}
-        </div>
-        
-        {/* Manufacturer filter */}
-        <div className="flex flex-wrap justify-center mb-8 gap-4">
-          <span className="text-primary font-montserrat font-medium self-center">Manufacturer:</span>
-          {MANUFACTURERS.map(manufacturer => (
-            <button
-              key={manufacturer.value}
-              className={`font-montserrat font-medium px-4 py-2 rounded transition duration-200 ${
-                manufacturerFilter === manufacturer.value 
-                  ? 'active-filter' 
-                  : 'inactive-filter'
-              }`}
-              onClick={() => handleManufacturerFilterChange(manufacturer.value)}
-            >
-              {manufacturer.name}
             </button>
           ))}
         </div>
