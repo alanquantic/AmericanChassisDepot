@@ -38,17 +38,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all chassis models
-  app.get(`${apiPrefix}/chassis`, async (req, res) => {
+  app.get(`${apiPrefix}/chassis`, async (_req, res) => {
     try {
-      const conditionSlug = req.query.condition as string | undefined;
-      const size = req.query.size as string | undefined;
-      const manufacturer = req.query.manufacturer as string | undefined;
-      
-      const models = await storage.filterChassisModels(conditionSlug, size, manufacturer);
+      const models = await storage.getAllChassisModels();
       return res.json(models);
     } catch (error) {
       console.error("Error fetching chassis models:", error);
       return res.status(500).json({ message: "Failed to fetch chassis models" });
+    }
+  });
+  
+  // Filter chassis models
+  app.get(`${apiPrefix}/chassis/filter`, async (req, res) => {
+    try {
+      // Extract condition value from query parameters
+      let conditionSlug = req.query.condition as string | undefined;
+      if (conditionSlug && conditionSlug !== 'all') {
+        // Extract the slug from the value (e.g., 'new-chassis' -> 'new-chassis')
+        conditionSlug = conditionSlug.toString();
+      } else {
+        conditionSlug = undefined;
+      }
+      
+      // Extract size from query parameters
+      const size = req.query.size !== 'all' ? req.query.size as string : undefined;
+      
+      // Extract manufacturer from query parameters
+      let manufacturer = req.query.manufacturer as string | undefined;
+      if (manufacturer && manufacturer !== 'all') {
+        // If it's a manufacturer format, extract the actual name
+        if (manufacturer.startsWith('manufacturer-')) {
+          manufacturer = manufacturer.split('-')[1];
+        }
+      } else {
+        manufacturer = undefined;
+      }
+      
+      const models = await storage.filterChassisModels(conditionSlug, size, manufacturer);
+      return res.json(models);
+    } catch (error) {
+      console.error("Error filtering chassis models:", error);
+      return res.status(500).json({ message: "Failed to filter chassis models" });
     }
   });
 
