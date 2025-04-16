@@ -5,15 +5,6 @@ export const CONDITIONS = [
   { name: "Used Chassis", value: "used-chassis" }
 ];
 
-// Manufacturer values for filtering
-export const MANUFACTURERS = [
-  { name: "All Manufacturers", value: "all" },
-  { name: "Bull", value: "Bull" },
-  { name: "Cheetah", value: "Cheetah" },
-  { name: "Pratt", value: "Pratt" },
-  { name: "Stoughton", value: "Stoughton" }
-];
-
 export const SIZES = [
   { name: "All Sizes", value: "all" },
   { name: "20ft", value: "20ft" },
