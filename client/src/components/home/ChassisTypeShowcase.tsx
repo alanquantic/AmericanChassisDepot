@@ -43,20 +43,23 @@ const ChassisTypeShowcase: React.FC = () => {
             ))
           ) : (
             conditions?.map((condition) => (
-              <div key={condition.id} className="bg-neutral-100 rounded-lg shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1" id={condition.slug}>
-                <div className="h-56 bg-neutral-200 overflow-hidden">
+              <div key={condition.id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" id={condition.slug}>
+                <div className="relative h-64 bg-neutral-200 overflow-hidden">
+                  <div className="absolute top-0 left-0 bg-[#E30D16] text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold z-10">
+                    {condition.name}
+                  </div>
                   <img 
                     src={condition.imageUrl} 
                     alt={condition.name} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center transform transition-transform duration-700 hover:scale-110"
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-montserrat font-bold text-primary mb-2">{condition.name}</h3>
-                  <p className="text-neutral-600 mb-4">
+                  <h3 className="text-2xl font-montserrat font-bold text-primary mb-3">{condition.name}</h3>
+                  <p className="text-neutral-600 mb-5">
                     {condition.description}
                   </p>
-                  <Link href={`/conditions/${condition.slug}`} className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-4 py-2 rounded transition duration-200">
+                  <Link href={`/conditions/${condition.slug}`} className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-300 transform hover:scale-105 shadow-md">
                     View Models
                   </Link>
                 </div>

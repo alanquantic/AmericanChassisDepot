@@ -135,14 +135,14 @@ export class MemStorage implements IStorage {
       name: "New Chassis",
       slug: "new-chassis",
       description: "Brand new chassis with full warranty and the latest features and technology.",
-      imageUrl: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+      imageUrl: "/assets/new-chassis.jpg"
     });
     
     const usedCondition = this.createCondition({
       name: "Used Chassis",
       slug: "used-chassis",
       description: "Quality pre-owned chassis that have been thoroughly inspected and refurbished as needed.",
-      imageUrl: "https://images.unsplash.com/photo-1573413005382-4b56a5092502?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+      imageUrl: "/assets/used-chassis.jpg"
     });
     
     // Seed chassis models - New Condition
