@@ -145,14 +145,15 @@ export class MemStorage implements IStorage {
       imageUrl: "https://images.unsplash.com/photo-1573413005382-4b56a5092502?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
     });
     
-    // Seed chassis models
+    // Seed chassis models - New Condition
     this.createChassisModel({
       name: "40ft Container Chassis",
-      slug: "bull-40ft-container",
-      brandId: 1, // Bull Chassis
+      slug: "new-bull-40ft-container",
+      conditionId: 1, // New Chassis
+      manufacturer: "Bull",
       size: "40ft",
       dutyType: "Heavy Duty",
-      description: "Versatile 40ft container chassis with reinforced frame and advanced suspension.",
+      description: "Brand new versatile 40ft container chassis with reinforced frame and advanced suspension.",
       imageUrl: "https://images.unsplash.com/photo-1586191582151-f73872dce13c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       features: ["Reinforced frame", "Advanced suspension", "Corrosion-resistant coating", "LED lighting"],
       specifications: ["Length: 40ft", "Weight capacity: 45,000 lbs", "Axles: Tandem", "Kingpin: 2 inch"]
@@ -160,11 +161,12 @@ export class MemStorage implements IStorage {
     
     this.createChassisModel({
       name: "53ft Extendable Chassis",
-      slug: "bull-53ft-extendable",
-      brandId: 1, // Bull Chassis
+      slug: "new-bull-53ft-extendable",
+      conditionId: 1, // New Chassis
+      manufacturer: "Bull",
       size: "53ft",
       dutyType: "Extra Heavy Duty",
-      description: "Heavy-duty 53ft extendable chassis with enhanced load capacity and durability.",
+      description: "Brand new heavy-duty 53ft extendable chassis with enhanced load capacity and durability.",
       imageUrl: "https://images.unsplash.com/photo-1498887960847-2a5e46312788?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       features: ["Extendable frame", "Enhanced load capacity", "Heavy-duty components", "Premium braking system"],
       specifications: ["Length: 53ft (extendable)", "Weight capacity: 67,000 lbs", "Axles: Tri-axle", "Kingpin: 2 inch"]
@@ -172,23 +174,26 @@ export class MemStorage implements IStorage {
     
     this.createChassisModel({
       name: "53ft Gooseneck Chassis",
-      slug: "cheetah-53ft-gooseneck",
-      brandId: 2, // Cheetah Chassis
+      slug: "new-cheetah-53ft-gooseneck",
+      conditionId: 1, // New Chassis
+      manufacturer: "Cheetah",
       size: "53ft",
       dutyType: "Extra Heavy Duty",
-      description: "Premium 53ft gooseneck chassis with extended reach and superior stability.",
+      description: "Brand new premium 53ft gooseneck chassis with extended reach and superior stability.",
       imageUrl: "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       features: ["Gooseneck design", "Extended reach", "Superior stability", "Air-ride suspension"],
       specifications: ["Length: 53ft", "Weight capacity: 65,000 lbs", "Axles: Tri-axle", "Kingpin: 2 inch"]
     });
     
+    // Seed chassis models - Used Condition
     this.createChassisModel({
       name: "20ft Intermodal Chassis",
-      slug: "pratt-20ft-intermodal",
-      brandId: 3, // Pratt Intermodal
+      slug: "used-pratt-20ft-intermodal",
+      conditionId: 2, // Used Chassis
+      manufacturer: "Pratt",
       size: "20ft",
       dutyType: "Standard Duty",
-      description: "Compact 20ft intermodal chassis with optimized weight distribution and maneuverability.",
+      description: "Pre-owned 20ft intermodal chassis with optimized weight distribution and maneuverability. Fully inspected and reconditioned.",
       imageUrl: "https://images.unsplash.com/photo-1555412654-72a95a495858?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       features: ["Optimized weight distribution", "Enhanced maneuverability", "Compact design", "Versatile coupler"],
       specifications: ["Length: 20ft", "Weight capacity: 30,000 lbs", "Axles: Single", "Kingpin: 2 inch"]
@@ -196,11 +201,12 @@ export class MemStorage implements IStorage {
     
     this.createChassisModel({
       name: "40ft Combo Chassis",
-      slug: "pratt-40ft-combo",
-      brandId: 3, // Pratt Intermodal
+      slug: "used-pratt-40ft-combo",
+      conditionId: 2, // Used Chassis
+      manufacturer: "Pratt",
       size: "40ft",
       dutyType: "Heavy Duty",
-      description: "Versatile 40ft combo chassis designed for flexibility with multiple container configurations.",
+      description: "Pre-owned 40ft combo chassis designed for flexibility with multiple container configurations. Thoroughly inspected.",
       imageUrl: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       features: ["Multiple container configurations", "Adaptable design", "Heavy-duty construction", "Enhanced stability"],
       specifications: ["Length: 40ft", "Weight capacity: 48,000 lbs", "Axles: Tandem", "Kingpin: 2 inch"]
@@ -208,11 +214,12 @@ export class MemStorage implements IStorage {
     
     this.createChassisModel({
       name: "45ft Slider Chassis",
-      slug: "stoughton-45ft-slider",
-      brandId: 4, // Stoughton Chassis
+      slug: "used-stoughton-45ft-slider",
+      conditionId: 2, // Used Chassis
+      manufacturer: "Stoughton",
       size: "45ft",
       dutyType: "Heavy Duty",
-      description: "Adjustable 45ft slider chassis with multiple locking positions for versatile container handling.",
+      description: "Pre-owned 45ft slider chassis with multiple locking positions for versatile container handling. Fully refurbished.",
       imageUrl: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       features: ["Adjustable slider", "Multiple locking positions", "Versatile container handling", "Premium materials"],
       specifications: ["Length: 45ft", "Weight capacity: 50,000 lbs", "Axles: Tandem", "Kingpin: 2 inch"]

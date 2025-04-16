@@ -1,10 +1,17 @@
-// Brand and size values for filtering
-export const BRANDS = [
-  { name: "All Models", value: "all" },
-  { name: "Bull Chassis", value: "bull-chassis" },
-  { name: "Cheetah Chassis", value: "cheetah-chassis" },
-  { name: "Pratt Intermodal Chassis", value: "pratt-chassis" },
-  { name: "Stoughton Chassis", value: "stoughton-chassis" }
+// Condition and size values for filtering
+export const CONDITIONS = [
+  { name: "All Chassis", value: "all" },
+  { name: "New Chassis", value: "new-chassis" },
+  { name: "Used Chassis", value: "used-chassis" }
+];
+
+// Manufacturer values for filtering
+export const MANUFACTURERS = [
+  { name: "All Manufacturers", value: "all" },
+  { name: "Bull", value: "Bull" },
+  { name: "Cheetah", value: "Cheetah" },
+  { name: "Pratt", value: "Pratt" },
+  { name: "Stoughton", value: "Stoughton" }
 ];
 
 export const SIZES = [

@@ -3,25 +3,30 @@ import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
-import { BRANDS, SIZES } from '@/lib/constants';
+import { CONDITIONS, MANUFACTURERS, SIZES } from '@/lib/constants';
 import type { ChassisModel } from '@shared/schema';
 
 const ProductGrid: React.FC = () => {
-  const [brandFilter, setBrandFilter] = useState('all');
+  const [conditionFilter, setConditionFilter] = useState('all');
   const [sizeFilter, setSizeFilter] = useState('all');
+  const [manufacturerFilter, setManufacturerFilter] = useState('all');
 
   // Fetch chassis models with filters
   const { data: models, isLoading, error } = useQuery<ChassisModel[]>({
-    queryKey: ['/api/chassis', { brand: brandFilter, size: sizeFilter }],
+    queryKey: ['/api/chassis/filter', { condition: conditionFilter, size: sizeFilter, manufacturer: manufacturerFilter }],
   });
 
   // Handle filter changes
-  const handleBrandFilterChange = (value: string) => {
-    setBrandFilter(value);
+  const handleConditionFilterChange = (value: string) => {
+    setConditionFilter(value);
   };
 
   const handleSizeFilterChange = (value: string) => {
     setSizeFilter(value);
+  };
+  
+  const handleManufacturerFilterChange = (value: string) => {
+    setManufacturerFilter(value);
   };
 
   if (error) {
@@ -42,19 +47,37 @@ const ProductGrid: React.FC = () => {
           Browse our selection of premium chassis models or filter by your specific requirements
         </p>
         
-        {/* Filter controls */}
+        {/* Condition filter controls */}
         <div className="flex flex-wrap justify-center mb-8 gap-4">
-          {BRANDS.map(brand => (
+          {CONDITIONS.map(condition => (
             <button
-              key={brand.value}
+              key={condition.value}
               className={`font-montserrat font-medium px-4 py-2 rounded transition duration-200 ${
-                brandFilter === brand.value 
+                conditionFilter === condition.value 
                   ? 'active-filter' 
                   : 'inactive-filter'
               }`}
-              onClick={() => handleBrandFilterChange(brand.value)}
+              onClick={() => handleConditionFilterChange(condition.value)}
             >
-              {brand.name}
+              {condition.name}
+            </button>
+          ))}
+        </div>
+        
+        {/* Manufacturer filter */}
+        <div className="flex flex-wrap justify-center mb-8 gap-4">
+          <span className="text-primary font-montserrat font-medium self-center">Manufacturer:</span>
+          {MANUFACTURERS.map(manufacturer => (
+            <button
+              key={manufacturer.value}
+              className={`font-montserrat font-medium px-4 py-2 rounded transition duration-200 ${
+                manufacturerFilter === manufacturer.value 
+                  ? 'active-filter' 
+                  : 'inactive-filter'
+              }`}
+              onClick={() => handleManufacturerFilterChange(manufacturer.value)}
+            >
+              {manufacturer.name}
             </button>
           ))}
         </div>
@@ -95,8 +118,8 @@ const ProductGrid: React.FC = () => {
             ))
           ) : models && models.length > 0 ? (
             models.map((model) => {
-              // Find the brand for this model
-              const brandSlug = BRANDS.find(b => b.value !== 'all' && model.brandId.toString() === b.value.split('-')[0])?.value || '';
+              // Find condition name based on model's conditionId
+              const conditionName = CONDITIONS.find(c => c.value !== 'all' && c.value.includes(model.conditionId === 1 ? 'new' : 'used'))?.name || '';
               
               return (
                 <div 
@@ -105,7 +128,10 @@ const ProductGrid: React.FC = () => {
                 >
                   <div className="h-56 bg-neutral-200 overflow-hidden relative">
                     <div className="absolute top-0 left-0 bg-[#E30D16] text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold">
-                      {BRANDS.find(b => b.value !== 'all' && model.brandId.toString() === b.value.split('-')[0])?.name || ''}
+                      {conditionName}
+                    </div>
+                    <div className="absolute top-0 right-0 bg-primary text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold">
+                      {model.manufacturer}
                     </div>
                     <img 
                       src={model.imageUrl} 

@@ -9,41 +9,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API route prefix
   const apiPrefix = "/api";
 
-  // Get all brands
-  app.get(`${apiPrefix}/brands`, async (_req, res) => {
+  // Get all conditions (new/used)
+  app.get(`${apiPrefix}/conditions`, async (_req, res) => {
     try {
-      const brands = await storage.getAllBrands();
-      return res.json(brands);
+      const conditions = await storage.getAllConditions();
+      return res.json(conditions);
     } catch (error) {
-      console.error("Error fetching brands:", error);
-      return res.status(500).json({ message: "Failed to fetch brands" });
+      console.error("Error fetching conditions:", error);
+      return res.status(500).json({ message: "Failed to fetch conditions" });
     }
   });
 
-  // Get brand by slug
-  app.get(`${apiPrefix}/brands/:slug`, async (req, res) => {
+  // Get condition by slug
+  app.get(`${apiPrefix}/conditions/:slug`, async (req, res) => {
     try {
       const { slug } = req.params;
-      const brand = await storage.getBrandBySlug(slug);
+      const condition = await storage.getConditionBySlug(slug);
       
-      if (!brand) {
-        return res.status(404).json({ message: "Brand not found" });
+      if (!condition) {
+        return res.status(404).json({ message: "Condition not found" });
       }
       
-      return res.json(brand);
+      return res.json(condition);
     } catch (error) {
-      console.error("Error fetching brand:", error);
-      return res.status(500).json({ message: "Failed to fetch brand" });
+      console.error("Error fetching condition:", error);
+      return res.status(500).json({ message: "Failed to fetch condition" });
     }
   });
 
   // Get all chassis models
   app.get(`${apiPrefix}/chassis`, async (req, res) => {
     try {
-      const brandSlug = req.query.brand as string | undefined;
+      const conditionSlug = req.query.condition as string | undefined;
       const size = req.query.size as string | undefined;
+      const manufacturer = req.query.manufacturer as string | undefined;
       
-      const models = await storage.filterChassisModels(brandSlug, size);
+      const models = await storage.filterChassisModels(conditionSlug, size, manufacturer);
       return res.json(models);
     } catch (error) {
       console.error("Error fetching chassis models:", error);
@@ -51,17 +52,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get chassis models by brand
-  app.get(`${apiPrefix}/brands/:slug/chassis`, async (req, res) => {
+  // Get chassis models by condition
+  app.get(`${apiPrefix}/conditions/:slug/chassis`, async (req, res) => {
     try {
       const { slug } = req.params;
-      const brand = await storage.getBrandBySlug(slug);
+      const condition = await storage.getConditionBySlug(slug);
       
-      if (!brand) {
-        return res.status(404).json({ message: "Brand not found" });
+      if (!condition) {
+        return res.status(404).json({ message: "Condition not found" });
       }
       
-      const models = await storage.getChassisModelsByBrand(brand.id);
+      const models = await storage.getChassisModelsByCondition(condition.id);
       return res.json(models);
     } catch (error) {
       console.error("Error fetching chassis models:", error);

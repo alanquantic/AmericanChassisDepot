@@ -3,7 +3,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import Hero from '@/components/home/Hero';
-import BrandShowcase from '@/components/home/BrandShowcase';
+import ChassisTypeShowcase from '@/components/home/ChassisTypeShowcase';
 import ProductGrid from '@/components/home/ProductGrid';
 import AboutSection from '@/components/home/AboutSection';
 import BusinessAdvantages from '@/components/home/BusinessAdvantages';
@@ -19,7 +19,7 @@ const HomePage: React.FC = () => {
       
       <main>
         <Hero />
-        <BrandShowcase />
+        <ChassisTypeShowcase />
         <ProductGrid />
         <BusinessAdvantages />
         <VideoSection />

@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { BRANDS } from '@/lib/constants';
+import { CONDITIONS, MANUFACTURERS } from '@/lib/constants';
 import { 
   Form,
   FormControl,
@@ -169,13 +169,20 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                 >
                   <FormControl>
                     <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary">
-                      <SelectValue placeholder="Select a chassis brand" />
+                      <SelectValue placeholder="Select chassis type or manufacturer" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {BRANDS.filter(brand => brand.value !== 'all').map((brand) => (
-                      <SelectItem key={brand.value} value={brand.value}>
-                        {brand.name}
+                    {/* First, the condition options */}
+                    {CONDITIONS.filter(condition => condition.value !== 'all').map((condition) => (
+                      <SelectItem key={condition.value} value={condition.value}>
+                        {condition.name}
+                      </SelectItem>
+                    ))}
+                    {/* Then specific manufacturer options */}
+                    {MANUFACTURERS.filter(manufacturer => manufacturer.value !== 'all').map((manufacturer) => (
+                      <SelectItem key={`manufacturer-${manufacturer.value}`} value={`manufacturer-${manufacturer.value}`}>
+                        {manufacturer.name} Chassis
                       </SelectItem>
                     ))}
                     <SelectItem value="other">Other</SelectItem>
