@@ -8,9 +8,10 @@ export const CONDITIONS = [
 export const SIZES = [
   { name: "All Sizes", value: "all" },
   { name: "20ft", value: "20ft" },
+  { name: "20-40ft", value: "20-40ft" },
   { name: "40ft", value: "40ft" },
-  { name: "45ft", value: "45ft" },
-  { name: "53ft", value: "53ft" }
+  { name: "40-45ft", value: "40-45ft" },
+  { name: "20-40-45ft", value: "20-40-45ft" }
 ];
 
 // Contact information
