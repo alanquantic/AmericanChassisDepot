@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/layout/Header';
@@ -32,6 +32,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
   
   // Use manufacturer from model
   const manufacturer = model?.manufacturer || "";
+  
+  // Scroll to top when the component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]); // Re-run when slug changes
   
   const isLoading = modelLoading;
   

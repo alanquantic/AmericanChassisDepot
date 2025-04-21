@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { MenuIcon, XIcon, ChevronDownIcon, ChevronUpIcon } from '@/lib/icons';
 
@@ -6,7 +6,6 @@ const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileBrandsOpen, setIsMobileBrandsOpen] = useState(false);
   const [location] = useLocation();
-  const timeoutRef = useRef<number | null>(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -19,18 +18,7 @@ const Header: React.FC = () => {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     setIsMobileBrandsOpen(false);
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
   };
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    timeoutRef.current = window.setTimeout(() => {
-      if (!e.currentTarget.matches(':hover')) {
-        e.currentTarget.querySelector('.peer-hover\\:block')?.classList.remove('block');
-      }
-    }, 800);
-  }
 
   return (
     <header className="sticky top-0 z-40 bg-white shadow-md">
@@ -58,15 +46,15 @@ const Header: React.FC = () => {
           >
             Home
           </Link>
-          <div className="relative" onMouseLeave={handleMouseLeave}>
+          <div className="relative group">
             <button 
-              className="font-montserrat font-medium text-primary hover:text-[#E30D16] transition duration-200 flex items-center peer"
+              className="font-montserrat font-medium text-primary hover:text-[#E30D16] transition duration-200 flex items-center"
               aria-haspopup="true"
               aria-expanded="false"
             >
               Sizes <ChevronDownIcon className="ml-1 w-4 h-4" />
             </button>
-            <div className="absolute hidden peer-hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
+            <div className="absolute hidden group-hover:block hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
               <div className="py-1 px-2">
                 <a 
                   href="/products/new-20ft-sl-tandem" 
