@@ -56,36 +56,36 @@ const Header: React.FC = () => {
             </button>
             <div className="absolute hidden peer-hover:block hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
               <div className="py-1 px-2">
-                <Link 
+                <a 
                   href="/sizes/20ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   20ft Chassis
-                </Link>
-                <Link 
+                </a>
+                <a 
                   href="/sizes/20-40ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   20-40ft Chassis
-                </Link>
-                <Link 
+                </a>
+                <a 
                   href="/sizes/40ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   40ft Chassis
-                </Link>
-                <Link 
+                </a>
+                <a 
                   href="/sizes/40-45ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   40-45ft Chassis
-                </Link>
-                <Link 
+                </a>
+                <a 
                   href="/sizes/20-40-45ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   20-40-45ft Chassis
-                </Link>
+                </a>
               </div>
             </div>
           </div>
@@ -142,41 +142,41 @@ const Header: React.FC = () => {
           </button>
           {isMobileBrandsOpen && (
             <div className="pl-4 animate-accordion-down">
-              <Link 
+              <a 
                 href="/sizes/20ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 20ft Chassis
-              </Link>
-              <Link 
+              </a>
+              <a 
                 href="/sizes/20-40ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 20-40ft Chassis
-              </Link>
-              <Link 
+              </a>
+              <a 
                 href="/sizes/40ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 40ft Chassis
-              </Link>
-              <Link 
+              </a>
+              <a 
                 href="/sizes/40-45ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 40-45ft Chassis
-              </Link>
-              <Link 
+              </a>
+              <a 
                 href="/sizes/20-40-45ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 20-40-45ft Chassis
-              </Link>
+              </a>
             </div>
           )}
           <Link href="/products" onClick={closeMobileMenu} className={`block py-2 font-montserrat font-medium ${location === '/products' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}>
