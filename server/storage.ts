@@ -9,6 +9,8 @@ import {
   type ContactMessage,
   type InsertContactMessage
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, ilike, and, or } from "drizzle-orm";
 
 // Storage interface
 export interface IStorage {
@@ -28,118 +30,109 @@ export interface IStorage {
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
 }
 
-// In-memory storage implementation
-export class MemStorage implements IStorage {
-  private conditions: Map<number, Condition>;
-  private chassisModels: Map<number, ChassisModel>;
-  private contactMessages: Map<number, ContactMessage>;
-  private conditionIdCounter: number;
-  private chassisIdCounter: number;
-  private messageIdCounter: number;
-
-  constructor() {
-    this.conditions = new Map();
-    this.chassisModels = new Map();
-    this.contactMessages = new Map();
-    this.conditionIdCounter = 1;
-    this.chassisIdCounter = 1;
-    this.messageIdCounter = 1;
-    
-    // Initialize with seed data
-    this.seedData();
-  }
-
+// Database storage implementation using PostgreSQL
+export class DatabaseStorage implements IStorage {
   // Condition operations
   async getAllConditions(): Promise<Condition[]> {
-    return Array.from(this.conditions.values());
+    return await db.select().from(conditions);
   }
 
   async getConditionBySlug(slug: string): Promise<Condition | undefined> {
-    return Array.from(this.conditions.values()).find(condition => condition.slug === slug);
+    const [condition] = await db.select()
+      .from(conditions)
+      .where(eq(conditions.slug, slug));
+    return condition;
   }
 
   async createCondition(insertCondition: InsertCondition): Promise<Condition> {
-    const id = this.conditionIdCounter++;
-    const condition: Condition = { ...insertCondition, id };
-    this.conditions.set(id, condition);
+    const [condition] = await db.insert(conditions)
+      .values(insertCondition)
+      .returning();
     return condition;
   }
 
   // Chassis model operations
   async getAllChassisModels(): Promise<ChassisModel[]> {
-    return Array.from(this.chassisModels.values());
+    return await db.select().from(chassisModels);
   }
 
   async getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]> {
-    return Array.from(this.chassisModels.values())
-      .filter(model => model.conditionId === conditionId);
+    return await db.select()
+      .from(chassisModels)
+      .where(eq(chassisModels.conditionId, conditionId));
   }
 
   async getChassisModelBySlug(slug: string): Promise<ChassisModel | undefined> {
-    return Array.from(this.chassisModels.values())
-      .find(model => model.slug === slug);
+    const [model] = await db.select()
+      .from(chassisModels)
+      .where(eq(chassisModels.slug, slug));
+    return model;
   }
 
   async createChassisModel(insertModel: InsertChassisModel): Promise<ChassisModel> {
-    const id = this.chassisIdCounter++;
-    const model: ChassisModel = { 
-      ...insertModel, 
-      id,
-      features: insertModel.features || null,
-      specifications: insertModel.specifications || null
-    };
-    this.chassisModels.set(id, model);
+    const [model] = await db.insert(chassisModels)
+      .values(insertModel)
+      .returning();
     return model;
   }
 
   async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string): Promise<ChassisModel[]> {
-    let models = Array.from(this.chassisModels.values());
+    // First get all chassis models
+    const allModels = await db.select().from(chassisModels);
+    
+    // Then filter them in memory
+    let filteredModels = [...allModels];
     
     if (conditionSlug && conditionSlug !== 'all') {
       const condition = await this.getConditionBySlug(conditionSlug);
       if (condition) {
-        models = models.filter(model => model.conditionId === condition.id);
+        filteredModels = filteredModels.filter(model => model.conditionId === condition.id);
       }
     }
     
     if (size && size !== 'all') {
-      models = models.filter(model => model.size === size);
+      filteredModels = filteredModels.filter(model => model.size === size);
     }
     
     if (manufacturer && manufacturer !== 'all') {
-      models = models.filter(model => model.manufacturer.toLowerCase() === manufacturer.toLowerCase());
+      const lowerCaseManufacturer = manufacturer.toLowerCase();
+      filteredModels = filteredModels.filter(model => 
+        model.manufacturer.toLowerCase().includes(lowerCaseManufacturer)
+      );
     }
     
-    return models;
+    return filteredModels;
   }
 
   // Contact message operations
   async createContactMessage(insertMessage: InsertContactMessage): Promise<ContactMessage> {
-    const id = this.messageIdCounter++;
-    const message: ContactMessage = { 
-      ...insertMessage, 
-      id,
-      company: insertMessage.company || null,
-      phone: insertMessage.phone || null,
-      units: insertMessage.units || null,
-      interest: insertMessage.interest || null,
-      sourceUrl: insertMessage.sourceUrl || null
-    };
-    this.contactMessages.set(id, message);
+    const [message] = await db.insert(contactMessages)
+      .values(insertMessage)
+      .returning();
     return message;
   }
 
+  // Initialize database with seed data if needed
+  async initializeDatabase(): Promise<void> {
+    const existingConditions = await this.getAllConditions();
+    
+    if (existingConditions.length === 0) {
+      console.log("Initializing database with seed data...");
+      await this.seedData();
+    }
+  }
+
   // Seed initial data
-  private seedData() {
+  private async seedData() {
     // Seed conditions
-    const newCondition = this.createCondition({
+    const newCondition = await this.createCondition({
       name: "New Chassis",
       slug: "new-chassis",
       description: "Brand new chassis with full warranty and the latest features and technology.",
       imageUrl: "/assets/new-chassis.jpg"
     });
     
-    const usedCondition = this.createCondition({
+    const usedCondition = await this.createCondition({
       name: "Used Chassis",
       slug: "used-chassis",
       description: "Quality pre-owned chassis that have been thoroughly inspected and refurbished as needed.",
@@ -147,10 +140,10 @@ export class MemStorage implements IStorage {
     });
     
     // Seed chassis models - New Condition
-    this.createChassisModel({
+    await this.createChassisModel({
       name: "20' SL Tandem Container Chassis",
       slug: "new-20ft-sl-tandem",
-      conditionId: 1, // New Chassis
+      conditionId: newCondition.id,
       manufacturer: "American Chassis Depot",
       size: "20ft",
       dutyType: "Heavy Duty",
@@ -170,10 +163,10 @@ export class MemStorage implements IStorage {
       ]
     });
     
-    this.createChassisModel({
+    await this.createChassisModel({
       name: "20/40' Extendable Tandem Container Chassis",
       slug: "new-20-40ft-extendable-tandem",
-      conditionId: 1, // New Chassis
+      conditionId: newCondition.id,
       manufacturer: "American Chassis Depot",
       size: "20-40ft",
       dutyType: "Heavy Duty",
@@ -193,10 +186,10 @@ export class MemStorage implements IStorage {
       ]
     });
     
-    this.createChassisModel({
+    await this.createChassisModel({
       name: "20/40' 12 Pins Triaxle Container Chassis",
       slug: "new-20-40ft-12pins-triaxle",
-      conditionId: 1, // New Chassis
+      conditionId: newCondition.id,
       manufacturer: "American Chassis Depot",
       size: "20-40ft",
       dutyType: "Extra Heavy Duty",
@@ -217,10 +210,10 @@ export class MemStorage implements IStorage {
     });
     
     // More new chassis models
-    this.createChassisModel({
+    await this.createChassisModel({
       name: "40/45' Extendable Container Chassis",
       slug: "new-40-45ft-extendable",
-      conditionId: 1, // New Chassis
+      conditionId: newCondition.id,
       manufacturer: "American Chassis Depot",
       size: "40-45ft",
       dutyType: "Heavy Duty",
@@ -241,10 +234,10 @@ export class MemStorage implements IStorage {
     });
     
     // Seed chassis models - Used Condition
-    this.createChassisModel({
+    await this.createChassisModel({
       name: "40' Gooseneck Container Chassis",
       slug: "used-40ft-gooseneck",
-      conditionId: 2, // Used Chassis
+      conditionId: usedCondition.id,
       manufacturer: "American Chassis Depot",
       size: "40ft",
       dutyType: "Heavy Duty",
@@ -264,10 +257,10 @@ export class MemStorage implements IStorage {
       ]
     });
     
-    this.createChassisModel({
+    await this.createChassisModel({
       name: "20/40/45' Extendable Triaxle Container Chassis",
       slug: "used-20-40-45ft-extendable-triaxle",
-      conditionId: 2, // Used Chassis
+      conditionId: usedCondition.id,
       manufacturer: "American Chassis Depot",
       size: "20-40-45ft",
       dutyType: "Extra Heavy Duty",
@@ -289,4 +282,10 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Create storage instance and initialize
+const storage = new DatabaseStorage();
+storage.initializeDatabase().catch(err => {
+  console.error("Failed to initialize database:", err);
+});
+
+export { storage };
