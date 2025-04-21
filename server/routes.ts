@@ -75,8 +75,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         manufacturer = undefined;
       }
       
-      const models = await storage.filterChassisModels(conditionSlug, size, manufacturer);
-      return res.json(models);
+      try {
+        const models = await storage.filterChassisModels(conditionSlug, size, manufacturer);
+        // Asegurarnos de que models es un array antes de devolverlo
+        if (Array.isArray(models)) {
+          return res.json(models);
+        } else {
+          console.error("Unexpected response format from filterChassisModels:", models);
+          return res.json([]); // Devolver un array vacío en caso de respuesta inesperada
+        }
+      } catch (filterError) {
+        console.error("Error in filterChassisModels operation:", filterError);
+        return res.json([]); // Devolver un array vacío en caso de error
+      }
     } catch (error) {
       console.error("Error filtering chassis models:", error);
       return res.status(500).json({ message: "Failed to filter chassis models" });

@@ -77,31 +77,42 @@ export class DatabaseStorage implements IStorage {
   }
 
   async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string): Promise<ChassisModel[]> {
-    // First get all chassis models
-    const allModels = await db.select().from(chassisModels).execute();
-    
-    // Then filter them in memory
-    let filteredModels = [...allModels];
-    
-    if (conditionSlug && conditionSlug !== 'all') {
-      const condition = await this.getConditionBySlug(conditionSlug);
-      if (condition) {
-        filteredModels = filteredModels.filter(model => model.conditionId === condition.id);
+    try {
+      // First get all chassis models
+      const allModels = await db.select().from(chassisModels).execute();
+      
+      // Ensure allModels is an array
+      if (!Array.isArray(allModels)) {
+        console.error("Database didn't return an array for chassisModels:", allModels);
+        return [];
       }
+      
+      // Then filter them in memory
+      let filteredModels = [...allModels];
+      
+      if (conditionSlug && conditionSlug !== 'all') {
+        const condition = await this.getConditionBySlug(conditionSlug);
+        if (condition) {
+          filteredModels = filteredModels.filter(model => model.conditionId === condition.id);
+        }
+      }
+      
+      if (size && size !== 'all') {
+        filteredModels = filteredModels.filter(model => model.size === size);
+      }
+      
+      if (manufacturer && manufacturer !== 'all') {
+        const lowerCaseManufacturer = manufacturer.toLowerCase();
+        filteredModels = filteredModels.filter(model => 
+          model.manufacturer.toLowerCase().includes(lowerCaseManufacturer)
+        );
+      }
+      
+      return filteredModels;
+    } catch (error) {
+      console.error('Error in filterChassisModels:', error);
+      return [];
     }
-    
-    if (size && size !== 'all') {
-      filteredModels = filteredModels.filter(model => model.size === size);
-    }
-    
-    if (manufacturer && manufacturer !== 'all') {
-      const lowerCaseManufacturer = manufacturer.toLowerCase();
-      filteredModels = filteredModels.filter(model => 
-        model.manufacturer.toLowerCase().includes(lowerCaseManufacturer)
-      );
-    }
-    
-    return filteredModels;
   }
 
   // Contact message operations
