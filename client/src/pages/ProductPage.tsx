@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/layout/Header';
@@ -23,6 +23,7 @@ interface ProductPageProps {
 const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
   const params = useParams();
   const slug = propSlug || params.slug;
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
   // Fetch chassis model data
   const { data: model, isLoading: modelLoading, error: modelError } = useQuery<ChassisModel>({
@@ -32,6 +33,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
   
   // Use manufacturer from model
   const manufacturer = model?.manufacturer || "";
+
+  // Update the selected image when model data is loaded
+  useEffect(() => {
+    if (model && model.imageUrl) {
+      setSelectedImage(model.imageUrl);
+    }
+  }, [model]);
   
   // Scroll to top when the component mounts
   useEffect(() => {
@@ -39,6 +47,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
   }, [slug]); // Re-run when slug changes
   
   const isLoading = modelLoading;
+  
+  // Handle thumbnail click
+  const handleThumbnailClick = (image: string) => {
+    setSelectedImage(image);
+  };
   
   if (modelError) {
     return (
@@ -68,17 +81,52 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
         <section className="bg-neutral-100 py-12">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row gap-12">
-              {/* Image */}
+              {/* Image gallery */}
               <div className="md:w-1/2">
                 {isLoading ? (
                   <Skeleton className="h-96 w-full rounded-lg" />
                 ) : (
-                  <div className="bg-white p-4 rounded-lg shadow-md">
-                    <img 
-                      src={model?.imageUrl} 
-                      alt={model?.name} 
-                      className="w-full h-auto rounded"
-                    />
+                  <div className="space-y-4">
+                    {/* Main image */}
+                    <div className="bg-white p-4 rounded-lg shadow-md h-80 md:h-96 flex items-center justify-center">
+                      <img 
+                        src={selectedImage || model?.imageUrl} 
+                        alt={model?.name} 
+                        className="max-w-full max-h-full object-contain rounded"
+                      />
+                    </div>
+                    
+                    {/* Thumbnail gallery */}
+                    {model?.additionalImages && model.additionalImages.length > 0 && (
+                      <div className="grid grid-cols-5 gap-2">
+                        {/* Main image thumbnail */}
+                        <div 
+                          className={`h-16 bg-white p-1 rounded cursor-pointer border-2 ${selectedImage === model.imageUrl ? 'border-[#E30D16]' : 'border-transparent'}`}
+                          onClick={() => handleThumbnailClick(model.imageUrl)}
+                        >
+                          <img 
+                            src={model.imageUrl} 
+                            alt={`${model.name} thumbnail`} 
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        
+                        {/* Additional image thumbnails */}
+                        {model.additionalImages.map((image, index) => (
+                          <div 
+                            key={index}
+                            className={`h-16 bg-white p-1 rounded cursor-pointer border-2 ${selectedImage === image ? 'border-[#E30D16]' : 'border-transparent'}`}
+                            onClick={() => handleThumbnailClick(image)}
+                          >
+                            <img 
+                              src={image} 
+                              alt={`${model.name} view ${index + 1}`} 
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

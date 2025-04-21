@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, foreignKey } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -25,9 +25,10 @@ export const chassisModels = pgTable("chassis_models", {
   size: text("size").notNull(), // 20ft, 40ft, 45ft, 53ft
   dutyType: text("duty_type").notNull(), // Standard, Heavy, Extra Heavy
   description: text("description").notNull(),
-  imageUrl: text("image_url").notNull(),
+  imageUrl: text("image_url").notNull(), // Imagen principal (para mantener compatibilidad)
   features: text("features").array(),
   specifications: text("specifications").array(),
+  additionalImages: text("additional_images").array(), // Aquí almacenaremos rutas a imágenes adicionales
 });
 
 export const insertChassisModelSchema = createInsertSchema(chassisModels).omit({
