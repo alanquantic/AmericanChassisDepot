@@ -18,7 +18,7 @@ interface HomePageProps {
 
 const HomePage: React.FC<HomePageProps> = ({ initialSize }) => {
   return (
-    <>
+    <div>
       <Header />
       
       <main>
@@ -73,7 +73,7 @@ const HomePage: React.FC<HomePageProps> = ({ initialSize }) => {
       
       <Footer />
       <FloatingButton />
-    </>
+    </div>
   );
 };
 
