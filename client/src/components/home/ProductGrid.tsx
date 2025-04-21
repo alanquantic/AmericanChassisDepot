@@ -22,9 +22,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
   }, [initialSize]);
 
   // Fetch chassis models with filters
-  const { data: models, isLoading, error } = useQuery<ChassisModel[]>({
+  const { data, isLoading, error } = useQuery<ChassisModel[]>({
     queryKey: ['/api/chassis/filter', { condition: conditionFilter, size: sizeFilter, manufacturer: 'all' }],
   });
+
+  // Asegurémonos de que models sea un array
+  const models = Array.isArray(data) ? data : [];
 
   // Handle filter changes
   const handleConditionFilterChange = (value: string) => {
@@ -36,6 +39,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
   };
 
   if (error) {
+    console.error('Error loading chassis models:', error);
     return (
       <div className="py-16 bg-neutral-200">
         <div className="container mx-auto px-4">
@@ -104,7 +108,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
                 </div>
               </div>
             ))
-          ) : models && models.length > 0 ? (
+          ) : models.length > 0 ? (
             models.map((model) => {
               // Find condition name based on model's conditionId
               const conditionName = CONDITIONS.find(c => c.value !== 'all' && c.value.includes(model.conditionId === 1 ? 'new' : 'used'))?.name || '';
@@ -139,13 +143,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
                     <p className="text-neutral-600 mb-4">
                       {model.description}
                     </p>
-                    <a
+                    <Link
                       href={`/products/${model.slug}`} 
-                      onClick={() => window.scrollTo(0, 0)}
                       className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-4 py-2 rounded transition duration-200"
                     >
                       View Details
-                    </a>
+                    </Link>
                   </div>
                 </div>
               );

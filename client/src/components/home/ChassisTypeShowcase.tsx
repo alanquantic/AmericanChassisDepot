@@ -5,11 +5,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { Condition } from '@shared/schema';
 
 const ChassisTypeShowcase: React.FC = () => {
-  const { data: conditions, isLoading, error } = useQuery<Condition[]>({
+  const { data, isLoading, error } = useQuery<Condition[]>({
     queryKey: ['/api/conditions'],
   });
 
+  // Asegurémonos de que conditions sea un array
+  const conditions = Array.isArray(data) ? data : [];
+
   if (error) {
+    console.error('Error loading conditions:', error);
     return (
       <div className="py-16 bg-white">
         <div className="container mx-auto px-4">
@@ -41,8 +45,8 @@ const ChassisTypeShowcase: React.FC = () => {
                 </div>
               </div>
             ))
-          ) : (
-            conditions?.map((condition) => (
+          ) : conditions.length > 0 ? (
+            conditions.map((condition) => (
               <div key={condition.id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" id={condition.slug}>
                 <div className="relative h-64 bg-neutral-200 overflow-hidden">
                   <div className="absolute top-0 left-0 bg-[#E30D16] text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold z-10">
@@ -65,6 +69,10 @@ const ChassisTypeShowcase: React.FC = () => {
                 </div>
               </div>
             ))
+          ) : (
+            <div className="col-span-2 text-center py-10">
+              <p className="text-neutral-500">No chassis types available at the moment. Please check back later.</p>
+            </div>
           )}
         </div>
       </div>
