@@ -1,3 +1,4 @@
+
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
@@ -10,9 +11,12 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
+let pool: Pool;
+let db: ReturnType<typeof drizzle>;
+
 try {
-  export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  export const db = drizzle({ client: pool, schema });
+  pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  db = drizzle({ client: pool, schema });
   
   // Test the connection
   pool.connect().then(() => {
@@ -25,3 +29,5 @@ try {
   console.error("Error initializing database:", err);
   process.exit(1);
 }
+
+export { pool, db };
