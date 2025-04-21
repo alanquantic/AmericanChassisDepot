@@ -1,26 +1,32 @@
+
 import mailgun from 'mailgun-js';
 import { ContactMessage } from '@shared/schema';
 
-// Initialize Mailgun client
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API_KEY || '',
-  domain: process.env.MAILGUN_DOMAIN || ''
-});
+// Only initialize Mailgun if credentials are available
+const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
+const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
 
-/**
- * Sends a notification email about a new contact message
- * @param contactMessage The contact form submission data
- * @param sourceUrl The URL where the form was submitted from
- * @returns Promise that resolves to true if successful, false otherwise
- */
+const mg = MAILGUN_API_KEY && MAILGUN_DOMAIN ? mailgun({
+  apiKey: MAILGUN_API_KEY,
+  domain: MAILGUN_DOMAIN
+}) : null;
+
+if (!mg) {
+  console.warn('WARNING: Mailgun credentials not configured. Email functionality will be disabled.');
+}
+
 export async function sendContactNotification(
   contactMessage: ContactMessage, 
   sourceUrl: string
 ): Promise<boolean> {
+  if (!mg) {
+    console.warn('Email notification skipped: Mailgun not configured');
+    return false;
+  }
+
   try {
-    // Prepare the email data
     const data = {
-      from: `American Chassis Depot Website <no-reply@${process.env.MAILGUN_DOMAIN}>`,
+      from: `American Chassis Depot Website <no-reply@${MAILGUN_DOMAIN}>`,
       to: 'alan@ceosnm.com',
       subject: `New Contact Form Submission from ${contactMessage.name}`,
       text: `
@@ -84,7 +90,6 @@ ${contactMessage.message}
       `
     };
 
-    // Send the email
     await mg.messages().send(data);
     return true;
   } catch (error) {
