@@ -6,14 +6,21 @@ import { ContactMessage } from '@shared/schema';
 const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
 const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
 
+if (!MAILGUN_API_KEY || !MAILGUN_DOMAIN) {
+  console.error('ERROR: Missing Mailgun credentials. MAILGUN_API_KEY and MAILGUN_DOMAIN are required.');
+}
+
 const mg = MAILGUN_API_KEY && MAILGUN_DOMAIN ? mailgun({
   apiKey: MAILGUN_API_KEY,
-  domain: MAILGUN_DOMAIN
+  domain: MAILGUN_DOMAIN,
+  timeout: 10000 // 10 second timeout
 }) : null;
 
-if (!mg) {
-  console.warn('WARNING: Mailgun credentials not configured. Email functionality will be disabled.');
-}
+console.log('Mailgun Configuration Status:', {
+  hasApiKey: !!MAILGUN_API_KEY,
+  hasDomain: !!MAILGUN_DOMAIN,
+  isInitialized: !!mg
+});
 
 export async function sendContactNotification(
   contactMessage: ContactMessage, 

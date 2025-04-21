@@ -6,6 +6,7 @@ const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileBrandsOpen, setIsMobileBrandsOpen] = useState(false);
   const [location] = useLocation();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -18,7 +19,16 @@ const Header: React.FC = () => {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     setIsMobileBrandsOpen(false);
+    clearTimeout(timeoutId);
   };
+
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    setTimeoutId(setTimeout(() => {
+      if (!e.currentTarget.matches(':hover')) {
+        e.currentTarget.querySelector('.peer-hover\\:block')?.classList.remove('block');
+      }
+    }, 300));
+  }
 
   return (
     <header className="sticky top-0 z-40 bg-white shadow-md">
@@ -37,7 +47,7 @@ const Header: React.FC = () => {
             </span>
           </div>
         </Link>
-        
+
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-6">
           <Link 
@@ -46,7 +56,7 @@ const Header: React.FC = () => {
           >
             Home
           </Link>
-          <div className="relative">
+          <div className="relative" onMouseLeave={handleMouseLeave}>
             <button 
               className="font-montserrat font-medium text-primary hover:text-[#E30D16] transition duration-200 flex items-center peer"
               aria-haspopup="true"
@@ -54,7 +64,7 @@ const Header: React.FC = () => {
             >
               Sizes <ChevronDownIcon className="ml-1 w-4 h-4" />
             </button>
-            <div className="absolute hidden peer-hover:block hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
+            <div className="absolute hidden peer-hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
               <div className="py-1 px-2">
                 <a 
                   href="/size/20ft" 
@@ -108,7 +118,7 @@ const Header: React.FC = () => {
             Contact
           </Link>
         </nav>
-        
+
         {/* Mobile menu button */}
         <button 
           className="md:hidden text-primary focus:outline-none" 
@@ -122,7 +132,7 @@ const Header: React.FC = () => {
           )}
         </button>
       </div>
-      
+
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white pb-4 px-4">
