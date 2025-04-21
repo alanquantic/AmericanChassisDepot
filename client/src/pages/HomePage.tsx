@@ -56,10 +56,10 @@ const HomePage: React.FC<HomePageProps> = ({ initialSize }) => {
                   <h3 className="text-xl font-montserrat font-semibold mb-4">Business Hours</h3>
                   <div className="grid grid-cols-2 gap-2">
                     {CONTACT_INFO.hours.map((item, index) => (
-                      <React.Fragment key={index}>
+                      <div key={index} className="contents">
                         <div>{item.day}</div>
                         <div>{item.hours}</div>
-                      </React.Fragment>
+                      </div>
                     ))}
                   </div>
                 </div>

@@ -13,7 +13,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/">
-        {() => <HomePage key="home-page" />}
+        {() => <HomePage key="home-page" initialSize="all" />}
       </Route>
       <Route path="/brands/:slug">
         {(params) => <BrandPage slug={params.slug} />}
@@ -28,7 +28,7 @@ function Router() {
         {() => <AboutPage />}
       </Route>
       <Route path="/products">
-        {() => <HomePage key="products-page" />}
+        {() => <HomePage key="products-page" initialSize="all" />}
       </Route>
       {/* Tamaños de chasis */}
       <Route path="/size/:size">
