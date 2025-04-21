@@ -67,11 +67,21 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
       };
       return apiRequest('POST', '/api/contact', dataWithSource);
     },
-    onSuccess: () => {
-      toast({
-        title: "Message Sent",
-        description: "Thank you for your message! We will get back to you soon.",
-      });
+    onSuccess: (response: any) => {
+      // Check if email was sent successfully
+      if (response && response.emailSent === false) {
+        toast({
+          title: "Mensaje Recibido",
+          description: "Tu información ha sido guardada. Revisaremos tu solicitud pronto, pero las notificaciones por correo electrónico están temporalmente deshabilitadas.",
+          variant: "default",
+          duration: 5000
+        });
+      } else {
+        toast({
+          title: "Mensaje Enviado",
+          description: "¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.",
+        });
+      }
       form.reset({
         name: "",
         email: "",

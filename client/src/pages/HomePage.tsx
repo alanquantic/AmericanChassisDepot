@@ -12,6 +12,8 @@ import { MapPinIcon, PhoneIcon, EmailIcon } from '@/lib/icons';
 import { CONTACT_INFO } from '@/lib/constants';
 import ContactForm from '@/components/shared/ContactForm';
 
+// Eliminamos los atributos de React.Fragment que causan el warning
+
 interface HomePageProps {
   initialSize?: string;
 }
