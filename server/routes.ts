@@ -136,9 +136,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Send email notification
       const sourceUrl = validatedData.sourceUrl || 'Unknown source';
       
+      let emailSent = false;
       try {
-        await sendContactNotification(newMessage, sourceUrl);
-        console.log('Contact notification email sent successfully');
+        emailSent = await sendContactNotification(newMessage, sourceUrl);
+        if (emailSent) {
+          console.log('Contact notification email sent successfully');
+        } else {
+          console.warn('Contact notification email was not sent (Mailgun might not be configured)');
+        }
       } catch (emailError) {
         console.error('Failed to send contact notification email:', emailError);
         // Continue execution even if email fails
@@ -146,6 +151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       return res.status(201).json({
         message: "Contact message submitted successfully",
+        emailSent: emailSent,
         data: newMessage
       });
     } catch (error) {
