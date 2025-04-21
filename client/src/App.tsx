@@ -13,7 +13,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/">
-        {() => <HomePage />}
+        {() => <HomePage key="home-page" />}
       </Route>
       <Route path="/brands/:slug">
         {(params) => <BrandPage slug={params.slug} />}
@@ -28,26 +28,26 @@ function Router() {
         {() => <AboutPage />}
       </Route>
       <Route path="/products">
-        {() => <HomePage />}
+        {() => <HomePage key="products-page" />}
       </Route>
       {/* Tamaños de chasis */}
       <Route path="/size/:size">
-        {(params) => <HomePage initialSize={params.size} />}
+        {(params) => <HomePage key={`size-${params.size}`} initialSize={params.size} />}
       </Route>
       <Route path="/sizes/20ft">
-        {() => <HomePage initialSize="20ft" />}
+        {() => <HomePage key="size-20ft" initialSize="20ft" />}
       </Route>
       <Route path="/sizes/20-40ft">
-        {() => <HomePage initialSize="20-40ft" />}
+        {() => <HomePage key="size-20-40ft" initialSize="20-40ft" />}
       </Route>
       <Route path="/sizes/40ft">
-        {() => <HomePage initialSize="40ft" />}
+        {() => <HomePage key="size-40ft" initialSize="40ft" />}
       </Route>
       <Route path="/sizes/40-45ft">
-        {() => <HomePage initialSize="40-45ft" />}
+        {() => <HomePage key="size-40-45ft" initialSize="40-45ft" />}
       </Route>
       <Route path="/sizes/20-40-45ft">
-        {() => <HomePage initialSize="20-40-45ft" />}
+        {() => <HomePage key="size-20-40-45ft" initialSize="20-40-45ft" />}
       </Route>
       <Route>
         {() => <NotFound />}

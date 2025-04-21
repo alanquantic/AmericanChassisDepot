@@ -29,7 +29,7 @@ const Header: React.FC = () => {
       if (!e.currentTarget.matches(':hover')) {
         e.currentTarget.querySelector('.peer-hover\\:block')?.classList.remove('block');
       }
-    }, 300);
+    }, 800);
   }
 
   return (
@@ -69,34 +69,34 @@ const Header: React.FC = () => {
             <div className="absolute hidden peer-hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
               <div className="py-1 px-2">
                 <a 
-                  href="/size/20ft" 
+                  href="/products/new-20ft-sl-tandem" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   20ft Chassis
                 </a>
                 <a 
-                  href="/size/20-40ft" 
+                  href="/products/new-20-40ft-extendable-tandem" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  20-40ft Chassis
+                  20-40ft Extendable
                 </a>
                 <a 
-                  href="/size/40ft" 
+                  href="/products/new-20-40ft-12pins-triaxle" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  40ft Chassis
+                  20-40ft Triaxle
                 </a>
                 <a 
-                  href="/size/40-45ft" 
+                  href="/products/new-40-45ft-extendable" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  40-45ft Chassis
+                  40-45ft Extendable
                 </a>
                 <a 
-                  href="/size/20-40-45ft" 
+                  href="/products/used-20-40-45ft-extendable-triaxle" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  20-40-45ft Chassis
+                  20-40-45ft Extendable
                 </a>
               </div>
             </div>
@@ -155,39 +155,39 @@ const Header: React.FC = () => {
           {isMobileBrandsOpen && (
             <div className="pl-4 animate-accordion-down">
               <a 
-                href="/size/20ft" 
+                href="/products/new-20ft-sl-tandem" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 20ft Chassis
               </a>
               <a 
-                href="/size/20-40ft" 
+                href="/products/new-20-40ft-extendable-tandem" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                20-40ft Chassis
+                20-40ft Extendable
               </a>
               <a 
-                href="/size/40ft" 
+                href="/products/new-20-40ft-12pins-triaxle" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                40ft Chassis
+                20-40ft Triaxle
               </a>
               <a 
-                href="/size/40-45ft" 
+                href="/products/new-40-45ft-extendable" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                40-45ft Chassis
+                40-45ft Extendable
               </a>
               <a 
-                href="/size/20-40-45ft" 
+                href="/products/used-20-40-45ft-extendable-triaxle" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                20-40-45ft Chassis
+                20-40-45ft Extendable
               </a>
             </div>
           )}
