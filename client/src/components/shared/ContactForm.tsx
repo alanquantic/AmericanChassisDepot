@@ -24,10 +24,10 @@ import { Button } from '@/components/ui/button';
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
-  company: z.string().optional(),
-  phone: z.string().optional(),
-  units: z.string().optional(),
-  interest: z.string().optional(),
+  company: z.string().min(1, { message: "Company name is required" }),
+  phone: z.string().min(5, { message: "Phone number is required" }),
+  units: z.string().min(1, { message: "Number of units is required" }),
+  interest: z.string().min(1, { message: "Please select an option" }),
   message: z.string().min(10, { message: "Message must be at least 10 characters" }),
   sourceUrl: z.string().optional()
 });

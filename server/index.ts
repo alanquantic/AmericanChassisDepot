@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import "./services/mail";
 
 const app = express();
 app.use(express.json());
@@ -74,6 +75,5 @@ app.use((req, res, next) => {
   }, () => {
     log(`Server running on port ${port}`);
     log(`Environment: ${process.env.NODE_ENV}`);
-    log(`Mail service status: ${!!mg ? 'Configured' : 'Not configured'}`);
   });
 })();

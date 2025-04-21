@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useLocation } from 'wouter';
 import { MenuIcon, XIcon, ChevronDownIcon, ChevronUpIcon } from '@/lib/icons';
 
@@ -6,7 +6,7 @@ const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileBrandsOpen, setIsMobileBrandsOpen] = useState(false);
   const [location] = useLocation();
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<number | null>(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -19,15 +19,17 @@ const Header: React.FC = () => {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     setIsMobileBrandsOpen(false);
-    clearTimeout(timeoutId);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    setTimeoutId(setTimeout(() => {
+    timeoutRef.current = window.setTimeout(() => {
       if (!e.currentTarget.matches(':hover')) {
         e.currentTarget.querySelector('.peer-hover\\:block')?.classList.remove('block');
       }
-    }, 300));
+    }, 300);
   }
 
   return (
