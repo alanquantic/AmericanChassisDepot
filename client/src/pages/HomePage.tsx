@@ -12,7 +12,11 @@ import { MapPinIcon, PhoneIcon, EmailIcon } from '@/lib/icons';
 import { CONTACT_INFO } from '@/lib/constants';
 import ContactForm from '@/components/shared/ContactForm';
 
-const HomePage: React.FC = () => {
+interface HomePageProps {
+  initialSize?: string;
+}
+
+const HomePage: React.FC<HomePageProps> = ({ initialSize }) => {
   return (
     <>
       <Header />
@@ -20,7 +24,7 @@ const HomePage: React.FC = () => {
       <main>
         <Hero />
         <ChassisTypeShowcase />
-        <ProductGrid />
+        <ProductGrid initialSize={initialSize} />
         <BusinessAdvantages />
         <VideoSection />
         <AboutSection />

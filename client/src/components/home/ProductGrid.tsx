@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -6,9 +6,20 @@ import { RulerIcon, WeightIcon } from '@/lib/icons';
 import { CONDITIONS, SIZES } from '@/lib/constants';
 import type { ChassisModel } from '@shared/schema';
 
-const ProductGrid: React.FC = () => {
+interface ProductGridProps {
+  initialSize?: string;
+}
+
+const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
   const [conditionFilter, setConditionFilter] = useState('all');
-  const [sizeFilter, setSizeFilter] = useState('all');
+  const [sizeFilter, setSizeFilter] = useState(initialSize || 'all');
+  
+  // Update size filter if initialSize prop changes
+  useEffect(() => {
+    if (initialSize) {
+      setSizeFilter(initialSize);
+    }
+  }, [initialSize]);
 
   // Fetch chassis models with filters
   const { data: models, isLoading, error } = useQuery<ChassisModel[]>({
