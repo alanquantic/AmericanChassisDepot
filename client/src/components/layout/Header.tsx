@@ -25,14 +25,14 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link href="/" className="flex items-center">
           <div className="flex items-center">
-            <div className="h-12 w-12 relative">
+            <div className="h-12 w-12 md:h-12 md:w-12 relative">
               <img 
                 src="/assets/logo.png" 
                 alt="American Chassis Depot Logo" 
                 className="object-contain h-full w-full"
               />
             </div>
-            <span className="ml-3 font-montserrat font-semibold text-primary text-lg hidden md:block">
+            <span className="ml-2 md:ml-3 font-montserrat font-semibold text-primary text-xs md:text-lg">
               American Chassis Depot
             </span>
           </div>
@@ -63,22 +63,28 @@ const Header: React.FC = () => {
                   20ft Chassis
                 </Link>
                 <Link 
+                  href="/sizes/20-40ft" 
+                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
+                >
+                  20-40ft Chassis
+                </Link>
+                <Link 
                   href="/sizes/40ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   40ft Chassis
                 </Link>
                 <Link 
-                  href="/sizes/45ft" 
+                  href="/sizes/40-45ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  45ft Chassis
+                  40-45ft Chassis
                 </Link>
                 <Link 
-                  href="/sizes/53ft" 
+                  href="/sizes/20-40-45ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
-                  53ft Chassis
+                  20-40-45ft Chassis
                 </Link>
               </div>
             </div>
@@ -144,6 +150,13 @@ const Header: React.FC = () => {
                 20ft Chassis
               </Link>
               <Link 
+                href="/sizes/20-40ft" 
+                onClick={closeMobileMenu}
+                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
+              >
+                20-40ft Chassis
+              </Link>
+              <Link 
                 href="/sizes/40ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
@@ -151,18 +164,18 @@ const Header: React.FC = () => {
                 40ft Chassis
               </Link>
               <Link 
-                href="/sizes/45ft" 
+                href="/sizes/40-45ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                45ft Chassis
+                40-45ft Chassis
               </Link>
               <Link 
-                href="/sizes/53ft" 
+                href="/sizes/20-40-45ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
-                53ft Chassis
+                20-40-45ft Chassis
               </Link>
             </div>
           )}
