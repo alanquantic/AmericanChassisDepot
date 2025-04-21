@@ -1,4 +1,4 @@
-import * as mailgun from 'mailgun-js';
+import mailgun from 'mailgun-js';
 import { ContactMessage } from '@shared/schema';
 
 // Initialize Mailgun client

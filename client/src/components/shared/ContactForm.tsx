@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { CONDITIONS } from '@/lib/constants';
+import { useLocation } from 'wouter';
 import { 
   Form,
   FormControl,
@@ -27,7 +28,8 @@ const formSchema = z.object({
   phone: z.string().optional(),
   units: z.string().optional(),
   interest: z.string().optional(),
-  message: z.string().min(10, { message: "Message must be at least 10 characters" })
+  message: z.string().min(10, { message: "Message must be at least 10 characters" }),
+  sourceUrl: z.string().optional()
 });
 
 type ContactFormValues = z.infer<typeof formSchema>;
@@ -38,6 +40,7 @@ interface ContactFormProps {
 
 const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
   const { toast } = useToast();
+  const [location] = useLocation();
   
   // Initialize form
   const form = useForm<ContactFormValues>({
@@ -49,21 +52,36 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
       phone: "",
       units: "",
       interest: "",
-      message: ""
+      message: "",
+      sourceUrl: window.location.href
     }
   });
   
   // Submit mutation
   const mutation = useMutation({
     mutationFn: (values: ContactFormValues) => {
-      return apiRequest('POST', '/api/contact', values);
+      // Include the current URL in the submission
+      const dataWithSource = {
+        ...values,
+        sourceUrl: window.location.href
+      };
+      return apiRequest('POST', '/api/contact', dataWithSource);
     },
     onSuccess: () => {
       toast({
         title: "Message Sent",
         description: "Thank you for your message! We will get back to you soon.",
       });
-      form.reset();
+      form.reset({
+        name: "",
+        email: "",
+        company: "",
+        phone: "",
+        units: "",
+        interest: "",
+        message: "",
+        sourceUrl: window.location.href
+      });
     },
     onError: (error) => {
       toast({

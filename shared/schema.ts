@@ -44,6 +44,7 @@ export const contactMessages = pgTable("contact_messages", {
   units: text("units"),
   interest: text("interest"),
   message: text("message").notNull(),
+  sourceUrl: text("source_url"),
   createdAt: text("created_at").notNull(),
 });
 

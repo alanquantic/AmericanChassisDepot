@@ -1,9 +1,10 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { z } from "zod";
 import { storage } from "./storage";
 import { insertContactMessageSchema } from "@shared/schema";
 import { ZodError } from "zod";
+import { sendContactNotification } from "./services/mail";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API route prefix
@@ -131,6 +132,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Store the contact message
       const newMessage = await storage.createContactMessage(validatedData);
+      
+      // Send email notification
+      const sourceUrl = validatedData.sourceUrl || 'Unknown source';
+      
+      try {
+        await sendContactNotification(newMessage, sourceUrl);
+        console.log('Contact notification email sent successfully');
+      } catch (emailError) {
+        console.error('Failed to send contact notification email:', emailError);
+        // Continue execution even if email fails
+      }
       
       return res.status(201).json({
         message: "Contact message submitted successfully",

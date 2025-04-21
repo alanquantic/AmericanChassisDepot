@@ -122,7 +122,8 @@ export class MemStorage implements IStorage {
       company: insertMessage.company || null,
       phone: insertMessage.phone || null,
       units: insertMessage.units || null,
-      interest: insertMessage.interest || null
+      interest: insertMessage.interest || null,
+      sourceUrl: insertMessage.sourceUrl || null
     };
     this.contactMessages.set(id, message);
     return message;
