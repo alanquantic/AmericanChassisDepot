@@ -98,7 +98,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                     </h1>
                     <div className="flex items-center gap-2 mb-6">
                       <span className="bg-[#E30D16] text-white px-3 py-1 rounded-sm font-montserrat text-sm font-semibold">
-                        {brand?.name}
+                        {manufacturer}
                       </span>
                     </div>
                     <div className="flex items-center gap-4 mb-6 text-neutral-600">

@@ -7,7 +7,15 @@ import FloatingButton from '@/components/layout/FloatingButton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
 import { Skeleton } from '@/components/ui/skeleton';
 import ContactForm from '@/components/shared/ContactForm';
-import type { Brand, ChassisModel } from '@shared/schema';
+import type { ChassisModel } from '@shared/schema';
+
+// Define a type for the brand info
+interface Brand {
+  id: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+}
 
 interface BrandPageProps {
   slug?: string;
