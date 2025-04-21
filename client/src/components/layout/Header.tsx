@@ -57,31 +57,31 @@ const Header: React.FC = () => {
             <div className="absolute hidden peer-hover:block hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
               <div className="py-1 px-2">
                 <a 
-                  href="/sizes/20ft" 
+                  href="/size/20ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   20ft Chassis
                 </a>
                 <a 
-                  href="/sizes/20-40ft" 
+                  href="/size/20-40ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   20-40ft Chassis
                 </a>
                 <a 
-                  href="/sizes/40ft" 
+                  href="/size/40ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   40ft Chassis
                 </a>
                 <a 
-                  href="/sizes/40-45ft" 
+                  href="/size/40-45ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   40-45ft Chassis
                 </a>
                 <a 
-                  href="/sizes/20-40-45ft" 
+                  href="/size/20-40-45ft" 
                   className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
                 >
                   20-40-45ft Chassis
@@ -143,35 +143,35 @@ const Header: React.FC = () => {
           {isMobileBrandsOpen && (
             <div className="pl-4 animate-accordion-down">
               <a 
-                href="/sizes/20ft" 
+                href="/size/20ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 20ft Chassis
               </a>
               <a 
-                href="/sizes/20-40ft" 
+                href="/size/20-40ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 20-40ft Chassis
               </a>
               <a 
-                href="/sizes/40ft" 
+                href="/size/40ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 40ft Chassis
               </a>
               <a 
-                href="/sizes/40-45ft" 
+                href="/size/40-45ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >
                 40-45ft Chassis
               </a>
               <a 
-                href="/sizes/20-40-45ft" 
+                href="/size/20-40-45ft" 
                 onClick={closeMobileMenu}
                 className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
               >

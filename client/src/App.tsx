@@ -31,6 +31,9 @@ function Router() {
         {() => <HomePage />}
       </Route>
       {/* Tamaños de chasis */}
+      <Route path="/size/:size">
+        {(params) => <HomePage initialSize={params.size} />}
+      </Route>
       <Route path="/sizes/20ft">
         {() => <HomePage initialSize="20ft" />}
       </Route>
