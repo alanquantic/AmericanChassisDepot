@@ -15,10 +15,18 @@ function Router() {
       <Route path="/">
         {() => <HomePage />}
       </Route>
-      <Route path="/brands/:slug" component={BrandPage} />
-      <Route path="/products/:slug" component={ProductPage} />
-      <Route path="/contact" component={ContactPage} />
-      <Route path="/about" component={AboutPage} />
+      <Route path="/brands/:slug">
+        {(params) => <BrandPage slug={params.slug} />}
+      </Route>
+      <Route path="/products/:slug">
+        {(params) => <ProductPage slug={params.slug} />}
+      </Route>
+      <Route path="/contact">
+        {() => <ContactPage />}
+      </Route>
+      <Route path="/about">
+        {() => <AboutPage />}
+      </Route>
       <Route path="/products">
         {() => <HomePage />}
       </Route>

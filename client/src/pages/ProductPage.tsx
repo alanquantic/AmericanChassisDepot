@@ -7,10 +7,22 @@ import FloatingButton from '@/components/layout/FloatingButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
 import ContactForm from '@/components/shared/ContactForm';
-import type { ChassisModel, Brand } from '@shared/schema';
+import type { ChassisModel } from '@shared/schema';
 
-const ProductPage: React.FC = () => {
-  const { slug } = useParams();
+// Define a type for the manufacturer info
+interface Manufacturer {
+  id: number;
+  name: string;
+  description: string;
+}
+
+interface ProductPageProps {
+  slug?: string;
+}
+
+const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
+  const params = useParams();
+  const slug = propSlug || params.slug;
   
   // Fetch chassis model data
   const { data: model, isLoading: modelLoading, error: modelError } = useQuery<ChassisModel>({
@@ -18,13 +30,10 @@ const ProductPage: React.FC = () => {
     enabled: !!slug,
   });
   
-  // Fetch brand data if we have the model
-  const { data: brand, isLoading: brandLoading } = useQuery<Brand>({
-    queryKey: [`/api/brands/${model?.brandId}`],
-    enabled: !!model?.brandId,
-  });
+  // Use manufacturer from model
+  const manufacturer = model?.manufacturer || "";
   
-  const isLoading = modelLoading || brandLoading;
+  const isLoading = modelLoading;
   
   if (modelError) {
     return (

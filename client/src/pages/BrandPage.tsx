@@ -9,8 +9,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import ContactForm from '@/components/shared/ContactForm';
 import type { Brand, ChassisModel } from '@shared/schema';
 
-const BrandPage: React.FC = () => {
-  const { slug } = useParams();
+interface BrandPageProps {
+  slug?: string;
+}
+
+const BrandPage: React.FC<BrandPageProps> = ({ slug: propSlug }) => {
+  const params = useParams();
+  const slug = propSlug || params.slug;
   
   // Fetch brand data
   const { data: brand, isLoading: brandLoading, error: brandError } = useQuery<Brand>({
