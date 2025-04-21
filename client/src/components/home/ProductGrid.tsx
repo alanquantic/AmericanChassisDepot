@@ -139,12 +139,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
                     <p className="text-neutral-600 mb-4">
                       {model.description}
                     </p>
-                    <Link 
+                    <a 
                       href={`/products/${model.slug}`} 
                       className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-4 py-2 rounded transition duration-200"
                     >
                       View Details
-                    </Link>
+                    </a>
                   </div>
                 </div>
               );
