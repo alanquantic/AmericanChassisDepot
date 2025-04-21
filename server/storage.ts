@@ -78,7 +78,7 @@ export class DatabaseStorage implements IStorage {
 
   async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string): Promise<ChassisModel[]> {
     // First get all chassis models
-    const allModels = await db.select().from(chassisModels);
+    const allModels = await db.select().from(chassisModels).execute();
     
     // Then filter them in memory
     let filteredModels = [...allModels];
