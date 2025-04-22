@@ -34,7 +34,7 @@ export async function sendContactNotification(
   try {
     const data = {
       from: `American Chassis Depot Website <no-reply@${MAILGUN_DOMAIN}>`,
-      to: 'alan@ceosnm.com',
+      to: ['alan@ceosnm.com', 'sales@americanchassisdepot.com'],
       subject: `New Contact Form Submission from ${contactMessage.name}`,
       text: `
 New contact form submission from the American Chassis Depot website.
