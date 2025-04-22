@@ -63,7 +63,7 @@ const ChassisTypeShowcase: React.FC = () => {
                   <p className="text-neutral-600 mb-5">
                     {condition.description}
                   </p>
-                  <Link href={`/conditions/${condition.slug}`} className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-300 transform hover:scale-105 shadow-md">
+                  <Link href={`/${condition.slug}`} className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-300 transform hover:scale-105 shadow-md">
                     View Models
                   </Link>
                 </div>

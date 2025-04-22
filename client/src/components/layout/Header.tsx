@@ -46,49 +46,6 @@ const Header: React.FC = () => {
           >
             Home
           </Link>
-          <div className="relative group">
-            <button 
-              className="font-montserrat font-medium text-primary hover:text-[#E30D16] transition duration-200 flex items-center"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Sizes <ChevronDownIcon className="ml-1 w-4 h-4" />
-            </button>
-            <div className="absolute hidden group-hover:block hover:block bg-white mt-2 py-2 w-48 rounded shadow-lg z-10 transition-opacity duration-300 ease-in-out border border-gray-200">
-              <div className="py-1 px-2">
-                <a 
-                  href="/products/new-20ft-sl-tandem" 
-                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
-                >
-                  20ft Chassis
-                </a>
-                <a 
-                  href="/products/new-20-40ft-extendable-tandem" 
-                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
-                >
-                  20-40ft Extendable
-                </a>
-                <a 
-                  href="/products/new-20-40ft-12pins-triaxle" 
-                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
-                >
-                  20-40ft Triaxle
-                </a>
-                <a 
-                  href="/products/new-40-45ft-extendable" 
-                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
-                >
-                  40-45ft Extendable
-                </a>
-                <a 
-                  href="/products/used-20-40-45ft-extendable-triaxle" 
-                  className="block px-4 py-3 text-primary hover:bg-primary hover:text-white transition-all duration-200 transform hover:translate-x-1 rounded-md"
-                >
-                  20-40-45ft Extendable
-                </a>
-              </div>
-            </div>
-          </div>
           <Link 
             href="/products" 
             className={`font-montserrat font-medium ${location === '/products' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'} transition duration-200`}
@@ -129,56 +86,6 @@ const Header: React.FC = () => {
           <Link href="/" onClick={closeMobileMenu} className={`block py-2 font-montserrat font-medium ${location === '/' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}>
             Home
           </Link>
-          <button 
-            className="w-full text-left py-2 font-montserrat font-medium text-primary hover:text-[#E30D16] flex justify-between items-center" 
-            onClick={toggleMobileBrandsMenu}
-          >
-            Sizes
-            {isMobileBrandsOpen ? (
-              <ChevronUpIcon className="w-4 h-4" />
-            ) : (
-              <ChevronDownIcon className="w-4 h-4" />
-            )}
-          </button>
-          {isMobileBrandsOpen && (
-            <div className="pl-4 animate-accordion-down">
-              <a 
-                href="/products/new-20ft-sl-tandem" 
-                onClick={closeMobileMenu}
-                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
-              >
-                20ft Chassis
-              </a>
-              <a 
-                href="/products/new-20-40ft-extendable-tandem" 
-                onClick={closeMobileMenu}
-                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
-              >
-                20-40ft Extendable
-              </a>
-              <a 
-                href="/products/new-20-40ft-12pins-triaxle" 
-                onClick={closeMobileMenu}
-                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
-              >
-                20-40ft Triaxle
-              </a>
-              <a 
-                href="/products/new-40-45ft-extendable" 
-                onClick={closeMobileMenu}
-                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
-              >
-                40-45ft Extendable
-              </a>
-              <a 
-                href="/products/used-20-40-45ft-extendable-triaxle" 
-                onClick={closeMobileMenu}
-                className="block py-2 text-primary hover:text-[#E30D16] transition-all duration-200 transform hover:translate-x-1"
-              >
-                20-40-45ft Extendable
-              </a>
-            </div>
-          )}
           <Link href="/products" onClick={closeMobileMenu} className={`block py-2 font-montserrat font-medium ${location === '/products' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}>
             Products
           </Link>
