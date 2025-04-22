@@ -16,9 +16,9 @@ export const SIZES = [
 
 // Contact information
 export const CONTACT_INFO = {
-  address: "123 Transport Drive, Logistics Park, TX 75001",
-  phone: "(555) 123-4567",
-  email: "info@americanchassisdepot.com",
+  address: "4811 N McCarty St Suite C, Houston, TX 77013",
+  phone: "+1 (442) 257-9946",
+  email: "sales@americanchassisdepot.com",
   hours: [
     { day: "Monday - Friday", hours: "8:00 AM - 6:00 PM" },
     { day: "Saturday", hours: "9:00 AM - 2:00 PM" },
