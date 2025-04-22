@@ -8,6 +8,8 @@ import BrandPage from "@/pages/BrandPage";
 import ProductPage from "@/pages/ProductPage";
 import ContactPage from "@/pages/ContactPage";
 import AboutPage from "@/pages/AboutPage";
+import NewChassisPage from "@/pages/NewChassisPage";
+import UsedChassisPage from "@/pages/UsedChassisPage";
 
 function Router() {
   return (
@@ -26,6 +28,12 @@ function Router() {
       </Route>
       <Route path="/about">
         {() => <AboutPage />}
+      </Route>
+      <Route path="/new-chassis">
+        {() => <NewChassisPage />}
+      </Route>
+      <Route path="/used-chassis">
+        {() => <UsedChassisPage />}
       </Route>
       <Route path="/products">
         {() => <HomePage key="products-page" initialSize="all" />}
