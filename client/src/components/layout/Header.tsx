@@ -23,13 +23,15 @@ const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 bg-white shadow-md">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center" aria-label="American Chassis Depot - Home" title="Return to Homepage">
           <div className="flex items-center">
             <div className="h-12 w-12 md:h-12 md:w-12 relative">
               <img 
                 src="/assets/logo.png" 
                 alt="American Chassis Depot Logo" 
                 className="object-contain h-full w-full"
+                width="48"
+                height="48"
               />
             </div>
             <span className="ml-2 md:ml-3 font-montserrat font-semibold text-primary text-xs md:text-lg">
@@ -39,28 +41,36 @@ const Header: React.FC = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-6">
+        <nav className="hidden md:flex space-x-6" aria-label="Main Navigation">
           <Link 
             href="/" 
             className={`font-montserrat font-medium ${location === '/' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'} transition duration-200`}
+            aria-label="Home page"
+            title="Go to homepage"
           >
             Home
           </Link>
           <Link 
             href="/products" 
             className={`font-montserrat font-medium ${location === '/products' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'} transition duration-200`}
+            aria-label="Browse our chassis products"
+            title="Browse all chassis products"
           >
             Products
           </Link>
           <Link 
             href="/about" 
             className={`font-montserrat font-medium ${location === '/about' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'} transition duration-200`}
+            aria-label="About American Chassis Depot"
+            title="Learn about our company"
           >
             About Us
           </Link>
           <Link 
             href="/contact" 
             className={`font-montserrat font-medium ${location === '/contact' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'} transition duration-200`}
+            aria-label="Contact us"
+            title="Get in touch with our team"
           >
             Contact
           </Link>
@@ -82,20 +92,40 @@ const Header: React.FC = () => {
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white pb-4 px-4">
-          <Link href="/" onClick={closeMobileMenu} className={`block py-2 font-montserrat font-medium ${location === '/' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}>
+        <nav className="md:hidden bg-white pb-4 px-4" aria-label="Mobile Navigation">
+          <Link 
+            href="/" 
+            onClick={closeMobileMenu} 
+            className={`block py-2 font-montserrat font-medium ${location === '/' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}
+            aria-label="Home page"
+          >
             Home
           </Link>
-          <Link href="/products" onClick={closeMobileMenu} className={`block py-2 font-montserrat font-medium ${location === '/products' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}>
+          <Link 
+            href="/products" 
+            onClick={closeMobileMenu} 
+            className={`block py-2 font-montserrat font-medium ${location === '/products' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}
+            aria-label="Browse our chassis products"
+          >
             Products
           </Link>
-          <Link href="/about" onClick={closeMobileMenu} className={`block py-2 font-montserrat font-medium ${location === '/about' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}>
+          <Link 
+            href="/about" 
+            onClick={closeMobileMenu} 
+            className={`block py-2 font-montserrat font-medium ${location === '/about' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}
+            aria-label="About American Chassis Depot"
+          >
             About Us
           </Link>
-          <Link href="/contact" onClick={closeMobileMenu} className={`block py-2 font-montserrat font-medium ${location === '/contact' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}>
+          <Link 
+            href="/contact" 
+            onClick={closeMobileMenu} 
+            className={`block py-2 font-montserrat font-medium ${location === '/contact' ? 'text-[#E30D16]' : 'text-primary hover:text-[#E30D16]'}`}
+            aria-label="Contact us"
+          >
             Contact
           </Link>
-        </div>
+        </nav>
       )}
     </header>
   );
