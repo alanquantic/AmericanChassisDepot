@@ -111,7 +111,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
           ) : models.length > 0 ? (
             models.map((model) => {
               // Find condition name based on model's conditionId
-              const conditionName = CONDITIONS.find(c => c.value !== 'all' && c.value.includes(model.conditionId === 1 ? 'new' : 'used'))?.name || '';
+              const conditionName = CONDITIONS.find(c => c.value !== 'all' && c.value.includes(model.conditionId === 3 ? 'new' : 'used'))?.name || '';
               
               return (
                 <div 
@@ -120,7 +120,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
                 >
                   <div className="h-56 bg-neutral-200 overflow-hidden relative">
                     <div className={`absolute top-0 left-0 text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold ${
-                      model.conditionId === 1 ? 'bg-[#E30D16]' : 'bg-blue-600'
+                      model.conditionId === 3 ? 'bg-[#E30D16]' : 'bg-blue-600'
                     }`}>
                       {conditionName}
                     </div>
