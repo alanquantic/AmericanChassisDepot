@@ -87,7 +87,7 @@ const UsedChassisPage: React.FC = () => {
             <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-12">
               Some of our inventory
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
               <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                 <img 
                   src="/assets/used1.jpg" 
@@ -118,15 +118,22 @@ const UsedChassisPage: React.FC = () => {
               </div>
               <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                 <img 
-                  src="/assets/20_40_12_Pins_Triaxle_1.jpg" 
+                  src="/assets/used2040-1.jpg" 
                   alt="Used 20/40 chassis model 1" 
                   className="w-full h-64 object-cover"
                 />
               </div>
               <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                 <img 
-                  src="/assets/20_40_12_Pins_Triaxle_2.jpg" 
+                  src="/assets/used2040-2.jpg" 
                   alt="Used 20/40 chassis model 2" 
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <img 
+                  src="/assets/used2040-3.jpg" 
+                  alt="Used 20/40 chassis model 3" 
                   className="w-full h-64 object-cover"
                 />
               </div>
