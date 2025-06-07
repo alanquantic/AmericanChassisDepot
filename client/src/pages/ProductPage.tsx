@@ -150,7 +150,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                       {model?.name}
                     </h1>
                     <div className="flex items-center gap-2 mb-6">
-                      <span className="bg-[#E30D16] text-white px-3 py-1 rounded-sm font-montserrat text-sm font-semibold">
+                      <span className={`text-white px-3 py-1 rounded-sm font-montserrat text-sm font-semibold ${
+                        model?.conditionId === 1 ? 'bg-[#E30D16]' : 'bg-blue-600'
+                      }`}>
+                        {model?.conditionId === 1 ? 'New Chassis' : 'Used Chassis'}
+                      </span>
+                      <span className="bg-primary text-white px-3 py-1 rounded-sm font-montserrat text-sm font-semibold">
                         {manufacturer}
                       </span>
                     </div>

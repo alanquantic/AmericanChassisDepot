@@ -119,7 +119,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
                   className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1"
                 >
                   <div className="h-56 bg-neutral-200 overflow-hidden relative">
-                    <div className="absolute top-0 left-0 bg-[#E30D16] text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold">
+                    <div className={`absolute top-0 left-0 text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold ${
+                      model.conditionId === 1 ? 'bg-[#E30D16]' : 'bg-blue-600'
+                    }`}>
                       {conditionName}
                     </div>
                     <div className="absolute top-0 right-0 bg-primary text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold">

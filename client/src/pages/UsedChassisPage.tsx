@@ -81,8 +81,61 @@ const UsedChassisPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Call-to-Action Section */}
+        {/* Used Chassis Gallery */}
         <section className="py-16 bg-neutral-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-12">
+              Our Used Chassis Inventory
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <img 
+                  src="/assets/used1.jpg" 
+                  alt="Used chassis inventory 1" 
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <img 
+                  src="/assets/used2.jpg" 
+                  alt="Used chassis inventory 2" 
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <img 
+                  src="/assets/used3.jpg" 
+                  alt="Used chassis inventory 3" 
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <img 
+                  src="/assets/used4.jpg" 
+                  alt="Used chassis inventory 4" 
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <img 
+                  src="/assets/used2040-1.jpg" 
+                  alt="Used 20/40 chassis model 1" 
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <img 
+                  src="/assets/used2040-2.jpg" 
+                  alt="Used 20/40 chassis model 2" 
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Call-to-Action Section */}
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-montserrat font-bold text-primary mb-6">
               Find Quality Used Chassis

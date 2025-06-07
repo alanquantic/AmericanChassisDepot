@@ -275,7 +275,7 @@ export class DatabaseStorage implements IStorage {
       manufacturer: "American Chassis Depot",
       size: "20-40-45ft",
       dutyType: "Extra Heavy Duty",
-      description: "Chasis extensible triaxial diseñado para transportar contenedores ISO de 20, 40 y 45 pies. Ofrece una estructura reforzada, sistema de extensión con bloqueo neumático y capacidad de carga variable según la posición del contenedor. Cumple con los estándares de seguridad y transporte vigentes.",
+      description: "Extendable triaxle chassis designed to transport 20, 40, and 45 ft ISO containers. Features reinforced structure, pneumatic locking extension system, and variable load capacity based on container position. Meets all current safety and transportation standards.",
       imageUrl: "/assets/used-chassis-1.jpg",
       features: [
         "Air-operated locking system with spring brakes and third glad hand",
@@ -288,6 +288,30 @@ export class DatabaseStorage implements IStorage {
         "Tare Weight: 10,210 lbs ±2%",
         "Payload Capacity: 49,400 lbs (20') / 67,200 lbs (40'/45')",
         "Axle Spread: 61\" + 61\""
+      ]
+    });
+
+    await this.createChassisModel({
+      name: "20/40' 12 Pins Triaxle Container Chassis",
+      slug: "used-20-40ft-12pins-triaxle",
+      conditionId: usedCondition.id,
+      manufacturer: "American Chassis Depot",
+      size: "20-40ft",
+      dutyType: "Extra Heavy Duty",
+      description: "Used triaxle chassis designed to transport one 40' ISO container, one loaded 20', or two empty 20' containers. Features 12 twist locks and an extendable frame, offering maximum payload flexibility and compliance with transport regulations. Thoroughly inspected and refurbished for reliable performance.",
+      imageUrl: "/assets/used2040-1.jpg",
+      additionalImages: ["/assets/used2040-2.jpg", "/assets/used2040-3.jpg"],
+      features: [
+        "12 container locks for 1x40', 1x20' or 2x20' empties",
+        "Air-operated locking pin system",
+        "Reinforced I-beam gooseneck mainframe",
+        "LED lighting system with sealed harness"
+      ],
+      specifications: [
+        "Overall Length: 31'-7\" (retracted) / 40'-11\" (extended)",
+        "Axle Configuration: Triaxle (61\" + 61\" spread)",
+        "Tare Weight: 10,900 lbs ± 2%",
+        "Suspension: AXN tri-axle underslung, high-arch single spring"
       ]
     });
   }
