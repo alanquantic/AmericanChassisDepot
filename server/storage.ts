@@ -299,8 +299,8 @@ export class DatabaseStorage implements IStorage {
       size: "20-40ft",
       dutyType: "Extra Heavy Duty",
       description: "Used triaxle chassis designed to transport one 40' ISO container, one loaded 20', or two empty 20' containers. Features 12 twist locks and an extendable frame, offering maximum payload flexibility and compliance with transport regulations. Thoroughly inspected and refurbished for reliable performance.",
-      imageUrl: "/assets/used2040-1.jpg",
-      additionalImages: ["/assets/used2040-2.jpg", "/assets/used2040-3.jpg"],
+      imageUrl: "/assets/20_40_12_Pins_Triaxle_1.jpg",
+      additionalImages: ["/assets/20_40_12_Pins_Triaxle_2.jpg", "/assets/20_40_12_Pins_Triaxle_3.jpg"],
       features: [
         "12 container locks for 1x40', 1x20' or 2x20' empties",
         "Air-operated locking pin system",

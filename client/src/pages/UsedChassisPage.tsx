@@ -85,7 +85,7 @@ const UsedChassisPage: React.FC = () => {
         <section className="py-16 bg-neutral-50">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-12">
-              Our Used Chassis Inventory
+              Some of our inventory
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
               <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
@@ -118,14 +118,14 @@ const UsedChassisPage: React.FC = () => {
               </div>
               <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                 <img 
-                  src="/assets/used2040-1.jpg" 
+                  src="/assets/20_40_12_Pins_Triaxle_1.jpg" 
                   alt="Used 20/40 chassis model 1" 
                   className="w-full h-64 object-cover"
                 />
               </div>
               <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                 <img 
-                  src="/assets/used2040-2.jpg" 
+                  src="/assets/20_40_12_Pins_Triaxle_2.jpg" 
                   alt="Used 20/40 chassis model 2" 
                   className="w-full h-64 object-cover"
                 />
