@@ -29,9 +29,11 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" onClick={closeMobileMenu} className="flex items-center space-x-3">
-          <div className="bg-primary text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm">
-            ACD
-          </div>
+          <img 
+            src="/attached_assets/acn.png" 
+            alt="American Chassis Depot Logo" 
+            className="h-12 w-auto"
+          />
           <div className="flex flex-col">
             <span className="font-montserrat font-bold text-lg text-primary leading-tight">
               American Chassis Depot

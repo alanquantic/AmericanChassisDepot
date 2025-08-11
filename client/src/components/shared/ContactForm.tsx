@@ -7,6 +7,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { CONDITIONS } from '@/lib/constants';
 import { useLocation } from 'wouter';
+import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import { 
   Form,
   FormControl,
@@ -41,6 +42,7 @@ interface ContactFormProps {
 const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
   const { toast } = useToast();
   const [location] = useLocation();
+  const { t } = useLanguage();
   
   // Initialize form
   const form = useForm<ContactFormValues>({
@@ -70,8 +72,8 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
     onSuccess: (response: any) => {
       // Same friendly message regardless of email status
       toast({
-        title: "Thank You!",
-        description: "We've received your information. Our team will contact you soon.",
+        title: getCurrentLanguage() === 'es' ? "¡Gracias!" : "Thank You!",
+        description: getCurrentLanguage() === 'es' ? "Hemos recibido tu información. Nuestro equipo se pondrá en contacto contigo pronto." : "We've received your information. Our team will contact you soon.",
         variant: "default",
         duration: 5000
       });
@@ -89,8 +91,8 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: "There was a problem sending your message. Please try again.",
+        title: getCurrentLanguage() === 'es' ? "Error" : "Error",
+        description: getCurrentLanguage() === 'es' ? "Hubo un problema enviando tu mensaje. Por favor intenta de nuevo." : "There was a problem sending your message. Please try again.",
         variant: "destructive"
       });
       console.error("Form submission error:", error);
@@ -110,7 +112,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">Full Name</FormLabel>
+                <FormLabel className="font-montserrat text-neutral-700">{t('fullName')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -127,7 +129,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">Email Address</FormLabel>
+                <FormLabel className="font-montserrat text-neutral-700">{t('emailAddress')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -147,7 +149,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="company"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">Company Name</FormLabel>
+                <FormLabel className="font-montserrat text-neutral-700">{t('companyName')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -164,7 +166,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">Phone Number</FormLabel>
+                <FormLabel className="font-montserrat text-neutral-700">{t('phoneNumber')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -184,14 +186,14 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="interest"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">Interested In</FormLabel>
+                <FormLabel className="font-montserrat text-neutral-700">{t('interestedIn')}</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary">
-                      <SelectValue placeholder="Select chassis type" />
+                      <SelectValue placeholder={t('selectChassisType')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -214,13 +216,13 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="units"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">Number of Units</FormLabel>
+                <FormLabel className="font-montserrat text-neutral-700">{t('numberOfUnits')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
                     type="number"
                     min="1"
-                    placeholder="How many units do you need?"
+                    placeholder={t('howManyUnits')}
                     className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary" 
                   />
                 </FormControl>
@@ -235,7 +237,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
           name="message"
           render={({ field }) => (
             <FormItem className="mb-6">
-              <FormLabel className="font-montserrat text-neutral-700">Message</FormLabel>
+              <FormLabel className="font-montserrat text-neutral-700">{t('message')}</FormLabel>
               <FormControl>
                 <Textarea 
                   {...field} 
@@ -253,7 +255,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
           className="bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
           disabled={mutation.isPending}
         >
-          {mutation.isPending ? "Sending..." : "Send Message"}
+          {mutation.isPending ? t('sending') : t('sendMessage')}
         </Button>
       </form>
     </Form>

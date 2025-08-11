@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
 import { CONDITIONS, SIZES } from '@/lib/constants';
+import { useLanguage } from '@/lib/i18n-simple';
 import type { ChassisModel } from '@shared/schema';
 
 interface ProductGridProps {
@@ -11,6 +12,7 @@ interface ProductGridProps {
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
+  const { t } = useLanguage();
   const [conditionFilter, setConditionFilter] = useState('all');
   const [sizeFilter, setSizeFilter] = useState(initialSize || 'all');
   
@@ -52,9 +54,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
   return (
     <section className="py-16 bg-neutral-200" id="products">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-4">Featured Chassis Models</h2>
+        <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-4">{t('ourChassisTypes')}</h2>
         <p className="text-lg text-neutral-600 text-center max-w-3xl mx-auto mb-8">
-          Browse our selection of premium chassis models or filter by your specific requirements
+          {t('browseSelection')}
         </p>
         
         {/* Condition filter controls */}

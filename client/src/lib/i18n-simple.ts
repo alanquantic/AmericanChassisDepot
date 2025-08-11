@@ -17,7 +17,24 @@ export const translations = {
     requestQuote: 'Request Quote',
     
     // Brands
-    trustedBrands: 'Trusted Component Brands'
+    trustedBrands: 'Trusted Component Brands',
+    
+    // Products Section
+    ourChassisTypes: 'Our Chassis Types',
+    browseSelection: 'Browse our selection of high-quality new and used chassis options to find the perfect solution for your transportation needs.',
+    
+    // Contact Form
+    fullName: 'Full Name',
+    emailAddress: 'Email Address',
+    companyName: 'Company Name',
+    phoneNumber: 'Phone Number',
+    interestedIn: 'Interested In',
+    numberOfUnits: 'Number of Units',
+    message: 'Message',
+    sendMessage: 'Send Message',
+    sending: 'Sending...',
+    selectChassisType: 'Select chassis type',
+    howManyUnits: 'How many units do you need?'
   },
   es: {
     // Navigation  
@@ -33,7 +50,24 @@ export const translations = {
     requestQuote: 'Solicitar Cotización',
     
     // Brands
-    trustedBrands: 'Marcas de Componentes de Confianza'
+    trustedBrands: 'Marcas de Componentes de Confianza',
+    
+    // Products Section
+    ourChassisTypes: 'Tipos de Chasis',
+    browseSelection: 'Navega por nuestra selección de chasis nuevos y usados de alta calidad para encontrar la solución perfecta para tus necesidades de transporte.',
+    
+    // Contact Form
+    fullName: 'Nombre Completo',
+    emailAddress: 'Dirección de Email',
+    companyName: 'Nombre de la Empresa',
+    phoneNumber: 'Número de Teléfono',
+    interestedIn: 'Interesado En',
+    numberOfUnits: 'Número de Unidades',
+    message: 'Mensaje',
+    sendMessage: 'Enviar Mensaje',
+    sending: 'Enviando...',
+    selectChassisType: 'Selecciona tipo de chasis',
+    howManyUnits: '¿Cuántas unidades necesitas?'
   }
 };
 
@@ -42,6 +76,11 @@ export type TranslationKey = keyof typeof translations.en;
 
 // Get current language
 export function getCurrentLanguage(): Language {
+  return currentLanguage;
+}
+
+// Simple function to get current language for components
+export function getLanguage(): Language {
   return currentLanguage;
 }
 
