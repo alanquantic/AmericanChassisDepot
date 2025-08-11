@@ -69,7 +69,59 @@ export const translations = {
     businessHours: 'Business Hours',
     sendUsAMessage: 'Send Us a Message',
     fillOutForm: 'Fill out the form below and one of our representatives will get back to you as soon as possible.',
-    getAQuoteHero: 'Get a Quote'
+    getAQuoteHero: 'Get a Quote',
+    
+    // Homepage Contact Section
+    contactInformation: 'Contact Information',
+    haveQuestionsOrNeedQuote: 'Have questions or need a quote? Reach out to our team using the contact information below or fill out the form.',
+    
+    // Business Advantages
+    businessAdvantagesTitle: 'Business Advantages of Our Chassis',
+    businessAdvantagesSubtitle: 'Discover how our premium chassis solutions can transform your transportation operations and drive business growth.',
+    costEfficiencyTitle: 'Cost Efficiency',
+    operationalExcellenceTitle: 'Operational Excellence',
+    safetyComplianceTitle: 'Safety & Compliance',
+    
+    // Cost Efficiency benefits
+    reducedMaintenanceCosts: 'Reduced maintenance costs with durable construction',
+    extendedProductLifecycle: 'Extended product lifecycle provides better ROI',
+    optimizedFuelEfficiency: 'Optimized fuel efficiency through lightweight design',
+    minimizedDowntime: 'Minimized downtime for increased operational hours',
+    
+    // Operational Excellence benefits
+    increasedLoadCapacity: 'Increased load capacity for maximized productivity',
+    enhancedManeuverability: 'Enhanced maneuverability in tight spaces',
+    versatileModels: 'Versatile models suitable for various cargo types',
+    streamlinedProcesses: 'Streamlined loading and unloading processes',
+    
+    // Safety & Compliance benefits
+    dotCompliance: 'Full compliance with DOT regulations and standards',
+    advancedSafetyFeatures: 'Advanced safety features for cargo security',
+    reducedAccidentRisk: 'Reduced risk of accidents with stable design',
+    regularInspection: 'Regular inspection and certification programs',
+    
+    // Chassis Showcase
+    chassisShowcaseTitle: 'Our Chassis Types',
+    chassisShowcaseSubtitle: 'Browse our selection of high-quality new and used chassis options to find the perfect solution for your transportation needs.',
+    viewModels: 'View Models',
+    failedToLoadChassisTypes: 'Failed to load chassis types. Please try again later.',
+    noChassisTypesAvailable: 'No chassis types available at the moment. Please check back later.',
+    
+    // Video Section
+    videoQuote: 'Trusted transportation solutions that drive success for businesses across America.',
+    videoQuoteAuthor: 'American Chassis Depot',
+    partnerWithUs: 'Partner With Us',
+    
+    // FloatingButton
+    callAriaLabel: 'Call American Chassis Depot',
+    callTitle: 'Call us at +1 (442) 257-9946',
+    emailAriaLabel: 'Send a message to American Chassis Depot',
+    emailTitle: 'Contact us via email',
+    
+    // 404 Page
+    pageNotFoundTitle: '404 Page Not Found',
+    pageNotFoundDescription: 'The page you are looking for does not exist.',
+    goHomeButton: 'Go Home'
   },
   es: {
     // Navigation  
@@ -137,7 +189,59 @@ export const translations = {
     businessHours: 'Horarios de Atención',
     sendUsAMessage: 'Envíanos un Mensaje',
     fillOutForm: 'Completa el formulario a continuación y uno de nuestros representantes se pondrá en contacto contigo lo antes posible.',
-    getAQuoteHero: 'Obtener Cotización'
+    getAQuoteHero: 'Obtener Cotización',
+    
+    // Homepage Contact Section
+    contactInformation: 'Información de Contacto',
+    haveQuestionsOrNeedQuote: '¿Tienes preguntas o necesitas una cotización? Comunícate con nuestro equipo usando la información de contacto a continuación o completa el formulario.',
+    
+    // Business Advantages
+    businessAdvantagesTitle: 'Ventajas Comerciales de Nuestros Chasis',
+    businessAdvantagesSubtitle: 'Descubre cómo nuestras soluciones premium de chasis pueden transformar tus operaciones de transporte e impulsar el crecimiento empresarial.',
+    costEfficiencyTitle: 'Eficiencia de Costos',
+    operationalExcellenceTitle: 'Excelencia Operacional',
+    safetyComplianceTitle: 'Seguridad y Cumplimiento',
+    
+    // Cost Efficiency benefits
+    reducedMaintenanceCosts: 'Costos de mantenimiento reducidos con construcción duradera',
+    extendedProductLifecycle: 'Ciclo de vida extendido del producto proporciona mejor ROI',
+    optimizedFuelEfficiency: 'Eficiencia de combustible optimizada a través de diseño ligero',
+    minimizedDowntime: 'Tiempo de inactividad minimizado para aumentar horas operacionales',
+    
+    // Operational Excellence benefits
+    increasedLoadCapacity: 'Mayor capacidad de carga para productividad maximizada',
+    enhancedManeuverability: 'Maniobrabilidad mejorada en espacios reducidos',
+    versatileModels: 'Modelos versátiles adecuados para varios tipos de carga',
+    streamlinedProcesses: 'Procesos de carga y descarga optimizados',
+    
+    // Safety & Compliance benefits
+    dotCompliance: 'Cumplimiento total con regulaciones y estándares DOT',
+    advancedSafetyFeatures: 'Características de seguridad avanzadas para seguridad de la carga',
+    reducedAccidentRisk: 'Riesgo reducido de accidentes con diseño estable',
+    regularInspection: 'Programas regulares de inspección y certificación',
+    
+    // Chassis Showcase
+    chassisShowcaseTitle: 'Tipos de Chasis',
+    chassisShowcaseSubtitle: 'Navega por nuestra selección de opciones de chasis nuevos y usados de alta calidad para encontrar la solución perfecta para tus necesidades de transporte.',
+    viewModels: 'Ver Modelos',
+    failedToLoadChassisTypes: 'Error al cargar tipos de chasis. Por favor intenta de nuevo más tarde.',
+    noChassisTypesAvailable: 'No hay tipos de chasis disponibles en este momento. Por favor vuelve más tarde.',
+    
+    // Video Section
+    videoQuote: 'Soluciones de transporte confiables que impulsan el éxito de empresas en toda América.',
+    videoQuoteAuthor: 'American Chassis Depot',
+    partnerWithUs: 'Asóciate Con Nosotros',
+    
+    // FloatingButton
+    callAriaLabel: 'Llamar a American Chassis Depot',
+    callTitle: 'Llámanos al +1 (442) 257-9946',
+    emailAriaLabel: 'Enviar mensaje a American Chassis Depot',
+    emailTitle: 'Contáctanos por email',
+    
+    // 404 Page
+    pageNotFoundTitle: '404 Página No Encontrada',
+    pageNotFoundDescription: 'La página que buscas no existe.',
+    goHomeButton: 'Ir al Inicio'
   }
 };
 

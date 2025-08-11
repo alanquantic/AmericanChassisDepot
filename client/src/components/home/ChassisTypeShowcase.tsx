@@ -2,9 +2,11 @@ import React from 'react';
 import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useLanguage } from '@/lib/i18n-simple';
 import type { Condition } from '@shared/schema';
 
 const ChassisTypeShowcase: React.FC = () => {
+  const { t } = useLanguage();
   const { data, isLoading, error } = useQuery<Condition[]>({
     queryKey: ['/api/conditions'],
   });
@@ -17,7 +19,7 @@ const ChassisTypeShowcase: React.FC = () => {
     return (
       <div className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <p className="text-center text-red-500">Failed to load chassis types. Please try again later.</p>
+          <p className="text-center text-red-500">{t('failedToLoadChassisTypes')}</p>
         </div>
       </div>
     );
@@ -26,9 +28,9 @@ const ChassisTypeShowcase: React.FC = () => {
   return (
     <section className="py-16 bg-white" id="chassis-types">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-4">Our Chassis Types</h2>
+        <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-4">{t('chassisShowcaseTitle')}</h2>
         <p className="text-lg text-neutral-600 text-center max-w-3xl mx-auto mb-12">
-          Browse our selection of high-quality new and used chassis options to find the perfect solution for your transportation needs.
+          {t('chassisShowcaseSubtitle')}
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -64,14 +66,14 @@ const ChassisTypeShowcase: React.FC = () => {
                     {condition.description}
                   </p>
                   <Link href={`/${condition.slug}`} className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-300 transform hover:scale-105 shadow-md">
-                    View Models
+                    {t('viewModels')}
                   </Link>
                 </div>
               </div>
             ))
           ) : (
             <div className="col-span-2 text-center py-10">
-              <p className="text-neutral-500">No chassis types available at the moment. Please check back later.</p>
+              <p className="text-neutral-500">{t('noChassisTypesAvailable')}</p>
             </div>
           )}
         </div>

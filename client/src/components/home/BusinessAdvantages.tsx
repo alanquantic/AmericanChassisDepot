@@ -1,13 +1,16 @@
 import React from 'react';
+import { useLanguage } from '@/lib/i18n-simple';
 
 const BusinessAdvantages: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-montserrat font-bold text-primary mb-4">Business Advantages of Our Chassis</h2>
+          <h2 className="text-3xl font-montserrat font-bold text-primary mb-4">{t('businessAdvantagesTitle')}</h2>
           <p className="text-neutral-700 max-w-3xl mx-auto">
-            Discover how our premium chassis solutions can transform your transportation operations and drive business growth.
+            {t('businessAdvantagesSubtitle')}
           </p>
         </div>
         
@@ -18,23 +21,23 @@ const BusinessAdvantages: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-montserrat font-bold text-primary mb-3">Cost Efficiency</h3>
+            <h3 className="text-xl font-montserrat font-bold text-primary mb-3">{t('costEfficiencyTitle')}</h3>
             <ul className="text-neutral-700 space-y-2">
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Reduced maintenance costs with durable construction</span>
+                <span>{t('reducedMaintenanceCosts')}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Extended product lifecycle provides better ROI</span>
+                <span>{t('extendedProductLifecycle')}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Optimized fuel efficiency through lightweight design</span>
+                <span>{t('optimizedFuelEfficiency')}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Minimized downtime for increased operational hours</span>
+                <span>{t('minimizedDowntime')}</span>
               </li>
             </ul>
           </div>
@@ -45,23 +48,23 @@ const BusinessAdvantages: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h3 className="text-xl font-montserrat font-bold text-primary mb-3">Operational Excellence</h3>
+            <h3 className="text-xl font-montserrat font-bold text-primary mb-3">{t('operationalExcellenceTitle')}</h3>
             <ul className="text-neutral-700 space-y-2">
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Increased load capacity for maximized productivity</span>
+                <span>{t('increasedLoadCapacity')}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Enhanced maneuverability in tight spaces</span>
+                <span>{t('enhancedManeuverability')}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Versatile models suitable for various cargo types</span>
+                <span>{t('versatileModels')}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Streamlined loading and unloading processes</span>
+                <span>{t('streamlinedProcesses')}</span>
               </li>
             </ul>
           </div>
@@ -72,23 +75,23 @@ const BusinessAdvantages: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
-            <h3 className="text-xl font-montserrat font-bold text-primary mb-3">Safety & Compliance</h3>
+            <h3 className="text-xl font-montserrat font-bold text-primary mb-3">{t('safetyComplianceTitle')}</h3>
             <ul className="text-neutral-700 space-y-2">
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Full compliance with DOT regulations and standards</span>
+                <span>{t('dotCompliance')}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Advanced safety features for cargo security</span>
+                <span>{t('advancedSafetyFeatures')}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Reduced risk of accidents with stable design</span>
+                <span>{t('reducedAccidentRisk')}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#E30D16] mr-2">✓</span>
-                <span>Regular inspection and certification programs</span>
+                <span>{t('regularInspection')}</span>
               </li>
             </ul>
           </div>
