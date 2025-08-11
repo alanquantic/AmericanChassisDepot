@@ -1,17 +1,19 @@
 import React from 'react';
 import { useLanguage } from '@/lib/i18n-simple';
+import BendixLogo from '@assets/Bendix_1754944094395.png';
+import GroteLogo from '@assets/Grote_1754944094396.png';
+import HendricksonLogo from '@assets/H_1754944094396.png';
+import JostLogo from '@assets/Jost_1754944094396.png';
+import PhillipsLogo from '@assets/Phillips_1754944094396.png';
+import WabcoLogo from '@assets/WABCO_1754944094397.png';
 
 const brands = [
-  'SAF-HOLLAND',
-  'Hendrickson',
-  'Meritor',
-  'JOST',
-  'WABCO',
-  'Bendix',
-  'Alcoa',
-  'Michelin',
-  'TSE Brakes',
-  'Firestone'
+  { name: 'Bendix', logo: BendixLogo },
+  { name: 'Grote', logo: GroteLogo },
+  { name: 'Hendrickson', logo: HendricksonLogo },
+  { name: 'Jost', logo: JostLogo },
+  { name: 'Phillips', logo: PhillipsLogo },
+  { name: 'WABCO', logo: WabcoLogo },
 ];
 
 const LogoMarquee: React.FC = () => {
@@ -26,48 +28,64 @@ const LogoMarquee: React.FC = () => {
         
         {/* Desktop marquee */}
         <div className="hidden sm:block relative">
-          <div className="flex items-center space-x-12 marquee">
+          <div className="flex items-center space-x-16 marquee">
             {/* First set of brands */}
             {brands.map((brand, index) => (
               <div
                 key={`first-${index}`}
-                className="flex-shrink-0 text-lg font-montserrat font-semibold text-neutral-600 hover:text-primary transition-colors duration-300 whitespace-nowrap"
+                className="flex-shrink-0 flex items-center justify-center transition-all duration-300 hover:scale-105"
               >
-                {brand}
+                <img
+                  src={brand.logo}
+                  alt={`${brand.name} logo`}
+                  className="h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                />
               </div>
             ))}
             {/* Duplicate set for seamless loop */}
             {brands.map((brand, index) => (
               <div
                 key={`second-${index}`}
-                className="flex-shrink-0 text-lg font-montserrat font-semibold text-neutral-600 hover:text-primary transition-colors duration-300 whitespace-nowrap"
+                className="flex-shrink-0 flex items-center justify-center transition-all duration-300 hover:scale-105"
               >
-                {brand}
+                <img
+                  src={brand.logo}
+                  alt={`${brand.name} logo`}
+                  className="h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                />
               </div>
             ))}
           </div>
         </div>
 
         {/* Mobile static grid for reduced motion accessibility */}
-        <div className="sm:hidden grid grid-cols-2 gap-4">
-          {brands.slice(0, 6).map((brand, index) => (
+        <div className="sm:hidden grid grid-cols-2 gap-6">
+          {brands.map((brand, index) => (
             <div
               key={index}
-              className="text-center text-sm font-montserrat font-medium text-neutral-600 py-2 px-3 bg-neutral-50 rounded-lg"
+              className="flex items-center justify-center p-4 bg-neutral-50 rounded-lg"
             >
-              {brand}
+              <img
+                src={brand.logo}
+                alt={`${brand.name} logo`}
+                className="h-10 w-auto object-contain"
+              />
             </div>
           ))}
         </div>
 
         {/* Static grid fallback for users who prefer reduced motion */}
-        <div className="hidden motion-reduce:grid motion-reduce:grid-cols-3 lg:motion-reduce:grid-cols-5 gap-4 sm:motion-reduce:block">
+        <div className="hidden motion-reduce:grid motion-reduce:grid-cols-3 lg:motion-reduce:grid-cols-6 gap-6 sm:motion-reduce:block">
           {brands.map((brand, index) => (
             <div
               key={index}
-              className="text-center text-sm font-montserrat font-medium text-neutral-600 py-2 px-3 bg-neutral-50 rounded-lg"
+              className="flex items-center justify-center p-4 bg-neutral-50 rounded-lg"
             >
-              {brand}
+              <img
+                src={brand.logo}
+                alt={`${brand.name} logo`}
+                className="h-10 w-auto object-contain"
+              />
             </div>
           ))}
         </div>
