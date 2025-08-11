@@ -112,7 +112,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">{t('fullName')}</FormLabel>
+                <FormLabel className="font-montserrat text-white">{t('fullName')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -129,7 +129,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">{t('emailAddressLabel')}</FormLabel>
+                <FormLabel className="font-montserrat text-white">{t('emailAddressLabel')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -149,7 +149,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="company"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">{t('companyName')}</FormLabel>
+                <FormLabel className="font-montserrat text-white">{t('companyName')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -166,7 +166,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">{t('phoneNumberLabel')}</FormLabel>
+                <FormLabel className="font-montserrat text-white">{t('phoneNumberLabel')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -186,7 +186,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="interest"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">{t('interestedIn')}</FormLabel>
+                <FormLabel className="font-montserrat text-white">{t('interestedIn')}</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
                   defaultValue={field.value}
@@ -216,7 +216,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="units"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">{t('numberOfUnits')}</FormLabel>
+                <FormLabel className="font-montserrat text-white">{t('numberOfUnits')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -237,7 +237,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
           name="message"
           render={({ field }) => (
             <FormItem className="mb-6">
-              <FormLabel className="font-montserrat text-neutral-700">{t('message')}</FormLabel>
+              <FormLabel className="font-montserrat text-white">{t('message')}</FormLabel>
               <FormControl>
                 <Textarea 
                   {...field} 
