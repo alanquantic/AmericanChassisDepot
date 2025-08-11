@@ -68,17 +68,17 @@ export function subscribeToLanguageChange(callback: () => void) {
 import { useState, useEffect } from 'react';
 
 export function useLanguage() {
-  const [, forceUpdate] = useState({});
+  const [language, setLanguageState] = useState(getCurrentLanguage());
 
   useEffect(() => {
     const unsubscribe = subscribeToLanguageChange(() => {
-      forceUpdate({});
+      setLanguageState(getCurrentLanguage());
     });
     return unsubscribe;
   }, []);
 
   return {
-    language: getCurrentLanguage(),
+    language,
     setLanguage,
     t
   };
