@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { CONDITIONS } from '@/lib/constants';
+import { CONDITIONS, getConditions } from '@/lib/constants';
 import { useLocation } from 'wouter';
 import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import { 
@@ -198,12 +198,12 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                   </FormControl>
                   <SelectContent>
                     {/* Condition options */}
-                    {CONDITIONS.filter(condition => condition.value !== 'all').map((condition) => (
+                    {getConditions().filter(condition => condition.value !== 'all').map((condition) => (
                       <SelectItem key={condition.value} value={condition.value}>
                         {condition.name}
                       </SelectItem>
                     ))}
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="other">{getCurrentLanguage() === 'es' ? 'Otro' : 'Other'}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

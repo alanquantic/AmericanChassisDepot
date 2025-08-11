@@ -30,7 +30,7 @@ const Header: React.FC = () => {
         {/* Logo */}
         <Link href="/" onClick={closeMobileMenu} className="flex items-center space-x-3">
           <img 
-            src="/attached_assets/acn.png" 
+            src="/acn.png" 
             alt="American Chassis Depot Logo" 
             className="h-12 w-auto"
           />

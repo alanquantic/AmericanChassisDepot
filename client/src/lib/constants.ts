@@ -1,9 +1,32 @@
-// Condition and size values for filtering
+// Condition and size values for filtering  
+import { getCurrentLanguage } from './i18n-simple';
+
+export const getConditions = () => {
+  const isSpanish = getCurrentLanguage() === 'es';
+  return [
+    { name: isSpanish ? "Todos los Chasis" : "All Chassis", value: "all" },
+    { name: isSpanish ? "Chasis Nuevos" : "New Chassis", value: "new-chassis" },
+    { name: isSpanish ? "Chasis Usados" : "Used Chassis", value: "used-chassis" }
+  ];
+};
+
 export const CONDITIONS = [
   { name: "All Chassis", value: "all" },
   { name: "New Chassis", value: "new-chassis" },
   { name: "Used Chassis", value: "used-chassis" }
 ];
+
+export const getSizes = () => {
+  const isSpanish = getCurrentLanguage() === 'es';
+  return [
+    { name: isSpanish ? "Todos los Tamaños" : "All Sizes", value: "all" },
+    { name: "20ft", value: "20ft" },
+    { name: "20-40ft", value: "20-40ft" },
+    { name: "40ft", value: "40ft" },
+    { name: "40-45ft", value: "40-45ft" },
+    { name: "20-40-45ft", value: "20-40-45ft" }
+  ];
+};
 
 export const SIZES = [
   { name: "All Sizes", value: "all" },

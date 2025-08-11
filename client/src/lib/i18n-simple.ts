@@ -116,9 +116,13 @@ export function useLanguage() {
     return unsubscribe;
   }, []);
 
+  const tFunction = (key: TranslationKey): string => {
+    return translations[language]?.[key] || translations.en[key] || key;
+  };
+
   return {
     language,
     setLanguage,
-    t
+    t: tFunction
   };
 }

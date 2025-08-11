@@ -3,8 +3,8 @@ import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
-import { CONDITIONS, SIZES } from '@/lib/constants';
-import { useLanguage } from '@/lib/i18n-simple';
+import { CONDITIONS, SIZES, getConditions, getSizes } from '@/lib/constants';
+import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import type { ChassisModel } from '@shared/schema';
 
 interface ProductGridProps {
@@ -61,7 +61,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
         
         {/* Condition filter controls */}
         <div className="flex flex-wrap justify-center mb-8 gap-4">
-          {CONDITIONS.map(condition => (
+          {getConditions().map(condition => (
             <button
               key={condition.value}
               className={`font-montserrat font-medium px-4 py-2 rounded transition duration-200 ${
@@ -78,8 +78,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
         
         {/* Size filter */}
         <div className="flex flex-wrap justify-center mb-12 gap-4">
-          <span className="text-primary font-montserrat font-medium self-center">Size:</span>
-          {SIZES.map(size => (
+          <span className="text-primary font-montserrat font-medium self-center">{getCurrentLanguage() === 'es' ? 'Tamaño:' : 'Size:'}</span>
+          {getSizes().map(size => (
             <button
               key={size.value}
               className={`font-montserrat font-medium px-4 py-2 rounded transition duration-200 ${
