@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'wouter';
 import ContactForm from '@/components/shared/ContactForm';
 import { useLanguage } from '@/lib/i18n-simple';
+import HeroVideo from '@assets/acd_home_1754946248802.mp4';
 
 const Hero: React.FC = () => {
   const { t } = useLanguage();
@@ -17,7 +18,7 @@ const Hero: React.FC = () => {
           playsInline
           className="w-full h-full object-cover"
         >
-          <source src="/attached_assets/acd_home_1754946248802.mp4" type="video/mp4" />
+          <source src={HeroVideo} type="video/mp4" />
         </video>
       </div>
       
