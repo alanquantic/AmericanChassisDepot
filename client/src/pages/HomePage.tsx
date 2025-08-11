@@ -3,6 +3,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import Hero from '@/components/home/Hero';
+import LogoMarquee from '@/components/home/LogoMarquee';
 import ChassisTypeShowcase from '@/components/home/ChassisTypeShowcase';
 import ProductGrid from '@/components/home/ProductGrid';
 import AboutSection from '@/components/home/AboutSection';
@@ -25,6 +26,7 @@ const HomePage: React.FC<HomePageProps> = ({ initialSize }) => {
       
       <main>
         <Hero />
+        <LogoMarquee />
         <ChassisTypeShowcase />
         <ProductGrid initialSize={initialSize} />
         <BusinessAdvantages />

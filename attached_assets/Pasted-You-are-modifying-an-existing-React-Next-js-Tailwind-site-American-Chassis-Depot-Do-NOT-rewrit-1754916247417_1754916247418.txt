@@ -1,0 +1,66 @@
+You are modifying an existing React/Next.js + Tailwind site (American Chassis Depot). 
+Do NOT rewrite or change any visible copy/text, product names, routes, or slugs. 
+The goal is a more modern UI, English as default language, and two new UI sections.
+
+GOALS
+1) Keep all current text content EXACTLY as-is. Only update layout/styling and components.
+2) Default language must be English. If i18n exists, set defaultLocale:'en' and keep 'es' active.
+3) Modernize the Home page: full-bleed HERO with video, glass card quote form, flat product cards, and a brands marquee.
+
+TECH & CONSTRAINTS
+- Keep the current color palette inspired by the US flag: blue #0A3161, red #B22234, white.
+- Tailwind CSS is the styling baseline. No additional UI libs.
+- Accessibility: proper contrast, keyboard focus, and prefers-reduced-motion for animations.
+- Performance: LCP < 2.5s. Use next/image for images; serve hero video in webm+mp4 with poster fallback.
+
+TASKS (Home only)
+A) HERO (replace background image with video)
+   - Add /public/videos/hero.mp4 and /public/videos/hero.webm (use placeholders if needed).
+   - Implement <video autoplay muted loop playsInline> with a dark gradient overlay (blue/red) for readable white text.
+   - Left column: reuse the existing H1, paragraph and CTAs from the current hero (do not change text).
+   - Right column: keep the existing quote form, wrap it in a translucent glass card (backdrop-blur, white/90, rounded-2xl).
+   - Mobile: form stacks below hero copy; CTAs remain.
+
+B) BRANDS MARQUEE (new section under hero)
+   - Section title: reuse any existing “brands/components” heading if present; otherwise keep the section title minimal and do NOT change global copy elsewhere.
+   - Add a horizontal marquee of component brands (logos or text pills) such as: SAF-HOLLAND, Hendrickson, Meritor, JOST, WABCO, Bendix, Alcoa, Michelin, TSE Brakes, Firestone.
+   - Implement as an infinite, seamless scroll with tailwind keyframes; pause on hover; respect prefers-reduced-motion (show static grid if reduced).
+   - Add placeholder SVGs in /public/brands/*.svg if logo assets are missing.
+
+C) FEATURED PRODUCTS (refresh styles only)
+   - Keep the same product data and labels (“New/Used”, “In stock”, buttons).
+   - Visual style: flat cards (no hard borders), subtle shadow on hover, 16:9 media area, clean badges (red for New, blue for Used).
+   - Primary button = red (#B22234) “Get a Quote”; secondary outline “View details”.
+   - No text changes.
+
+D) BENEFITS / COVERAGE / TESTIMONIALS / FOOTER
+   - Keep the same content; update spacing, rounded corners, and micro-interactions to match the new style.
+   - Maintain US-inspired accents (subtle stripes/stars backgrounds at low opacity).
+
+FILE CHANGES (suggested)
+- app/(or pages)/page.tsx: compose new Home layout using the new components below.
+- components/Hero.tsx: video hero + glass quote form (reusing existing form component).
+- components/LogoMarquee.tsx: marquee with brands; fall back to a static grid on reduced motion.
+- components/ProductCard.tsx: flat card variant; keep existing props and text.
+- styles/globals.css (or app/globals.css): add marquee keyframes and utility classes.
+- public/videos/hero.mp4, hero.webm, poster.jpg (placeholder ok).
+- public/brands/*.svg for brand logos (placeholders ok).
+
+TAILWIND HELPERS
+Add to globals.css:
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.marquee { animation: marquee 30s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .marquee { animation: none; } }
+
+I18N (only if present): in next.config.js ensure:
+i18n: { locales: ['en','es'], defaultLocale: 'en' }
+
+ACCEPTANCE CRITERIA
+- All existing texts remain unchanged.
+- Home shows a looping hero video with readable overlay and the unchanged quote form in a glass card.
+- A brands marquee (or static grid when reduced motion) appears under the hero.
+- Product cards look flatter, with hover elevation and correct badges/colors.
+- No route or slug changes. Build passes, Lighthouse LCP <= 2.5s on desktop.
+
+After implementing, run the dev server and show me the updated Home. Commit as:
+chore(ui): modern home with video hero, brands marquee, flat product cards, EN default

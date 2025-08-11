@@ -26,7 +26,7 @@
   }
   
   .btn-secondary {
-    @apply bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-6 py-3 rounded transition duration-200;
+    @apply bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-6 py-3 rounded transition duration-200;
   }
   
   .btn-outline {
@@ -53,6 +53,26 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+/* Marquee animations for brands section */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  animation: marquee 30s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
   }
 }
 

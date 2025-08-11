@@ -116,11 +116,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
               return (
                 <div 
                   key={model.id} 
-                  className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1"
+                  className="bg-white rounded-lg border border-neutral-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                 >
                   <div className="h-56 bg-neutral-200 overflow-hidden relative">
-                    <div className={`absolute top-0 left-0 text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold ${
-                      model.conditionId === 3 ? 'bg-[#E30D16]' : 'bg-blue-600'
+                    <div className={`absolute top-0 left-0 text-white px-3 py-1 m-2 rounded font-montserrat text-sm font-semibold ${
+                      model.conditionId === 3 ? 'bg-[#B22234]' : 'bg-[#0A3161]'
                     }`}>
                       {conditionName}
                     </div>
@@ -145,12 +145,20 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
                     <p className="text-neutral-600 mb-4">
                       {model.description}
                     </p>
-                    <Link
-                      href={`/products/${model.slug}`} 
-                      className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-4 py-2 rounded transition duration-200"
-                    >
-                      View Details
-                    </Link>
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/products/${model.slug}`} 
+                        className="inline-block border border-primary text-primary hover:bg-primary hover:text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
+                      >
+                        View Details
+                      </Link>
+                      <Link
+                        href="/contact" 
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
+                      >
+                        Get a Quote
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
@@ -163,7 +171,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
         </div>
         
         <div className="text-center mt-12">
-          <Link href="/products" className="inline-block bg-[#F5A623] hover:bg-[#e09511] text-primary font-montserrat font-semibold px-8 py-3 rounded-md transition duration-200">
+          <Link href="/products" className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 shadow-lg">
             View All Products
           </Link>
         </div>

@@ -114,7 +114,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                 <FormControl>
                   <Input 
                     {...field} 
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -132,7 +132,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                   <Input 
                     {...field} 
                     type="email"
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -151,7 +151,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                 <FormControl>
                   <Input 
                     {...field} 
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -169,7 +169,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                   <Input 
                     {...field} 
                     type="tel"
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -190,7 +190,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary">
+                    <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary">
                       <SelectValue placeholder="Select chassis type" />
                     </SelectTrigger>
                   </FormControl>
@@ -221,7 +221,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                     type="number"
                     min="1"
                     placeholder="How many units do you need?"
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -240,7 +240,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                 <Textarea 
                   {...field} 
                   rows={4}
-                  className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary transition-all duration-200 hover:border-primary" 
+                  className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary" 
                 />
               </FormControl>
               <FormMessage />
@@ -250,7 +250,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
         
         <Button 
           type="submit" 
-          className="bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-8 py-3 rounded transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+          className="bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
           disabled={mutation.isPending}
         >
           {mutation.isPending ? "Sending..." : "Send Message"}
