@@ -129,7 +129,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">{t('emailAddress')}</FormLabel>
+                <FormLabel className="font-montserrat text-neutral-700">{t('emailAddressLabel')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
@@ -166,7 +166,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-montserrat text-neutral-700">{t('phoneNumber')}</FormLabel>
+                <FormLabel className="font-montserrat text-neutral-700">{t('phoneNumberLabel')}</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 

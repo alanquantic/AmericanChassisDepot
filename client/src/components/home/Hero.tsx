@@ -57,7 +57,7 @@ const Hero: React.FC = () => {
           <div className="hidden lg:block">
             <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-2xl">
               <h2 className="text-2xl font-montserrat font-bold text-white mb-6 text-center">
-                Get a Quote
+                {t('getAQuoteHero')}
               </h2>
               <ContactForm className="text-white" />
             </div>
@@ -68,7 +68,7 @@ const Hero: React.FC = () => {
         <div className="lg:hidden mt-8">
           <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-2xl">
             <h2 className="text-xl font-montserrat font-bold text-white mb-4 text-center">
-              Get a Quote
+              {t('getAQuoteHero')}
             </h2>
             <ContactForm className="text-white" />
           </div>

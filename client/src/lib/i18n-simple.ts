@@ -25,9 +25,9 @@ export const translations = {
     
     // Contact Form
     fullName: 'Full Name',
-    emailAddress: 'Email Address',
+    emailAddressLabel: 'Email Address',
     companyName: 'Company Name',
-    phoneNumber: 'Phone Number',
+    phoneNumberLabel: 'Phone Number',
     interestedIn: 'Interested In',
     numberOfUnits: 'Number of Units',
     message: 'Message',
@@ -62,13 +62,14 @@ export const translations = {
     contactUs: 'Contact Us',
     contactPageSubtitle: 'Have questions or need a quote? Our team is here to help you find the perfect chassis solution.',
     ourLocation: 'Our Location',
-    phoneNumber: 'Phone Number',
-    emailAddress: 'Email Address',
+    phoneNumberSection: 'Phone Number',
+    emailAddressSection: 'Email Address',
     callUsMonday: 'Call us Monday through Friday',
     respondWithin24: 'We\'ll respond within 24 hours',
     businessHours: 'Business Hours',
     sendUsAMessage: 'Send Us a Message',
-    fillOutForm: 'Fill out the form below and one of our representatives will get back to you as soon as possible.'
+    fillOutForm: 'Fill out the form below and one of our representatives will get back to you as soon as possible.',
+    getAQuoteHero: 'Get a Quote'
   },
   es: {
     // Navigation  
@@ -92,9 +93,9 @@ export const translations = {
     
     // Contact Form
     fullName: 'Nombre Completo',
-    emailAddress: 'Dirección de Email',
+    emailAddressLabel: 'Dirección de Email',
     companyName: 'Nombre de la Empresa',
-    phoneNumber: 'Número de Teléfono',
+    phoneNumberLabel: 'Número de Teléfono',
     interestedIn: 'Interesado En',
     numberOfUnits: 'Número de Unidades',
     message: 'Mensaje',
@@ -129,13 +130,14 @@ export const translations = {
     contactUs: 'Contáctanos',
     contactPageSubtitle: '¿Tienes preguntas o necesitas una cotización? Nuestro equipo está aquí para ayudarte a encontrar la solución de chasis perfecta.',
     ourLocation: 'Nuestra Ubicación',
-    phoneNumber: 'Número de Teléfono',
-    emailAddress: 'Dirección de Email',
+    phoneNumberSection: 'Número de Teléfono',
+    emailAddressSection: 'Dirección de Email',
     callUsMonday: 'Llámanos de lunes a viernes',
     respondWithin24: 'Responderemos dentro de 24 horas',
     businessHours: 'Horarios de Atención',
     sendUsAMessage: 'Envíanos un Mensaje',
-    fillOutForm: 'Completa el formulario a continuación y uno de nuestros representantes se pondrá en contacto contigo lo antes posible.'
+    fillOutForm: 'Completa el formulario a continuación y uno de nuestros representantes se pondrá en contacto contigo lo antes posible.',
+    getAQuoteHero: 'Obtener Cotización'
   }
 };
 

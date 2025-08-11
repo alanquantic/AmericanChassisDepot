@@ -45,7 +45,7 @@ const ContactPage: React.FC = () => {
                   <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white mx-auto mb-4">
                     <PhoneIcon className="w-8 h-8" />
                   </div>
-                  <h3 className="font-montserrat font-semibold text-primary text-xl mb-2">{t('phoneNumber')}</h3>
+                  <h3 className="font-montserrat font-semibold text-primary text-xl mb-2">{t('phoneNumberSection')}</h3>
                   <p className="text-neutral-600">{contactInfo.phone}</p>
                   <p className="text-neutral-600 mt-2 text-sm">{t('callUsMonday')}</p>
                 </div>
@@ -55,7 +55,7 @@ const ContactPage: React.FC = () => {
                   <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white mx-auto mb-4">
                     <EmailIcon className="w-8 h-8" />
                   </div>
-                  <h3 className="font-montserrat font-semibold text-primary text-xl mb-2">{t('emailAddress')}</h3>
+                  <h3 className="font-montserrat font-semibold text-primary text-xl mb-2">{t('emailAddressSection')}</h3>
                   <p className="text-neutral-600">{contactInfo.email}</p>
                   <p className="text-neutral-600 mt-2 text-sm">{t('respondWithin24')}</p>
                 </div>

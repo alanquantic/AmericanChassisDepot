@@ -73,8 +73,6 @@ export const CONTACT_INFO = {
 };
 
 // Company information
-import { getCurrentLanguage } from './i18n-simple';
-
 export const getCompanyInfo = () => {
   const isSpanish = getCurrentLanguage() === 'es';
   return {
