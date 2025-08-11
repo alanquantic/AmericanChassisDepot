@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '@/lib/i18n-simple';
 
 const brands = [
   'SAF-HOLLAND',
@@ -14,11 +15,13 @@ const brands = [
 ];
 
 const LogoMarquee: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <section className="py-12 bg-white overflow-hidden">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-montserrat font-bold text-primary text-center mb-8">
-          Trusted Component Brands
+          {t('trustedBrands')}
         </h2>
         
         {/* Desktop marquee */}

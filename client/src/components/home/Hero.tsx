@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'wouter';
 import ContactForm from '@/components/shared/ContactForm';
+import { useLanguage } from '@/lib/i18n-simple';
 
 const Hero: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <section className="relative min-h-screen overflow-hidden">
       {/* Video Background */}
@@ -29,29 +32,29 @@ const Hero: React.FC = () => {
           {/* Left Column - Hero Content */}
           <div className="text-white">
             <h1 className="text-3xl md:text-5xl font-montserrat font-bold mb-6 drop-shadow-lg">
-              Premium Chassis Solutions for Every Need
+              {t('heroTitle')}
             </h1>
             <p className="text-lg md:text-xl mb-8 drop-shadow-md max-w-2xl">
-              Explore our wide selection of high-quality chassis from leading manufacturers in the industry
+              {t('heroSubtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 href="/products" 
                 className="bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
               >
-                View Products
+                {t('viewProducts')}
               </Link>
               <Link 
                 href="/contact" 
                 className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 text-center shadow-lg border border-white/30"
               >
-                Request Quote
+                {t('requestQuote')}
               </Link>
             </div>
           </div>
 
-          {/* Right Column - Glass Card Quote Form */}
-          <div className="lg:block">
+          {/* Right Column - Glass Card Quote Form - Desktop only */}
+          <div className="hidden lg:block">
             <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-2xl">
               <h2 className="text-2xl font-montserrat font-bold text-white mb-6 text-center">
                 Get a Quote
@@ -60,15 +63,15 @@ const Hero: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile: Form stacks below on smaller screens */}
-      <div className="lg:hidden relative z-20 bg-white/10 backdrop-blur-lg border-t border-white/20 p-6">
-        <div className="container mx-auto">
-          <h2 className="text-2xl font-montserrat font-bold text-white mb-6 text-center">
-            Get a Quote
-          </h2>
-          <ContactForm className="text-white" />
+        {/* Mobile: Form stacks below on smaller screens */}
+        <div className="lg:hidden mt-8">
+          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-2xl">
+            <h2 className="text-xl font-montserrat font-bold text-white mb-4 text-center">
+              Get a Quote
+            </h2>
+            <ContactForm className="text-white" />
+          </div>
         </div>
       </div>
     </section>
