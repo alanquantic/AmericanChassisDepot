@@ -1,19 +1,22 @@
 import React from 'react';
 import { TruckIcon, ToolsIcon, CertificateIcon } from '@/lib/icons';
 import { COMPANY_INFO } from '@/lib/constants';
+import { useLanguage } from '@/lib/i18n-simple';
 
 const AboutSection: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <section className="py-16 bg-white" id="about">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center gap-12">
           <div className="md:w-1/2 order-2 md:order-1">
-            <h2 className="text-3xl font-montserrat font-bold text-primary mb-6">About American Chassis Depot</h2>
+            <h2 className="text-3xl font-montserrat font-bold text-primary mb-6">{t('aboutTitle')}</h2>
             <p className="text-lg text-neutral-600 mb-6">
               {COMPANY_INFO.description}
             </p>
             <p className="text-lg text-neutral-600 mb-6">
-              With years of experience in the field, our team is committed to helping you find the perfect chassis solution for your specific needs. We take pride in our extensive inventory, competitive pricing, and exceptional customer service.
+              {t('aboutDescription')}
             </p>
             <div className="flex flex-wrap gap-6 mt-8">
               {COMPANY_INFO.benefits.map((benefit, index) => (

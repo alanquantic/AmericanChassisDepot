@@ -34,7 +34,41 @@ export const translations = {
     sendMessage: 'Send Message',
     sending: 'Sending...',
     selectChassisType: 'Select chassis type',
-    howManyUnits: 'How many units do you need?'
+    howManyUnits: 'How many units do you need?',
+    
+    // Condition labels
+    new: 'New',
+    used: 'Used',
+    
+    // Product section
+    learnMore: 'Learn More',
+    getQuote: 'Get Quote',
+    viewDetails: 'View Details',
+    getAQuote: 'Get a Quote',
+    viewAllProducts: 'View All Products',
+    noChassisFound: 'No chassis models found with the selected filters.',
+    
+    // About Section
+    aboutTitle: 'About American Chassis Depot',
+    aboutDescription: 'With years of experience in the field, our team is committed to helping you find the perfect chassis solution for your specific needs. We take pride in our extensive inventory, competitive pricing, and exceptional customer service.',
+    
+    // Footer
+    footerDescription: 'Your trusted source for premium chassis solutions from leading manufacturers.',
+    quickLinks: 'Quick Links',
+    contactInfo: 'Contact Info',
+    allRightsReserved: 'All rights reserved.',
+    
+    // Contact Page
+    contactUs: 'Contact Us',
+    contactPageSubtitle: 'Have questions or need a quote? Our team is here to help you find the perfect chassis solution.',
+    ourLocation: 'Our Location',
+    phoneNumber: 'Phone Number',
+    emailAddress: 'Email Address',
+    callUsMonday: 'Call us Monday through Friday',
+    respondWithin24: 'We\'ll respond within 24 hours',
+    businessHours: 'Business Hours',
+    sendUsAMessage: 'Send Us a Message',
+    fillOutForm: 'Fill out the form below and one of our representatives will get back to you as soon as possible.'
   },
   es: {
     // Navigation  
@@ -67,7 +101,41 @@ export const translations = {
     sendMessage: 'Enviar Mensaje',
     sending: 'Enviando...',
     selectChassisType: 'Selecciona tipo de chasis',
-    howManyUnits: '¿Cuántas unidades necesitas?'
+    howManyUnits: '¿Cuántas unidades necesitas?',
+    
+    // Condition labels
+    new: 'Nuevo',
+    used: 'Usado',
+    
+    // Product section
+    learnMore: 'Saber Más',
+    getQuote: 'Obtener Cotización',
+    viewDetails: 'Ver Detalles',
+    getAQuote: 'Obtener Cotización',
+    viewAllProducts: 'Ver Todos los Productos',
+    noChassisFound: 'No se encontraron modelos de chasis con los filtros seleccionados.',
+    
+    // About Section
+    aboutTitle: 'Acerca de American Chassis Depot',
+    aboutDescription: 'Con años de experiencia en el campo, nuestro equipo está comprometido a ayudarte a encontrar la solución de chasis perfecta para tus necesidades específicas. Nos enorgullecemos de nuestro extenso inventario, precios competitivos y servicio al cliente excepcional.',
+    
+    // Footer
+    footerDescription: 'Tu fuente confiable para soluciones premium de chasis de fabricantes líderes.',
+    quickLinks: 'Enlaces Rápidos',
+    contactInfo: 'Información de Contacto',
+    allRightsReserved: 'Todos los derechos reservados.',
+    
+    // Contact Page
+    contactUs: 'Contáctanos',
+    contactPageSubtitle: '¿Tienes preguntas o necesitas una cotización? Nuestro equipo está aquí para ayudarte a encontrar la solución de chasis perfecta.',
+    ourLocation: 'Nuestra Ubicación',
+    phoneNumber: 'Número de Teléfono',
+    emailAddress: 'Dirección de Email',
+    callUsMonday: 'Llámanos de lunes a viernes',
+    respondWithin24: 'Responderemos dentro de 24 horas',
+    businessHours: 'Horarios de Atención',
+    sendUsAMessage: 'Envíanos un Mensaje',
+    fillOutForm: 'Completa el formulario a continuación y uno de nuestros representantes se pondrá en contacto contigo lo antes posible.'
   }
 };
 

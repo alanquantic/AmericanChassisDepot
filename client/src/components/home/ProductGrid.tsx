@@ -113,7 +113,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
           ) : models.length > 0 ? (
             models.map((model) => {
               // Find condition name based on model's conditionId
-              const conditionName = CONDITIONS.find(c => c.value !== 'all' && c.value.includes(model.conditionId === 3 ? 'new' : 'used'))?.name || '';
+              const currentLang = getCurrentLanguage();
+              const isSpanish = currentLang === 'es';
+              const conditionName = model.conditionId === 3 
+                ? (isSpanish ? 'Nuevo' : 'New')
+                : (isSpanish ? 'Usado' : 'Used');
               
               return (
                 <div 
@@ -152,13 +156,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
                         href={`/products/${model.slug}`} 
                         className="inline-block border border-primary text-primary hover:bg-primary hover:text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
                       >
-                        View Details
+                        {t('viewDetails')}
                       </Link>
                       <Link
                         href="/contact" 
                         className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
                       >
-                        Get a Quote
+                        {t('getAQuote')}
                       </Link>
                     </div>
                   </div>
@@ -167,14 +171,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
             })
           ) : (
             <div className="col-span-full text-center py-8">
-              <p className="text-neutral-600">No chassis models found with the selected filters.</p>
+              <p className="text-neutral-600">{t('noChassisFound')}</p>
             </div>
           )}
         </div>
         
         <div className="text-center mt-12">
           <Link href="/products" className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 shadow-lg">
-            View All Products
+            {t('viewAllProducts')}
           </Link>
         </div>
       </div>
