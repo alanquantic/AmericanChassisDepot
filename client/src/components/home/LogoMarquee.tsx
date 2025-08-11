@@ -26,39 +26,25 @@ const LogoMarquee: React.FC = () => {
           {t('trustedBrands')}
         </h2>
         
-        {/* Desktop marquee */}
-        <div className="hidden sm:block relative">
-          <div className="flex items-center space-x-16 marquee">
-            {/* First set of brands */}
+        {/* Static logo grid - Desktop */}
+        <div className="hidden sm:block">
+          <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-12">
             {brands.map((brand, index) => (
               <div
-                key={`first-${index}`}
-                className="flex-shrink-0 flex items-center justify-center transition-all duration-300 hover:scale-105"
+                key={index}
+                className="flex items-center justify-center transition-all duration-300 hover:scale-110"
               >
                 <img
                   src={brand.logo}
                   alt={`${brand.name} logo`}
-                  className="h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
-                />
-              </div>
-            ))}
-            {/* Duplicate set for seamless loop */}
-            {brands.map((brand, index) => (
-              <div
-                key={`second-${index}`}
-                className="flex-shrink-0 flex items-center justify-center transition-all duration-300 hover:scale-105"
-              >
-                <img
-                  src={brand.logo}
-                  alt={`${brand.name} logo`}
-                  className="h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                  className="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
                 />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Mobile static grid for reduced motion accessibility */}
+        {/* Mobile static grid */}
         <div className="sm:hidden grid grid-cols-2 gap-6">
           {brands.map((brand, index) => (
             <div
@@ -68,23 +54,7 @@ const LogoMarquee: React.FC = () => {
               <img
                 src={brand.logo}
                 alt={`${brand.name} logo`}
-                className="h-10 w-auto object-contain"
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Static grid fallback for users who prefer reduced motion */}
-        <div className="hidden motion-reduce:grid motion-reduce:grid-cols-3 lg:motion-reduce:grid-cols-6 gap-6 sm:motion-reduce:block">
-          {brands.map((brand, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-center p-4 bg-neutral-50 rounded-lg"
-            >
-              <img
-                src={brand.logo}
-                alt={`${brand.name} logo`}
-                className="h-10 w-auto object-contain"
+                className="h-12 w-auto object-contain"
               />
             </div>
           ))}

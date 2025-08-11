@@ -16,15 +16,14 @@ const Hero: React.FC = () => {
           loop
           playsInline
           className="w-full h-full object-cover"
-          poster="/videos/poster.jpg"
         >
-          <source src="/videos/hero.webm" type="video/webm" />
-          <source src="/videos/hero.mp4" type="video/mp4" />
+          <source src="/attached_assets/acd_home_1754946248802.mp4" type="video/mp4" />
         </video>
       </div>
       
-      {/* Gradient overlay with US flag colors */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#0A3161]/80 via-[#B22234]/50 to-[#0A3161]/80"></div>
+      {/* Elegant Black Gradient Overlay */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/70 via-black/40 to-black/70"></div>
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/50 via-transparent to-black/60"></div>
       
       {/* Content */}
       <div className="relative container mx-auto px-4 min-h-screen flex items-center z-20">
