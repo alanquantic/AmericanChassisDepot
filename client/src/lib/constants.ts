@@ -38,6 +38,29 @@ export const SIZES = [
 ];
 
 // Contact information
+export const getContactInfo = () => {
+  const isSpanish = getCurrentLanguage() === 'es';
+  return {
+    address: "4811 N McCarty St Suite C, Houston, TX 77013",
+    phone: "+1 (442) 257-9946",
+    email: "sales@americanchassisdepot.com",
+    hours: [
+      { 
+        day: isSpanish ? "Lunes - Viernes" : "Monday - Friday", 
+        hours: "8:00 AM - 6:00 PM" 
+      },
+      { 
+        day: isSpanish ? "Sábado" : "Saturday", 
+        hours: isSpanish ? "9:00 AM - 2:00 PM" : "9:00 AM - 2:00 PM" 
+      },
+      { 
+        day: isSpanish ? "Domingo" : "Sunday", 
+        hours: isSpanish ? "Cerrado" : "Closed" 
+      }
+    ]
+  };
+};
+
 export const CONTACT_INFO = {
   address: "4811 N McCarty St Suite C, Houston, TX 77013",
   phone: "+1 (442) 257-9946",
@@ -50,6 +73,36 @@ export const CONTACT_INFO = {
 };
 
 // Company information
+import { getCurrentLanguage } from './i18n-simple';
+
+export const getCompanyInfo = () => {
+  const isSpanish = getCurrentLanguage() === 'es';
+  return {
+    name: "American Chassis Depot",
+    tagline: isSpanish ? "Soluciones Premium de Chasis para Cada Necesidad" : "Premium Chassis Solutions for Every Need",
+    description: isSpanish 
+      ? "American Chassis Depot es un proveedor líder de soluciones de chasis de alta calidad para la industria del transporte y la logística. Nos especializamos en ofrecer una amplia gama de opciones de chasis de los fabricantes más confiables de la industria."
+      : "American Chassis Depot is a leading provider of high-quality chassis solutions for the transportation and logistics industry. We specialize in offering a diverse range of chassis options from the industry's most trusted manufacturers.",
+    benefits: [
+      { 
+        icon: "truck", 
+        title: isSpanish ? "Calidad Premium" : "Premium Quality", 
+        description: isSpanish ? "Marcas líderes de la industria" : "Top industry brands" 
+      },
+      { 
+        icon: "tools", 
+        title: isSpanish ? "Soporte Experto" : "Expert Support", 
+        description: isSpanish ? "Especialistas dedicados" : "Dedicated specialists" 
+      },
+      { 
+        icon: "certificate", 
+        title: isSpanish ? "Productos Certificados" : "Certified Products", 
+        description: isSpanish ? "Cumple con la industria" : "Industry-compliant" 
+      }
+    ]
+  };
+};
+
 export const COMPANY_INFO = {
   name: "American Chassis Depot",
   tagline: "Premium Chassis Solutions for Every Need",

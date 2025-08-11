@@ -1,10 +1,11 @@
 import React from 'react';
 import { TruckIcon, ToolsIcon, CertificateIcon } from '@/lib/icons';
-import { COMPANY_INFO } from '@/lib/constants';
+import { COMPANY_INFO, getCompanyInfo } from '@/lib/constants';
 import { useLanguage } from '@/lib/i18n-simple';
 
 const AboutSection: React.FC = () => {
   const { t } = useLanguage();
+  const companyInfo = getCompanyInfo();
   
   return (
     <section className="py-16 bg-white" id="about">
@@ -13,13 +14,13 @@ const AboutSection: React.FC = () => {
           <div className="md:w-1/2 order-2 md:order-1">
             <h2 className="text-3xl font-montserrat font-bold text-primary mb-6">{t('aboutTitle')}</h2>
             <p className="text-lg text-neutral-600 mb-6">
-              {COMPANY_INFO.description}
+              {companyInfo.description}
             </p>
             <p className="text-lg text-neutral-600 mb-6">
               {t('aboutDescription')}
             </p>
             <div className="flex flex-wrap gap-6 mt-8">
-              {COMPANY_INFO.benefits.map((benefit, index) => (
+              {companyInfo.benefits.map((benefit, index) => (
                 <div key={index} className="flex items-center">
                   <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white mr-4">
                     {benefit.icon === 'truck' && <TruckIcon className="w-6 h-6" />}

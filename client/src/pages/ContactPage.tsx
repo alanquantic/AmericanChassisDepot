@@ -3,12 +3,13 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import { MapPinIcon, PhoneIcon, EmailIcon } from '@/lib/icons';
-import { CONTACT_INFO } from '@/lib/constants';
+import { CONTACT_INFO, getContactInfo } from '@/lib/constants';
 import ContactForm from '@/components/shared/ContactForm';
 import { useLanguage } from '@/lib/i18n-simple';
 
 const ContactPage: React.FC = () => {
   const { t } = useLanguage();
+  const contactInfo = getContactInfo();
   
   return (
     <>
@@ -36,7 +37,7 @@ const ContactPage: React.FC = () => {
                     <MapPinIcon className="w-8 h-8" />
                   </div>
                   <h3 className="font-montserrat font-semibold text-primary text-xl mb-2">{t('ourLocation')}</h3>
-                  <p className="text-neutral-600">{CONTACT_INFO.address}</p>
+                  <p className="text-neutral-600">{contactInfo.address}</p>
                 </div>
                 
                 {/* Phone */}
@@ -45,7 +46,7 @@ const ContactPage: React.FC = () => {
                     <PhoneIcon className="w-8 h-8" />
                   </div>
                   <h3 className="font-montserrat font-semibold text-primary text-xl mb-2">{t('phoneNumber')}</h3>
-                  <p className="text-neutral-600">{CONTACT_INFO.phone}</p>
+                  <p className="text-neutral-600">{contactInfo.phone}</p>
                   <p className="text-neutral-600 mt-2 text-sm">{t('callUsMonday')}</p>
                 </div>
                 
@@ -55,7 +56,7 @@ const ContactPage: React.FC = () => {
                     <EmailIcon className="w-8 h-8" />
                   </div>
                   <h3 className="font-montserrat font-semibold text-primary text-xl mb-2">{t('emailAddress')}</h3>
-                  <p className="text-neutral-600">{CONTACT_INFO.email}</p>
+                  <p className="text-neutral-600">{contactInfo.email}</p>
                   <p className="text-neutral-600 mt-2 text-sm">{t('respondWithin24')}</p>
                 </div>
               </div>
@@ -64,7 +65,7 @@ const ContactPage: React.FC = () => {
               <div className="bg-neutral-100 rounded-lg p-8 mb-12">
                 <h2 className="text-2xl font-montserrat font-bold text-primary text-center mb-6">{t('businessHours')}</h2>
                 <div className="max-w-md mx-auto grid grid-cols-2 gap-4">
-                  {CONTACT_INFO.hours.map((item, index) => (
+                  {contactInfo.hours.map((item, index) => (
                     <React.Fragment key={index}>
                       <div className="font-montserrat font-medium text-primary">{item.day}</div>
                       <div className="text-neutral-600">{item.hours}</div>

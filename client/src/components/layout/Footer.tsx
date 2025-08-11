@@ -9,11 +9,12 @@ import {
   PhoneIcon,
   EmailIcon
 } from '@/lib/icons';
-import { CONTACT_INFO } from '@/lib/constants';
+import { CONTACT_INFO, getContactInfo } from '@/lib/constants';
 import { useLanguage } from '@/lib/i18n-simple';
 
 const Footer: React.FC = () => {
   const { t } = useLanguage();
+  const contactInfo = getContactInfo();
   
   return (
     <footer className="bg-primary text-white pt-12 pb-6">
@@ -54,19 +55,19 @@ const Footer: React.FC = () => {
               <li className="flex items-start">
                 <MapPinIcon className="w-5 h-5 mt-1 mr-3" />
                 <a href="https://maps.google.com/?q=4811+N+McCarty+St+Suite+C,+Houston,+TX+77013" target="_blank" rel="noopener noreferrer" className="hover:text-[#E30D16] transition duration-200">
-                  {CONTACT_INFO.address}
+                  {contactInfo.address}
                 </a>
               </li>
               <li className="flex items-center">
                 <PhoneIcon className="w-5 h-5 mr-3" />
-                <a href={`tel:${CONTACT_INFO.phone.replace(/[^\d+]/g, '')}`} className="hover:text-[#E30D16] transition duration-200">
-                  {CONTACT_INFO.phone}
+                <a href={`tel:${contactInfo.phone.replace(/[^\d+]/g, '')}`} className="hover:text-[#E30D16] transition duration-200">
+                  {contactInfo.phone}
                 </a>
               </li>
               <li className="flex items-center">
                 <EmailIcon className="w-5 h-5 mr-3" />
-                <a href={`mailto:${CONTACT_INFO.email}`} className="hover:text-[#E30D16] transition duration-200">
-                  {CONTACT_INFO.email}
+                <a href={`mailto:${contactInfo.email}`} className="hover:text-[#E30D16] transition duration-200">
+                  {contactInfo.email}
                 </a>
               </li>
             </ul>
