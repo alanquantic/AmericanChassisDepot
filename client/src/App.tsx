@@ -15,7 +15,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/">
-        {() => <HomePage key="home-page" initialSize="all" />}
+        {() => <HomePage key="home-page" />}
       </Route>
       <Route path="/brands/:slug">
         {(params) => <BrandPage slug={params.slug} />}
