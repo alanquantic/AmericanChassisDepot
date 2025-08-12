@@ -59,27 +59,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
           {t('browseSelection')}
         </p>
         
-        {/* Size filter controls only for home */}
+        {/* Size filter for home page */}
         <div className="flex flex-wrap justify-center mb-8 gap-4">
-          <span className="font-montserrat font-semibold text-primary mr-4">Filter by Size:</span>
-          {getSizes().map(size => (
-            <button
-              key={size.value}
-              className={`font-montserrat font-medium px-4 py-2 rounded transition duration-200 ${
-                sizeFilter === size.value 
-                  ? 'active-filter' 
-                  : 'inactive-filter'
-              }`}
-              onClick={() => handleSizeFilterChange(size.value)}
-            >
-              {size.name}
-            </button>
-          ))}
-        </div>
-        
-        {/* Size filter */}
-        <div className="flex flex-wrap justify-center mb-12 gap-4">
-          <span className="text-primary font-montserrat font-medium self-center">{getCurrentLanguage() === 'es' ? 'Tamaño:' : 'Size:'}</span>
+          <span className="text-primary font-montserrat font-medium self-center">{getCurrentLanguage() === 'es' ? 'Filtrar por Tamaño:' : 'Filter by Size:'}</span>
           {getSizes().map(size => (
             <button
               key={size.value}
