@@ -21,14 +21,40 @@ export const chassisModels = pgTable("chassis_models", {
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   conditionId: integer("condition_id").notNull(), // New or Used
-  manufacturer: text("manufacturer").notNull(), // Bull, Cheetah, Pratt, Stoughton, etc.
-  size: text("size").notNull(), // 20ft, 40ft, 45ft, 53ft
-  dutyType: text("duty_type").notNull(), // Standard, Heavy, Extra Heavy
+  manufacturer: text("manufacturer").notNull(), // AXN, SAF, JOST, etc.
+  size: text("size").notNull(), // 20ft, 40ft, 45ft, 53ft, 20-40ft, etc.
+  axleConfig: text("axle_config").notNull(), // Tandem, Triaxle, etc.
   description: text("description").notNull(),
-  imageUrl: text("image_url").notNull(), // Imagen principal (para mantener compatibilidad)
-  features: text("features").array(),
-  specifications: text("specifications").array(),
-  additionalImages: text("additional_images").array(), // Aquí almacenaremos rutas a imágenes adicionales
+  imageUrl: text("image_url").notNull(), // Main product image
+  additionalImages: text("additional_images").array(), // Additional product photos
+  
+  // Technical specifications - structured data
+  overallLength: text("overall_length"),
+  overallWidth: text("overall_width"),
+  overallHeight: text("overall_height"),
+  fifthWheelHeight: text("fifth_wheel_height"),
+  rearDeckHeight: text("rear_deck_height"),
+  kingpinLocation: text("kingpin_location"),
+  landingGearLocation: text("landing_gear_location"),
+  axleSpread: text("axle_spread"),
+  tareWeight: text("tare_weight"),
+  payload: text("payload"),
+  gvwr: text("gvwr"),
+  
+  // Component details - stored as JSON-like text arrays for flexibility
+  frameComponents: text("frame_components").array(), // Main beam, cross members, etc.
+  suspensionDetails: text("suspension_details").array(),
+  brakeSystemDetails: text("brake_system_details").array(),
+  electricalDetails: text("electrical_details").array(),
+  additionalEquipment: text("additional_equipment").array(),
+  
+  // Multilingual support
+  nameEs: text("name_es"), // Spanish name
+  descriptionEs: text("description_es"), // Spanish description
+  
+  // SEO and organization
+  featured: boolean("featured").default(false), // For homepage showcase
+  sortOrder: integer("sort_order").default(0), // Manual ordering
 });
 
 export const insertChassisModelSchema = createInsertSchema(chassisModels).omit({

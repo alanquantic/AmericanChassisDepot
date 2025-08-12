@@ -146,7 +146,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
                       <span>{model.size}</span>
                       <span className="mx-2">|</span>
                       <WeightIcon className="w-4 h-4" />
-                      <span>{model.dutyType}</span>
+                      <span>{model.axleConfig}</span>
                     </div>
                     <p className="text-neutral-600 mb-4">
                       {model.description}

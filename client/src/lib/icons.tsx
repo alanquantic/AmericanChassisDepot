@@ -95,6 +95,13 @@ export const WeightIcon: React.FC<IconProps> = ({ className = "" }) => (
   </svg>
 );
 
+export const CogIcon: React.FC<IconProps> = ({ className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m15.5-6.5L19 6l-1.5-1.5M5 19l1.5-1.5L5 16M19 19l-1.5-1.5L19 16M6.5 6.5L5 5l1.5-1.5"/>
+  </svg>
+);
+
 export const FacebookIcon: React.FC<IconProps> = ({ className = "" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>

@@ -5,16 +5,10 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import { Skeleton } from '@/components/ui/skeleton';
-import { RulerIcon, WeightIcon } from '@/lib/icons';
+import { RulerIcon, WeightIcon, TruckIcon, CogIcon } from '@/lib/icons';
 import ContactForm from '@/components/shared/ContactForm';
+import { useLanguage } from '@/lib/i18n-simple';
 import type { ChassisModel } from '@shared/schema';
-
-// Define a type for the manufacturer info
-interface Manufacturer {
-  id: number;
-  name: string;
-  description: string;
-}
 
 interface ProductPageProps {
   slug?: string;
@@ -24,6 +18,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
   const params = useParams();
   const slug = propSlug || params.slug;
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const { t } = useLanguage();
   
   // Fetch chassis model data
   const { data: model, isLoading: modelLoading, error: modelError } = useQuery<ChassisModel>({
@@ -165,8 +160,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                         <span>{model?.size}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <WeightIcon className="w-5 h-5" />
-                        <span>{model?.dutyType}</span>
+                        <TruckIcon className="w-5 h-5" />
+                        <span>{model?.axleConfig}</span>
                       </div>
                     </div>
                     <p className="text-neutral-600 mb-8">
@@ -185,55 +180,156 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
           </div>
         </section>
         
-        {/* Specifications & Features */}
+        {/* Technical Specifications */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {/* Specifications */}
-              <div>
-                <h2 className="text-2xl font-montserrat font-bold text-primary mb-6">Specifications</h2>
-                {isLoading ? (
-                  <div className="space-y-3">
-                    {Array(4).fill(0).map((_, index) => (
-                      <Skeleton key={index} className="h-6 w-full" />
-                    ))}
+            <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-12">Technical Specifications</h2>
+            
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Array(6).fill(0).map((_, index) => (
+                  <div key={index} className="bg-neutral-50 p-6 rounded-lg">
+                    <Skeleton className="h-6 w-full mb-4" />
+                    <Skeleton className="h-4 w-3/4" />
                   </div>
-                ) : (
-                  <ul className="space-y-3">
-                    {model?.specifications?.map((spec, index) => (
-                      <li key={index} className="flex items-center border-b border-neutral-200 pb-2">
-                        <span className="text-neutral-700">{spec}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                ))}
               </div>
-              
-              {/* Features */}
-              <div>
-                <h2 className="text-2xl font-montserrat font-bold text-primary mb-6">Key Features</h2>
-                {isLoading ? (
-                  <div className="space-y-3">
-                    {Array(4).fill(0).map((_, index) => (
-                      <Skeleton key={index} className="h-6 w-full" />
-                    ))}
-                  </div>
-                ) : (
-                  <ul className="space-y-3">
-                    {model?.features?.map((feature, index) => (
-                      <li key={index} className="flex items-center border-b border-neutral-200 pb-2">
-                        <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white mr-3">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
+            ) : (
+              <>
+                {/* Key Specifications Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                  {model?.overallLength && (
+                    <div className="bg-neutral-50 p-6 rounded-lg">
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">Overall Length</h3>
+                      <p className="text-neutral-700">{model.overallLength}</p>
+                    </div>
+                  )}
+                  {model?.overallWidth && (
+                    <div className="bg-neutral-50 p-6 rounded-lg">
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">Overall Width</h3>
+                      <p className="text-neutral-700">{model.overallWidth}</p>
+                    </div>
+                  )}
+                  {model?.tareWeight && (
+                    <div className="bg-neutral-50 p-6 rounded-lg">
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">Tare Weight</h3>
+                      <p className="text-neutral-700">{model.tareWeight}</p>
+                    </div>
+                  )}
+                  {model?.payload && (
+                    <div className="bg-neutral-50 p-6 rounded-lg">
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">Payload Capacity</h3>
+                      <p className="text-neutral-700">{model.payload}</p>
+                    </div>
+                  )}
+                  {model?.axleSpread && (
+                    <div className="bg-neutral-50 p-6 rounded-lg">
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">Axle Spread</h3>
+                      <p className="text-neutral-700">{model.axleSpread}</p>
+                    </div>
+                  )}
+                  {model?.fifthWheelHeight && (
+                    <div className="bg-neutral-50 p-6 rounded-lg">
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">Fifth Wheel Height</h3>
+                      <p className="text-neutral-700">{model.fifthWheelHeight}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Detailed Component Sections */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                  {/* Frame Components */}
+                  {model?.frameComponents && model.frameComponents.length > 0 && (
+                    <div>
+                      <h3 className="text-xl font-montserrat font-bold text-primary mb-6 flex items-center">
+                        <CogIcon className="w-6 h-6 mr-2" />
+                        Frame & Structural Components
+                      </h3>
+                      <ul className="space-y-3">
+                        {model.frameComponents.map((component, index) => (
+                          <li key={index} className="flex items-start border-b border-neutral-200 pb-3">
+                            <div className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <span className="text-neutral-700">{component}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Suspension Details */}
+                  {model?.suspensionDetails && model.suspensionDetails.length > 0 && (
+                    <div>
+                      <h3 className="text-xl font-montserrat font-bold text-primary mb-6 flex items-center">
+                        <TruckIcon className="w-6 h-6 mr-2" />
+                        Suspension System
+                      </h3>
+                      <ul className="space-y-3">
+                        {model.suspensionDetails.map((detail, index) => (
+                          <li key={index} className="flex items-start border-b border-neutral-200 pb-3">
+                            <div className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <span className="text-neutral-700">{detail}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Brake System */}
+                  {model?.brakeSystemDetails && model.brakeSystemDetails.length > 0 && (
+                    <div>
+                      <h3 className="text-xl font-montserrat font-bold text-primary mb-6 flex items-center">
+                        <WeightIcon className="w-6 h-6 mr-2" />
+                        Brake System
+                      </h3>
+                      <ul className="space-y-3">
+                        {model.brakeSystemDetails.map((detail, index) => (
+                          <li key={index} className="flex items-start border-b border-neutral-200 pb-3">
+                            <div className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <span className="text-neutral-700">{detail}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Electrical Details */}
+                  {model?.electricalDetails && model.electricalDetails.length > 0 && (
+                    <div>
+                      <h3 className="text-xl font-montserrat font-bold text-primary mb-6">
+                        Electrical System
+                      </h3>
+                      <ul className="space-y-3">
+                        {model.electricalDetails.map((detail, index) => (
+                          <li key={index} className="flex items-start border-b border-neutral-200 pb-3">
+                            <div className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <span className="text-neutral-700">{detail}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                {/* Additional Equipment */}
+                {model?.additionalEquipment && model.additionalEquipment.length > 0 && (
+                  <div className="mt-12">
+                    <h3 className="text-xl font-montserrat font-bold text-primary mb-6">Additional Equipment & Features</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {model.additionalEquipment.map((equipment, index) => (
+                        <div key={index} className="flex items-center bg-neutral-50 p-4 rounded">
+                          <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white mr-3 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-neutral-700">{equipment}</span>
                         </div>
-                        <span className="text-neutral-700">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </section>
         

@@ -2,9 +2,9 @@
 
 ## Overview
 
-American Chassis Depot is a full-stack web application for a chassis dealership specializing in container transportation equipment. The platform serves as a comprehensive business website featuring product catalogs, quote request functionality, and customer engagement tools. The application targets transportation companies and logistics professionals looking for new and used chassis solutions.
+American Chassis Depot is a comprehensive full-stack web application for a chassis dealership specializing in container transportation equipment. The platform features a sophisticated product catalog with detailed technical specifications, bilingual support (English/Spanish), and professional presentation of new and used chassis inventory. The application targets transportation companies and logistics professionals seeking detailed chassis information and technical specifications.
 
-The system follows a modern monorepo architecture with a React frontend and Express.js backend, designed to showcase chassis inventory, facilitate customer inquiries, and provide detailed product information with integrated contact management.
+The system follows a modern monorepo architecture with a React frontend and Express.js backend, designed to showcase detailed chassis specifications, facilitate customer inquiries, and provide comprehensive technical documentation with integrated contact management.
 
 ## User Preferences
 
@@ -34,7 +34,13 @@ Preferred communication style: Simple, everyday language.
 - **ORM**: Drizzle with schema-first approach for type safety
 - **Migration Management**: Drizzle Kit for database schema migrations
 - **Connection Pooling**: Connection pooling via @neondatabase/serverless for optimal performance
-- **Schema Design**: Normalized structure with separate tables for conditions (new/used), chassis models, and contact messages
+- **Schema Design**: Comprehensive normalized structure with detailed chassis specifications including:
+  - Conditions table (new/used chassis classification)
+  - Chassis models with extensive technical specifications
+  - Frame components, suspension details, brake systems, electrical systems
+  - Dimensional specifications (length, width, weight, payload)
+  - Additional equipment arrays for detailed feature listings
+  - Contact messages with integrated email notifications
 
 ### Authentication and Authorization
 - **Current State**: No authentication system implemented
@@ -42,12 +48,15 @@ Preferred communication style: Simple, everyday language.
 - **Access Control**: Open access to all endpoints and content
 
 ### Key Features and Components
-- **Product Catalog**: Dynamic chassis filtering by condition, size, and manufacturer
-- **Contact Management**: Multi-channel contact forms with email notifications
-- **Responsive Design**: Mobile-first approach with breakpoint-based layouts
-- **SEO Optimization**: Meta tags, structured data, and semantic HTML
+- **Comprehensive Product Catalog**: Advanced chassis filtering by condition, size, and manufacturer with detailed technical specifications
+- **Technical Specifications Display**: Extensive product pages featuring frame components, suspension systems, brake details, electrical specifications, and dimensional data
+- **Bilingual Content Support**: English and Spanish language support with professional technical translations
+- **Photo Galleries**: Multiple image support with thumbnail navigation and high-resolution viewing
+- **Contact Management**: Multi-channel contact forms with Mailgun email notifications
+- **Responsive Design**: Mobile-first approach with breakpoint-based layouts optimized for technical content
+- **SEO Optimization**: Meta tags, structured data, and semantic HTML for technical product pages
 - **Accessibility**: WCAG compliance with focus management and screen reader support
-- **Performance**: Image optimization, lazy loading, and efficient caching strategies
+- **Performance**: Image optimization, lazy loading, and efficient caching strategies for technical content
 
 ## External Dependencies
 
