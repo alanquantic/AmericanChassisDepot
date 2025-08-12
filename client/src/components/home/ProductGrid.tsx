@@ -23,9 +23,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
     }
   }, [initialSize]);
 
-  // Fetch chassis models with filters
+  // Fetch chassis models with filters - Only NEW chassis for home page
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
-    queryKey: ['/api/chassis/filter', { condition: conditionFilter, size: sizeFilter, manufacturer: 'all' }],
+    queryKey: ['/api/chassis/filter', { condition: 'new-chassis', size: sizeFilter, manufacturer: 'all' }],
   });
 
   // Asegurémonos de que models sea un array
@@ -59,19 +59,20 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
           {t('browseSelection')}
         </p>
         
-        {/* Condition filter controls */}
+        {/* Size filter controls only for home */}
         <div className="flex flex-wrap justify-center mb-8 gap-4">
-          {getConditions().map(condition => (
+          <span className="font-montserrat font-semibold text-primary mr-4">Filter by Size:</span>
+          {getSizes().map(size => (
             <button
-              key={condition.value}
+              key={size.value}
               className={`font-montserrat font-medium px-4 py-2 rounded transition duration-200 ${
-                conditionFilter === condition.value 
+                sizeFilter === size.value 
                   ? 'active-filter' 
                   : 'inactive-filter'
               }`}
-              onClick={() => handleConditionFilterChange(condition.value)}
+              onClick={() => handleSizeFilterChange(size.value)}
             >
-              {condition.name}
+              {size.name}
             </button>
           ))}
         </div>

@@ -12,10 +12,10 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Triaxle",
     description: "Versatile triaxle container chassis designed for 20' and 40' containers with 12-pin configuration and hydraulic locking system.",
     descriptionEs: "Chasis contenedor triaxial versátil diseñado para contenedores de 20' y 40' con configuración de 12 pines y sistema de bloqueo hidráulico.",
-    imageUrl: "/attached_assets/20_40_12_Pins_Triaxle_1.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=400&fit=crop",
     additionalImages: [
-      "/attached_assets/20_40_12_Pins_Triaxle_2.jpg",
-      "/attached_assets/20_40_12_Pins_Triaxle_3.jpg"
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&h=400&fit=crop"
     ],
     overallLength: "31'-7'' (retracted) or 40'-11'' (extended)",
     overallWidth: "96''",
@@ -69,10 +69,10 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Tandem",
     description: "Heavy-duty 40-foot gooseneck chassis equipped with generator set for specialized container transportation needs.",
     descriptionEs: "Chasis gooseneck de servicio pesado de 40 pies equipado con generador para necesidades especializadas de transporte de contenedores.",
-    imageUrl: "/attached_assets/40_Gooseneck_1.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&h=400&fit=crop",
     additionalImages: [
-      "/attached_assets/40_Gooseneck_2.jpg",
-      "/attached_assets/40_Gooseneck_3.jpg",
+      "https://images.unsplash.com/photo-1558717097-ea7caadc8ed7?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=600&h=400&fit=crop",
       "/attached_assets/40_Gooseneck_4.jpg",
       "/attached_assets/40_Gooseneck_5.jpg"
     ],
@@ -127,12 +127,12 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Tridem",
     description: "Specialized 45-foot multimodal chassis designed for efficient intermodal transportation with enhanced load capacity.",
     descriptionEs: "Chasis multimodal especializado de 45 pies diseñado para transporte intermodal eficiente con capacidad de carga mejorada.",
-    imageUrl: "/attached_assets/40_45_Extendable_1.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?w=600&h=400&fit=crop",
     additionalImages: [
-      "/attached_assets/40_45_Extendable_2.jpg",
-      "/attached_assets/40_45_Extendable_3.jpg",
-      "/attached_assets/40_45_Extendable_4.jpg",
-      "/attached_assets/40_45_Extendable_5.jpg"
+      "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=600&h=400&fit=crop"
     ],
     overallLength: "45'-2 33/64'' (13780 mm)",
     overallWidth: "98'' (2490 mm)",
@@ -183,11 +183,11 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Tandem",
     description: "Lightweight tandem axle chassis specifically designed for 20-foot containers with superior maneuverability.",
     descriptionEs: "Chasis tándem ligero específicamente diseñado para contenedores de 20 pies con maniobrabilidad superior.",
-    imageUrl: "/attached_assets/20_SL_Tandem_1.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1551708297-7a8b264c6e27?w=600&h=400&fit=crop",
     additionalImages: [
-      "/attached_assets/20_SL_Tandem_2.jpg",
-      "/attached_assets/20_SL_Tandem_3.jpg",
-      "/attached_assets/20_SL_Tandem_4.jpg"
+      "https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop"
     ],
     overallLength: "31'-6''",
     overallWidth: "96''",
@@ -235,7 +235,7 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Triaxle",
     description: "Ultra-versatile extendable triaxle chassis accommodating 20', 40', and 45' containers with advanced hydraulic extension system.",
     descriptionEs: "Chasis triaxial extensible ultra versátil que acomoda contenedores de 20', 40' y 45' con sistema de extensión hidráulica avanzada.",
-    imageUrl: "/attached_assets/20_40_45_Extendable_Triaxle_1.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
     additionalImages: [],
     overallLength: "Variable: 32'-45' depending on configuration",
     overallWidth: "96''",
@@ -284,9 +284,9 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Tandem",
     description: "Efficient extendable tandem chassis for 20' and 40' containers with reliable extension mechanism and superior fuel economy.",
     descriptionEs: "Chasis tándem extensible eficiente para contenedores de 20' y 40' con mecanismo de extensión confiable y economía de combustible superior.",
-    imageUrl: "/attached_assets/20_40_Extendable_Tandem_1.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=600&h=400&fit=crop",
     additionalImages: [
-      "/attached_assets/20_40_Extendable_Tandem_2.jpg"
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop"
     ],
     overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
     overallWidth: "96''",
@@ -339,10 +339,10 @@ export const usedChassisData: InsertChassisModel[] = [
     axleConfig: "Tandem",
     description: "Quality pre-owned 40' gooseneck chassis, fully inspected and refurbished to meet safety standards.",
     descriptionEs: "Chasis gooseneck de 40' de calidad pre-owned, completamente inspeccionado y reacondicionado para cumplir estándares de seguridad.",
-    imageUrl: "/attached_assets/used2040-1.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=600&h=400&fit=crop",
     additionalImages: [
-      "/attached_assets/used2040-2.jpg",
-      "/attached_assets/used2040-3.jpg"
+      "https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop"
     ],
     overallLength: "40'-11''",
     overallWidth: "96''",
