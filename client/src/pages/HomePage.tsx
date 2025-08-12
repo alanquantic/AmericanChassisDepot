@@ -32,7 +32,7 @@ const HomePage: React.FC<HomePageProps> = ({ initialSize }) => {
         <Hero />
         <LogoMarquee />
         <ChassisTypeShowcase />
-        <ProductGrid initialSize={initialSize} />
+        <ProductGrid initialSize={initialSize} showOnlyNew={initialSize === undefined} />
         <BusinessAdvantages />
         <VideoSection />
         <AboutSection />

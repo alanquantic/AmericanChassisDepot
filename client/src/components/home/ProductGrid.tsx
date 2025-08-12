@@ -9,9 +9,10 @@ import type { ChassisModel } from '@shared/schema';
 
 interface ProductGridProps {
   initialSize?: string;
+  showOnlyNew?: boolean;
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = false }) => {
   const { t } = useLanguage();
   const [conditionFilter, setConditionFilter] = useState('all');
   const [sizeFilter, setSizeFilter] = useState(initialSize || 'all');
@@ -23,9 +24,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
     }
   }, [initialSize]);
 
-  // Fetch chassis models with filters - Only NEW chassis for home page
+  // Fetch chassis models with filters
+  const conditionToUse = showOnlyNew ? 'new-chassis' : conditionFilter === 'all' ? 'all' : conditionFilter;
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
-    queryKey: ['/api/chassis/filter', { condition: 'new-chassis', size: sizeFilter, manufacturer: 'all' }],
+    queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all' }],
   });
 
   // Asegurémonos de que models sea un array
@@ -59,7 +61,27 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize }) => {
           {t('browseSelection')}
         </p>
         
-        {/* Size filter for home page */}
+        {/* Condition filter - only show when NOT showOnlyNew */}
+        {!showOnlyNew && (
+          <div className="flex flex-wrap justify-center mb-8 gap-4">
+            <span className="text-primary font-montserrat font-medium self-center">{getCurrentLanguage() === 'es' ? 'Condición:' : 'Condition:'}</span>
+            {getConditions().map(condition => (
+              <button
+                key={condition.value}
+                className={`font-montserrat font-medium px-4 py-2 rounded transition duration-200 ${
+                  conditionFilter === condition.value 
+                    ? 'active-filter' 
+                    : 'inactive-filter'
+                }`}
+                onClick={() => handleConditionFilterChange(condition.value)}
+              >
+                {condition.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Size filter */}
         <div className="flex flex-wrap justify-center mb-8 gap-4">
           <span className="text-primary font-montserrat font-medium self-center">{getCurrentLanguage() === 'es' ? 'Filtrar por Tamaño:' : 'Filter by Size:'}</span>
           {getSizes().map(size => (
