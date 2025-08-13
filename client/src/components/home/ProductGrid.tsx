@@ -77,9 +77,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
 
   const handleCharacteristicFilterChange = (value: string) => {
     console.log('🔄 Changing characteristic filter from', characteristicFilter, 'to', value);
+    console.log('🔄 showOnlyNew is:', showOnlyNew);
+    console.log('🔄 Current characteristicFilter state:', characteristicFilter);
     // Clear cache before changing filter to ensure fresh data
     queryClient.clear();
     setCharacteristicFilter(value);
+    console.log('🔄 After setState, should be:', value);
   };
 
   if (error) {
@@ -151,7 +154,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                     ? 'active-filter' 
                     : 'inactive-filter'
                 }`}
-                onClick={() => handleCharacteristicFilterChange(characteristic.value)}
+                onClick={() => {
+                  console.log('🔥 Button clicked for characteristic:', characteristic.value);
+                  handleCharacteristicFilterChange(characteristic.value);
+                }}
               >
                 {characteristic.name}
               </button>
