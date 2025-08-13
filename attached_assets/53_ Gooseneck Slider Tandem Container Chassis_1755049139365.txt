@@ -1,0 +1,38 @@
+﻿53' Gooseneck Slider Tandem Container Chassis
+Technical Specifications
+Overall Length: 53′−8′′ (Excluding dock bumpers)
+Overall Width: 96"
+Overall Height: 55′′
+Fifth Wheel Height: 47±1′′
+Max. Rear Height: 48±1′′
+Kingpin Location: 36′′ (From the rear face of the front bolster)
+Landing Gear Location: 130′′ (From the rear face of the front bolster)
+Axle Spread: 49"
+Slider Bogie Setting: 84" travel in 4" increment
+Tare Weight: 7,450 lbs (approximately)
+Payload: 67,200 lbs
+Steel Frame & Components
+1. Main Beam: One piece W12⊙l6lb/ft hot-rolled H-beam, ASTM A572 Grade 50 or equivalent
+2. Cross Member: 1/8"≪3/16" thick full height channel with profiled bar type diagonal brace
+3. Gn Beam: 4" deep x 4" wide fabricated H-beam, 5/8′′ thick flanges and 5/16′′ thick web
+4. Upper Coupler: 1/4′′ pick up plate with JOST 2" diameter square type king pin per SAE standard, 380-420 HB, with 2" water drain holes, design to be integrated with main frame through welding.
+5. Front Bolster: 7−3/8"wide×7−3/4"high×1/4′′ thick open section, with 2−3/8′′ chamfer in full length for gathering container in operation. 7-way receptacle and glad hands are located on the roadside of front bolster. Casted corner caps (TOCA 905-950-000CS/RS).
+6. Rear Bolster: 8" wide x 3/8" thick top plate with 7" wide x 6-5/8" deep x 3/16" thick "U" type bottom channel.
+7. Rear Bumper: 4′′×4′′×3/16′′​ square tube step with taper "H" section vertical member. Bar is bolted to uprights. The bumper is bolted to main beam.
+8. License Plate Bracket: Extending from rear bolster within envelope of ICC bumper. Plate is to contain rear cluster lights, rear fleet number & license plate.
+9. Sliding Suspension Frame: Z-beam slider suspension with 4 index pins. EZ-Pull lock pin mechanism with removable and replaceable pin cage. Pre-painted BLACK color.
+10. Front Locking Pin: TOCA 905-910-000-LH/RH
+11. Rear Twist Lock: TOCA 905-130-000-90-LH/RH
+12. Landing Gear: AXN FW32E00J with 60,000 lbs capacity, 2-speed 17" travel with low "T" shoes. Crank handle is located on the driver's side of the chassis. Pre-painted BLACK color. Landing gear brackets are bolted on the main beam as the layout.
+13. Suspension: AXN tandem suspension with high-arch 3-leaf spring (354-00). Pre-painted BLACK color.
+14. Axles: AXN 5" round axles with 22500lb capacity.71.5" track; Q16.5"X7" 4707Q brake. Pre-painted BLACK color. 11.5-28 spline, HALDEX 5.5" automatic slack adjusters. Axle Installation orientation: 270 degress FRONT, Chambers UP (1 abs ready front, 1 non abs rear per unit).
+15. Wheel End: AXN Hub & Drum Assembly P/N H30-0647BFNTZ/H30-0647BFNZ. STEMCO 358-4009 Integrated Sentinel Grease Hub Cap. STEMCO seals and bearings. Spindle nut: STEMCO Pro-Torq P/N 447-4743. (5-year warranty wheelend).
+16. Lubricant: Petro Canada precision synthetic EP 00 semi fluid grease lubricant.
+17. Wheels: JINGU 22.5 x 8.25 10-stud hub-piloted wheels with 5 hand holes and with TR572 valve stem. Pre-painted WHITE color.
+18. Tires: WESTLAKE 11R22.5-14PR tubeless type.
+19. Brake System: SEALCO 110800 spring brake priority valve system and WABCO 2S/1M ABS system. PHILLIPS swinger glad hand 12-4906 and 12-4908, 3/8′′ blue air tube for control and 3/8′′ red for supply. HALDEX Goldseal T30/30, 2.5" stroke brake chamber. FUWA air tanks.
+20. Electrical: GROTE mold seal wiring harness, Reserved PSI and GPS connector. (10-year warranty). GROTE LED lights (amp connections for S/T/T lights; PL-10 for Marker/ID/ABS lights and .180 bullets for license light). The theft proof design used for 4" LED lighting.
+21. Electrical Receptacle: GROTE zinc alloy material with solid pins.
+22. Document Holder: GROTE. Installed on roadside near crank handle.
+23. Conspicuity Tape: "3M" brand. Installed per federal regulations.
+24. Painting: Abrasive blast of all metal surfaces - not less than SA-2.5 to achieve clean bare steel. Surface will be coated with electrophoresis primer and powder topcoat. Color BLACK and at the corner painted YELLOW color. Total thickness not less than 80µm after dry membrane. Coating supplier: PPG (7-year warranty).

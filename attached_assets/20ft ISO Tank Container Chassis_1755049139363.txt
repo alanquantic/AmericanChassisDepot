@@ -1,0 +1,34 @@
+﻿20ft ISO Tank Container Chassis
+Technical Specifications
+Overall Length: 43'
+Overall Width: 96′′
+Fifth Wheel Height: 48±1′′
+Rear Deck Height: 44±1′′
+Kingpin Location: 16" (From front face of the pick-up plate)
+Landing Gear Location: 95′′ (From the kingpin center)
+Tandem Location: 72" (From rear face of rear bolster)
+Axle Spread: 109"
+Tare Weight: 7,340 lbs ±3%
+Payload: 67,200 lbs (30,480kgs)
+Steel Frame & Components
+1. Main Beam: Fabricated Continuous H-beam, 1/2n thick Grade 130 steel flange and 1/4′′ thick Grade 80 web
+2. Cross Member: 3/16′′ channel with profiled bar type diagonal brace.
+3. Upper Coupler: 1/4′′ pick up plate with JOST 2" diameter square type king pin per SAE standard, 380-420 HB, with 2" water drain holes, design to be integrated with main frame through welding.
+4. Front Bolster: Fabricated H-beam by Grade 100 steel.
+5. Rear Bolster: Fabricated H-beam by Grade 100 steel.
+6. Rear Bumper: 4′′×4′′ square tube step is welded to rear hangers.
+7. License Plate Bracket: Extending from rear bolster within envelope of ICC bumper. Plate is to contain rear cluster lights, rear fleet number & license plate.
+8. Twist Locks: TOCA 905-160-000
+9. Landing Gear: AXN FW32E00J with 60,000 lbs capacity, 2-speed 17" travel with Low profile sand shoes with solid axle. Crank handle is located on the driver's side of the chassis. Pre-painted BLACK RAL9005 color.
+10. Suspension: AXN 109" axle spread, underslung configuration with three HD high-arch leaf spring (365-00). Pre-painted BLACK RAL9005 color.
+11. Axles: AXN 5" round axles with 22500lb capacity; 71.5" track, Q+16.5"×7" 4707Q brake. Pre-painted BLACK RAL9005 color. 1.5-28 spline, HALDEX 5.5" automatic slack adjusters. Reserved PSI interface; Heat Sensing Labels. Axle Installation orientation: 90 degrees rear, chambers DOWN (1 abs ready front, 1 non abs rear per unit).
+12. Wheel End: AXN Hub & Drum Assembly P/N H30-0647BFNTZ/H30-0647BFNZ, STEMCO 358-4009 Integrated Sentinel Grease Hub Cap, STEMCO seals and bearings. Spindle nut: STEMCO Pro-Torq P/N 447-4743. (5-year warranty wheelend).
+13. Lubricant: Petro Canada precision synthetic EP 00 semi fluid grease lubricant.
+14. Wheels: JINGU 22.5×8.25 10-stud hub-piloted wheels with 5 hand holes and with TR572 valve stem. Pre-painted BLACK RAL9005 color.
+15. Tires: WESTLAKE 255/70R22.5-16PR tubeless type.
+16. Brake System: SEALCO 110800 spring brake priority valve system and WABCO 2S/1M ABS system. PHILLIPS glad hand 12-0061 and 12-0081, 3/8′′ blue air tube for control and 3/8′′ red for supply. HALDEX Goldseal T30/30, 2.5" stroke brake chamber. FUWA air tank (BLACK RAL9005 color).
+17. Electrical: PHILLIPS mold seal wiring harness, Reserved PSI and GPS connector. (10-year warranty) OPTRONICS LED lights (amp connections for S/T/T lights and .180 bullets for others). The theft proof design used for 4" LED lighting.
+18. Electrical Receptacle: PHILLIPS 15-7292 zinc alloy material with solid pins.
+19. Document Holder: PHILLIPS 16-802. Installed on roadside near crank handle.
+20. Conspicuity Tape: "3M" brand. Installed per federal regulations.
+21. Painting: Abrasive blast of all metal surfaces - not less than SA-2.5 to achieve clean bare steel. Surface will be coated with electrophoresis primer and true acrylic aliphatic urethane topcoat, Color YELLOW RAL1004 and at the corner painted BLACK RAL9005 color. Total thickness not less than 80µm after dry membrane. Coating supplier: NOROO (7-year warranty).

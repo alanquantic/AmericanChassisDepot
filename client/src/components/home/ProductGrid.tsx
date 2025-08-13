@@ -30,12 +30,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
     queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all' }],
   });
 
-  // Asegurémonos de que models sea un array y limitemos a 6 cuando showOnlyNew es true
+  // Asegurémonos de que models sea un array y seleccionemos 6 aleatorios cuando showOnlyNew es true
   let models = Array.isArray(data) ? data : [];
   
-  // Si showOnlyNew es true (estamos en el home), limitamos a 6 productos
+  // Si showOnlyNew es true (estamos en el home), seleccionamos 6 productos aleatorios
   if (showOnlyNew && models.length > 6) {
-    models = models.slice(0, 6);
+    // Mezclar el array y tomar los primeros 6
+    const shuffled = models.sort(() => 0.5 - Math.random());
+    models = shuffled.slice(0, 6);
   }
 
   // Handle filter changes

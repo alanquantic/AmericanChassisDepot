@@ -1,0 +1,39 @@
+﻿40/45/48/53' Extendable Triaxle Container Chassis
+Technical Specifications
+Overall Length: 40′−8′′ or 45′−8′′ or 48′−8′′ or 53′−8′′ (Excluding dock bumpers)
+Overall Width: 96" (over tire 102")
+Overall Height: 58′′
+Fifth Wheel Height: 47±1′′
+Rear Bolster Height: 48±1′′
+Kingpin Location: 24′′ (From the rear face of the front bolster)
+Landing Gear Location: 113−3/4′′ (From the kingpin center)
+Tridem Location: 41-3/4" (From rear face of rear bolster to rear axle center when extended)
+Axle Spread: 60′′+60′′
+Slider Bogie Setting: 48′′ travel in 4" increment
+Tare Weight: 11,420 lbs (approximately)
+Payload: 67,200 lbs (30,480 kg)
+Steel Frame & Components
+1. Main Beam: WI20​9lb/ft hot-rolled H-beam, ASTM A572 Grade 50 or equivalent.
+2. Cross Member: 3/16" thick x 2 1/2" wide 4 3/4" deep channel with profiled bar type diagonal brace for extension frame and 3/16" thick x 3 1/8" wide 6 5/8" deep channel with profiled bar type diagonal brace for the rear main beam.
+3. Gn Member: 4" deep x 4" wide fabricated H-beam by Grade 80 steel, with 5/8′′ thick flanges and 5/16′′ thick web. Gooseneck flippers for changing the GN's height for ISO/ AAR tunnels.
+4. Upper Coupler: 5/16′′ pick up plate with JOST 2" diameter square type king pin per SAE standard, 380-420 HB, with 2" water drain holes, design to be integrated with main frame through welding.
+5. Front Bolster: 8" wide x 10" high x 3/16" thick open section, with 3−1/2′′ chamfer in full length for gathering container in operation. 7-way receptacle and glad hands are in the center of front bolster. Casted corner caps (TOCA 905-940-000-RS/cs).
+6. Rear Bolster: 8" wide x 3/8" thick top plate with 7" wide x 7" deep ×3/16′′ thick "U" type bottom channel.
+7. Rear Bumper: 4′′×4′′×3/16′′ square tube step with taper "H" section vertical member. Bar is bolted to uprights. The bumper is bolted to rear bumper mounting bracket welded on main beam.
+8. Extension Frame: Fabricated I-beam 8 1/4′\inch deep with 5 1/4"×3/8" thick top and bottom flanges with 1/4′′ thick web. Air operated locking pins, activated by spring brakes on both side of the trailer through third gladhand on front sill.
+9. Sliding Suspension Frame: A sidemount friction slider with "Z" type slider rail fabricated by hi-tensile minimum 80,000 psi steel, 3/16′′ thick crossmembers reinforced with gussets. The slider with four (4) index pins operated mechanical manner. Lock pin mechanism with removable and replaceable components.
+10. Front Locking Pin: TOCA 905-910-000-LH/RH
+11. Rear Twist Lock: TOCA 905-800-400B/905-800-500B
+12. Landing Gear: AXN FW32E00J with 60,000 lbs capacity, 2-speed 17" travel with low "T" shoes. Crank handle is located on the driver's side of the chassis. Pre-painted BLACK RAL9005 color. Landing gear brackets are bolted on the main beam as the layout.
+13. Suspension: AXN sidemount OS 60" tri-axle, overslung configuration with medium-arch 3-leaf spring (355-00). Pre- painted BLACK RAL9005 color.
+14. Axles: AXN 5" round axles with 22500lb capacity; 77.5" track, Q+16.5"×7" 4707Q brake with AXN R23 linings. Dust shields are provided. Pre-painted BLACK RAL9005 color. 1.5-28 spline, HALDEX 5.5" automatic slack adjusters. Reserved PSI interface; Heat Sensing Labels. Axle Installation orientation: 90 degrees REAR, chambers DOWN (2 abs ready front and rear, I non abs mid per unit).
+15. Wheel End: AXN Hub & Drum Assembly P/N H30-0647BFNTZ/H30-0647BFNZ. SKF grease Hub Cap. SKF seals and Hyatt / General Bearing Company (China) bearings. Spindle nut: AXN Single nut.
+16. Lubricant: MOBILITH SHC 007 Synthetic Semi-Fluid Grease lubricant.
+17. Wheels: JINGU 22.5×8.25 10-stud hub-piloted wheels with 5 hand holes and with TR572 valve stem. Pre-painted BLACK RAL9005 color.
+18. Tires: SAILUN 11R22.5-16PR tubeless type, S665 tread without owner's logo.
+19. Brake System: SEALCO 110800 spring brake priority valve system, SEALCO 110580 control line valve and WABCO 4S/2M ABS system. PHILLIPS glad hand 12-13807 and 12-13607, 3/8′′ blue air tube for control and 1/2′′ red for supply. HALDEX Goldseal T30/30, 2.5" stroke brake chamber.
+20. Electrical: PHILLIPS mold seal wiring harness, Reserved PSI and GPS connector. OPTRONICS LED lights (amp connections for S/T/T lights and .180 bullets for others). The theft proof design used for 4" LED lighting.
+21. Electrical Receptacle: PHILLIPS 15-7292 zinc alloy material with solid pins.
+22. Document Holder: PHILLIPS 16-802. Installed on roadside near crank handle.
+23. Conspicuity Tape: "3M" brand. Installed per federal regulations.
+24. Painting: Abrasive blast of all metal surfaces not less than SA-2.5 to achieve clean bare steel. Surface will be coated with electrophoresis primer and true acrylic aliphatic urethane topcoat. Color YELLOW RAL1004 and at the corner painted BLACK RAL9005 color. Total thickness not less than 80µm after dry membrane. Coating supplier: NOROO

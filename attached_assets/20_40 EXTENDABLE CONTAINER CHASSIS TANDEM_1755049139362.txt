@@ -1,0 +1,38 @@
+﻿20/40 EXTENDABLE CONTAINER CHASSIS TANDEM
+Technical Specifications
+Overall Length: 29 -11" retracted or 40′−10′′ extended
+Overall Width: 96"
+Fifth Wheel Height: 48±1′′
+Kingpin Location: 24′′ (From rear face of front bolster)
+Landing Gear Location: 100′′ (From centerline of kingpin)
+Axle Spread: 49"
+Tandem Location: 54′′ (From rear face of rear bolster)
+Tare Weight: 7,500 lbs ±2%
+Payload: 44,800 lbs in 20' position; 67,200 lbs in 40' position
+Steel Frame & Components
+1. Front Main Beam: Fabricated I-beam with high strength Grade 100 steel flanges.
+2. Cross Member: Fabricated 3/16′′ thick channel with profiled bar type diagonal brace.
+3. Upper Coupler: 5/16′′ pick up plate with JOST 2" diameter square type king pin per SAE standard, 380-420 HB, with 2" water drain holes, design to be integrated with main frame through welding.
+4. Front Bolster: 8" wide x 10" high ×1/4′′ thick open section, with 3−1/2′′ chamfer in full length for gathering container in operation. 7-way receptacle and glad hands are located in the center of front bolster. Casted corner caps (TOCA 905-940-000-RS/cs).
+5. Front Locking Pin: TOCA 905-910-000-LH/RH
+6. Center Bolster: 8" wide x 6" deep ×1/4′′ thick tube section. ASTM A-500 GR.B or equivalent
+7. Center Twist Lock: TOCA 905-160-000
+8. Rear Bolster: 8" wide ×3/8′′ thick top plate with 7" wide x 6−5/8′′ deep ×1/4′′ thick "U" type bottom channel.
+9. Rear Twist Lock: TOCA 905-130-000-90-LH/RH
+10. Rear Bumper: 4′′×4′′ square tube step with taper "H" section vertical member. Bar is welded to uprights and main beam.
+11. Extension Beam: Fabricated 7−5/8′′ tall x 5−1/4′′ wide I-beam with high strength Grade 100 steel flanges.
+12. Rear Main Beam: WI2⊙l9lb/ft hot-rolled H-beam, ASTM A572 Grade 50 or equivalent.
+13. Locking System: Air operated locking pins, Activated by 24/24 spring brakes on both sides of the trailer through third glad hand on front sill.
+14. Landing Gear: AXN FW32E00J with 60,000 lbs capacity, 2-speed 17" travel with low "T" shoes. Crank handle is located on the driver's side of the chassis. Pre-painted BLACK color. Landing gear brackets are bolted on the main beam as the layout.
+15. Suspension: AXN mechanical tandem suspension, overslung configuration with 3-leaf high arch springs (354-00). Pre-painted BLACK color.
+16. Axles: AXN 5" round axles with 22500lb capacity; 71.5" track, Q+16.5"×7" 4707Q brake. Pre-painted BLACK color. 1.5-28 spline, HALDEX 5.5" automatic slack adjusters. Reserved PSI interface; Heat Sensing Labels. Axle Installation orientation: 90 degrees rear, Chambers DOWN (1 abs ready front, I non abs rear per unit).
+17. Wheel End: AXN Hub & Drum Assembly P/N H30-0647BFLNTZ/H30-0647BFLNZ, STEMCO 358-4009 Integrated Sentinel Grease Hub Cap, STEMCO seals and bearings. Spindle nut: STEMCO Pro-Torq P/N 447-4743. (5-year warranty wheelend). (Long stud bolt for installing with Aluminum wheels)
+18. Lubricant: Petro Canada precision synthetic EP 00 semi fluid grease lubricant.
+19. Wheels: SUNRISE 22.5×8.25 10-stud hub-piloted Aluminum wheels.
+20. Tires: WESTLAKE 11R22.5-14PR tubeless type.
+21. Brake System: SEALCO 110800 spring brake priority valve system and WABCO 2S/1M ABS system. PHILLIPS glad hand 12-0061 and 12-0081, 3/8′′ blue air tube for control and 3/8′′ red for supply. HALDEX Goldseal T30/30, 2.5" stroke brake chamber. FUWA air tanks.
+22. Electrical: PHILLIPS mold seal wiring harness, Reserved PSI and GPS connector. (10-year warranty) OPTRONICS LED lights (amp connections for S/T/T lights and .180 bullets for others). The theft proof design used for 4" LED lighting.
+23. Electrical Receptacle: PHILLIPS 15-7292 zinc alloy material with solid pins.
+24. Document Holder: PHILLIPS 16-802. Installed on roadside near crank handle.
+25. Conspicuity Tape: "3M" brand. Installed per federal regulations.
+26. Painting: Abrasive blast of all metal surfaces - not less than SA-2.5 to achieve clean bare steel. Surface will be coated with electrophoresis primer and powder topcoat. Color BLACK and at the corner painted YELLOW color. Total thickness not less than 80µm after dry membrane. Coating supplier: PPG (7-year warranty).
