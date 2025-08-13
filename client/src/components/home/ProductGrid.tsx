@@ -27,11 +27,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
     }
   }, [initialSize]);
 
-  // Fetch chassis models with filters - use Spanish condition when language is Spanish
+  // Fetch chassis models with filters - TOTAL SEPARATION by language
   const currentLanguage = getCurrentLanguage();
-  const conditionToUse = showOnlyNew 
-    ? (currentLanguage === 'es' ? 'chassis-nuevos-espanol' : 'new-chassis') 
-    : conditionFilter;
+  const conditionToUse = currentLanguage === 'es' 
+    ? 'chassis-nuevos-espanol' // SOLO chassis españoles para versión en español
+    : (showOnlyNew ? 'new-chassis' : conditionFilter); // Lógica normal para versión inglesa
   
   // Query parameters for filtering chassis
 
@@ -71,8 +71,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
     models = shuffled.slice(0, 6);
   }
 
-  // Handle filter changes
+  // Handle filter changes - ensure Spanish separation
   const handleConditionFilterChange = (value: string) => {
+    // Si estamos en español, ignorar cambios de condición ya que solo tenemos chassis españoles
+    if (currentLanguage === 'es') {
+      return; // No permitir cambio de condición en español
+    }
     setConditionFilter(value);
   };
 
@@ -107,10 +111,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
           {t('browseSelection')}
         </p>
         
-        {/* Condition filter - only show when NOT showOnlyNew */}
-        {!showOnlyNew && (
+        {/* Condition filter - only show when NOT showOnlyNew AND NOT Spanish */}
+        {!showOnlyNew && currentLanguage !== 'es' && (
           <div className="flex flex-wrap justify-center mb-8 gap-4">
-            <span className="text-primary font-montserrat font-medium self-center">{getCurrentLanguage() === 'es' ? 'Condición:' : 'Condition:'}</span>
+            <span className="text-primary font-montserrat font-medium self-center">Condition:</span>
             {getConditions().map(condition => (
               <button
                 key={condition.value}
