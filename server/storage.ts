@@ -8,7 +8,7 @@ import {
   type InsertChassisModel,
   type ContactMessage,
   type InsertContactMessage
-} from "@shared/schema";
+} from "../shared/schema.js";
 import { db } from "./db.js";
 import { eq, ilike, and, or } from "drizzle-orm";
 
