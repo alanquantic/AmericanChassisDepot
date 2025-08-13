@@ -29,9 +29,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
   // Fetch chassis models with filters
   const conditionToUse = showOnlyNew ? 'new-chassis' : conditionFilter;
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
-    queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all', characteristic: characteristicFilter }],
+    queryKey: ['/api/chassis/filter', conditionToUse, sizeFilter, characteristicFilter, Date.now()],
     staleTime: 0, // Force fresh data
     gcTime: 0, // Don't cache
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 
   // Asegurémonos de que models sea un array y seleccionemos 6 aleatorios cuando showOnlyNew es true
