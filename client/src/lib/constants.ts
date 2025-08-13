@@ -10,12 +10,6 @@ export const getConditions = () => {
   ];
 };
 
-export const CONDITIONS = [
-  { name: "All Chassis", value: "all" },
-  { name: "New Chassis", value: "new-chassis" },
-  { name: "Used Chassis", value: "used-chassis" }
-];
-
 export const getSizes = () => {
   const isSpanish = getCurrentLanguage() === 'es';
   return [
@@ -30,18 +24,6 @@ export const getSizes = () => {
     { name: "20-40-45ft", value: "20-40-45ft" }
   ];
 };
-
-export const SIZES = [
-  { name: "All Sizes", value: "all" },
-  { name: "20ft", value: "20ft" },
-  { name: "20-40ft", value: "20-40ft" },
-  { name: "33ft", value: "33ft" },
-  { name: "40ft", value: "40ft" },
-  { name: "40-45ft", value: "40-45ft" },
-  { name: "45ft", value: "45ft" },
-  { name: "53ft", value: "53ft" },
-  { name: "20-40-45ft", value: "20-40-45ft" }
-];
 
 // New characteristics filters
 export const getCharacteristics = () => {
@@ -79,16 +61,7 @@ export const getContactInfo = () => {
   };
 };
 
-export const CONTACT_INFO = {
-  address: "4811 N McCarty St Suite C, Houston, TX 77013",
-  phone: "+1 (442) 257-9946",
-  email: "sales@americanchassisdepot.com",
-  hours: [
-    { day: "Monday - Friday", hours: "8:00 AM - 6:00 PM" },
-    { day: "Saturday", hours: "9:00 AM - 2:00 PM" },
-    { day: "Sunday", hours: "Closed" }
-  ]
-};
+
 
 // Company information
 export const getCompanyInfo = () => {
@@ -119,13 +92,4 @@ export const getCompanyInfo = () => {
   };
 };
 
-export const COMPANY_INFO = {
-  name: "American Chassis Depot",
-  tagline: "Premium Chassis Solutions for Every Need",
-  description: "American Chassis Depot is a leading provider of high-quality chassis solutions for the transportation and logistics industry. We specialize in offering a diverse range of chassis options from the industry's most trusted manufacturers.",
-  benefits: [
-    { icon: "truck", title: "Premium Quality", description: "Top industry brands" },
-    { icon: "tools", title: "Expert Support", description: "Dedicated specialists" },
-    { icon: "certificate", title: "Certified Products", description: "Industry-compliant" }
-  ]
-};
+

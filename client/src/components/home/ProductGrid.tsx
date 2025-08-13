@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
-import { CONDITIONS, SIZES, getConditions, getSizes, getCharacteristics } from '@/lib/constants';
+import { getConditions, getSizes, getCharacteristics } from '@/lib/constants';
 import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import type { ChassisModel } from '@shared/schema';
 
@@ -29,6 +29,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
   const conditionToUse = showOnlyNew ? 'new-chassis' : conditionFilter;
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
     queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all', characteristic: characteristicFilter }],
+    staleTime: 0, // Force fresh data
+    gcTime: 0, // Don't cache
   });
 
   // Asegurémonos de que models sea un array y seleccionemos 6 aleatorios cuando showOnlyNew es true
