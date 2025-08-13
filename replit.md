@@ -17,6 +17,8 @@ Preferred communication style: Simple, everyday language.
 ✓ **Data Separation**: Established complete separation between new (condition_id=3) and used (condition_id=4) chassis
 ✓ **Navigation Logic**: Corrected routing between HomePage (6 random new) and AllProductsPage (all 20 with filters)
 ✓ **Label Management**: Removed "USED" labels from home page while maintaining them on product pages
+✓ **Filter System Overhaul**: Completely fixed characteristic filters with proper exclusion logic (gooseneck products no longer appear in tandem filter)
+✓ **Download Brochure Feature**: Added complete brochure download functionality with contact form and backend integration
 
 ## System Architecture
 

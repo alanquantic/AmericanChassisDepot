@@ -123,16 +123,19 @@ export class DatabaseStorage implements IStorage {
       
       if (characteristic && characteristic !== 'all') {
         filteredModels = filteredModels.filter(model => {
-          const searchText = (model.name + ' ' + model.axleConfig).toLowerCase();
+          const lowerName = model.name.toLowerCase();
+          const lowerAxleConfig = model.axleConfig.toLowerCase();
+          
           switch (characteristic) {
             case 'tandem':
-              return searchText.includes('tandem');
+              // Only match tandem if it's NOT a gooseneck
+              return lowerAxleConfig.includes('tandem') && !lowerName.includes('gooseneck') && !lowerName.includes('gn ');
             case 'triaxle':
-              return searchText.includes('triaxle') || searchText.includes('tri-axle') || searchText.includes('tri axle');
+              return lowerAxleConfig.includes('triaxle') || lowerAxleConfig.includes('tri-axle') || lowerName.includes('triaxle') || lowerName.includes('tri-axle') || lowerName.includes('tri axle');
             case 'gooseneck':
-              return searchText.includes('gooseneck') || searchText.includes('gn ') || model.name.toLowerCase().includes('gn ');
+              return lowerName.includes('gooseneck') || lowerName.includes('gn ');
             case 'extendable':
-              return searchText.includes('extendable') || searchText.includes('extend');
+              return lowerName.includes('extendable') || lowerName.includes('extend');
             default:
               return true;
           }
