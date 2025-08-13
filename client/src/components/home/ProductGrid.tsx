@@ -30,13 +30,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
   // Fetch chassis models with filters
   const conditionToUse = showOnlyNew ? 'new-chassis' : conditionFilter;
   
-  // Debug: log the current query parameters
-  console.log('🔍 Query Parameters:', {
-    condition: conditionToUse,
-    size: sizeFilter, 
-    manufacturer: 'all',
-    characteristic: characteristicFilter
-  });
+  // Query parameters for filtering chassis
 
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
     queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all', characteristic: characteristicFilter }],
@@ -49,7 +43,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
       });
       
       const url = `/api/chassis/filter?${params.toString()}`;
-      console.log('🚀 MAKING REQUEST TO:', url);
       
       const response = await fetch(url);
       if (!response.ok) {
@@ -63,13 +56,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
     refetchOnWindowFocus: true,
   });
 
-  // Debug: log the response data
-  console.log('📦 API Response:', { 
-    data: data?.map(item => ({name: item.name, id: item.id})), 
-    count: data?.length, 
-    isLoading, 
-    error 
-  });
+  // Process API response data
 
   // Asegurémonos de que models sea un array y seleccionemos 6 aleatorios cuando showOnlyNew es true
   let models = Array.isArray(data) ? data : [];
@@ -93,13 +80,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
   };
 
   const handleCharacteristicFilterChange = (value: string) => {
-    console.log('🔄 Changing characteristic filter from', characteristicFilter, 'to', value);
-    console.log('🔄 showOnlyNew is:', showOnlyNew);
-    console.log('🔄 Current characteristicFilter state:', characteristicFilter);
     // Clear cache before changing filter to ensure fresh data
     queryClient.clear();
     setCharacteristicFilter(value);
-    console.log('🔄 After setState, should be:', value);
   };
 
   if (error) {
@@ -171,10 +154,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                     ? 'active-filter' 
                     : 'inactive-filter'
                 }`}
-                onClick={() => {
-                  console.log('🔥 Button clicked for characteristic:', characteristic.value);
-                  handleCharacteristicFilterChange(characteristic.value);
-                }}
+                onClick={() => handleCharacteristicFilterChange(characteristic.value)}
               >
                 {characteristic.name}
               </button>

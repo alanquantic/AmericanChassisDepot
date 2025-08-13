@@ -19,6 +19,7 @@ Preferred communication style: Simple, everyday language.
 ✓ **Label Management**: Removed "USED" labels from home page while maintaining them on product pages
 ✓ **Filter System Overhaul**: Completely fixed characteristic filters with proper exclusion logic (gooseneck products no longer appear in tandem filter)
 ✓ **Download Brochure Feature**: Added complete brochure download functionality with contact form and backend integration
+✓ **CRITICAL BUG RESOLUTION**: Fixed React Query filter bug where parameters weren't being sent to backend - all filters now work perfectly (triaxle shows 5 products, gooseneck shows 6, etc.)
 
 ## System Architecture
 
