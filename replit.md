@@ -12,7 +12,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Successful Changes (August 13, 2025)
 
-✓ **Database Loading Process**: Successfully loaded exactly 20 new chassis from user specification files, replacing all test data
+✓ **Database Loading Process**: Successfully loaded 21 new chassis from user specification files (latest: 53' GN Slider Tandem), replacing all test data
 ✓ **Home Page Configuration**: Fixed to display 6 random chassis (not sequential) with proper randomization
 ✓ **Data Separation**: Established complete separation between new (condition_id=3) and used (condition_id=4) chassis
 ✓ **Navigation Logic**: Corrected routing between HomePage (6 random new) and AllProductsPage (all 20 with filters)
