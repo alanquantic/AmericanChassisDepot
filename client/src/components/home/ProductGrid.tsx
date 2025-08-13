@@ -27,13 +27,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
     }
   }, [initialSize]);
 
-  // Fetch chassis models with filters
-  const conditionToUse = showOnlyNew ? 'new-chassis' : conditionFilter;
+  // Fetch chassis models with filters - use Spanish condition when language is Spanish
+  const currentLanguage = getCurrentLanguage();
+  const conditionToUse = showOnlyNew 
+    ? (currentLanguage === 'es' ? 'chassis-nuevos-espanol' : 'new-chassis') 
+    : conditionFilter;
   
   // Query parameters for filtering chassis
 
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
-    queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all', characteristic: characteristicFilter }],
+    queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all', characteristic: characteristicFilter, language: currentLanguage }],
     queryFn: async () => {
       const params = new URLSearchParams({
         condition: conditionToUse || 'all',
