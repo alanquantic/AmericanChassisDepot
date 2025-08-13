@@ -40,6 +40,23 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
 
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
     queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all', characteristic: characteristicFilter }],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        condition: conditionToUse || 'all',
+        size: sizeFilter || 'all', 
+        manufacturer: 'all',
+        characteristic: characteristicFilter || 'all'
+      });
+      
+      const url = `/api/chassis/filter?${params.toString()}`;
+      console.log('🚀 MAKING REQUEST TO:', url);
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    },
     staleTime: 0, // Force fresh data
     gcTime: 0, // Don't cache
     refetchOnMount: true,
