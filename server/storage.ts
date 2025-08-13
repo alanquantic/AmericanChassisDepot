@@ -123,16 +123,16 @@ export class DatabaseStorage implements IStorage {
       
       if (characteristic && characteristic !== 'all') {
         filteredModels = filteredModels.filter(model => {
-          const nameAndAxleConfig = (model.name + ' ' + model.axleConfig).toLowerCase();
+          const searchText = (model.name + ' ' + model.axleConfig).toLowerCase();
           switch (characteristic) {
             case 'tandem':
-              return nameAndAxleConfig.includes('tandem');
+              return searchText.includes('tandem');
             case 'triaxle':
-              return nameAndAxleConfig.includes('triaxle') || nameAndAxleConfig.includes('tri-axle') || nameAndAxleConfig.includes('tri axle');
+              return searchText.includes('triaxle') || searchText.includes('tri-axle') || searchText.includes('tri axle');
             case 'gooseneck':
-              return nameAndAxleConfig.includes('gooseneck') || nameAndAxleConfig.includes('gn');
+              return searchText.includes('gooseneck') || searchText.includes('gn ') || model.name.toLowerCase().includes('gn ');
             case 'extendable':
-              return nameAndAxleConfig.includes('extendable') || nameAndAxleConfig.includes('extend');
+              return searchText.includes('extendable') || searchText.includes('extend');
             default:
               return true;
           }
