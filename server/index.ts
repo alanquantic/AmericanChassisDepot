@@ -1,9 +1,17 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes.js";
-import { setupVite, serveStatic, log } from "./vite.js";
 import "./services/mail.js";
 
 const app = express();
+function log(message: string, source = "express") {
+  const formattedTime = new Date().toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+  console.log(`${formattedTime} [${source}] ${message}`);
+}
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -51,8 +59,10 @@ async function bootstrap() {
   // Local dev/preview server only (not on Vercel)
   if (!process.env.VERCEL) {
     if (app.get("env") === "development") {
+      const { setupVite } = await import("./vite.js");
       await setupVite(app, server);
     } else {
+      const { serveStatic } = await import("./vite.js");
       serveStatic(app);
     }
 
