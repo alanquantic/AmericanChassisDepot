@@ -30,8 +30,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
     queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all' }],
   });
 
-  // Asegurémonos de que models sea un array
-  const models = Array.isArray(data) ? data : [];
+  // Asegurémonos de que models sea un array y limitemos a 6 cuando showOnlyNew es true
+  let models = Array.isArray(data) ? data : [];
+  
+  // Si showOnlyNew es true (estamos en el home), limitamos a 6 productos
+  if (showOnlyNew && models.length > 6) {
+    models = models.slice(0, 6);
+  }
 
   // Handle filter changes
   const handleConditionFilterChange = (value: string) => {
@@ -130,11 +135,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                   className="bg-white rounded-lg border border-neutral-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                 >
                   <div className="h-56 bg-neutral-200 overflow-hidden relative">
-                    <div className={`absolute top-0 left-0 text-white px-3 py-1 m-2 rounded font-montserrat text-sm font-semibold ${
-                      model.conditionId === 3 ? 'bg-[#B22234]' : 'bg-[#0A3161]'
-                    }`}>
-                      {conditionName}
-                    </div>
+                    {/* Solo mostrar etiqueta de condición cuando NO es showOnlyNew */}
+                    {!showOnlyNew && (
+                      <div className={`absolute top-0 left-0 text-white px-3 py-1 m-2 rounded font-montserrat text-sm font-semibold ${
+                        model.conditionId === 3 ? 'bg-[#B22234]' : 'bg-[#0A3161]'
+                      }`}>
+                        {conditionName}
+                      </div>
+                    )}
                     <div className="absolute top-0 right-0 bg-primary text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold">
                       {model.manufacturer}
                     </div>
@@ -181,11 +189,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
           )}
         </div>
         
-        <div className="text-center mt-12">
-          <Link href="/products" className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 shadow-lg">
-            {t('viewAllProducts')}
-          </Link>
-        </div>
+        {/* Solo mostrar botón View All Products cuando estamos en el home (showOnlyNew = true) */}
+        {showOnlyNew && (
+          <div className="text-center mt-12">
+            <Link href="/products" className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 shadow-lg">
+              {t('viewAllProducts')}
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );
