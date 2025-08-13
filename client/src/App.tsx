@@ -10,6 +10,7 @@ import ContactPage from "@/pages/ContactPage";
 import AboutPage from "@/pages/AboutPage";
 import NewChassisPage from "@/pages/NewChassisPage";
 import UsedChassisPage from "@/pages/UsedChassisPage";
+import AllProductsPage from "@/pages/AllProductsPage";
 
 function Router() {
   return (
@@ -36,7 +37,7 @@ function Router() {
         {() => <UsedChassisPage />}
       </Route>
       <Route path="/products">
-        {() => <HomePage key="products-page" initialSize="all" />}
+        {() => <AllProductsPage />}
       </Route>
       {/* Tamaños de chasis */}
       <Route path="/size/:size">

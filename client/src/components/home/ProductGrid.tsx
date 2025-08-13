@@ -25,7 +25,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
   }, [initialSize]);
 
   // Fetch chassis models with filters
-  const conditionToUse = showOnlyNew ? 'new-chassis' : conditionFilter === 'all' ? 'all' : conditionFilter;
+  const conditionToUse = showOnlyNew ? 'new-chassis' : conditionFilter;
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
     queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all' }],
   });
