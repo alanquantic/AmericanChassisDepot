@@ -6,6 +6,7 @@ import { RulerIcon, WeightIcon } from '@/lib/icons';
 import { getPrimaryCharacteristic } from '@/lib/chassisUtils';
 import { getConditions, getSizes, getCharacteristics } from '@/lib/constants';
 import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
+import { queryClient } from '@/lib/queryClient';
 import type { ChassisModel } from '@shared/schema';
 
 interface ProductGridProps {
@@ -54,6 +55,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
   };
 
   const handleCharacteristicFilterChange = (value: string) => {
+    // Clear cache before changing filter to ensure fresh data
+    queryClient.clear();
     setCharacteristicFilter(value);
   };
 
