@@ -202,9 +202,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
               // Find condition name based on model's conditionId
               const currentLang = getCurrentLanguage();
               const isSpanish = currentLang === 'es';
-              const conditionName = model.conditionId === 3 
-                ? (isSpanish ? 'Nuevo' : 'New')
-                : (isSpanish ? 'Usado' : 'Used');
+              
+              // CRITICAL: Los chassis españoles (conditionId=5) siempre son "Nuevo"
+              let conditionName;
+              if (model.conditionId === 5) {
+                conditionName = 'Nuevo'; // Chassis españoles siempre nuevos
+              } else if (model.conditionId === 3) {
+                conditionName = isSpanish ? 'Nuevo' : 'New';
+              } else {
+                conditionName = isSpanish ? 'Usado' : 'Used';
+              }
               
               return (
                 <div 
@@ -215,7 +222,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                     {/* Solo mostrar etiqueta de condición cuando NO es showOnlyNew */}
                     {!showOnlyNew && (
                       <div className={`absolute top-0 left-0 text-white px-3 py-1 m-2 rounded font-montserrat text-sm font-semibold ${
-                        model.conditionId === 3 ? 'bg-[#B22234]' : 'bg-[#0A3161]'
+                        (model.conditionId === 3 || model.conditionId === 5) ? 'bg-[#B22234]' : 'bg-[#0A3161]'
                       }`}>
                         {conditionName}
                       </div>
@@ -230,7 +237,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-montserrat font-bold text-primary mb-2">{model.name}</h3>
+                    <h3 className="text-xl font-montserrat font-bold text-primary mb-2">
+                      {model.name.split(' ').map(word => 
+                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                      ).join(' ')}
+                    </h3>
                     <div className="flex items-center gap-2 mb-3 text-neutral-600">
                       <RulerIcon className="w-4 h-4" />
                       <span>{model.size}</span>
