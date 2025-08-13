@@ -22,8 +22,11 @@ export const getSizes = () => {
     { name: isSpanish ? "Todos los Tamaños" : "All Sizes", value: "all" },
     { name: "20ft", value: "20ft" },
     { name: "20-40ft", value: "20-40ft" },
+    { name: "33ft", value: "33ft" },
     { name: "40ft", value: "40ft" },
     { name: "40-45ft", value: "40-45ft" },
+    { name: "45ft", value: "45ft" },
+    { name: "53ft", value: "53ft" },
     { name: "20-40-45ft", value: "20-40-45ft" }
   ];
 };
@@ -32,10 +35,25 @@ export const SIZES = [
   { name: "All Sizes", value: "all" },
   { name: "20ft", value: "20ft" },
   { name: "20-40ft", value: "20-40ft" },
+  { name: "33ft", value: "33ft" },
   { name: "40ft", value: "40ft" },
   { name: "40-45ft", value: "40-45ft" },
+  { name: "45ft", value: "45ft" },
+  { name: "53ft", value: "53ft" },
   { name: "20-40-45ft", value: "20-40-45ft" }
 ];
+
+// New characteristics filters
+export const getCharacteristics = () => {
+  const isSpanish = getCurrentLanguage() === 'es';
+  return [
+    { name: isSpanish ? "Todas las Características" : "All Characteristics", value: "all" },
+    { name: isSpanish ? "Tandem" : "Tandem", value: "tandem" },
+    { name: isSpanish ? "Triaxial" : "Tri Axle", value: "triaxle" },
+    { name: isSpanish ? "Cuello de Ganso" : "Gooseneck", value: "gooseneck" },
+    { name: isSpanish ? "Extensible" : "Extendable", value: "extendable" }
+  ];
+};
 
 // Contact information
 export const getContactInfo = () => {

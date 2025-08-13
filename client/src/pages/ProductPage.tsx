@@ -7,6 +7,7 @@ import FloatingButton from '@/components/layout/FloatingButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon, TruckIcon, CogIcon } from '@/lib/icons';
 import ContactForm from '@/components/shared/ContactForm';
+import { DownloadBrochureForm } from '@/components/shared/DownloadBrochureForm';
 import { useLanguage } from '@/lib/i18n-simple';
 import type { ChassisModel } from '@shared/schema';
 
@@ -167,12 +168,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                     <p className="text-neutral-600 mb-8">
                       {model?.description}
                     </p>
-                    <Link 
-                      href="/contact" 
-                      className="inline-block bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-6 py-3 rounded transition duration-200"
-                    >
-                      Request Quote
-                    </Link>
+                    <div className="flex flex-wrap gap-4">
+                      <Link 
+                        href="/contact" 
+                        className="inline-block bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-6 py-3 rounded transition duration-200"
+                      >
+                        Request Quote
+                      </Link>
+                      <DownloadBrochureForm 
+                        chassisName={model?.name || ''} 
+                        chassisSlug={model?.slug || ''} 
+                      />
+                    </div>
                   </>
                 )}
               </div>

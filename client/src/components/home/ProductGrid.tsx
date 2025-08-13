@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
-import { CONDITIONS, SIZES, getConditions, getSizes } from '@/lib/constants';
+import { CONDITIONS, SIZES, getConditions, getSizes, getCharacteristics } from '@/lib/constants';
 import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import type { ChassisModel } from '@shared/schema';
 
@@ -16,6 +16,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
   const { t } = useLanguage();
   const [conditionFilter, setConditionFilter] = useState('all');
   const [sizeFilter, setSizeFilter] = useState(initialSize || 'all');
+  const [characteristicFilter, setCharacteristicFilter] = useState('all');
   
   // Update size filter if initialSize prop changes
   useEffect(() => {
@@ -27,7 +28,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
   // Fetch chassis models with filters
   const conditionToUse = showOnlyNew ? 'new-chassis' : conditionFilter;
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
-    queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all' }],
+    queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all', characteristic: characteristicFilter }],
   });
 
   // Asegurémonos de que models sea un array y seleccionemos 6 aleatorios cuando showOnlyNew es true
@@ -47,6 +48,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
 
   const handleSizeFilterChange = (value: string) => {
     setSizeFilter(value);
+  };
+
+  const handleCharacteristicFilterChange = (value: string) => {
+    setCharacteristicFilter(value);
   };
 
   if (error) {
@@ -105,6 +110,26 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
             </button>
           ))}
         </div>
+
+        {/* Characteristics filter - only show when NOT showOnlyNew */}
+        {!showOnlyNew && (
+          <div className="flex flex-wrap justify-center mb-8 gap-4">
+            <span className="text-primary font-montserrat font-medium self-center">{getCurrentLanguage() === 'es' ? 'Filtrar por Características:' : 'Filter by Characteristics:'}</span>
+            {getCharacteristics().map(characteristic => (
+              <button
+                key={characteristic.value}
+                className={`font-montserrat font-medium px-4 py-2 rounded transition duration-200 ${
+                  characteristicFilter === characteristic.value 
+                    ? 'active-filter' 
+                    : 'inactive-filter'
+                }`}
+                onClick={() => handleCharacteristicFilterChange(characteristic.value)}
+              >
+                {characteristic.name}
+              </button>
+            ))}
+          </div>
+        )}
         
         {/* Products grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

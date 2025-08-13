@@ -76,7 +76,7 @@ export class DatabaseStorage implements IStorage {
     return model;
   }
 
-  async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string): Promise<ChassisModel[]> {
+  async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string, characteristic?: string): Promise<ChassisModel[]> {
     try {
       // First get all chassis models
       const allModels = await db.select().from(chassisModels).execute();
@@ -98,7 +98,20 @@ export class DatabaseStorage implements IStorage {
       }
       
       if (size && size !== 'all') {
-        filteredModels = filteredModels.filter(model => model.size === size);
+        filteredModels = filteredModels.filter(model => {
+          // Handle specific size filters that may need range matching
+          if (size === '40-45ft') {
+            return model.size === '40-45ft' || model.size.includes('40') && model.size.includes('45');
+          } else if (size === '20-40ft') {
+            return model.size === '20-40ft' || (model.size.includes('20') && model.size.includes('40') && !model.size.includes('45'));
+          } else if (size === '20-40-45ft') {
+            return model.size === '20-40-45ft' || model.size.includes('20-40-45');
+          } else if (size === '33ft') {
+            return model.size.includes('33');
+          } else {
+            return model.size === size;
+          }
+        });
       }
       
       if (manufacturer && manufacturer !== 'all') {
@@ -106,6 +119,24 @@ export class DatabaseStorage implements IStorage {
         filteredModels = filteredModels.filter(model => 
           model.manufacturer.toLowerCase().includes(lowerCaseManufacturer)
         );
+      }
+      
+      if (characteristic && characteristic !== 'all') {
+        filteredModels = filteredModels.filter(model => {
+          const nameAndAxleConfig = (model.name + ' ' + model.axleConfig).toLowerCase();
+          switch (characteristic) {
+            case 'tandem':
+              return nameAndAxleConfig.includes('tandem');
+            case 'triaxle':
+              return nameAndAxleConfig.includes('triaxle') || nameAndAxleConfig.includes('tri-axle') || nameAndAxleConfig.includes('tri axle');
+            case 'gooseneck':
+              return nameAndAxleConfig.includes('gooseneck') || nameAndAxleConfig.includes('gn');
+            case 'extendable':
+              return nameAndAxleConfig.includes('extendable') || nameAndAxleConfig.includes('extend');
+            default:
+              return true;
+          }
+        });
       }
       
       return filteredModels;

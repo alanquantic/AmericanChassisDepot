@@ -75,8 +75,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         manufacturer = undefined;
       }
       
+      // Extract characteristic from query parameters
+      const characteristic = req.query.characteristic !== 'all' ? req.query.characteristic as string : undefined;
+      
       try {
-        const models = await storage.filterChassisModels(conditionSlug, size, manufacturer);
+        const models = await storage.filterChassisModels(conditionSlug, size, manufacturer, characteristic);
         // Asegurarnos de que models es un array antes de devolverlo
         if (Array.isArray(models)) {
           return res.json(models);
@@ -126,6 +129,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching chassis model:", error);
       return res.status(500).json({ message: "Failed to fetch chassis model" });
+    }
+  });
+
+  // Download brochure endpoint
+  app.post(`${apiPrefix}/download-brochure`, async (req, res) => {
+    try {
+      const { name, email, company, phone, chassisName, chassisSlug } = req.body;
+      
+      // Save the brochure request to database (optional)
+      await storage.createContactMessage({
+        name,
+        email,
+        company: company || null,
+        phone: phone || null,
+        message: `Brochure Request: ${chassisName} (${chassisSlug}) - User requested brochure for chassis`,
+        createdAt: new Date().toISOString()
+      });
+
+      // For now, return a simple PDF placeholder (in production you'd generate actual PDFs)
+      const pdfBuffer = Buffer.from(`
+        PDF PLACEHOLDER FOR ${chassisName}
+        
+        Thank you ${name} from ${company} for your interest in our ${chassisName} chassis.
+        
+        Contact Information:
+        Email: ${email}
+        Phone: ${phone}
+        
+        This is a placeholder response. In production, this would be an actual PDF brochure.
+      `);
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${chassisSlug}-brochure.pdf"`);
+      res.send(pdfBuffer);
+      
+    } catch (error) {
+      console.error("Error processing brochure download:", error);
+      return res.status(500).json({ message: "Failed to process brochure download" });
     }
   });
 
