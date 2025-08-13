@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
+import { getPrimaryCharacteristic } from '@/lib/chassisUtils';
 import { getConditions, getSizes, getCharacteristics } from '@/lib/constants';
 import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import type { ChassisModel } from '@shared/schema';
@@ -188,7 +189,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                       <span>{model.size}</span>
                       <span className="mx-2">|</span>
                       <WeightIcon className="w-4 h-4" />
-                      <span>{model.axleConfig}</span>
+                      <span>{getPrimaryCharacteristic(model.name, model.axleConfig)}</span>
                     </div>
                     <p className="text-neutral-600 mb-4">
                       {model.description}

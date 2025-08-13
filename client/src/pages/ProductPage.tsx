@@ -9,6 +9,7 @@ import { RulerIcon, WeightIcon, TruckIcon, CogIcon } from '@/lib/icons';
 import ContactForm from '@/components/shared/ContactForm';
 import { DownloadBrochureForm } from '@/components/shared/DownloadBrochureForm';
 import { useLanguage } from '@/lib/i18n-simple';
+import { getPrimaryCharacteristic } from '@/lib/chassisUtils';
 import type { ChassisModel } from '@shared/schema';
 
 interface ProductPageProps {
@@ -48,6 +49,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
   const handleThumbnailClick = (image: string) => {
     setSelectedImage(image);
   };
+
+
   
   if (modelError) {
     return (
@@ -162,7 +165,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                       </div>
                       <div className="flex items-center gap-2">
                         <TruckIcon className="w-5 h-5" />
-                        <span>{model?.axleConfig}</span>
+                        <span>{getPrimaryCharacteristic(model?.name || '', model?.axleConfig || '')}</span>
                       </div>
                     </div>
                     <p className="text-neutral-600 mb-8">
