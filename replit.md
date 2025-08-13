@@ -22,6 +22,7 @@ Preferred communication style: Simple, everyday language.
 ✓ **Download Brochure Feature**: Added complete brochure download functionality with contact form and backend integration
 ✓ **CRITICAL BUG RESOLUTION**: Fixed React Query filter bug where parameters weren't being sent to backend - all filters now work perfectly (triaxle shows 5 products, gooseneck shows 6, etc.)
 ✓ **Multilingual Database**: Complete separation of English and Spanish chassis catalogs - no content mixing between versions
+✓ **UI Language Logic**: Spanish chassis card hidden from interface - chassis automatically switch based on language selection
 
 ## System Architecture
 

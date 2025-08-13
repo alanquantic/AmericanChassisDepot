@@ -48,13 +48,19 @@ const ChassisTypeShowcase: React.FC = () => {
               </div>
             ))
           ) : conditions.length > 0 ? (
-            conditions.map((condition) => (
+            conditions
+              .filter((condition) => condition.slug !== 'chassis-nuevos-espanol') // Ocultar la condición española
+              .map((condition) => (
               <div key={condition.id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" id={condition.slug}>
                 <div className="relative h-64 bg-neutral-200 overflow-hidden">
                   <div className="absolute top-0 left-0 bg-[#E30D16] text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold z-10">
                     {condition.name}
                   </div>
-                  
+                  <img 
+                    src={condition.imageUrl} 
+                    alt={condition.name} 
+                    className="w-full h-full object-cover object-center transform transition-transform duration-700 hover:scale-110"
+                  />
                 </div>
                 <div className="p-6">
                   <h3 className="text-2xl font-montserrat font-bold text-primary mb-3">{condition.name}</h3>
