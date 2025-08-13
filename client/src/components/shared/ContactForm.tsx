@@ -116,7 +116,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                 <FormControl>
                   <Input 
                     {...field} 
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -134,7 +134,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                   <Input 
                     {...field} 
                     type="email"
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -153,7 +153,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                 <FormControl>
                   <Input 
                     {...field} 
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600 transition-all duration-200 hover:border-primary" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -171,7 +171,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                   <Input 
                     {...field} 
                     type="tel"
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600 transition-all duration-200 hover:border-primary" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -192,7 +192,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary">
+                    <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600 transition-all duration-200 hover:border-primary">
                       <SelectValue placeholder={t('selectChassisType')} />
                     </SelectTrigger>
                   </FormControl>
@@ -223,7 +223,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                     type="number"
                     min="1"
                     placeholder={t('howManyUnits')}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary" 
+                    className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600 transition-all duration-200 hover:border-primary" 
                   />
                 </FormControl>
                 <FormMessage />
@@ -242,7 +242,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
                 <Textarea 
                   {...field} 
                   rows={4}
-                  className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 transition-all duration-200 hover:border-primary" 
+                  className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600 transition-all duration-200 hover:border-primary" 
                 />
               </FormControl>
               <FormMessage />
