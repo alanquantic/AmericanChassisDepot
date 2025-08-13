@@ -1,10 +1,10 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { z } from "zod";
-import { storage } from "./storage";
+import { storage } from "./storage.js";
 import { insertContactMessageSchema } from "@shared/schema";
 import { ZodError } from "zod";
-import { sendContactNotification } from "./services/mail";
+import { sendContactNotification } from "./services/mail.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API route prefix
