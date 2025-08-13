@@ -9,7 +9,7 @@ import {
   type ContactMessage,
   type InsertContactMessage
 } from "@shared/schema";
-import { db } from "./db";
+import { db } from "./db.js";
 import { eq, ilike, and, or } from "drizzle-orm";
 
 // Storage interface
