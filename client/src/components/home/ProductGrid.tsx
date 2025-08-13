@@ -29,10 +29,29 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
 
   // Fetch chassis models with filters
   const conditionToUse = showOnlyNew ? 'new-chassis' : conditionFilter;
+  
+  // Debug: log the current query parameters
+  console.log('🔍 Query Parameters:', {
+    condition: conditionToUse,
+    size: sizeFilter, 
+    manufacturer: 'all',
+    characteristic: characteristicFilter
+  });
+
   const { data, isLoading, error } = useQuery<ChassisModel[]>({
     queryKey: ['/api/chassis/filter', { condition: conditionToUse, size: sizeFilter, manufacturer: 'all', characteristic: characteristicFilter }],
     staleTime: 0, // Force fresh data
     gcTime: 0, // Don't cache
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
+
+  // Debug: log the response data
+  console.log('📦 API Response:', { 
+    data: data?.map(item => ({name: item.name, id: item.id})), 
+    count: data?.length, 
+    isLoading, 
+    error 
   });
 
   // Asegurémonos de que models sea un array y seleccionemos 6 aleatorios cuando showOnlyNew es true
@@ -51,10 +70,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
   };
 
   const handleSizeFilterChange = (value: string) => {
+    console.log('🔄 Changing size filter from', sizeFilter, 'to', value);
+    queryClient.clear();
     setSizeFilter(value);
   };
 
   const handleCharacteristicFilterChange = (value: string) => {
+    console.log('🔄 Changing characteristic filter from', characteristicFilter, 'to', value);
     // Clear cache before changing filter to ensure fresh data
     queryClient.clear();
     setCharacteristicFilter(value);
