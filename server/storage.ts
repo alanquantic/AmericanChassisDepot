@@ -91,9 +91,14 @@ export class DatabaseStorage implements IStorage {
       let filteredModels = [...allModels];
       
       if (conditionSlug && conditionSlug !== 'all') {
-        const condition = await this.getConditionBySlug(conditionSlug);
-        if (condition) {
-          filteredModels = filteredModels.filter(model => model.conditionId === condition.id);
+        if (conditionSlug === 'english-only') {
+          // CRITICAL: Exclude Spanish chassis (condition_id = 5) for English version
+          filteredModels = filteredModels.filter(model => model.conditionId !== 5);
+        } else {
+          const condition = await this.getConditionBySlug(conditionSlug);
+          if (condition) {
+            filteredModels = filteredModels.filter(model => model.conditionId === condition.id);
+          }
         }
       }
       

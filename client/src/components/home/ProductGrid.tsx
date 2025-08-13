@@ -29,9 +29,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
 
   // Fetch chassis models with filters - TOTAL SEPARATION by language
   const currentLanguage = getCurrentLanguage();
-  const conditionToUse = currentLanguage === 'es' 
-    ? 'chassis-nuevos-espanol' // SOLO chassis españoles para versión en español
-    : (showOnlyNew ? 'new-chassis' : conditionFilter); // Lógica normal para versión inglesa
+  
+  // CRITICAL: Complete separation between languages
+  let conditionToUse;
+  if (currentLanguage === 'es') {
+    // ESPAÑOL: SOLO chassis españoles, sin excepciones
+    conditionToUse = 'chassis-nuevos-espanol';
+  } else {
+    // INGLÉS: SOLO chassis ingleses (excluir completamente los españoles)
+    if (showOnlyNew) {
+      conditionToUse = 'new-chassis';
+    } else {
+      // Si el filtro es 'all', necesitamos asegurar que NO incluya chassis españoles
+      conditionToUse = conditionFilter === 'all' ? 'english-only' : conditionFilter;
+    }
+  }
   
   // Query parameters for filtering chassis
 
