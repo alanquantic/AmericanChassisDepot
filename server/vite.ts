@@ -68,7 +68,9 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  // When running built server locally, compiled files live in dist/server
+  // so the client build output is one level up in dist/
+  const distPath = path.resolve(import.meta.dirname, "..");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(

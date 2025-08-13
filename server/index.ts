@@ -16,7 +16,7 @@ app.use((req, res, next) => {
   res.json = function (bodyJson, ...args) {
     capturedJsonResponse = bodyJson;
     return originalResJson.apply(res, [bodyJson, ...args]);
-  };
+  } as typeof res.json;
 
   res.on("finish", () => {
     const duration = Date.now() - start;
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
+async function bootstrap() {
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -48,32 +48,38 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+  // Local dev/preview server only (not on Vercel)
+  if (!process.env.VERCEL) {
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught Exception:', error);
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    });
+
+    const port = 5000;
+    server.listen({
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    }, () => {
+      log(`Server running on port ${port}`);
+      log(`Environment: ${process.env.NODE_ENV}`);
+    });
   }
+}
 
-  // Enhanced error handling
-  process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-  });
+// Initialize immediately
+void bootstrap();
 
-  process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  });
-
-  // ALWAYS serve the app on port 5000
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`Server running on port ${port}`);
-    log(`Environment: ${process.env.NODE_ENV}`);
-  });
-})();
+// Export an Express-compatible handler for Vercel serverless
+export default function handler(req: Request, res: Response) {
+  return (app as unknown as (req: Request, res: Response) => void)(req, res);
+}
