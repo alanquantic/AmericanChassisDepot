@@ -1,0 +1,34 @@
+﻿20/40' SLIDER 12PINS CONTAINER CHASSIS TANDEM
+Especificaciones Técnicas
+Longitud Total: 9.44 m-17.78 cm (retraído) o 12.19 m-27.94 cm (extendido)
+Anchura Total: 243.84 cm
+Altura De La Quinta Rueda: 119.38±2.5 cm
+Altura De Plataforma Trasera: 121.92±2.54 cm
+Ubicación Del Perno Rey: 45.72 cm (desde la parte trasera del refuerzo delantero)
+Ubicación Del Tren De Aterrizaje: 254 cm (desde el centro del pasador de enganche)
+Ubicación Del Tándem: 81.28 cm (desde la cara trasera del refuerzo trasero hasta el centro de los ejes traseros cuando está extendido)
+Separación Del Eje: 276.86 cm
+Peso De Tara: 4241.08 kg±2%
+Carga Útil: 24720.78 kg para carga de 6.09 m o 25854.76 kg para carga de 12.19 m
+Steel Frame & Components
+1. Viga Principal: Viga en I fabricada de 40.64x12.7 cm con bridas de alta resistencia y altura de 16.11 cm para riel de cuello de ganso.
+2. Acoplador Superior: Placa de recogida de 0.79 cm con pasador cuadrado JOST de 5.08 cm de diámetro tipo SAE, de 380-420 HB, con orificios de drenaje de agua de 5.08 cm, diseñada para integrarse con el marco principal a través de soldadura.
+3. Refuerzo Delantero: Conjunto de refuerzo fabricado con placas de alta resistencia con centros de 226.06 cm, equipado con bloqueos de giro no retráctiles.
+4. Soporte Intermedio: Conjunto de refuerzo fabricado con bloqueos de giro retráctiles con bloqueos de giro abatibles.
+5. Refuerzo Trasero: Conjunto de refuerzo rectangular cónico del marco principal fabricado por placa superior e inferior de 0.95 cm de espesor y placas laterales de 0.79 cm de espesor. Conjunto de refuerzo de viga en caja fabricado con una placa superior/inferior de 1.27 cm de espesor y placas laterales de 0.79 cm de espesor con bloqueos de giro abatibles.
+6. Viga Deslizante: Viga en I fabricada con bridas superior e inferior de 1.90x12.7 cm y alma de 0.47 cm, el slider se extiende o retrae en rodillos de acero de 15.24 cm de diámetro.
+7. Sistema De Bloqueo: Pasadores de bloqueo accionados por aire, activados por frenos de resorte de 30/30 en ambos lados del remolque a través de la tercera manguera de aire en la parte delantera.
+8. Patas De Apoyo: "AXN FW32E00J con capacidad de 27215.54 kg, 2 velocidades y recorrido de 43.18 cm con zapatas bajas en forma de "T". La manivela está ubicada en el lado del conductor del chasis. Pre-pintado de color NEGRO. Los soportes de las patas de apoyo están atornillados al larguero principal según la disposición.
+9. Cerraduras De Contenedor: TOCA
+10. Suspensión: AXN 276.86 cm de distancia entre ejes, configuración colgante con un solo resorte de alta curvatura (360-00). Pre-pintado de color NEGRO.
+11. Eje: Ejes redondos AXN de 12.7 cm con capacidad de 10205.82 kg; 181.61 cm de ancho, frenos Q+41.91×17.78 cm 4707Q. Color negro pre-pintado. Estriado de 3.81 cm-28, ajustadores automáticos HALDEX de 13.97 cm. Interfaz PSI reservada; etiquetas de detección de calor. Orientación de instalación del eje: 90 grados hacia atrás, cámaras ABAJO (1 lista para ABS al frente, 1 sin ABS al trasero por unidad).
+12. Extremo De La Rueda: Conjunto de cubo y tambor AXN N/P H30-0647BFNTZ/H30-0647BFNZ, tapa de cubo integrada con grasa SENTINEL 358-4009 de STEMCO, sellos y rodamientos de STEMCO. Tuerca del husillo: Pro-Torq P/N 447-4743 de STEMCO (garantía de 5 años para la parte de la rueda).
+13. Lubricante: Lubricante de grasa sintética de precisión de Petro Canada EP 00 semifluido.
+14. Ruedas: Ruedas JINGU de 57.15x 20.95 cm con 10 tuercas y orificio central, 5 orificios para manos y con válvula TR572. Color negro PMS C pre-pintado.
+15. Neumáticos: Tipo sin cámara WESTLAKE 255/70R57.15cm-16PR.
+16. Sistema De Frenos: Sistema de válvula prioritaria de freno de resorte SEALCO 110800 y sistema ABS WABCO 2S/1M. PHILLIPS glad hand 12-0061 y 12-0081, tubo de aire azul de 0.95 cm para control y rojo de 0.95 cm para suministro. Cámara de freno HALDEX Goldseal T30/30 con carrera de 6.35 cm. Tanques de aire FUWA.
+17. Eléctrico: Arnes de cableado con sello moldeado PHILLIPS, interfaz PSI y conector GPS. (Garantía de 10 años) Luces LED OPTRONICS (conexiones de amperios para luces S/T/T y balas de .180 para otras). Diseño a prueba de robos utilizado para la iluminación LED de 10.16 cm.
+18. Receptáculo Eléctrico: PHILLIPS 15-7292 de material de aleación de zinc con clavijas sólidas.
+19. Portadocumentos: PHILLIPS 16-802. Instalado en el lado de la carretera cerca de la manivela.
+20. Cinta Reflectante: Marca "3M". Instalado de acuerdo con las regulaciones federales.
+21. Pintura: Chorro abrasivo de todas las superficies de metal, no inferior a SA-2.5 para lograr un acero desnudo limpio. La superficie será recubierta con imprimación de electroforesis y recubrimiento en polvo superior. Color NEGRO y en la esquina pintado de color AMARILLO. EI espesor total no será inferior a 80 µm después del secado de la membrana. Proveedor del recubrimiento: PPG (garantía de 7 años).

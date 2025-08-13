@@ -1,0 +1,38 @@
+﻿20/40 EXTENDABLE CONTAINER CHASSIS TANDEM
+Technical Specifications
+Longitud Total: 8.83m-27.94 cm retraído o 12.19 m-25.4 cm extendido
+Anchura Total: 243.84 cm
+Altura De La Quinta Rueda: 121.92±2.54 cm
+Ubicación Del Perno Rey: 60.96 cm (desde la cara trasera del refuerzo frontal)
+Ubicación Del Tren De Aterrizaje: 254 cm (desde la línea central del pasador rey)
+Separación Del Eje: 124.46 cm
+Ubicación Del Tandem: 137.16 cm (desde la cara trasera del refuerzo trasero)
+Peso De Tara: 3401.94 kg±2%
+Carga Útil: 20320.93 kg en posición de 6.09 m; 30481.40 kg en posición de 12.19 m.
+Steel Frame & Components
+1. Viga Principal Delantera: Viga en I fabricada con bridas de acero de alta resistencia grado 100.
+2. Travesaño: Canal de 0.47 cm de espesor fabricado con refuerzo diagonal tipo barra perfilada.
+3. Acoplador Superior: Placa de recogida de 0.79 cm con pasador rey cuadrado tipo JOST de 5.08 cm de diámetro según el estándar SAE, 380-420 HB, con agujeros de drenaje de agua de 5.08 cm, diseñado para integrarse con el bastidor principal mediante soldadura.
+4. Refuerzo Delantero: Sección abierta de 20.32 cm de ancho x 25.4 cm de alto x 0.63 cm de espesor, con chaflán de 8.89 cm en toda la longitud para recoger el contenedor en funcionamiento. El receptáculo de 7 vías y los acoples glad hands se encuentran en el centro del cojinete delantero. Tapas de esquina fundidas (TOCA 905-940-000-RS/CS).
+5. Pasador De Bloqueo Frontal: TOCA 905-910-000-LH/RH.
+6. Refuerzo Central: Sección de tubo de 20.32 cm de ancho x 15.24 cm de profundidad x 0.63 cm de espesor. ASTM A-500 GR.B O equivalente.
+7. Bloqueo De Giro Central: TOCA 905-160-000.
+8. Refuerzo Trasero: Placa superior de 20.32 cm de ancho x 0.95 cm de espesor con canal inferior tipo "U" de 17.78 cm de ancho x 16.83 cm de profundidad x 0.63 cm de espesor.
+9. Bloqueo De Giro Trasero: TOCA 905-130-000-90-LH/RH.
+10. Parachoques Trasero: Peldaño cuadrado de tubo de 10.16 x 10.16 cm con miembro vertical de sección cónica "H". La barra está soldada a los montantes y a la viga principal.
+11. Viga De Extensión: Viga en I fabricada de 19.37 cm de alto x 13.34 cm de ancho con bridas de acero de alta resistencia grado 100.
+12. Viga Principal Trasera: Viga H laminada en caliente de W30.48cm@8.61kg/m, ASTM A572 Grado 50 o equivalente.
+13. Sistema De Bloqueo: Pines de bloqueo accionados por aire, activados por frenos de resorte 24/24 en ambos lados del remolque a través del tercer enchufe de aire en el borde delantero.
+14. Patas De Apoyo: AXN FW32E00J con capacidad de 27215.54 kg, 2 velocidades de 43.18 cm de recorrido con zapatas bajas "T". La manivela de maniobra está ubicada en el lado del conductor del chasis. Prepintado en color NEGRO. Los soportes de las patas de apoyo están atornillados en la viga principal según la disposición.
+15. Suspensión: Suspensión tándem mecánica AXN, configuración sobreelevada con resortes de alta curvatura de 3 hojas (354-00). Pre-pintado en color NEGRO.
+16. Eje: Ejes redondos AXN de 12.7 cm con capacidad de 10205.828; 181.61 cm de ancho de vía, freno Q+41.91×17.78 cm 4707Q. Prepintado en color NEGRO. Ajustadores automáticos de holgura HALDEX de 13.97 cm de 3.81 cm-28 estrías. Interfaz de PSI reservada; Etiquetas de detección de calor. Orientación de la instalación del eje: 90 grados hacia atrás, cámaras ABAJO (1 listo para ABS en la parte delantera, 1 sin ABS en la parte trasera por unidad).
+17. Extremo De La Rueda: Conjunto de cubo y tambor AXN P/N H30-0647BFLNTZ/H30-0647BFLNZ, tapa de cubo de grasa integrada STEMCO 358-4009 Sentinel, sellos y rodamientos STEMCO. Tuerca del eje: STEMCO Pro-Torq P/N 447-4743. (Garantía de 5 años para extremo de la rueda). (Perno de espárrago largo para instalación con ruedas de aluminio).
+18. Lubricante: Grasa lubricante semifluida sintética de precisión Petro Canada EP 00.
+19. Ruedas: Ruedas de aluminio con piloto de cubo de 10 pernos de 57.15×20.95 cm de SUNRISE.
+20. Neumáticos: Tipo sin cámara WESTLAKE 11R57.15 cm-14PR.
+21. Sistema De Frenos: Sistema de válvula de prioridad de freno de resorte SEALCO 110800 y sistema ABS WABCO 2S/1M. PHILLIPS glad hand 12-0061 y 12-0081, tubo de aire azul de 0.95 cm para el control y rojo de 0.95 cm para el suministro. Cámara de freno HALDEX Goldseal T30/30 con carrera de 6.35 cm. Tanques de aire FUWA. (Garantía de 10 años).
+22. Eléctrico: Cableado de conexión sellado PHILLIPS, interfaz de PSI y GPS. Luces LED OPTRONICS (conexiones de amperaje para luces S/T/T y conectores de 0,180 para las demás). Diseño a prueba de robo utilizado para la iluminación LED de 10.16 cm.
+23. Receptáculo Eléctrico: PHILLIPS 15-7292, material de aleación de zinc con pines sólidos.
+24. Portadocumentos: PHILLIPS 16-802. Instalado en el lado de la carretera cerca de la manivela.
+25. Cinta Reflectante: Marca "3M". Instalado según las regulaciones federales.
+26. Pintura: Chorreado abrasivo de todas las superficies metálicas, no menos de SA-2.5 para lograr acero limpio y desnudo. La superficie será recubierta con imprimación de electroforesis y capa superior en polvo. Color NEGRO y en las esquinas pintado de color AMARILLO. El grosor total no será menor a 80 μ m después del secado. Proveedor de recubrimientos: PPG (garantía de 7 años).

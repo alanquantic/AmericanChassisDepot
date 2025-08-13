@@ -1,0 +1,37 @@
+﻿20' SL TANDEM
+Technical Specifications
+Longitud Total: 7.01m-20.32 cm o 8.22 m-20.32 cm (extendido)
+Anchura Total: 243.84 cm
+Altura Total: 149.86 cm
+Altura De La Quinta Rueda: 121.92±2.54 cm
+Altura De Plataforma Trasera: 132.08±2.54 cm
+Ubicación Del Perno Rey: 76.2 cm (Desde el centro del enganche delantero)
+Ubicación Del Tren De Aterrizaje: 482.6 cm (Desde el centro del perno de enganche)
+Ubicación Del Tándem: 137.16 cm (Desde la cara trasera del enganche trasero hasta el centro del eje trasero cuando está retraído)
+Separación Del Eje: 124.46 cm
+Peso De Tara: 3129.78 kg ±2%
+Carga Útil: 30,480 kg
+Steel Frame & Components
+1. Viga Principal: W30.48cmo8.6lkg/m Viga H laminada en caliente, ASTM A572 Grado 50 o equivalente.
+2. Travesaño: Canal de 0.47 cm de espesor x 7.62 cm de ancho x 22.86 cm de profundidad con refuerzo diagonal tipo barra perfilada.
+3. Acoplador Superior: Placa de enganche de 0.79 cm con perno rey cuadrado de 5.08 cm de diámetro tipo JOST según la norma SAE, 380-420 HB, con agujeros de drenaje de agua de 5.08 cm, diseñado para integrarse con el bastidor principal mediante soldadura.
+4. Rieles Superiores Del Enganche: Acero fabricado.
+5. Refuerzo Delantero: Canal de forma U de acero grado 50 A572 de 17.78 cm de ancho x 15.24 cm de alto x 0.79 cm de espesor en sección abierta. Placa superior de 0.95×20.32 cm.
+6. Refuerzo Trasero: Canal de forma U de acero grado 50 A572 de 17.78 cm de ancho x 17.78 cm de alto x 0.79 cm de espesor en sección abierta. Placa superior de 7.62×20.32 cm.
+7. Marco De Suspensión Deslizante: Tubo rectangular de 15.24×10.16×0.79 cm, ASTM A572 Grado 50 o equivalente. Se utiliza un mecanismo de pasador con resorte de carga automática y auto-bloqueo de fácil operación para bloquear el bastidor.
+8. Parachoques Trasero: Escalón de tubo cuadrado de 10.16×10.16 cm con miembro vertical en sección "H" cónica. La barra está soldada a los montantes y al travesaño principal.
+9. Soporte De Matrícula: Extensión de la placa de la parte trasera dentro del sobre del parachoques ICC. La placa debe contener las luces de grupo traseras, el número de flota trasera y la matrícula.
+10. Patas De Apoyo: AXN FW32E00J con una capacidad de 27215.54 kg, 2 velocidades de 48.26 cm de recorrido con zapatas bajas en forma de "T". La manivela de la pata de apoyo está ubicada en el lado del conductor del chasis. Pre-pintado en color NEGRO. Los soportes de la pata de apoyo están sujetos al travesaño principal según la disposición.
+11. Cerradura De Giro: TOCA 905-130-00-90-LH/RH.
+12. Suspensión: Suspensión tándem mecánica AXN, configuración sobrepuesta con resorte de 3 hojas de arco bajo (356-00). Color prepintado NEGRO.
+13. Eje: Ejes redondos AXN de 12.7 cm con capacidad de 10205.82 kg; riel de 181.61 cm, freno Q+ 41.91 cm "X7" 4707Q. Color prepintado NEGRO. 1.5-28 estrías, reguladores de holgura automáticos HALDEX de 13.97 cm. Interfaz de PSI reservada; etiquetas de detección de calor. Orientación de instalación del eje: 270 grados FRONTAL, cámaras ARRIBA (1 preparado para abs en la parte delantera, 1 sin abs en la parte trasera por unidad).
+14. Extremo De La Rueda: Conjunto de cubo y tambor AXN P/N H30-0647BFNTZ/H30-0647BFNZ. Tapa de cubo integrada STEMCO 358-4009 Sentinel Grease. Sellos y rodamientos STEMCO. Tuerca del husillo: STEMCO Pro-Torq P/N 447-4743. (Garantía de 5 años para el extremo de la rueda).
+15. Lubricante: Lubricante de grasa sintética semifluida de precisión EP 00 de Petro Canadá.
+16. Ruedas: Ruedas JINGU de 57.15 x 20.95 cm con 10 pernos pilotos con 5 agujeros y válvula TR572. Color prepintado BLANCO.
+17. Neumáticos: Tipo sin cámara WESTLAKE 27.94R57.15 cm-14PR.
+18. Sistema De Frenos: Sistema de válvula de prioridad de freno de resorte SEALCO 110800 y sistema ABS WABCO 2S/1M. Conector PHILLIPS glad hand 12-0061 y 12-0081, tubo de aire azul de 0.95 cm para control y rojo de 0.95 cm para suministro. Cámara de freno HALDEX Goldseal T30/30, carrera de 6.35 cm. Tanques de aire FUWA.
+19. Eléctrico: Arnés de cableado PHILLIPS con sello moldeado, conector PSI y GPS reservado. (Garantía de 10 años). Luces LED OPTRONICS (conexiones de amperios para luces S/T/T y conectores.180 para otras). El diseño a prueba de robos se utiliza para la iluminación LED de 10.16 cm.
+20. Receptáculo Eléctrico: PHILLIPS 15-7292 de material de aleación de zinc con pasadores sólidos.
+21. Portadocumentos: PHILLIPS 16-802. Instalado en el lado de la carretera cerca de la manivela.
+22. Cinta Reflectante: Marca "3M". Instalado según regulaciones federales.
+23. Pintura: Chorreado abrasivo de todas las superficies de metal no menos de SA-2.5 para lograr acero desnudo limpio. La superficie será recubierta con una imprimación electroforética y un recubrimiento superior en polvo. De color negro y en la esquina pintado de color amarillo. El grosor total no será inferior a 80µm después de la membrana seca. Proveedor de revestimiento: PPG (garantía de 7 años).

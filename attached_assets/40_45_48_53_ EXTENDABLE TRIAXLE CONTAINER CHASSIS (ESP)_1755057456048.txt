@@ -1,0 +1,39 @@
+﻿40/45/48/53' EXTENDABLE TRIAXLE CONTAINER CHASSIS
+Especificaciones Técnicas
+Longitud Total: 12.19 m-20.32 cm o 13.72 m-20.32 cm o 14.63m -20.32 cm o 16.15 m-20.32 cm (Excluyendo los parachoques del muelle de carga)
+Anchura Total: 243.84 cm (por encima del neumático 259.08 cm)
+Altura Total: 147.32 cm
+Altura De La Quinta Rueda: 119.38±2.54 cm
+Altura Del Refuerzo Traserot: 121.92±2.54 cm
+Ubicación Del Perno Rey: 60.96 cm (Desde la cara trasera del soporte delantero)
+Ubicación Del Tren De Aterrizaje: 287.02-1.905 cm (Desde el centro del perno rey)
+Ubicación Del Tándem: 104.14-0.75 cm (Desde la cara trasera del soporte trasero hasta el centro del eje trasero cuando se extiende)
+Separación Del Eje: 152.4+152.4 cm
+Ajuste Del Bogie Deslizante: Recorrido de 121.92 cm en incrementos de 10.16 cm
+Peso De Tara: 5180.02 kg (aproximadamente)
+Carga Útil: 30,480 kg
+Steel Frame & Components
+1. Viga Principal: Viga en H laminada en caliente Wl2⊙8.6lkg/m, ASTM A572 Grado 50 o equivalente.
+2. Travesaño: Canal de 4.76 mm de grosor x 6.35 cm de ancho x 12.06 cm de profundidad con diagonal en perfil de barra para el marco de extensión y canal de 4.76 mm de grosor x 7.94 cm de ancho x 16.83 cm de profundidad con diagonal en perfil de barra para la viga principal trasera.
+3. Elemento Del Cuello De Ganso: Viga en H fabricada de 10.16 cm de profundidad x 10.16 cm de ancho en acero Grado 80, con bridas de 1.59 cm de grosor y alma de 0.8 cm de grosor. Dispositivos de volteo de cuello de ganso para ajustar la altura del enganche de acuerdo a los túneles ISO/AAR.
+4. Acoplador Superior: Placa de recogida de 0.79 cm con perno rey cuadrado de 5 cm de diámetro tipo JOST según estándar SAE 380-420 HB con orificios de drenaje de 5 cm. Diseñado para integrarse con el marco principal a través de soldadura.
+5. Refuerzo Delantero: Sección abierta de 20.32 cm de ancho x 25.4 cm de alto x 0.48 centímetros de grosor, con chaflán de 8.89 cm en toda la longitud para ajustar el contenedor durante la operación. El enchufe de 7 vías y los acoples se encuentran en el centro del soporte delantero. Tapas de esquina moldeadas (TOCA 905-940-000-RS/CS).
+6. Refuerzo Trasero: Placa superior de 8" de ancho ×3​/8∘ de grosor con canal inferior tipo "U" de 7" de ancho x 7" de profundidad ×3/16′′ de grosor.
+7. Parachoques Trasero: Escalón de tubo cuadrado de 10.16 cm×10.16 cm x 0.48 cm con sección vertical en forma de "H" y barra atornillada a los montantes. El parachoques se atornilla a los soportes de montaje trasero soldados en la viga principal.
+8. Marco De Extensión: Viga en I fabricada de 20.6 cm de profundidad con bridas superiores e inferiores de 13.3 cm×0.95 cm de grosor y alma de 0.63 cm de grosor. Pasadores de bloqueo accionados por aire, activados por frenos de resorte en ambos lados del remolque a través del tercer acople en el borde delantero.
+9. Marco De Suspensión Deslizante: Un deslizador de fricción de montaje lateral con riel deslizante en forma de "Z" fabricado en acero de alta resistencia mínimo de 80,000 psi, con travesaños de refuerzo de 0.47 cm de grosor reforzados con refuerzos. El deslizador cuenta con cuatro (4) pasadores de índice accionados de manera mecánica. Mecanismo de bloqueo con componentes extraíbles y reemplazables.
+10. Pasador De Bloqueo Frontal: TOCA 905-910-000-LH/RH
+11. Bloqueo De Giro Trasero: TOCA 905-800-400B/905-800-500B
+12. Patas De Apoyo: AXN FW32E00J con capacidad de 27,216 kg, velocidad de 2 etapas y recorrido de 43,18 cm con zapatas bajas "T". La manivela está ubicada en el lado del conductor del chasis. Color prepintado NEGRO RAL9005. Los soportes de las patas de apoyo están sujetos con pernos al viga principal según el diseño.
+13. Suspensión: AXN sidemount OS 152.4 cm tridem, configuración overslung con resorte de 3 hojas de arco medio (355-00). Color prepintado NEGRO RAL9005.
+14. Eje: Ejes redondos AXN de 12,7 cm con capacidad de 10,206 kg; riel de 196,85 cm, freno Q+41,91 cm×17,78 cm 4707Q con forros AXN R23. Se proporcionan protectores contra el polvo. Color prepintado NEGRO RAL9005. Ajustadores de holgura automática HALDEX de 14.03 cm de 3.81 cm-28 estrías. Interfaz PSI reservada; etiquetas de detección de calor. Orientación de instalación del eje: 90 grados ATRÁS, cámaras ABAJO (2 listas para abs delante y detrás, 1 no abs en el medio por unidad).
+15. Extremo De La Rueda: Conjunto de cubo y tambor AXN P/N H30-0647BFNTZ/H30-0647BFNZ. Tapa del cubo engrasadora SKF. Sellos SKF y rodamientos Hyatt / General Bearing Company (China). Tuerca del husillo: tuerca única AXN.
+16. Lubricante: Lubricante de grasa semi-fluida sintética MOBILITH SHC 007.
+17. Ruedas: Ruedas hub-piloted de 10 pernos JINGU 57.15×21 cm con 5 agujeros para manos y con válvula TR572. Color prepintado NEGRO RAL9005.
+18. Neumáticos: Neumáticos sin cámara SAILUN 11R57.15cm-16PR, tipo S665 sin el logotipo del propietario.
+19. Sistema De Frenos: SEALCO 110800 sistema de válvula de freno de resorte de prioridad, válvula de línea de control SEALCO 110580 y sistema ABS WABCO 4S/2M PHILLIPS glad hand 12-13807 y 12-13607, tubo de aire azul de 1.9 cm para control y rojo de 1.3 cm para suministro. Cámara de freno HALDEX Goldseal T30/30, carrera de 6.35 cm
+20. Eléctrico: Arnés de cableado con sello de molde PHILLIPS, PSI y conector GPS reservados. Luces LED OPTRONICS (conexiones de amperios para luces S/T/T y balas de .180 para otras). Diseño a prueba de robo utilizado para la iluminación LED de 10.16 cm.
+21. Receptáculo Eléctrico: PHILLIPS 15-7292 material de aleación de zinc con pines sólidos.
+22. Portadocumentos: PHILLIPS 16-802. Instalado en la carretera cerca de la manivela.
+23. Cinta Reflectante: Marca "3M". Instalado según las regulaciones federales.
+24. Pintura: Chorreado abrasivo de todas las superficies metálicas, no menos de SA-2.5 para lograr acero desnudo limpio. La superficie se recubrirá con imprimación de electroforesis y capa superior de uretano acrílico alifático verdadero. Color AMARILLO RAL1004 y en la esquina pintado de color NEGRO RAL9005. El espesor total no será inferior a 80µm después de la membrana seca. Proveedor de revestimiento: NOROO.

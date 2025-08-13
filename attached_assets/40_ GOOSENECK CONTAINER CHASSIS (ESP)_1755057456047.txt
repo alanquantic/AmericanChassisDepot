@@ -1,0 +1,37 @@
+﻿40' GOOSENECK CONTAINER CHASSIS
+Especificaciones Técnicas
+Longitud Total: 12.19 m-27.94 cm
+Anchura Total: 243.84 cm
+Altura Total: 147.32 cm
+Altura De La Quinta Rueda: 121.92±2.54 cm
+Altura De Plataforma Trasera: 121.92±2.54 cm
+Ubicación Del Perno Rey: 76.2 cm (desde la cara trasera del soporte delantero)
+Ubicación Del Tren De Aterrizaje: 254 cm (desde el centro del perno rey)
+Ubicación Del Tandem: 137.16 cm (desde la cara trasera del soporte trasero)
+Separación Del Eje: 124.46 cm
+Peso De Tara: 2993.71 kg ±2%
+Carga Útil: 30,480 kg
+Steel Frame & Components
+1. Viga Principal: Viga en H laminada en caliente N12⊙8.6lkg/m, grado 50 de ASTM A572 o equivalente.
+2. Travesaño: Canal de 4.76 mm de espesor x 7.62 cm de ancho x 22.86 cm de profundidad con diagonales tipo barra perfilada.
+3. Elemento Del Cuello De Ganso: Viga en H laminada en caliente de 13.3 cm de profundidad x 10.2 cm de ancho grado 50 e ASTM A572 o equivalente, con bridas de 1.3 cm de espesor y alma de 0.6 cm de espeso
+4. Acoplador Superior: Placa de recogida de 0.64 cm con perno rey cuadrado de 5.08 cm de diámetro tipo JOST según norma SAE 380-420 HB, con 2 orificios de drenaje de agua diseñados para integrarse al bastidor principal mediante soldadura.
+5. Refuerzo Delantero: Sección abierta de 20,32 cm de ancho x 25,4 cm de alto x 0,64 cm de espesor, con bisel de 8,89 cm de longitud completa para recoger contenedores en operación. El receptáculo de 7 vías y las conexiones de aire están en el centro del soporte frontal. Tapas de esquina fundidas (TOCA 905-940-000-RS/CS).
+6. Refuerzo Trasero: Placa superior de 20.32 cm de ancho x 0.95 cm de espesor con canal inferior en forma de "U" de 17.78 cm de ancho x 16.83 cm de profundidad x 0.64 cm de espesor.
+7. Parachoques Trasero: Peldaño de tubo cuadrado de 10.16 cm×10.16 cm con miembro vertical en forma de "H" cónico. La barra está soldada a los montantes y al larguero principal.
+8. Soporte De Matrícula: "Se extiende desde el soporte trasero dentro del sobre de la defensa ICC. La placa debe contener el número de flota trasera y la placa de matrícula.
+9. Pasador De Bloqueo Frontal: TOCA 905-910-000-LH/RH
+10. Cierre De Torsión Trasero: TOCA 905-130-000-90-LH/RH
+11. Patas De Apoyo: AXN FW32E00J con capacidad de 60,000 libras, desplazamiento de 43.18 cm en 2 velocidades con zapatas bajas "T". La manivela está ubicada en el lado del conductor del chasis. Color prepintado NEGRO. Los soportes de las patas de aterrizaje se sujetan al larguero principal como diseño.
+12. Suspensión: Suspensión tándem mecánica AXN, configuración sobredimensionada con resortes de 3 hojas de alta curva (354-00). Color prepintado NEGRO.
+13. Eje: Ejes redondos AXN de 12.7 cm con capacidad de 10.206 kg; 181.6 cm de ancho, freno Q+41.9 cm×17.8 cm 4707Q. Color prepintado NEGRO. Spline de 3.81 cm-28, ajustadores automáticos de holgura HALDEX de 13.97 cm. Interfaz de PSI reservado; Etiquetas de detección de calor. Orientación de instalación del eje: 270 grados DELANTE, cámaras ARRIBA (1 delantera lista para ABS, 1 trasera sin ABS por unidad).
+14. Extremo De La Rueda: Ensamble de buje y tambor AXN P/N H30-0647BFNTZ/H30-0647BFNZ. STEMCO 358-4009 Tapa de buje de grasa integrada Sentinel. Sellos y rodamientos STEMCO. Tuerca del eje: STEMCO Pro-Torq P/N 447-4743. (Garantía de 5 años para el extremo de la rueda).
+15. Lubricante: Lubricante de grasa semifluida de precisión EP 00 de Petro Canada.
+16. Ruedas: Ruedas de tipo hub-piloted JINGU 57.15 cm×21 cm de 10 pernos con 5 agujeros para la mano y con válvula TR572. Color prepintado BLANCO.
+17. Neumáticos: Tipo tubeless WESTLAKE 11R57.15 cm-14PR.
+18. Sistema De Frenos: Sistema de válvula de freno de resorte prioritario SEALCO 110800 y sistema ABS WABCO 2S/1M. Conectores de aire PHILIPS glad hand 12-0061 y 12-0081, ubo de aire azul de 0.95 cm para control y rojo de 0.95 cm para suministro. Cámara de freno HALDEX Goldseal T30/30 carrera de 6.35 cm. Tanques de aire FUWA.
+19. Eléctrico: Arneses de cableado PHILLIPS moldeado con sello, conector de PSI y GPS. (Garantía de 10 años). Arneses de cableado PHILLIPS moldeado con sello, conector de PSI y GPS. (Garantía de 10 años). Luces LED OPTRONICS (conexiones de amperios para luces S/T/T y conectores de bala de 180 para otras). Diseño a prueba de robos utilizado para la iluminación LED de 10.16 cm.
+20. Receptáculo Eléctrico: Conectores de aleación de zinc PHILLIPS 15-7292 con clavijas sólidas.
+21. Portadocumentos: Conector PHILLIPS 16-802. Instalado en la acera cerca de la manivela.
+22. Cinta Reflectante: Marca "3M". Instalado según regulaciones federales.
+23. Pintura: Chorreado abrasivo de todas las superficies metálicas no inferior a SA-2.5 para lograr acero desnudo limpio. La superficie se recubrirá con imprimación de electroforesis y capa superior en polvo. Color NEGRO y en la esquina pintado de color AMARILLO. El espesor total no será inferior a 80μm después de la membrana seca. Proveedor de revestimiento: PPG (garantía de 7 años).

@@ -1,0 +1,40 @@
+﻿40FT Gooseneck Triaxle
+Especificaciones Técnicas
+Longitud Total: 12.19 m- 20.32 cm (Excluyendo parachoques trasero)
+Ancho Promedio: 243.84 cm (sobre neumático 259.08 cm)
+Altura Total: 147.32 cm
+Altura De La Quinta Rueda: 121.92±2.54 cm
+Altura De La Plataforma Trasera: 121.92±2.54 cm
+Ubicación Del Pivote Central: 30.48 cm (desde la cara trasera del refuerzo delantero)
+Ubicación Del Tren De Aterrizaje: 294.64 cm (Desde el centro del pivote central)
+Ubicación Del Tridem: 75.56 cm (desde la cara trasera del refuerzo trasero)
+Extensión Del Eje: 154.94+154.94 cm
+Peso De Tara: 3900.89 kg±2%
+Carga Útil: 34,020 kg
+Steel Frame & Components
+1. Haz Principal: Viga en H laminada en caliente W12 @ 8.61 kg/m ASTM A572 Grado 50 o equivalente.
+2. Miembro Transversal: Canal de 0.47 cm de espesor x 7.62 cm de ancho x 22.86 cm de profundidad con tirante diagonal tipo barra perfilada.
+3. Miembro De La Gn: Viga en H laminada en caliente de 13.3 cm de profundidad x 10.2 cm de ancho, alas de 1.27 cm de espesor y alma de 0.64 cm de espesor
+4. Acoplador Superior: Placa de recogida de 0.47 cm con perno rey tipo cuadrado JOST de 5.08 cm de diámetro según estándar SAE, 380-420 HB, con orificios de drenaje de agua de 5.08 cm, Diseño para integrarse con el marco principal mediante soldadura.
+5. Refuerzo Delantero: Sección abierta de 20.32 cm de ancho x 25.4 cm de alto x 0.64 centímetros de espesor, con bisel de 8.89 cm en toda su longitud para recolectar el contenedor en operación. El receptáculo de 7 vías y las manos alegres están en el centro del refuerzo delantero. Tapas de esquina fundidas (TOCA 905-940-000-RS/CS).
+6. Refuerzo Trasero: Placa superior de 20,32 cm de ancho x 0,95 cm de espesor con canal inferior tipo "U" de 17,46 cm de ancho x 20,32 cm de profundidad x 0,64 cm de espesor.
+7. Parachoques Trasero: Escalón de tubo cuadrado de 10.16×10.16 cm con miembro vertical de sección cónica "H" con brida de acero de 10.16 cm de ancho x 0.95 cm de espesor y alma de 0.64 cm de espesor. La barra está soldada a los montantes y a la viga principal.
+8. Soporte De Matrícula: Se extiende desde el refuerzo trasero dentro del envolvente del parachoques ICC. La placa debe contener el número de flota trasero y la placa.
+9. Pasador De Bloqueo Frontal: TOCA 905-910-000-LH/RH
+10. Bloqueo De Giro Trasero: TOCA 905-130-000-90-LH/RH
+11. Tren De Aterrizaje: AXN FW32E00J con capacidad de 27215.54 kg, recorrido de 43.18 cm de 2 velocidades y zapatas en "T" baja. La manivela está ubicada en el lado del chasis. Prepintado color NEGRO RAL9005. Los soportes del tren de aterrizaje están soldados en la viga principal como diseño.
+12. Suspensión: AXN OS 154.94 cm de tres ejes, configuración suspendida con resorte de 3 hojas de arco alto (354-00). Prepintado color NEGRO RAL9005.
+13. Ejes: Ejes redondos AXN de 12.7 cm con capacidad de 10,205 kg; Oruga de 196.85 cm, freno Q+ 41.9 cm X 17.8 cm 4707Q con forros AXN R23. Se proporcionan protectores contra el polvo y el sistema de ventilación del eje. Prepintado color NEGRO RAL9005. Ajustadores de holgura automáticos HALDEX de 3,8 cm - 28 estrías de 14 cm con indicadores de carrera. Interfaz PSI reservada; Etiquetas sensibles al calor. Orientación de instalación del eje: 270 grados DELANTERO, cámaras ARRIBA (2 abdominales listos delanteros y traseros, 1 central sin abdominales por unidad).
+14. Extremo De La Rueda: Conjunto de cubo y tambor AXN P/N H30-0647BFNTZ/H30-0647BFNZ. STEMCO 358-4009 Tapa de cubo de grasa Sentinel integrada. Sellos y rodamientos STEMCO. Tuerca del husillo: STEMCO Pro-Torq P/N 447-4743. (Garantía de 5 años en el extremo de la rueda).
+15. Lubricante: Lubricante graso semifluido sintético EP 00 de precisión Petro Canada.
+16. Ruedas: SUNRISE Ruedas de 57.15 cm×8.25 cm de 10 pernos pilotadas por maza con 5 orificios para mano y con vástago de válvula TR572. Color blanco prepintado.
+17. Llantas: SAILUN 11R22.5-16PR tipo tubeless, banda de rodadura S665 sin logotipo del propietario.
+18. Sistema De Frenos: Sistema de válvula de prioridad de freno de resorte SEALCO 110800 y sistema ABS WABCO 4S/2M. PHILLIPS glad hand 12-13807 y 12-13607, Tubo de aire azul de 0.95 cm para control y rojo de 0.95 cm para suministro. HALDEX Goldseal T30/30, cámara de freno de carrera de 6.35 cm. Tanques de aire FUWA.
+19. Eléctrico: Arnés de cableado de sello de molde PHILLIPS, PSI reservado y conector GPS. Luces LED OPTRÓNICAS (conexiones de amplificador para luces S/T/T y balas .180 para otras). El diseño a prueba de robos utilizado para iluminación LED de 10.16 cm.
+20. Receptáculo Eléctrico: Material de aleación de zinc PHILLIPS 15-7292 con pasadores sólidos.
+21. Portadocumentos: PHILLIPS 16-802. Instalado en la carretera cerca de la manivela.
+22. Cinta De Visibilidad: Marca "AVERY". Instalado según las regulaciones federales.
+23. Cuadro: Chorro abrasivo de todas las superficies metálicas: no menos de SA-2,5 para lograr un acero desnudo y limpio. La superficie se recubrirá con imprimación de electroforesis y capa final en polvo. Color NEGRO RAL9005 y en las esquinas pintado color AMARILLO. Espesor total no inferior a 80 μ m después de secar la membrana. Proveedor de revestimiento: PPG
+24. Sistema De Inflado De Neumáticos: NINGUNO
+25. Hubodómetro: NINGUNO
+26. Guardabarros: Guardabarros de PVC NEGRO de 762x610x6.0 mm

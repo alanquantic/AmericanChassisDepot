@@ -1,0 +1,33 @@
+﻿33' SLIDER TRI-AXLE CONTAINER CHASSIS
+Especificaciones Técnicas
+Longitud Total: 10.06 m (retraído) o 12.5 m (extendido)
+Anchura Total: 243.84 cm
+Altura De La Quinta Rueda: 121.92±2.54 cm
+Altura De Plataforma Trasera: 132.08±2.54 cm
+Ubicación Del Perno Rey: 38.1 cm
+Ubicación Del Tren De Aterrizaje: 284.48 cm (desde el centro del pivote delantero)
+Ubicación De Tridem: 40.64 cm (desde la cara trasera del refuerzo trasero hasta el centro del eje trasero cuando está extendido)
+Separación Del Eje: 138.43+138.43 cm
+Peso De Tara: 4853.43 kg ± 2%
+Carga Útil: 30481.40 kg
+Steel Frame & Components
+1. Viga Principal: Viga en "I" fabricada con acero de alta resistencia grado 80.
+2. Travesaño: Canal de 0.48 cm de espesor x 7.62 cm de ancho x 22.86 cm de profundidad con diagonales de barra perfilada.
+3. Travesaño Deslizante: Tubo rectangular fabricado de 25,4 cm de profundidad x 12,7 cm de ancho.
+4. Acoplador Superior: Placa de recogida de 0,79 cm con pivote cuadrado de tipo JOST de 5,08 cm de diámetro según la norma SAE, con 380-420 HB y 2 agujeros de drenaje de agua de 5,08 cm, diseñado para integrarse con el marco principal mediante soldadura.
+5. Refuerzos: Placa superior de 20.32 cm de ancho x 0.95 cm de espesor con canal inferior en forma de "U" de 17.78 cm de ancho x 17.15 cm de profundidad x 0.79 cm de espesor.
+6. Parachoques Trasero: Peldaño cuadrado de tubo de 10.16×10.16 cm con un miembro vertical en forma de "H" cónico. La barra se suelda a los montantes y a la viga principal.
+7. Cerradura De Giro: TOCA 905-130-000-90-LH/RH
+8. Patas De Apoyo: AXN FW32E00J con capacidad de 27,215 kg, con 2 velocidades y 43.18 cm de recorrido con zapatas bajas "T". La manivela se encuentra en el lado del conductor del chasis. Pre-pintado de color NEGRO. Los soportes de la pata de apoyo están soldados en la viga principal según el diseño.
+9. Suspensión: Configuración de tres ejes AXN de 138.43 cm, de tipo colgante con hojas de resorte individuales altas (360-00). Prepintado de color NEGRO.
+10. Lubricante: Lubricante de grasa semifluida de precisión sintética EP 00 de Petro Canadá.
+11. Eje: Ejes redondos AXN de 12.7 cm con capacidad de 10206 kg; rueda de 181.6 cm, freno Q+ 41.9 cm 17.8 cm 4707Q. Pre-pintado de color NEGRO. 3.81 cm -28 estrías, ajustadores automáticos de holgura HALDEX de 13.97 cm. Interfaz PSI reservada; etiquetas de detección de calor. Orientación de la instalación del eje: 90 grados hacia atrás, cámaras ABAJO (2 ABS listos para la parte delantera y trasera, 1 sin ABS para la parte media por unidad).
+12. Extremo De La Rueda: Conjunto de buje y tambor AXN P/N H30-0647BFNTZ/H30-0647BFNZ, tapa de buje integrada Sentinel Grease STEMCO 358-4009, sellos y rodamientos STEMCO. Tuerca de eje: STEMCO Pro-Torq P/N 447-4743. (Garantía de 5 años en el extremo de la rueda).
+13. Ruedas: Ruedas tipo hub-piloted de 10 pernos y 5 agujeros para las manos de 57.15 cm x 21 cm de JINGU con válvula de vástago TR572. Prepintadas de color BLANCO.
+14. Neumáticos: Neumáticos tipo tubeless WESTLAKE 11R22.5-14PR.
+15. Sistema De Frenos: Sistema de válvula de prioridad de freno de resorte SEALCO 110800 y sistema ABS 4S/2M WABCO; PHILLIPS Glad Hand 12-0061 y 12-0081, tubo de aire azul de 0,95 cm para control y rojo de 0,95 cm para suministro. Cámara de freno HALDEX Goldseal T30/30 de 6,35 cm de carrera. Tanques de aire FUWA.
+16. Eléctrico: Arneses de cableado con sellado de molde PHILLIPS, PSI reservado y conector GPS. (Garantía de 10 años) Luces LED OPTRONICS (conexiones de amperaje para luces S/T/T y conectores de .180 para otras). Diseño a prueba de robos utilizado para la iluminación LED de 10.16 cm.
+17. Receptáculo Eléctrico: PHILLIPS 15-7292 de material de aleación de zinc con pines sólidos.
+18. Portadocumentos: PHILLIPS 16-802. Instalado en el lado de la carretera cerca de la manivela.
+19. Cinta Reflectante: Marca "3M". Instalado según las regulaciones federales.
+20. Pintura: Chorreado abrasivo de todas las superficies metálicas -no menos de SA-2.5 para lograr acero limpio y desnudo. La superficie será recubierta con imprimación de electroforesis y acabado de polvo. Color NEGRO y en la esquina pintado de color AMARILLO. El espesor total no será inferior a 80µm después del seçado de la membrana. Proveedor de revestimiento: NOROO (garantía de 7 años).

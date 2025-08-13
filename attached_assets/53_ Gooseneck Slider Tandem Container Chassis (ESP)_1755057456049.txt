@@ -1,0 +1,38 @@
+﻿53' Gooseneck Slider Tandem Container Chassis
+Especificaciones Técnicas
+Longitud Total: 16.15m−20.32cm (Excluyendo topes de muelle)
+Anchura Total: 243.84 cm
+Altura Total: 139.7 cm
+Altura De La Quinta Rueda: 119.38±2.54 cm
+Altura Máxima Trasera: 121.92±2.54 cm
+Ubicación Del Perno Rey: 91.44 cm (Desde la cara trasera del soporte delantero)
+Ubicación Del Tren De Aterrizaje: 330.2 cm (Desde la cara trasera del soporte delantero)
+Separación Del Eje: 124.46 cm
+Ajuste Del Bogie Deslizante: Recorrido de 213.36 cm en incrementos de 10.16 cm
+Peso De Tara: 3379.26 kg (aproximadamente)
+Carga Útil: 30481.40 kg
+Steel Frame & Components
+1. Viga Principal: Viga H laminada en caliente de una pieza 7.25kg/m, ASTM A572 Grado 50 o equivalente.
+2. Travesaño: Canal de altura completa de 0.31 cm y 0.48 cm de espesor con diagonal de perfil de barra.
+3. Viga De Cuello De Ganso: Viga H fabricada de 10.2 cm de profundidad x 10.2 cm de ancho, con bridas de 1.59 cm de espesor y alma de 0.79 cm de espesor.
+4. Acoplador Superior: Placa de recogida de 0.63 cm con perno rey cuadrado de 5.08 cm de diámetro tipo JOST según norma SAE, 380-420 HB, con orificios de drenaje de 5.08 cm, diseñada para ser integrada con el marco principal mediante soldadura.
+5. Refuerzo Delantero: Sección abierta de 19 cm de ancho x 19.7 cm de alto x 0.6 cm de espesor, con chaflán de 6 cm en todo su longitud para recoger el contenedor en operación. El receptáculo de 7 vías y las conexiones Glad Hands se encuentran en el lado de la carretera del refuerzo frontal. Tapas de esquina fundidas (TOCA 905-950-000CS/RS).
+6. Refuerzo Trasero: Placa superior de 20.32 cm de ancho x 0.95 cm de espesor con canal inferior tipo "U" de 17.78 cm de ancho x 16.83 cm de profundidad x 0.48 cm de espesor.
+7. Parachoques Trasero: Peldaño de tubo cuadrado de 10.16 cm x 10.16 cm x 0.48 cm con miembro vertical en forma de "H" cónico. La barra está sujeta a los montantes con pernos. El parachoques está sujeto a la viga principal con pernos.
+8. Soporte De Matrícula: Que se extiende desde el refuerzo trasero dentro del sobre del parachoques ICC. La placa debe contener luces traseras de agrupación, número de flota trasera y matrícula.
+9. Marco De Suspensión Deslizante: Suspensión deslizante de viga Z con 4 pasadores de índice. Mecanismo de pasador de bloqueo EZ-Pull con jaula de pasador extraíble y reemplazable. Color prepintado en negro.
+10. Pasador De Bloqueo Frontal: TOCA 905-910-000-LH/RH
+11. Cierre De Torsión Trasero: TOCA 905-130-000-90-LH/RH
+12. Patas De Apoyo: AXN FW32E00J con capacidad de 27,216 kg, de 2 velocidades y 43.18 cm de recorrido con zapatas bajas en forma de "T". La manivela de manivela se encuentra en el lado del conductor del chasis. Color prepintado NEGRO. Los soportes de las patas de aterrizaje están atornillados al travesaño principal según el diseño.
+13. Suspensión: Suspensión tandem AXN con resorte de alta curvatura de 3 hojas (354-00). Color prepintado NEGRO.
+14. Eje: Ejes redondos AXN de 12.7 cm con capacidad de 10,205 kg. Riel de 181.6 cm; freno Q16.5"×7" 4707Q. Color prepintado NEGRO. Ajustadores automáticos de holgura HALDEX de 14 cm de 29 cm-28 estrías. Orientación de la instalación del eje: 270 grados DELANTE, cámaras ARRIBA (1 abs listo delantero, 1 no abs trasero por unidad).
+15. Extremo De La Rueda: Ensamble de cubo y tambor AXN P / N H30-0647BFNTZ / H30-0647BFNZ. Tapa de cubo de grasa integrada SENTINEL 358-4009 de STEMCO. Sellos y rodamientos STEMCO. Tuerca del husillo: Pro-Torq P / N 447-4743 de STEMCO. (Garantía de 5 años para la rueda).
+16. Lubricante: Grasa sintética de precisión EP 00 semi-fluida de Petro Canada.
+17. Ruedas: Ruedas JINGU con piloto central de 57.15×21 cm, 10 pernos, 5 agujeros para las manos y con válvula TR572. Color prepintado BLANCO.
+18. Neumáticos: Tipo sin cámara WESTLAKE 11R57.15cm-14PR.
+19. Sistema De Frenos: Sistema de válvula de prioridad de freno de resorte SEALCO 110800 y sistema ABS WABCO 2S / IM. PHILLIPS swinger glad hand 12-4906 y 12-4908, tubo de aire azul de 0.95 cm para control y rojo de 0.95 cm para suministro. Cámara de freno HALDEX Goldseal T30/30 de 6.35 cm de carrera. Tanques de aire FUWA.
+20. Eléctrico: Arnés de cableado con sellador de molde GROTE, con conectores PSI y GPS reservados. (Garantía de 10 años). Luces LED GROTE (conexiones de amperios para luces S/T/T; PL-10 para luces de marcador / identificación / ABS y balas de 180 para la luz de la placa de licencia). Diseño a prueba de robos utilizado para iluminación LED de 4 pulgadas.
+21. Receptáculo Eléctrico: Material de aleación de zinc GROTE con pines sólidos.
+22. Portadocumentos: GROTE. Instalado en el lado de la carretera cerca de la manivela.
+23. Cinta Reflectante: Marca "3M". Instalado según regulaciones federales.
+24. Pintura: Limpieza abrasiva de todas las superficies metálicas, no inferior a SA-2.5 para lograr acero desnudo limpio. La superficie estará recubierta con imprimación electroforética y capa superior en polvo. Color NEGRO y en la esquina pintado de color AMARILLO. El espesor total no será inferior a 80 µm después de la membrana seca. Proveedor de recubrimientos: PPG (garantía de 7 años).

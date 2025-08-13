@@ -1,0 +1,39 @@
+﻿20ft ISO Tank Container Chassis
+Especificaciones Técnicas
+Longitud Total: 13.10 m
+Anchura Total: 243.84 cm
+Altura De La Quinta Rueda: 121.92±2.54 cm
+Altura De Plataforma Trasera: 111.76±2.54 cm
+Ubicación Del Perno Rey: 40.64 cm (Desde la cara frontal de la placa de enganche)
+Ubicación Del Tren De Aterrizaje: 241.3 cm (Desde el centro del pivote de enganche)
+Ubicación Del Tándem: 182.88 cm (Desde la cara trasera del refuerzo trasero)
+Separación Del Eje: 276.86 cm
+Peso De Tara: 3329.36 kg ±3%
+Carga Útil: 30,480kg
+Steel Frame & Components
+1. Viga Principal: Viga continua en H fabricada, con un espesor de 1.27 cm en la brida de acero de grado 130 y un espesor de 0.64 cm en la banda de acero de grado 80.
+2. Travesaño: Canal de 0.47 cm con soporte diagonal tipo barra perfilada
+3. Acoplador Superior: Placa de enganche de 0,64 cm con pivote cuadrado de 5,08 cm de diámetro tipo JOST según la norma SAE, 380-420 HB con orificios de drenaje de 5,08 cm de diámetro, diseñado para ser integrado con el marco principal mediante soldadura.
+4. Refuerzo Delantero: Viga en H fabricada con acero de grado 100.
+5. Refuerzo Trasero: Viga en H fabricada con acero de grado 100.
+6. Parachoques Trasero: Escalón de tubo cuadrado de 10.2 cm x 10.2 cm soldado a los soportes traseros.
+7. Soporte De Matrícula: Placa que se extiende desde el refuerzo trasero dentro del espacio del parachoques ICC. La placa contiene luces traseras, número de flota trasero y placa de matrícula.
+8. Cierres De Giro: TOCA 905-160-000
+9. Patas De Apoyo: AXN FW32E00J con capacidad para 27,216 kg, 2 velocidades de 43.18 cm de recorrido con zapatas de arena de bajo perfil con eje sólido. La manivela está ubicada en el lado del conductor del chasis. Pre-pintado de color NEGRO RAL9005.
+10. Suspensión: Eje AXN de 276.86 cm de separación, configuración subyacente con tres hojas de resorte de alta arco HD (365-00). Pre-pintado de color NEGRO RAL9005.
+11. Eje: Ejes redondos AXN de 12.7 cm con capacidad para 10,206 kg; 181.6 cm de ancho de vía, freno Q+ 41.9 cm x 17.8 cm 4707Q. Ajustadores automáticos de holgura de 13.97 cm HALDEX de 3.81 cm-28 estrías. Interfaz PSI reservada; etiquetas de detección de calor. Orientación de la instalación del eje: 90 grados hacia atrás, cámaras ABAJO (1 preparado para ABS delantero, 1 sin ABS trasero por unidad).
+12. Extremo De La Rueda: Ensamblaje de cubo y tambor AXN, P/N H30-0647BFNTZ/H30-0647BFNZ tapa de cubo integrada Sentinel Grease STEMCO 358-4009, sellos y rodamientos STEMCO. Tuerca del husillo: STEMCO Pro-Torq P/N 447-4743. (Garantía de 5 años para el extremo de la rueda).
+13. Lubricante: Grasa semilíquida de precisión sintética EP 00 de Petro Canada.
+14. Ruedas: Ruedas JINGU de 10 pernos y tipo piloto de cubo de 57.15×21 cm, con 5 orificios para la mano y con válvula de vástago TR572. Pre-pintado en color NEGRO RAL9005.
+15. Neumáticos: Neumáticos WESTLAKE 255/70R22.5-16PR sin cámara.
+16. Sistema De Frenos: Sistema de válvula de prioridad de freno de resorte SEALCO 110800 y sistema de ABS WABCO 2S/1M. Conexiones de aire PHILLIPS 12-0061 y 12-0081, tubo de aire azul de 0.95 cm para control y rojo de 0.95 cm para suministro. Cámara de freno HALDEX Goldseal T30/30 de 6.35 cm de carrera. Tanque de aire FUWA (color NEGRO RAL9005).
+17. Eléctrico: Arnes de cableado Phillips con sellado de molde, PSI reservado y conector GPS. (Garantía de 10 años) Luces LED OPTRONICS (conexiones de amperaje para luces S/T/T y balas de .180 para otras). Diseño antirrobo utilizado para la iluminación LED de 10.16 cm.
+18. Receptáculo Eléctrico: Conector de aleación de zinc Phillips 15-7292 con pines sólidos.
+19. Portadocumentos: Phillips 16-802. Instalado en el lado de la carretera cerca de la manivela.
+20. Cinta Reflectante: Marca "3M". Instalado de acuerdo a las regulaciones federales.
+21. Pintura: Chorreado abrasivo de todas las superficies metálicas no menos de SA-2.5 para lograr acero desnudo limpio. La superficie será recubierta con imprimación de electroforesis y una capa superior de uretano alifático acrílico verdadero, color AMARILLO RALI004 y con las esquinas pintadas de color NEGRO RAL9005. El espesor total no será inferior a 80µm después del secado. Proveedor del recubrimiento: NOROO (garantía de 7 años).
+22. Contador De Kilómetros: NINGUNO
+23. Sistema De Inflado De Neumáticos: NINGUNO
+24. Pasarela: Pasarela galvanizada de 3.35 m
+25. Guardabarros: Guardabarros de PVC.
+26. Opciones: Mecanismo de elevación de carga: sistema de muelles de aire FT 210-32DS.

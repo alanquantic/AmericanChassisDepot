@@ -1,0 +1,33 @@
+﻿20/40' 12 Pins Triaxle Container Chassis
+Especificaciones Técnicas
+Longitud Total: 9.44 m-17.78 cm (retraído) o 12.19 m-27.94 cm (extendido).
+Anchura Total: 243.84 cm
+Altura De La Quinta Rueda: 119.38±2.54 cm
+Altura De Plataforma Trasera: 121.92±2.54 cm
+Ubicación Del Pasador Rey.: 45.72 cm (desde la parte trasera del soporte delantero)
+Ubicación Del Pie De Apoyo: 254 cm (desde el centro del perno rey).
+Ubicación Del Tridem: 66.04 cm (desde la cara trasera del soporte trasero hasta el centro de los ejes traseros cuando está extendido)
+Distancia Entre Ejes: 154.94+154.94 cm
+Peso De Tara: 4944.15 kg±2%
+Carga Útil: 29982.45 kg para 6.09 m cargado o 33611.19 kg para 12.19 m cargado
+Steel Frame & Components
+1. Viga Principal: Viga en I de 40.64x12.7 cm fabricada con bridas de alta resistencia y altura de 16.11 cm para el riel del cuello de ganso.
+2. Acoplador Superior: Placa de recogida de 0.79 cm con perno rey tipo cuadrado JOST de 5.08 cm de diámetro según la norma SAE con una dureza de 380-420 HB, y 2 orificios de drenaje de agua de 5.08 cm, diseñado para integrarse con el bastidor principal mediante soldadura.
+3. Refuerzo Delantero: Ensamblaje de soporte fabricado con placas de alta resistencia con centros de 226.06 cm, equipado con cerraduras de giro no retráctiles.
+4. Soporte Intermedio: Fabricado con cerraduras de giro retráctiles con cerraduras de giro abatibles.
+5. Refuerzo Trasero: Soporte rectangular cónico del bastidor principal fabricado con placas superiores e inferiores de 0.95 cm de grosor y placas laterales de 0.79 cm de grosor. Soporte de viga en caja fabricado de 16.83 cm de altura x 10.16 cm de ancho en un deslizador compuesto por placas superior/inferior de 1.27 cm de grosor con placas laterales de 0.79 cm de grosor con cerraduras de giro abatibles.
+6. Sistema De Bloqueo: Pasadores de bloqueo accionados por aire, activados por frenos de resorte de 30/30 en ambos lados del remolque a través de la tercera manguera de aire en el umbral delantero.
+7. Patas De Apoyo: "AXN FW32E00J con capacidad de 27215.54 kg, con recorrido de 43.18 cm y 2 velocidades con zapatas bajas en forma de "T". La manivela está ubicada en el lado del conductor del chasis. Pre-pintado de color NEGRO. Los soportes de las patas de aterrizaje se sujetan al larguero principal según la disposición
+8. Cerraduras De Contenedor: TOCA
+9. Suspensión: Configuración underslung de tri-eje AXN de 154.94 cm con muelle individual de alta curvatura (360-00). Pre-pintado de color NEGRO.
+10. Eje: AXN ejes redondos de 12.7 cm con capacidad de 10205.82 kg; pista de 181.61 cm freno Q+ de 116.51×17.78 cm 4707Q. Pre-pintado en color NEGRO. Ajustadores automáticos HALDEX de 13.97 cm con 3.81 cm-28 estrías. Interfaz PSI reservada; etiquetas de detección de calor. Orientación de instalación del eje: 90 grados hacia atrás, cámaras ABAJO (2 abs en la parte delantera y trasera, 1 no abs en la mitad por unidad).
+11. Extremo De La Rueda: Conjunto de buje y tambor AXN P/N H30-0647BFNTZ / H30-0647BFNZ, Tapa de buje STEMCO 358-4009 Integrated Sentinel Grease, Sellos y rodamientos STEMCO. Tuerca de eje: STEMCO Pro-Torq P/N 447-4743. (Garantía de 5 años para el extremo de la rueda).
+12. Lubricante: Grasa semifluida sintética de precisión EP 00 de Petro Canada.
+13. Ruedas: Ruedas hub-pilotadas de 10 espárragos JINGU 57.15×20.95 cm con 5 agujeros para la mano y con válvula TR572. Pre-pintado en color NEGRO.
+14. Neumáticos: Tipo sin cámara WESTLAKE 255/70R57.15 cm-16PR.
+15. Sistema De Frenos: Sistema de válvula de prioridad de freno de resorte SEALCO 110800 y sistema ABS WABCO 4S/2M. PHILLIPS glad hand 12-0061 y 12-0081, tubo de aire azul de 0.95 cm para el control y rojo de 0.95 cm para el suministro. Cámara de freno HALDEX Goldseal T30/30 de 6.35 cm de recorrido. Tanques de aire FUWA.
+16. Eléctrico: Arnes de cableado PHILLIPS moldeado con conector PSI y GPS. (Garantía de 10 años) Luces LED OPTRONICS (conexiones de amperios para luces S/T/T y conectores de .180 para otras luces). El diseño a prueba de robos se utiliza para la iluminación LED de 10.16 cm.
+17. Receptáculo Eléctrico: PHILLIPS 15-7292 es de material de aleación de zinc con pines sólidos.
+18. Portadocumentos: PHILLIPS 16-802. Instalado en el lado de la carretera cerca de la manivela.
+19. Cinta Reflectante.: Marca "3M". Instalado de acuerdo con las regulaciones federales.
+20. Pintura: Toda la superficie de metal se someten a chorro abrasivo, con un mínimo de SA-2.5, para obtener acero desnudo limpio. La superficie se recubre con una imprimación de electroforesis y una capa superior en polvo. El color es AMARILLO y en las esquinas está pintado de color NEGRO. El espesor total no es inferior a 80µm después de la membrana seca. Proveedor de recubrimientos: PPG (garantía de 7 años).

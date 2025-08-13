@@ -1,0 +1,32 @@
+﻿45ft MULTIMODAL CHASSIS
+Especificaciones Técnicas
+Longitud Total (+/-): 13.71 m-6.39 cm
+Anchura Total (+/-): 248.92 cm
+Altura Total (+/-): 149.86 cm
+Altura De La Quinta Rueda: 116.84 +-2.54 cm
+Altura De Plataforma Trasera: 142.24 +-2.54 cm
+Ajuste Del Perno Rey: 83.82 cm
+Espaciado Entre Ejes: 132.08 cm
+Ubicación De La Cola: 274.32 cm
+Peso De Tara: 6800 kg (+-2%)
+Carga Útil: 30000 kg
+P.M.A (Peso Máximo Autorizado): 36800 kg
+Steel Frame & Components
+1. Viga Principal: Viga H fabricada H420x140x14x6x14mm, ASTM A572 Grado 50, longitud 1352.29 cm
+2. Travesaño: Canal "U", ancho de 8 cm x altura de 4 cm x espesor de 0.42 cm, longitud de 91 cm, de ASTM A572 o SS400
+3. Refuerzo Delantero: Refuerzos de calibre de espesor de 0.5 cm×17.8 cm de altura x 22.1 cm de ancho x 248.9 cm de longitud de ASTM A572 SS400
+4. Refuerzo Trasero: Refuerzos de calibre de espesor de 2.54 cm×17.78 cm de altura$\times22.09$ cm de ancho x 248.92 cm de longitud de ASTM A572 SS400
+5. Perno Rey: Soldadura de 5.08 cm, marca JOST
+6. Bloqueo Delantero: Bloqueo de giro
+7. Bloqueo Trasero: Bloqueo de giro
+8. Patas De Apoyo: Marca JOST, capacidad de 27923 kg, 2 velocidades, 48 cm de recorrido con zapatas bajas "T", la manivela está ubicada en el lado del conductor del chasis
+9. Eje: Eje cuadrado JOST con ABS, capacidad de 13809 kg, pista de 185 cm, 10 cubos piloteados con tambor de acero fundido de montaje interno.
+10. Suspensión: Marca ZY con 9999.89 kg, suspensión tridem mecánica con 3 hojas de resorte
+11. Sistema De Frenos: Sistema ABS KORMEE, sistema de freno de remolque de línea doble, válvula Sealco, cámara de freno 30/30
+12. Neumático: Medida 11R57.15cm, capacidad de carga de 16 capas (16 PR) y marca DRC
+13. Rines: 21×57 cm, 10 huecos ISO
+14. Pintura: -Granallado de todas las superficies metálicas -Recubrimiento base: epoxi -Recubrimiento de color: PU (poliuretano), color negro
+15. Marcado: Todas las marcas y señales según los requisitos del cliente
+16. Sistema Eléctrico: Iluminación LED, voltaje: 12V
+17. Toma Eléctrica: Marca Phillips
+18. Misceláneas: Marcado estándar, guardabarros de goma

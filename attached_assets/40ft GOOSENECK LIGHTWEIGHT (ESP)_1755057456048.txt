@@ -1,0 +1,37 @@
+﻿40ft GOOSENECK LIGHTWEIGHT
+Especificaciones Técnicas
+Longitud Total (+/-): 12.19 m-27.94 cm
+Anchura Total (+/-): 243.84 cm
+Altura Total (+/-): 147.32 cm
+Altura De La Quinta Rueda: 121.92±2.54 cm
+Altura De Plataforma Trasera: 121.92±2.54 cm
+Ubicación Del Perno Rey: 45.72 cm (Desde la cara trasera del soporte delantero)
+Ubicación Del Tren De Aterrizaje: 279.4 cm (Desde el centro del perno rey)
+Ubicación Del Tandem: 132.08 cm (Desde la cara trasera del soporte trasero)
+Separación Del Eje: 124.46 cm
+Peso De Tara: 2381.35 kg ±2%
+Carga Útil: 30,480 kg
+Steel Frame & Components
+1. Viga Principal: Viga H de fabricación con una profundidad de 35 cm y un ancho de 10 cm, con una brida de acero de grado 100 de 0.79 cm de espesor y una sección transversal de acero de grado 50 de 0.63 cm de espesor.
+2. Travesaño: Canal de 0.48 cm de espesor x 7.62 cm de ancho x 22.86 cm de profundidad con un refuerzo diagonal de tipo barra perfilada.
+3. Elemento Del Cuello De Ganso: Viga H de fabricación con una profundidad de 13.3 cm y un ancho de 10.2 cm, con bridas de 0.79 cm de espesor y una sección transversal de 0.63 cm de espesor.
+4. Acoplador Superior: Placa de recogida de 0.63 cm con perno rey tipo cuadrado de 5.08 cm de diámetro JOST según la norma SAE, 380-420 HB, con 2 orificios de drenaje de agua de 5.08 cm, diseñada para integrarse con el bastidor principal mediante soldadura.
+5. Refuerzo Delantero: Sección abierta de 20.3 cm de ancho x 25.4 cm de alto x 0.48 cm de espesor, fabricada con acero de grado 100 con un chaflán de 8.89 cm en toda su longitud para recoger el contenedor durante la operación. Receptáculo de 7 vías y conexiones glad hands en el centro del soporte delantero. Tapas de esquina dobladas.
+6. Refuerzo Trasero: Placa superior de 20.32 cm de ancho y 0.79 cm de espesor con canal en forma de "U" de 17.78 cm de ancho x 16.83 cm de profundidad x 0.47 cm de espesor fabricado con acero de grado 100.
+7. Parachoques Trasero: Paso de tubo cuadrado de 10.16 cm×10.16 cm con miembro vertical de sección "H" en ángulo. La barra está soldada a los postes y al travesaño principal.
+8. Soporte De Matrícula: Se extiende desde el soporte trasero dentro del espacio del parachoques de la ICC. La placa debe contener las luces de la agrupación trasera, el número de flota trasera y la matrícula.
+9. Pasador De Bloqueo Frontal: TOCA 905-910-000-LH/RH
+10. Cierre De Torsión Trasero: TOCA 905-130-000-90-LH/RH
+11. Patas De Apoyo: SAF-HOLLAND ATLAS 65 con capacidad de 29483.50 kg, 2 velocidades y un recorrido de 43.18 cm con zapatas de arena de perfil bajo con eje sólido. La manivela se encuentra en el lado del conductor del chasis. Pre-pintado en color NEGRO.
+12. Suspensión: Suspensión mecánica tándem liviana SAF-HOLLAND con una sola hoja de bajo arco (363-00). Prepintado en color NEGRO.
+13. Eje: Ejes redondos AXN de 14.6 cm con capacidad de 10,206 kg; 181.6 cm de ancho, freno Q+ 41.9 cmX17.8 cm 4707Q. Prepintado en color NEGRO. 28 estrías de 3.81 cm, ajustadores automáticos HALDEX de 13.97 cm. Interfaz de PSI reservado; etiquetas de detección de calor. Orientación de instalación del eje: 270 grados FRONTAL, cámaras ARRIBA (1 lista para abs delantero, 1 sin abs trasero por unidad). Tornillos largos para instalar ruedas de aluminio.
+14. Extremo De La Rueda: Mazas piloteadas con 10 pernos WEMC con tambor de montaje externo ligero WEBB. Tapa de cubo integrada STEMCO 358-4009 Sentinel Grease. Sellos y rodamientos STEMCO. Tuerca del eje: STEMCO Pro-Torq P/N 447-4743. (Garantía de 5 años en el extremo de la rueda)
+15. Lubricante: Lubricante de grasa semisintética de precisión EPOO de Petro Canadá.
+16. Ruedas: Ruedas de aluminio piloteadas de 57.15 cm×21 cm POMLEAD.
+17. Neumáticos: Tipo sin cámara WESTLAKE 255/70R57.15cm-16PR.
+18. Sistema De Frenos: Sistema de válvula de prioridad de freno de resorte SEALCO 110800 y sistema ABS WABCO 2S/1M. PHILLIPS glad hand 12-0061 y 12-0081, tubo de aire azul de 0.95 cm para control y rojo de 0.95 cm para suministro. Cámara de freno HALDEX Goldseal T30/30 de 6.35 cm de carrera. Tanque de aire FUWA (color NEGRO).
+19. Eléctrico: Cableado con sello moldeado GROTE, con conexión PSI reservada y GPS (garantía de 10 años). Luces LED GROTE (conexiones de amperios para las luces S/T/T; PL-10 para las luces de marcador/ID/ABS y balas de .180 para la luz de la placa de matrícula). Diseño a prueba de robo utilizado para la iluminación LED de 10.16 cm.
+20. Receptáculo Eléctrico: Aleación de zinc GROTE con pines sólidos.
+21. Portadocumentos: PHILLIPS 16-802. Instalado en la parte del camino cerca de la manivela.
+22. Cinta De Visibilidad: Marca "3M". Instalado según las regulaciones federales.
+23. Pintura: Limpieza con chorro abrasivo de todas las superficies metálicas, con al menos un SA-2.5 para lograr acero limpio y desnudo. La superficie será recubierta con imprimación de electroforesis y una capa superior de uretano alifático verdadero acrílico, color AMARILLO RAL1004 y en las esquinas pintado de color NEGRO. El espesor total no será inferior a 80µm después de la membrana seca. Proveedor del recubrimiento: NOROO (garantía de 7 años).
