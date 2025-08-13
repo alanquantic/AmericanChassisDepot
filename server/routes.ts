@@ -78,8 +78,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Extract characteristic from query parameters
       const characteristic = req.query.characteristic !== 'all' ? req.query.characteristic as string : undefined;
       
+      // DEBUG: Log what we're receiving
+      console.log('🔍 SERVER RECEIVED PARAMS:', {
+        condition: req.query.condition,
+        size: req.query.size,
+        manufacturer: req.query.manufacturer,
+        characteristic: req.query.characteristic,
+        processedCharacteristic: characteristic
+      });
+      
       try {
         const models = await storage.filterChassisModels(conditionSlug, size, manufacturer, characteristic);
+        // DEBUG: Log what we're returning
+        console.log('📦 SERVER RETURNING:', {
+          count: models?.length || 0,
+          characteristic: characteristic,
+          firstFewNames: models?.slice(0, 3).map(m => m.name) || []
+        });
+        
         // Asegurarnos de que models es un array antes de devolverlo
         if (Array.isArray(models)) {
           return res.json(models);
