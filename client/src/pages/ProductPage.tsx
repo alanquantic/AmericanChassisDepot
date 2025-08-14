@@ -174,7 +174,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                     </p>
                     <div className="flex flex-wrap gap-4">
                       <Link 
-                        href="/contact" 
+                        href={`/${getLanguage()}/contact`} 
                         className="inline-block bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-6 py-3 rounded transition duration-200"
                       >
                         {t('requestQuote')}
