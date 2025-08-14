@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon, TruckIcon, CogIcon } from '@/lib/icons';
 import ContactForm from '@/components/shared/ContactForm';
 import { DownloadBrochureForm } from '@/components/shared/DownloadBrochureForm';
-import { useLanguage } from '@/lib/i18n-simple';
+import { useLanguage, getLanguage } from '@/lib/i18n-simple';
 import { getPrimaryCharacteristic } from '@/lib/chassisUtils';
 import type { ChassisModel } from '@shared/schema';
 import Seo from '@/components/seo/Seo';
