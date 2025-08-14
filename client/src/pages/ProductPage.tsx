@@ -28,8 +28,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
     enabled: !!slug,
   });
   
-  // Use manufacturer from model
-  const manufacturer = model?.manufacturer || "";
+  // Manufacturer badge should always display the brand name
+  const manufacturer = 'American Chassis Depot';
 
   // Update the selected image when model data is loaded
   useEffect(() => {
@@ -149,11 +149,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                       {model?.name}
                     </h1>
                     <div className="flex items-center gap-2 mb-6">
-                      <span className={`text-white px-3 py-1 rounded-sm font-montserrat text-sm font-semibold ${
-                        model?.conditionId === 3 ? 'bg-[#E30D16]' : 'bg-blue-600'
-                      }`}>
-                        {model?.conditionId === 3 ? 'New Chassis' : 'Used Chassis'}
-                      </span>
+                      {/* Only show NEW badge; never show USED */}
+                      {model?.conditionId === 3 || model?.conditionId === 5 ? (
+                        <span className="text-white px-3 py-1 rounded-sm font-montserrat text-sm font-semibold bg-[#E30D16]">
+                          {t('new')}
+                        </span>
+                      ) : null}
                       <span className="bg-primary text-white px-3 py-1 rounded-sm font-montserrat text-sm font-semibold">
                         {manufacturer}
                       </span>
@@ -176,7 +177,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                         href="/contact" 
                         className="inline-block bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-6 py-3 rounded transition duration-200"
                       >
-                        Request Quote
+                        {t('requestQuote')}
                       </Link>
                       <DownloadBrochureForm 
                         chassisName={model?.name || ''} 

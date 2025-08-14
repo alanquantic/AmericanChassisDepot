@@ -204,14 +204,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
               const isSpanish = currentLang === 'es';
               
               // CRITICAL: Los chassis españoles (conditionId=5) siempre son "Nuevo"
-              let conditionName;
-              if (model.conditionId === 5) {
-                conditionName = 'Nuevo'; // Chassis españoles siempre nuevos
-              } else if (model.conditionId === 3) {
-                conditionName = isSpanish ? 'Nuevo' : 'New';
-              } else {
-                conditionName = isSpanish ? 'Usado' : 'Used';
-              }
+              // Only show NEW badge; never show USED
+              const showNewBadge = model.conditionId === 3 || model.conditionId === 5;
+              const conditionName = isSpanish ? 'Nuevo' : 'New';
               
               return (
                 <div 
@@ -220,15 +215,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                 >
                   <div className="h-56 bg-neutral-200 overflow-hidden relative">
                     {/* Solo mostrar etiqueta de condición cuando NO es showOnlyNew */}
-                    {!showOnlyNew && (
+                    {!showOnlyNew && showNewBadge && (
                       <div className={`absolute top-0 left-0 text-white px-3 py-1 m-2 rounded font-montserrat text-sm font-semibold ${
-                        (model.conditionId === 3 || model.conditionId === 5) ? 'bg-[#B22234]' : 'bg-[#0A3161]'
+                        'bg-[#B22234]'
                       }`}>
                         {conditionName}
                       </div>
                     )}
                     <div className="absolute top-0 right-0 bg-primary text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold">
-                      {model.manufacturer}
+                      American Chassis Depot
                     </div>
                     <img 
                       src={model.imageUrl} 
