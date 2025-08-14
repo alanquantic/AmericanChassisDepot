@@ -12,6 +12,31 @@ import {
 import { db } from "./db.js";
 import { eq, ilike, and, or } from "drizzle-orm";
 
+// Blocklist de imágenes que no deben mostrarse en ningún producto
+const BLOCKED_IMAGE_SUBSTRINGS = [
+  "photo-1580674684081-7617fbf3d745",
+];
+
+function sanitizeModelImages<T extends { imageUrl: string; additionalImages: string[] | null }>(model: T): T {
+  const isBlocked = (url: string | undefined | null) =>
+    !!url && BLOCKED_IMAGE_SUBSTRINGS.some((s) => url.includes(s));
+
+  const cleanedAdditional = Array.isArray(model.additionalImages)
+    ? model.additionalImages.filter((u) => !isBlocked(u))
+    : model.additionalImages;
+
+  let cleanedImageUrl = model.imageUrl;
+  if (isBlocked(cleanedImageUrl)) {
+    // Si la principal está bloqueada, usar la primera adicional válida o un placeholder
+    const fallback = Array.isArray(cleanedAdditional) && cleanedAdditional.length > 0
+      ? cleanedAdditional[0]
+      : "/assets/og-image.jpg";
+    cleanedImageUrl = fallback;
+  }
+
+  return { ...model, imageUrl: cleanedImageUrl, additionalImages: cleanedAdditional } as T;
+}
+
 // Storage interface
 export interface IStorage {
   // Condition operations (New/Used)
@@ -53,20 +78,22 @@ export class DatabaseStorage implements IStorage {
 
   // Chassis model operations
   async getAllChassisModels(): Promise<ChassisModel[]> {
-    return await db.select().from(chassisModels);
+    const rows = await db.select().from(chassisModels);
+    return rows.map(sanitizeModelImages);
   }
 
   async getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]> {
-    return await db.select()
+    const rows = await db.select()
       .from(chassisModels)
       .where(eq(chassisModels.conditionId, conditionId));
+    return rows.map(sanitizeModelImages);
   }
 
   async getChassisModelBySlug(slug: string): Promise<ChassisModel | undefined> {
     const [model] = await db.select()
       .from(chassisModels)
       .where(eq(chassisModels.slug, slug));
-    return model;
+    return model ? sanitizeModelImages(model) : model;
   }
 
   async createChassisModel(insertModel: InsertChassisModel): Promise<ChassisModel> {
@@ -79,7 +106,8 @@ export class DatabaseStorage implements IStorage {
   async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string, characteristic?: string): Promise<ChassisModel[]> {
     try {
       // First get all chassis models
-      const allModels = await db.select().from(chassisModels).execute();
+      const allModelsRaw = await db.select().from(chassisModels).execute();
+      const allModels = allModelsRaw.map(sanitizeModelImages);
       
       // Ensure allModels is an array
       if (!Array.isArray(allModels)) {
