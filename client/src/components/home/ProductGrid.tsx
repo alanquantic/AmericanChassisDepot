@@ -275,7 +275,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
         {/* Solo mostrar botón View All Products cuando estamos en el home (showOnlyNew = true) */}
         {showOnlyNew && (
           <div className="text-center mt-12">
-            <Link href="/products" className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 shadow-lg">
+            <Link href={`/${getCurrentLanguage()}/products`} className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 shadow-lg">
               {t('viewAllProducts')}
             </Link>
           </div>
