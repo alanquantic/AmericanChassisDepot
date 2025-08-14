@@ -135,7 +135,7 @@ const BrandPage: React.FC<BrandPageProps> = ({ slug: propSlug }) => {
                         {model.description}
                       </p>
                       <Link 
-                        href={`/products/${model.slug}`} 
+                        href={`/${getCurrentLanguage()}/products/${model.slug}`}
                         className="inline-block bg-primary hover:bg-primary-dark text-white font-montserrat font-medium px-4 py-2 rounded transition duration-200"
                       >
                         View Details

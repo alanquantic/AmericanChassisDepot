@@ -77,7 +77,7 @@ function Router() {
         }}
       </Route>
       {/* Tamaños de chasis */}
-      <Route path=\"/:lang/size/:size\">
+      <Route path="/:lang/size/:size">
         {(params) => {
           const lang = params.lang === 'es' ? 'es' : 'en';
           setLanguage(lang);
