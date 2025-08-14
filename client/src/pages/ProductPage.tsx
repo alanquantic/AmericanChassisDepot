@@ -194,7 +194,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
         {/* Technical Specifications */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-12">Technical Specifications</h2>
+            <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-12">{t('technicalSpecifications')}</h2>
             
             {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -211,37 +211,37 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                   {model?.overallLength && (
                     <div className="bg-neutral-50 p-6 rounded-lg">
-                      <h3 className="font-montserrat font-semibold text-primary mb-2">Overall Length</h3>
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">{t('overallLength')}</h3>
                       <p className="text-neutral-700">{model.overallLength}</p>
                     </div>
                   )}
                   {model?.overallWidth && (
                     <div className="bg-neutral-50 p-6 rounded-lg">
-                      <h3 className="font-montserrat font-semibold text-primary mb-2">Overall Width</h3>
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">{t('overallWidth')}</h3>
                       <p className="text-neutral-700">{model.overallWidth}</p>
                     </div>
                   )}
                   {model?.tareWeight && (
                     <div className="bg-neutral-50 p-6 rounded-lg">
-                      <h3 className="font-montserrat font-semibold text-primary mb-2">Tare Weight</h3>
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">{t('tareWeight')}</h3>
                       <p className="text-neutral-700">{model.tareWeight}</p>
                     </div>
                   )}
                   {model?.payload && (
                     <div className="bg-neutral-50 p-6 rounded-lg">
-                      <h3 className="font-montserrat font-semibold text-primary mb-2">Payload Capacity</h3>
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">{t('payloadCapacity')}</h3>
                       <p className="text-neutral-700">{model.payload}</p>
                     </div>
                   )}
                   {model?.axleSpread && (
                     <div className="bg-neutral-50 p-6 rounded-lg">
-                      <h3 className="font-montserrat font-semibold text-primary mb-2">Axle Spread</h3>
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">{t('axleSpread')}</h3>
                       <p className="text-neutral-700">{model.axleSpread}</p>
                     </div>
                   )}
                   {model?.fifthWheelHeight && (
                     <div className="bg-neutral-50 p-6 rounded-lg">
-                      <h3 className="font-montserrat font-semibold text-primary mb-2">Fifth Wheel Height</h3>
+                      <h3 className="font-montserrat font-semibold text-primary mb-2">{t('fifthWheelHeight')}</h3>
                       <p className="text-neutral-700">{model.fifthWheelHeight}</p>
                     </div>
                   )}
@@ -254,7 +254,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                     <div>
                       <h3 className="text-xl font-montserrat font-bold text-primary mb-6 flex items-center">
                         <CogIcon className="w-6 h-6 mr-2" />
-                        Frame & Structural Components
+                        {t('frameComponentsTitle')}
                       </h3>
                       <ul className="space-y-3">
                         {model.frameComponents.map((component, index) => (
@@ -272,7 +272,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                     <div>
                       <h3 className="text-xl font-montserrat font-bold text-primary mb-6 flex items-center">
                         <TruckIcon className="w-6 h-6 mr-2" />
-                        Suspension System
+                        {t('suspensionSystemTitle')}
                       </h3>
                       <ul className="space-y-3">
                         {model.suspensionDetails.map((detail, index) => (
@@ -290,7 +290,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                     <div>
                       <h3 className="text-xl font-montserrat font-bold text-primary mb-6 flex items-center">
                         <WeightIcon className="w-6 h-6 mr-2" />
-                        Brake System
+                        {t('brakeSystemTitle')}
                       </h3>
                       <ul className="space-y-3">
                         {model.brakeSystemDetails.map((detail, index) => (
@@ -307,7 +307,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                   {model?.electricalDetails && model.electricalDetails.length > 0 && (
                     <div>
                       <h3 className="text-xl font-montserrat font-bold text-primary mb-6">
-                        Electrical System
+                        {t('electricalSystemTitle')}
                       </h3>
                       <ul className="space-y-3">
                         {model.electricalDetails.map((detail, index) => (
@@ -324,7 +324,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                 {/* Additional Equipment */}
                 {model?.additionalEquipment && model.additionalEquipment.length > 0 && (
                   <div className="mt-12">
-                    <h3 className="text-xl font-montserrat font-bold text-primary mb-6">Additional Equipment & Features</h3>
+                    <h3 className="text-xl font-montserrat font-bold text-primary mb-6">{t('additionalEquipmentTitle')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {model.additionalEquipment.map((equipment, index) => (
                         <div key={index} className="flex items-center bg-neutral-50 p-4 rounded">
@@ -348,9 +348,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
         <section className="py-16 bg-neutral-200">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden p-8">
-              <h2 className="text-2xl font-montserrat font-bold text-primary text-center mb-6">Interested in this Chassis?</h2>
+              <h2 className="text-2xl font-montserrat font-bold text-primary text-center mb-6">{t('interestedInThisChassis')}</h2>
               <p className="text-lg text-neutral-600 text-center mb-8">
-                Contact us for pricing, availability, or to schedule a consultation
+                {t('contactUsPricingAvailability')}
               </p>
               <ContactForm />
             </div>
