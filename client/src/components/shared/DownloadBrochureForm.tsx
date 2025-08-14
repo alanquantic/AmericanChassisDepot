@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useLanguage } from '@/lib/i18n-simple';
+import { useLanguage, getLanguage } from '@/lib/i18n-simple';
 import { useToast } from '@/hooks/use-toast';
 import { DownloadIcon } from 'lucide-react';
 
@@ -70,6 +70,27 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
+      // GA4 events: brochure_download and file_download
+      try {
+        const lang = getLanguage();
+        // @ts-ignore
+        window.gtag && window.gtag('event', 'brochure_download', {
+          event_category: 'Engagement',
+          event_label: 'Download Brochure',
+          product_slug: chassisSlug,
+          product_name: chassisName,
+          language: lang
+        });
+        // @ts-ignore
+        window.gtag && window.gtag('event', 'file_download', {
+          link_text: 'Download Brochure',
+          file_name: `${chassisSlug}-brochure.pdf`,
+          product_slug: chassisSlug,
+          product_name: chassisName,
+          language: lang
+        });
+      } catch {}
+
       toast({
         title: t('downloadStartedTitle'),
         description: t('downloadStartedDesc'),
