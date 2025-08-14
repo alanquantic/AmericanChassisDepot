@@ -71,8 +71,8 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       window.URL.revokeObjectURL(url);
       
       toast({
-        title: 'Download Started',
-        description: 'Your brochure is downloading now.',
+        title: t('downloadStartedTitle'),
+        description: t('downloadStartedDesc'),
       });
       
       setIsOpen(false);
@@ -81,8 +81,8 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
     onError: () => {
       toast({
         variant: 'destructive',
-        title: 'Download Failed',
-        description: 'There was an error downloading the brochure. Please try again.',
+        title: t('downloadFailedTitle'),
+        description: t('downloadFailedDesc'),
       });
     }
   });
@@ -102,29 +102,29 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
           className="bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-3 rounded transition-all duration-200 flex items-center gap-2"
         >
           <DownloadIcon className="w-5 h-5" />
-          Download Brochure
+          {t('downloadBrochure')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="font-montserrat font-bold text-primary">
-            Download Brochure
+            {t('downloadBrochure')}
           </DialogTitle>
           <p className="text-sm text-neutral-600 mt-2">
-            Please fill out the form below to download the brochure for <strong>{chassisName}</strong>
+            {t('sendUsAMessage')}
           </p>
         </DialogHeader>
         
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
           <div className="space-y-2">
             <Label htmlFor="name" className="font-montserrat font-medium">
-              Full Name *
+              {t('fullName')} *
             </Label>
             <Input
               id="name"
               {...form.register('name')}
               className="font-montserrat"
-              placeholder="Enter your full name"
+              placeholder={t('fullName')}
             />
             {form.formState.errors.name && (
               <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
@@ -133,14 +133,14 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor="email" className="font-montserrat font-medium">
-              Email Address *
+              {t('emailAddressLabel')} *
             </Label>
             <Input
               id="email"
               type="email"
               {...form.register('email')}
               className="font-montserrat"
-              placeholder="Enter your email address"
+              placeholder={t('emailAddressLabel')}
             />
             {form.formState.errors.email && (
               <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
@@ -149,13 +149,13 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor="company" className="font-montserrat font-medium">
-              Company Name *
+              {t('companyName')} *
             </Label>
             <Input
               id="company"
               {...form.register('company')}
               className="font-montserrat"
-              placeholder="Enter your company name"
+              placeholder={t('companyName')}
             />
             {form.formState.errors.company && (
               <p className="text-sm text-red-500">{form.formState.errors.company.message}</p>
@@ -164,14 +164,14 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor="phone" className="font-montserrat font-medium">
-              Phone Number *
+              {t('phoneNumberLabel')} *
             </Label>
             <Input
               id="phone"
               type="tel"
               {...form.register('phone')}
               className="font-montserrat"
-              placeholder="Enter your phone number"
+              placeholder={t('phoneNumberLabel')}
             />
             {form.formState.errors.phone && (
               <p className="text-sm text-red-500">{form.formState.errors.phone.message}</p>
@@ -185,17 +185,14 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
               onClick={() => setIsOpen(false)}
               className="flex-1 font-montserrat"
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               type="submit"
               disabled={downloadMutation.isPending}
               className="flex-1 bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat"
             >
-              {downloadMutation.isPending 
-                ? 'Downloading...' 
-                : 'Download'
-              }
+              {downloadMutation.isPending ? t('downloading') : t('download')}
             </Button>
           </div>
         </form>
