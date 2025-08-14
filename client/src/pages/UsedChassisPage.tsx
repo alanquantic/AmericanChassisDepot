@@ -6,6 +6,7 @@ import FloatingButton from '@/components/layout/FloatingButton';
 import ContactForm from '@/components/shared/ContactForm';
 import { RulerIcon, WeightIcon, ToolsIcon, CertificateIcon } from '@/lib/icons';
 
+// Hide/retire Used Chassis page content and redirect to home
 const UsedChassisPage: React.FC = () => {
 
   return (
@@ -16,7 +17,7 @@ const UsedChassisPage: React.FC = () => {
         <section className="bg-primary py-16 md:py-24 relative">
           <div className="container mx-auto px-4 relative z-10 text-white">
             <div className="max-w-3xl">
-              <h1 className="text-3xl md:text-5xl font-montserrat font-bold mb-6">Used Chassis</h1>
+              <h1 className="text-3xl md:text-5xl font-montserrat font-bold mb-6">New Chassis</h1>
               <p className="text-lg md:text-xl mb-8">
                 Quality pre-owned chassis that have been thoroughly inspected and refurbished as needed, offering excellent value for your investment.
               </p>
@@ -35,7 +36,7 @@ const UsedChassisPage: React.FC = () => {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-montserrat font-bold text-primary text-center mb-12">
-              Benefits of Used Chassis
+              Benefits of New Chassis
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="bg-white p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl text-center">
