@@ -85,6 +85,25 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
           productSlug={model.slug}
         />
       )}
+      {/* JSON-LD Producto */}
+      {model && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: model.name,
+          description: model.description,
+          image: model.imageUrl,
+          brand: { '@type': 'Brand', name: 'American Chassis Depot' },
+          category: 'New Container Chassis',
+          url: `${window.location.origin}/${getLanguage()}/products/${model.slug}`,
+          offers: {
+            '@type': 'Offer',
+            availability: 'https://schema.org/InStock',
+            itemCondition: 'https://schema.org/NewCondition',
+            priceCurrency: 'USD'
+          }
+        }) }} />
+      )}
       
       <main>
         {/* Product Hero */}
