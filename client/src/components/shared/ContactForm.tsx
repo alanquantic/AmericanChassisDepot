@@ -70,6 +70,17 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
       return apiRequest('POST', '/api/contact', dataWithSource);
     },
     onSuccess: (response: any) => {
+      try {
+        const lang = getCurrentLanguage();
+        // GA4 event for lead
+        // @ts-ignore
+        window.gtag && window.gtag('event', 'generate_lead', {
+          event_category: 'Lead',
+          event_label: 'Contact Form',
+          language: lang,
+          source_url: window.location.href
+        });
+      } catch {}
       // Same friendly message regardless of email status
       toast({
         title: getCurrentLanguage() === 'es' ? "¡Gracias!" : "Thank You!",

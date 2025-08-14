@@ -206,6 +206,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                       <Link 
                         href={`/${getLanguage()}/contact`} 
                         className="inline-block bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-6 py-3 rounded transition duration-200"
+                        onClick={() => {
+                          try {
+                            // @ts-ignore
+                            window.gtag && window.gtag('event','request_quote_click',{
+                              event_category:'Engagement',
+                              event_label:'Request Quote Button',
+                              product_slug: model?.slug,
+                              product_name: model?.name,
+                              language: getLanguage()
+                            });
+                          } catch {}
+                        }}
                       >
                         {t('requestQuote')}
                       </Link>
