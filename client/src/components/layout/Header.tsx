@@ -47,7 +47,7 @@ const Header: React.FC = () => {
           <nav className="flex space-x-6" aria-label="Main Navigation">
             <Link 
               href={`${langPrefix}`} 
-              className={`font-montserrat font-medium ${location === '/' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
+              className={`font-montserrat font-medium ${location === `${langPrefix}` ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
               aria-label="Home page"
               title="Go to homepage"
             >
@@ -55,7 +55,7 @@ const Header: React.FC = () => {
             </Link>
             <Link 
               href={`${langPrefix}/products`} 
-              className={`font-montserrat font-medium ${location === '/products' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
+              className={`font-montserrat font-medium ${location === `${langPrefix}/products` ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
               aria-label="Browse our chassis products"
               title="Browse all chassis products"
             >
@@ -63,7 +63,7 @@ const Header: React.FC = () => {
             </Link>
             <Link 
               href={`${langPrefix}/about`} 
-              className={`font-montserrat font-medium ${location === '/about' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
+              className={`font-montserrat font-medium ${location === `${langPrefix}/about` ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
               aria-label="About American Chassis Depot"
               title="Learn about our company"
             >
@@ -71,7 +71,7 @@ const Header: React.FC = () => {
             </Link>
             <Link 
               href={`${langPrefix}/contact`} 
-              className={`font-montserrat font-medium ${location === '/contact' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
+              className={`font-montserrat font-medium ${location === `${langPrefix}/contact` ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
               aria-label="Contact us"
               title="Get in touch with our team"
             >

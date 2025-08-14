@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
+import { getCurrentLanguage } from '@/lib/i18n-simple';
 import { Skeleton } from '@/components/ui/skeleton';
 import ContactForm from '@/components/shared/ContactForm';
 import type { ChassisModel } from '@shared/schema';
@@ -129,7 +130,7 @@ const BrandPage: React.FC<BrandPageProps> = ({ slug: propSlug }) => {
                         <span>{model.size}</span>
                         <span className="mx-2">|</span>
                         <WeightIcon className="w-4 h-4" />
-                        <span>{model.dutyType}</span>
+                        <span>{model.axleConfig}</span>
                       </div>
                       <p className="text-neutral-600 mb-4">
                         {model.description}

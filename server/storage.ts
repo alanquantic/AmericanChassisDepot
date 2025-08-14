@@ -92,8 +92,17 @@ export class DatabaseStorage implements IStorage {
       
       if (conditionSlug && conditionSlug !== 'all') {
         if (conditionSlug === 'english-only') {
-          // CRITICAL: Exclude Spanish chassis (condition_id = 5) for English version
+          // Excluir catálogo español para EN
           filteredModels = filteredModels.filter(model => model.conditionId !== 5);
+        } else if (conditionSlug === 'chassis-nuevos-espanol') {
+          // Catálogo ES por condición explícita (slug documentado en README)
+          const condition = await this.getConditionBySlug('chassis-nuevos-espanol');
+          if (condition) {
+            filteredModels = filteredModels.filter(model => model.conditionId === condition.id);
+          } else {
+            // Fallback: si no existe condición, filtrar por convención de slug '-esp'
+            filteredModels = filteredModels.filter(model => model.slug.endsWith('-esp'));
+          }
         } else {
           const condition = await this.getConditionBySlug(conditionSlug);
           if (condition) {

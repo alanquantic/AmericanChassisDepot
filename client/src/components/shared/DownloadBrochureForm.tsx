@@ -32,6 +32,7 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+  const [staticUrl, setStaticUrl] = useState<string | null>(null);
   
   const form = useForm<DownloadFormData>({
     resolver: zodResolver(downloadFormSchema),
@@ -42,6 +43,15 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       phone: ''
     }
   });
+
+  // Detectar brochure estático por idioma y slug: /brochures/{en|es}/{slug}.pdf
+  React.useEffect(() => {
+    const lang = getLanguage();
+    const url = `/brochures/${lang === 'es' ? 'es' : 'en'}/${chassisSlug}.pdf`;
+    fetch(url, { method: 'HEAD' }).then((res) => {
+      if (res.ok) setStaticUrl(url);
+    }).catch(() => {});
+  }, [chassisSlug]);
 
   const downloadMutation = useMutation({
     mutationFn: async (data: DownloadFormData & { chassisName: string; chassisSlug: string }) => {
@@ -109,6 +119,34 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
   });
 
   const onSubmit = (data: DownloadFormData) => {
+    // Si existe PDF estático, descargar sin invocar API
+    if (staticUrl) {
+      try {
+        const lang = getLanguage();
+        // @ts-ignore
+        window.gtag && window.gtag('event', 'brochure_download', {
+          event_category: 'Engagement',
+          event_label: 'Download Brochure',
+          product_slug: chassisSlug,
+          product_name: chassisName,
+          language: lang
+        });
+        // @ts-ignore
+        window.gtag && window.gtag('event', 'file_download', {
+          link_text: 'Download Brochure',
+          file_name: `${chassisSlug}.pdf`,
+          product_slug: chassisSlug,
+          product_name: chassisName,
+          language: lang
+        });
+      } catch {}
+      window.open(staticUrl, '_blank');
+      toast({ title: t('downloadStartedTitle'), description: t('downloadStartedDesc') });
+      setIsOpen(false);
+      form.reset();
+      return;
+    }
+    // Si no hay PDF estático, usar API (placeholder actual)
     downloadMutation.mutate({
       ...data,
       chassisName,
