@@ -11,6 +11,7 @@ import { DownloadBrochureForm } from '@/components/shared/DownloadBrochureForm';
 import { useLanguage } from '@/lib/i18n-simple';
 import { getPrimaryCharacteristic } from '@/lib/chassisUtils';
 import type { ChassisModel } from '@shared/schema';
+import Seo from '@/components/seo/Seo';
 
 interface ProductPageProps {
   slug?: string;
@@ -74,6 +75,16 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
   return (
     <>
       <Header />
+      {/* SEO per producto */}
+      {model && (
+        <Seo
+          title={`${model.name} | American Chassis Depot`}
+          description={model.description || 'Premium container chassis model.'}
+          imageUrl={model.imageUrl}
+          canonicalPath={`/${getLanguage()}/products/${model.slug}`}
+          productSlug={model.slug}
+        />
+      )}
       
       <main>
         {/* Product Hero */}
