@@ -1,69 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://americanchassisdepot.com/</loc>
+    <loc>https://americanchassisdepot.com/en</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/products</loc>
+    <loc>https://americanchassisdepot.com/en/products</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/new-chassis</loc>
+    <loc>https://americanchassisdepot.com/en/new-chassis</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/used-chassis</loc>
+    <loc>https://americanchassisdepot.com/en/used-chassis</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/about</loc>
+    <loc>https://americanchassisdepot.com/en/about</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/contact</loc>
+    <loc>https://americanchassisdepot.com/en/contact</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/products/new-20ft-sl-tandem</loc>
+    <loc>https://americanchassisdepot.com/en/products/20-sl-tandem</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/products/new-20-40ft-extendable-tandem</loc>
+    <loc>https://americanchassisdepot.com/en/products/20-40-extendable-tandem</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/products/new-20-40ft-12pins-triaxle</loc>
+    <loc>https://americanchassisdepot.com/en/products/20-40-12-pins-triaxle</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/products/new-40-45ft-extendable</loc>
+    <loc>https://americanchassisdepot.com/en/products/40-45-extendable</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://americanchassisdepot.com/products/used-20-40-45ft-extendable-triaxle</loc>
+    <loc>https://americanchassisdepot.com/en/products/40-45-48-53-extendable-triaxle</loc>
     <lastmod>2025-04-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <!-- Spanish homepage -->
+  <url>
+    <loc>https://americanchassisdepot.com/es</loc>
+    <lastmod>2025-04-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Disallow legacy non-prefixed routes to avoid duplicate content
+Disallow: /products$
+Disallow: /about$
+Disallow: /contact$
+Disallow: /new-chassis$
+Disallow: /used-chassis$
+
+Sitemap: https://americanchassisdepot.com/sitemap.xml
+
