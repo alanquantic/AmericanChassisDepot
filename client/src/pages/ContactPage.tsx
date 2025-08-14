@@ -3,7 +3,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import { MapPinIcon, PhoneIcon, EmailIcon } from '@/lib/icons';
-import { CONTACT_INFO, getContactInfo } from '@/lib/constants';
+import { getContactInfo } from '@/lib/constants';
 import ContactForm from '@/components/shared/ContactForm';
 import { useLanguage } from '@/lib/i18n-simple';
 

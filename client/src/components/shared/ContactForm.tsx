@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { CONDITIONS, getConditions } from '@/lib/constants';
+import { getConditions } from '@/lib/constants';
 import { useLocation } from 'wouter';
 import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import { 

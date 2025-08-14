@@ -205,7 +205,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
               
               // CRITICAL: Los chassis españoles (conditionId=5) siempre son "Nuevo"
               // Only show NEW badge; never show USED
-              const showNewBadge = model.conditionId === 3 || model.conditionId === 5;
+              const showNewBadge = model.conditionId !== 4 && model.conditionId !== 2;
               const conditionName = isSpanish ? 'Nuevo' : 'New';
               
               return (
@@ -255,7 +255,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                         {t('viewDetails')}
                       </Link>
                       <Link
-                        href="/contact" 
+                        href={`/${getCurrentLanguage()}/contact`} 
                         className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
                       >
                         {t('getAQuote')}

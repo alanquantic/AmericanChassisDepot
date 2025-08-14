@@ -3,7 +3,6 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import { TruckIcon, ToolsIcon, CertificateIcon } from '@/lib/icons';
-import { COMPANY_INFO } from '@/lib/constants';
 
 const AboutPage: React.FC = () => {
   return (
