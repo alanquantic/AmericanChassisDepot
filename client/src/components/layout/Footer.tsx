@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { 
   FacebookIcon, 
   TwitterIcon, 
@@ -9,11 +9,12 @@ import {
   PhoneIcon,
   EmailIcon
 } from '@/lib/icons';
-import { CONTACT_INFO, getContactInfo } from '@/lib/constants';
+import { getContactInfo } from '@/lib/constants';
 import { useLanguage } from '@/lib/i18n-simple';
 
 const Footer: React.FC = () => {
   const { t } = useLanguage();
+  const [location] = useLocation();
   const contactInfo = getContactInfo();
   
   return (
@@ -42,10 +43,10 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-montserrat font-semibold text-lg mb-4">{t('quickLinks')}</h4>
             <ul className="space-y-2">
-              <li><Link href="/" className="hover:text-[#E30D16] transition duration-200">{t('home')}</Link></li>
-              <li><Link href="/products" className="hover:text-[#E30D16] transition duration-200">{t('products')}</Link></li>
-              <li><Link href="/about" className="hover:text-[#E30D16] transition duration-200">{t('about')}</Link></li>
-              <li><Link href="/contact" className="hover:text-[#E30D16] transition duration-200">{t('contact')}</Link></li>
+              <li><Link href={`${location?.startsWith('/es') ? '/es' : '/en'}`} className="hover:text-[#E30D16] transition duration-200">{t('home')}</Link></li>
+              <li><Link href={`${location?.startsWith('/es') ? '/es' : '/en'}/products`} className="hover:text-[#E30D16] transition duration-200">{t('products')}</Link></li>
+              <li><Link href={`${location?.startsWith('/es') ? '/es' : '/en'}/about`} className="hover:text-[#E30D16] transition duration-200">{t('about')}</Link></li>
+              <li><Link href={`${location?.startsWith('/es') ? '/es' : '/en'}/contact`} className="hover:text-[#E30D16] transition duration-200">{t('contact')}</Link></li>
             </ul>
           </div>
           

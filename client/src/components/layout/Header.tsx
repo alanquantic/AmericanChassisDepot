@@ -24,11 +24,12 @@ const Header: React.FC = () => {
     setIsMobileBrandsOpen(!isMobileBrandsOpen);
   };
 
+  const langPrefix = location.startsWith('/es') ? '/es' : '/en';
   return (
     <header className="bg-white border-b border-neutral-200 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" onClick={closeMobileMenu} className="flex items-center space-x-3">
+        <Link href={`${langPrefix}`} onClick={closeMobileMenu} className="flex items-center space-x-3">
           <img 
             src="/acn.png" 
             alt="American Chassis Depot Logo" 
@@ -45,32 +46,32 @@ const Header: React.FC = () => {
         <div className="hidden md:flex items-center space-x-6">
           <nav className="flex space-x-6" aria-label="Main Navigation">
             <Link 
-              href="/" 
-              className={`font-montserrat font-medium ${location === '/' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
+              href={`${langPrefix}`} 
+              className={`font-montserrat font-medium ${location === `${langPrefix}` ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
               aria-label="Home page"
               title="Go to homepage"
             >
               {t('home')}
             </Link>
             <Link 
-              href="/products" 
-              className={`font-montserrat font-medium ${location === '/products' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
+              href={`${langPrefix}/products`} 
+              className={`font-montserrat font-medium ${location === `${langPrefix}/products` ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
               aria-label="Browse our chassis products"
               title="Browse all chassis products"
             >
               {t('products')}
             </Link>
             <Link 
-              href="/about" 
-              className={`font-montserrat font-medium ${location === '/about' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
+              href={`${langPrefix}/about`} 
+              className={`font-montserrat font-medium ${location === `${langPrefix}/about` ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
               aria-label="About American Chassis Depot"
               title="Learn about our company"
             >
               {t('about')}
             </Link>
             <Link 
-              href="/contact" 
-              className={`font-montserrat font-medium ${location === '/contact' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
+              href={`${langPrefix}/contact`} 
+              className={`font-montserrat font-medium ${location === `${langPrefix}/contact` ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
               aria-label="Contact us"
               title="Get in touch with our team"
             >
@@ -105,7 +106,7 @@ const Header: React.FC = () => {
           </div>
           <nav aria-label="Mobile Navigation">
             <Link 
-              href="/" 
+              href={`${langPrefix}`} 
               onClick={closeMobileMenu} 
               className={`block py-2 font-montserrat font-medium ${location === '/' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'}`}
               aria-label="Home page"
@@ -113,7 +114,7 @@ const Header: React.FC = () => {
               {t('home')}
             </Link>
             <Link 
-              href="/products" 
+              href={`${langPrefix}/products`} 
               onClick={closeMobileMenu} 
               className={`block py-2 font-montserrat font-medium ${location === '/products' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'}`}
               aria-label="Browse our chassis products"
@@ -121,7 +122,7 @@ const Header: React.FC = () => {
               {t('products')}
             </Link>
             <Link 
-              href="/about" 
+              href={`${langPrefix}/about`} 
               onClick={closeMobileMenu} 
               className={`block py-2 font-montserrat font-medium ${location === '/about' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'}`}
               aria-label="About American Chassis Depot"
@@ -129,7 +130,7 @@ const Header: React.FC = () => {
               {t('about')}
             </Link>
             <Link 
-              href="/contact" 
+              href={`${langPrefix}/contact`} 
               onClick={closeMobileMenu} 
               className={`block py-2 font-montserrat font-medium ${location === '/contact' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'}`}
               aria-label="Contact us"

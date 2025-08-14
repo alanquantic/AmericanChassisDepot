@@ -15,6 +15,14 @@ export const translations = {
     heroSubtitle: 'Explore our wide selection of high-quality chassis from leading manufacturers in the industry',
     viewProducts: 'View Products',
     requestQuote: 'Request Quote',
+    downloadBrochure: 'Download Brochure',
+    downloadStartedTitle: 'Download Started',
+    downloadStartedDesc: 'Your brochure is downloading now.',
+    downloadFailedTitle: 'Download Failed',
+    downloadFailedDesc: 'There was an error downloading the brochure. Please try again.',
+    cancel: 'Cancel',
+    downloading: 'Downloading...',
+    download: 'Download',
     
     // Brands
     trustedBrands: 'Trusted Component Brands',
@@ -47,6 +55,22 @@ export const translations = {
     getAQuote: 'Get a Quote',
     viewAllProducts: 'View All Products',
     noChassisFound: 'No chassis models found with the selected filters.',
+
+    // Product details
+    technicalSpecifications: 'Technical Specifications',
+    overallLength: 'Overall Length',
+    overallWidth: 'Overall Width',
+    tareWeight: 'Tare Weight',
+    payloadCapacity: 'Payload Capacity',
+    axleSpread: 'Axle Spread',
+    fifthWheelHeight: 'Fifth Wheel Height',
+    frameComponentsTitle: 'Frame & Structural Components',
+    suspensionSystemTitle: 'Suspension System',
+    brakeSystemTitle: 'Brake System',
+    electricalSystemTitle: 'Electrical System',
+    additionalEquipmentTitle: 'Additional Equipment & Features',
+    interestedInThisChassis: 'Interested in this Chassis?',
+    contactUsPricingAvailability: 'Contact us for pricing, availability, or to schedule a consultation',
     
     // About Section
     aboutTitle: 'About American Chassis Depot',
@@ -135,6 +159,14 @@ export const translations = {
     heroSubtitle: 'Explora nuestra amplia selección de chasis de alta calidad de los principales fabricantes de la industria',
     viewProducts: 'Ver Productos',
     requestQuote: 'Solicitar Cotización',
+    downloadBrochure: 'Descargar Folleto',
+    downloadStartedTitle: 'Descarga iniciada',
+    downloadStartedDesc: 'Tu folleto se está descargando.',
+    downloadFailedTitle: 'Fallo en la descarga',
+    downloadFailedDesc: 'Ocurrió un error al descargar el folleto. Intenta nuevamente.',
+    cancel: 'Cancelar',
+    downloading: 'Descargando...',
+    download: 'Descargar',
     
     // Brands
     trustedBrands: 'Marcas de Componentes de Confianza',
@@ -167,6 +199,22 @@ export const translations = {
     getAQuote: 'Obtener Cotización',
     viewAllProducts: 'Ver Todos los Productos',
     noChassisFound: 'No se encontraron modelos de chasis con los filtros seleccionados.',
+
+    // Product details
+    technicalSpecifications: 'Especificaciones Técnicas',
+    overallLength: 'Longitud Total',
+    overallWidth: 'Anchura Total',
+    tareWeight: 'Peso de Tara',
+    payloadCapacity: 'Carga Útil',
+    axleSpread: 'Separación del Eje',
+    fifthWheelHeight: 'Altura de la Quinta Rueda',
+    frameComponentsTitle: 'Estructura y Componentes del Bastidor',
+    suspensionSystemTitle: 'Sistema de Suspensión',
+    brakeSystemTitle: 'Sistema de Frenos',
+    electricalSystemTitle: 'Sistema Eléctrico',
+    additionalEquipmentTitle: 'Equipo y Características Adicionales',
+    interestedInThisChassis: '¿Interesado en este Chasis?',
+    contactUsPricingAvailability: 'Contáctanos para precios, disponibilidad o para agendar una consulta',
     
     // About Section
     aboutTitle: 'Acerca de American Chassis Depot',

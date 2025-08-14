@@ -48,6 +48,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ message: "Failed to fetch chassis models" });
     }
   });
+
+  // Dynamic sitemap by language
+  app.get('/sitemap.xml', async (_req: Request, res: Response) => {
+    try {
+      const models = await storage.getAllChassisModels();
+      const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://americanchassisdepot.com';
+      const lastmod = new Date().toISOString().slice(0, 10);
+      const urls: string[] = [];
+      // EN static
+      urls.push(`${baseUrl}/en`, `${baseUrl}/en/products`, `${baseUrl}/en/about`, `${baseUrl}/en/contact`);
+      // ES home
+      urls.push(`${baseUrl}/es`);
+      // Products EN/ES
+      for (const m of models) {
+        const enSlug = m.slug.endsWith('-esp') ? m.slug.slice(0, -4) : m.slug;
+        const esSlug = m.slug.endsWith('-esp') ? m.slug : `${m.slug}-esp`;
+        urls.push(`${baseUrl}/en/products/${enSlug}`);
+        urls.push(`${baseUrl}/es/products/${esSlug}`);
+      }
+      const xml = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        ...urls.map(u => `  <url><loc>${u}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>`),
+        '</urlset>'
+      ].join('\n');
+      res.setHeader('Content-Type', 'application/xml');
+      return res.send(xml);
+    } catch (e) {
+      console.error('Error generating sitemap:', e);
+      return res.status(500).send('');
+    }
+  });
   
   // Filter chassis models
   app.get(`${apiPrefix}/chassis/filter`, async (req, res) => {

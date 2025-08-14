@@ -1,6 +1,6 @@
 import React from 'react';
 import { TruckIcon, ToolsIcon, CertificateIcon } from '@/lib/icons';
-import { COMPANY_INFO, getCompanyInfo } from '@/lib/constants';
+import { getCompanyInfo } from '@/lib/constants';
 import { useLanguage } from '@/lib/i18n-simple';
 
 const AboutSection: React.FC = () => {

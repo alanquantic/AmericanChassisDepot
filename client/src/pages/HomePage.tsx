@@ -13,6 +13,7 @@ import { MapPinIcon, PhoneIcon, EmailIcon } from '@/lib/icons';
 import { getContactInfo } from '@/lib/constants';
 import { useLanguage } from '@/lib/i18n-simple';
 import ContactForm from '@/components/shared/ContactForm';
+import Seo from '@/components/seo/Seo';
 
 // Eliminamos los atributos de React.Fragment que causan el warning
 
@@ -27,6 +28,11 @@ const HomePage: React.FC<HomePageProps> = ({ initialSize }) => {
   return (
     <div>
       <Header />
+      <Seo
+        title="American Chassis Depot | Premium New Container Chassis Solutions"
+        description="Leading provider of high-quality new container chassis in Houston, TX. Browse 20ft, 33ft, 40ft, 45ft and extendable models with exceptional service and competitive pricing."
+        canonicalPath={`/${t('home') === 'Inicio' ? 'es' : 'en'}`}
+      />
       
       <main>
         <Hero />
