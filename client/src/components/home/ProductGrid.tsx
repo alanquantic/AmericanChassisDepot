@@ -248,8 +248,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                       {model.description}
                     </p>
                     <div className="flex gap-2">
-                      <Link
-                        href={`/products/${model.slug}`} 
+            <Link
+              href={`/${getCurrentLanguage()}/products/${model.slug}`} 
                         className="inline-block border border-primary text-primary hover:bg-primary hover:text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
                       >
                         {t('viewDetails')}

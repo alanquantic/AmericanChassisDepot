@@ -1,12 +1,17 @@
 import React from 'react';
 import { useLanguage, Language } from '@/lib/i18n-simple';
+import { useLocation } from 'wouter';
 
 export default function LanguageSelector() {
   const { language, setLanguage } = useLanguage();
+  const [location, navigate] = useLocation();
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log('Changing language to:', e.target.value);
-    setLanguage(e.target.value as Language);
+    const lang = e.target.value as Language;
+    setLanguage(lang);
+    const path = location.replace(/^\/(en|es)/, `/${lang}`);
+    const next = /^\/(en|es)/.test(path) ? path : `/${lang}` + (path.startsWith('/') ? path : `/${path}`);
+    navigate(next);
   };
 
   return (
