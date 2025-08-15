@@ -260,7 +260,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                         chassisSlug={model.slug}
                         actionType="quote"
                         triggerText={t('getAQuote')}
-                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[120px]"
                       />
                     </div>
                   </div>

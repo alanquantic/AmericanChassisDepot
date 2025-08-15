@@ -22,6 +22,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const { t } = useLanguage();
   
+  // Debug logging
+  console.log('ProductPage render:', { slug, propSlug, params });
+  
   // Fetch chassis model data
   const { data: model, isLoading: modelLoading, error: modelError } = useQuery<ChassisModel>({
     queryKey: [`/api/chassis/${slug}`],
@@ -225,14 +228,14 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                         chassisSlug={model?.slug || ''}
                         actionType="quote"
                         triggerText={t('requestQuote')}
-                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[140px]"
                       />
                       <UnifiedContactForm
                         chassisName={model?.name || ''}
                         chassisSlug={model?.slug || ''}
                         actionType="brochure"
                         triggerText={t('downloadBrochure')}
-                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[160px]"
                       />
                     </div>
                   </>
