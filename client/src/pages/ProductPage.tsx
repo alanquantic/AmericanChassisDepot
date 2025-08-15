@@ -7,6 +7,7 @@ import FloatingButton from '@/components/layout/FloatingButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon, TruckIcon, CogIcon } from '@/lib/icons';
 import { UnifiedContactForm } from '@/components/shared/UnifiedContactForm';
+import ContactForm from '@/components/shared/ContactForm';
 import { useLanguage, getLanguage } from '@/lib/i18n-simple';
 import { getPrimaryCharacteristic } from '@/lib/chassisUtils';
 import type { ChassisModel } from '@shared/schema';
@@ -228,14 +229,14 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                         chassisSlug={model?.slug || ''}
                         actionType="quote"
                         triggerText={t('requestQuote')}
-                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[160px] whitespace-nowrap"
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[180px] whitespace-nowrap"
                       />
                       <UnifiedContactForm
                         chassisName={model?.name || ''}
                         chassisSlug={model?.slug || ''}
                         actionType="brochure"
                         triggerText={t('downloadBrochure')}
-                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[180px] whitespace-nowrap"
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[200px] whitespace-nowrap"
                       />
                     </div>
                   </>
@@ -406,13 +407,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
               <p className="text-lg text-neutral-600 text-center mb-8">
                 {t('contactUsPricingAvailability')}
               </p>
-              <UnifiedContactForm
-                chassisName={model?.name || ''}
-                chassisSlug={model?.slug || ''}
-                actionType="quote"
-                triggerText={t('getAQuote')}
-                className="w-full"
-              />
+              <ContactForm />
             </div>
           </div>
         </section>
