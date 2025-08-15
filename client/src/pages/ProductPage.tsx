@@ -206,37 +206,20 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                       {model?.description}
                     </p>
                     <div className="flex flex-wrap gap-4">
-                      <Link 
-                        href={`/${getLanguage()}/contact`} 
-                        className="inline-block bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-6 py-3 rounded transition duration-200"
-                        onClick={() => {
-                          try {
-                            // @ts-ignore
-                            window.gtag && window.gtag('event','request_quote_click',{
-                              event_category:'Engagement',
-                              event_label:'Request Quote Button',
-                              product_slug: model?.slug,
-                              product_name: model?.name,
-                              language: getLanguage()
-                            });
-                          } catch {}
-                        }}
-                      >
-                        {t('requestQuote')}
-                      </Link>
+                      
                       <UnifiedContactForm
                         chassisName={model?.name || ''}
                         chassisSlug={model?.slug || ''}
                         actionType="quote"
                         triggerText={t('requestQuote')}
-                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[180px] whitespace-nowrap"
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[220px] whitespace-nowrap"
                       />
                       <UnifiedContactForm
                         chassisName={model?.name || ''}
                         chassisSlug={model?.slug || ''}
                         actionType="brochure"
                         triggerText={t('downloadBrochure')}
-                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[200px] whitespace-nowrap"
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[240px] whitespace-nowrap"
                       />
                     </div>
                   </>
