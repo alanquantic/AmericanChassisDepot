@@ -17,6 +17,9 @@ const BLOCKED_IMAGE_SUBSTRINGS = [
   "photo-1580674684081-7617fbf3d745",
   "20_SL_Tandem_4.jpg",
   "20_40_Extendable_Tandem_2.jpg",
+  "40_Gooseneck_1.jpg",
+  "40_Gooseneck_2.jpg",
+  "40_45_Extendable_5.jpg",
 ];
 
 function sanitizeModelImages<T extends { imageUrl: string; additionalImages: string[] | null }>(model: T): T {
