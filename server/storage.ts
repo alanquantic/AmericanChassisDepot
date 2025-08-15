@@ -15,6 +15,8 @@ import { eq, ilike, and, or } from "drizzle-orm";
 // Blocklist de imágenes que no deben mostrarse en ningún producto
 const BLOCKED_IMAGE_SUBSTRINGS = [
   "photo-1580674684081-7617fbf3d745",
+  "20_SL_Tandem_4.jpg",
+  "20_40_Extendable_Tandem_2.jpg",
 ];
 
 function sanitizeModelImages<T extends { imageUrl: string; additionalImages: string[] | null }>(model: T): T {
