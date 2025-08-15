@@ -260,10 +260,10 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button 
-          className={`bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-3 rounded transition-all duration-200 flex items-center gap-2 ${className}`}
+          className={`bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-3 rounded transition-all duration-200 flex items-center justify-center gap-2 ${className}`}
         >
-          {actionType === 'quote' ? <FileTextIcon className="w-5 h-5" /> : <DownloadIcon className="w-5 h-5" />}
-          {getTriggerText()}
+          {actionType === 'quote' ? <FileTextIcon className="w-5 h-5 flex-shrink-0" /> : <DownloadIcon className="w-5 h-5 flex-shrink-0" />}
+          <span className="flex-shrink-0">{getTriggerText()}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
