@@ -386,6 +386,63 @@ export const newChassisData: InsertChassisModel[] = [
     ],
     featured: true,
     sortOrder: 7
+  },
+  {
+    name: "40' GN Tandem",
+    nameEs: "40' GN Tandem",
+    slug: "40ft-gn-tandem",
+    conditionId: 1, // New
+    manufacturer: "AXN",
+    size: "40ft",
+    axleConfig: "Tandem",
+    description: "Heavy-duty 40-foot gooseneck tandem chassis designed for reliable container transportation with superior stability and load capacity.",
+    descriptionEs: "Chasis gooseneck tándem de servicio pesado de 40 pies diseñado para transporte confiable de contenedores con estabilidad superior y capacidad de carga.",
+    imageUrl: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&h=400&fit=crop",
+    additionalImages: [
+      "https://images.unsplash.com/photo-1558717097-ea7caadc8ed7?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=600&h=400&fit=crop"
+    ],
+    overallLength: "40'-11''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "49''",
+    tareWeight: "6,600 lbs ±2%",
+    payload: "67,200 lbs (30,480kgs)",
+    frameComponents: [
+      "Main Beam: WI209lb/ft hot-rolled H-beam, ASTM A572 Grade 50",
+      "Cross Member: 3/16'' thick x 3'' wide x 9'' deep channel",
+      "GN Member: 5-1/4'' deep×4'' wide hot-rolled H-beam",
+      "Upper Coupler: 1/4'' pick up plate with JOST 2'' diameter kingpin",
+      "Front Bolster: 8'' wide x 10'' high ×1/4'' thick open section"
+    ],
+    suspensionDetails: [
+      "HUTCH H9700 mechanical tandem suspension",
+      "Overslung configuration with CASC high-arch 3-leaf spring",
+      "Pre-painted BLACK color"
+    ],
+    brakeSystemDetails: [
+      "SEALCO 110800 spring brake priority valve system",
+      "WABCO 4S/2M ABS system",
+      "HALDEX Goldseal T30/30, 2.5'' stroke brake chamber",
+      "PHILLIPS glad hand 12-0061 and 12-0081"
+    ],
+    electricalDetails: [
+      "PHILLIPS mold seal wiring harness",
+      "OPTRONICS LED lights",
+      "Reserved PSI and GPS connector",
+      "10-year warranty electrical system"
+    ],
+    additionalEquipment: [
+      "AXN FW32E00J Landing Gear with 60,000 lbs capacity",
+      "WESTLAKE 255/70R22.5-16PR tubeless tires",
+      "JINGU 22.5×8.25 10-stud hub-piloted wheels",
+      "3M Conspicuity Tape per federal regulations"
+    ],
+    featured: false,
+    sortOrder: 8
   }
 ];
 
