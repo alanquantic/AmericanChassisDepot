@@ -7,6 +7,11 @@ type SeoProps = {
   imageUrl?: string
   canonicalPath?: string
   productSlug?: string
+  productPrice?: string
+  productBrand?: string
+  productCategory?: string
+  productAvailability?: 'InStock' | 'OutOfStock' | 'PreOrder'
+  isProduct?: boolean
 }
 
 function upsertMeta(property: string, content: string, attr: 'name' | 'property' = 'name') {
@@ -53,19 +58,37 @@ function getAlternateSlug(slug: string, lang: 'en' | 'es'): string {
   }
 }
 
-export const Seo: React.FC<SeoProps> = ({ title, description, imageUrl, canonicalPath = '', productSlug }) => {
+export const Seo: React.FC<SeoProps> = ({ 
+  title, 
+  description, 
+  imageUrl, 
+  canonicalPath = '', 
+  productSlug,
+  productPrice,
+  productBrand = 'American Chassis Depot',
+  productCategory = 'Container Chassis',
+  productAvailability = 'InStock',
+  isProduct = false
+}) => {
   useEffect(() => {
     const lang = getCurrentLanguage()
     const baseUrl = (import.meta as any)?.env?.VITE_SITE_URL || window.location.origin
     const path = canonicalPath || window.location.pathname
     const canonical = new URL(path, baseUrl).toString()
+    const absImage = ensureAbsolute(imageUrl || '/assets/og-image.jpg', baseUrl)
 
+    // Basic meta tags
     document.title = title
-
     upsertMeta('description', description)
     upsertMeta('robots', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1')
     upsertMeta('theme-color', '#0A3161')
+    upsertMeta('author', 'American Chassis Depot')
+    upsertMeta('keywords', lang === 'es' 
+      ? 'chasis de contenedores, chasis 20ft, chasis 40ft, chasis extensibles, chasis triaxial, chasis gooseneck, equipos de transporte, chasis intermodal, chasis de envío, distribuidor de chasis'
+      : 'container chassis, 20ft chassis, 40ft chassis, extendable chassis, triaxle chassis, gooseneck chassis, transportation equipment, intermodal chassis, shipping chassis, chassis dealer'
+    )
 
+    // Canonical and alternate links
     upsertLink('canonical', canonical)
     const altEnPath = productSlug ? `/en/products/${getAlternateSlug(productSlug, 'en')}` : '/en'
     const altEsPath = productSlug ? `/es/products/${getAlternateSlug(productSlug, 'es')}` : '/es'
@@ -73,21 +96,64 @@ export const Seo: React.FC<SeoProps> = ({ title, description, imageUrl, canonica
     upsertLink('alternate', new URL(altEsPath, baseUrl).toString(), 'es')
     upsertLink('alternate', new URL(altEnPath, baseUrl).toString(), 'x-default')
 
-    upsertMeta('og:type', 'website', 'property')
+    // Enhanced Open Graph tags
+    upsertMeta('og:type', isProduct ? 'product' : 'website', 'property')
     upsertMeta('og:site_name', 'American Chassis Depot', 'property')
     upsertMeta('og:locale', lang === 'es' ? 'es_US' : 'en_US', 'property')
     upsertMeta('og:title', title, 'property')
     upsertMeta('og:description', description, 'property')
     upsertMeta('og:url', canonical, 'property')
-    const absImage = ensureAbsolute(imageUrl || '/assets/og-image.jpg', baseUrl)
-    if (absImage) upsertMeta('og:image', absImage, 'property')
+    if (absImage) {
+      upsertMeta('og:image', absImage, 'property')
+      upsertMeta('og:image:width', '1200', 'property')
+      upsertMeta('og:image:height', '630', 'property')
+      upsertMeta('og:image:type', 'image/jpeg', 'property')
+      upsertMeta('og:image:alt', title, 'property')
+    }
 
-    upsertMeta('twitter:card', 'summary_large_image', 'property')
-    upsertMeta('twitter:url', canonical, 'property')
-    upsertMeta('twitter:title', title, 'property')
-    upsertMeta('twitter:description', description, 'property')
-    if (absImage) upsertMeta('twitter:image', absImage, 'property')
-  }, [title, description, imageUrl, canonicalPath, productSlug])
+    // Product-specific Open Graph tags
+    if (isProduct) {
+      upsertMeta('og:product:availability', productAvailability, 'property')
+      if (productPrice) {
+        upsertMeta('og:product:price:amount', productPrice, 'property')
+        upsertMeta('og:product:price:currency', 'USD', 'property')
+      }
+      if (productBrand) {
+        upsertMeta('og:product:brand', productBrand, 'property')
+      }
+      if (productCategory) {
+        upsertMeta('og:product:category', productCategory, 'property')
+      }
+    }
+
+    // Enhanced Twitter Card tags
+    upsertMeta('twitter:card', 'summary_large_image', 'name')
+    upsertMeta('twitter:site', '@americanchassisdepot', 'name')
+    upsertMeta('twitter:creator', '@americanchassisdepot', 'name')
+    upsertMeta('twitter:url', canonical, 'name')
+    upsertMeta('twitter:title', title, 'name')
+    upsertMeta('twitter:description', description, 'name')
+    if (absImage) {
+      upsertMeta('twitter:image', absImage, 'name')
+      upsertMeta('twitter:image:alt', title, 'name')
+    }
+
+    // Additional SEO tags
+    upsertMeta('geo.region', 'US-TX')
+    upsertMeta('geo.placename', 'Houston')
+    upsertMeta('geo.position', '29.8171;-95.4026')
+    upsertMeta('ICBM', '29.8171, -95.4026')
+
+    // Language-specific meta tags
+    if (lang === 'es') {
+      upsertMeta('language', 'Spanish')
+      upsertMeta('content-language', 'es')
+    } else {
+      upsertMeta('language', 'English')
+      upsertMeta('content-language', 'en')
+    }
+
+  }, [title, description, imageUrl, canonicalPath, productSlug, productPrice, productBrand, productCategory, productAvailability, isProduct])
 
   return null
 }
