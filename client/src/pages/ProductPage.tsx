@@ -6,8 +6,7 @@ import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RulerIcon, WeightIcon, TruckIcon, CogIcon } from '@/lib/icons';
-import ContactForm from '@/components/shared/ContactForm';
-import { DownloadBrochureForm } from '@/components/shared/DownloadBrochureForm';
+import { UnifiedContactForm } from '@/components/shared/UnifiedContactForm';
 import { useLanguage, getLanguage } from '@/lib/i18n-simple';
 import { getPrimaryCharacteristic } from '@/lib/chassisUtils';
 import type { ChassisModel } from '@shared/schema';
@@ -221,9 +220,19 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                       >
                         {t('requestQuote')}
                       </Link>
-                      <DownloadBrochureForm 
-                        chassisName={model?.name || ''} 
-                        chassisSlug={model?.slug || ''} 
+                      <UnifiedContactForm
+                        chassisName={model?.name || ''}
+                        chassisSlug={model?.slug || ''}
+                        actionType="quote"
+                        triggerText={t('requestQuote')}
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
+                      />
+                      <UnifiedContactForm
+                        chassisName={model?.name || ''}
+                        chassisSlug={model?.slug || ''}
+                        actionType="brochure"
+                        triggerText={t('downloadBrochure')}
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
                       />
                     </div>
                   </>
