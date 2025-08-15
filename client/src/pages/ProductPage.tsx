@@ -228,14 +228,14 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                         chassisSlug={model?.slug || ''}
                         actionType="quote"
                         triggerText={t('requestQuote')}
-                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[140px]"
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[160px] whitespace-nowrap"
                       />
                       <UnifiedContactForm
                         chassisName={model?.name || ''}
                         chassisSlug={model?.slug || ''}
                         actionType="brochure"
                         triggerText={t('downloadBrochure')}
-                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[160px]"
+                        className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-200 min-w-[180px] whitespace-nowrap"
                       />
                     </div>
                   </>
@@ -406,7 +406,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
               <p className="text-lg text-neutral-600 text-center mb-8">
                 {t('contactUsPricingAvailability')}
               </p>
-              <ContactForm />
+              <UnifiedContactForm
+                chassisName={model?.name || ''}
+                chassisSlug={model?.slug || ''}
+                actionType="quote"
+                triggerText={t('getAQuote')}
+                className="w-full"
+              />
             </div>
           </div>
         </section>
