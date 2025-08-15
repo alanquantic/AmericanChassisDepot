@@ -262,8 +262,10 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
         <Button 
           className={`bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-3 rounded transition-all duration-200 flex items-center justify-center gap-2 ${className}`}
         >
-          {actionType === 'quote' ? <FileTextIcon className="w-5 h-5 flex-shrink-0 -mt-0.5" /> : <DownloadIcon className="w-5 h-5 flex-shrink-0 -mt-0.5" />}
-          <span className="flex-shrink-0">{getTriggerText()}</span>
+          <div className="flex items-center justify-center gap-2">
+            {actionType === 'quote' ? <FileTextIcon className="w-5 h-5" /> : <DownloadIcon className="w-5 h-5" />}
+            <span>{getTriggerText()}</span>
+          </div>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
