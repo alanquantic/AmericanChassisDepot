@@ -145,7 +145,19 @@ export const translations = {
     // 404 Page
     pageNotFoundTitle: '404 Page Not Found',
     pageNotFoundDescription: 'The page you are looking for does not exist.',
-    goHomeButton: 'Go Home'
+    goHomeButton: 'Go Home',
+    
+    // Used Chassis Form
+    usedChassisInquiry: 'Used Chassis Inquiry',
+    usedChassisInquiryDescription: 'Complete the form below to inquire about our available used chassis. Our team will contact you shortly.',
+    chassisType: 'Chassis Type',
+    selectChassisType: 'Select chassis type',
+    quantity: 'Quantity',
+    usedChassisMessagePlaceholder: 'Describe your specific needs, cargo type, size requirements, etc.',
+    sendInquiry: 'Send Inquiry',
+    usedChassisInquirySent: 'Your used chassis inquiry has been sent. We will contact you soon.',
+    failedToSendInquiry: 'Failed to send inquiry. Please try again.',
+    sending: 'Sending...'
   },
   es: {
     // Navigation  
@@ -289,7 +301,19 @@ export const translations = {
     // 404 Page
     pageNotFoundTitle: '404 Página No Encontrada',
     pageNotFoundDescription: 'La página que buscas no existe.',
-    goHomeButton: 'Ir al Inicio'
+    goHomeButton: 'Ir al Inicio',
+    
+    // Used Chassis Form
+    usedChassisInquiry: 'Consulta de Chasis Usados',
+    usedChassisInquiryDescription: 'Complete el formulario a continuación para consultar sobre nuestros chasis usados disponibles. Nuestro equipo se pondrá en contacto con usted pronto.',
+    chassisType: 'Tipo de Chasis',
+    selectChassisType: 'Seleccionar tipo de chasis',
+    quantity: 'Cantidad',
+    usedChassisMessagePlaceholder: 'Describa sus necesidades específicas, tipo de carga, requisitos de tamaño, etc.',
+    sendInquiry: 'Enviar Consulta',
+    usedChassisInquirySent: 'Su consulta sobre chasis usados ha sido enviada. Nos pondremos en contacto pronto.',
+    failedToSendInquiry: 'Error al enviar la consulta. Por favor intente de nuevo.',
+    sending: 'Enviando...'
   }
 };
 
