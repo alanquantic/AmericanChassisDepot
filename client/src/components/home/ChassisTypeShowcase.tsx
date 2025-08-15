@@ -55,31 +55,31 @@ const ChassisTypeShowcase: React.FC = () => {
                 const isUsedChassis = condition.name.toLowerCase().includes('used') || condition.slug.includes('used');
                 
                 return (
-              <div key={condition.id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" id={condition.slug}>
-                <div className="relative h-64 bg-neutral-200 overflow-hidden">
-                  <div className="absolute top-0 left-0 bg-[#E30D16] text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold z-10">
-                    {condition.name}
+                  <div key={condition.id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2" id={condition.slug}>
+                    <div className="relative h-64 bg-neutral-200 overflow-hidden">
+                      <div className="absolute top-0 left-0 bg-[#E30D16] text-white px-3 py-1 m-2 rounded-sm font-montserrat text-sm font-semibold z-10">
+                        {condition.name}
+                      </div>
+                      <img 
+                        src={condition.imageUrl} 
+                        alt={condition.name} 
+                        className="w-full h-full object-cover object-center transform transition-transform duration-700 hover:scale-110"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-2xl font-montserrat font-bold text-primary mb-3">{condition.name}</h3>
+                      <p className="text-neutral-600 mb-5">
+                        {condition.description}
+                      </p>
+                      <Link 
+                        href={isUsedChassis ? `/${getCurrentLanguage()}/used-chassis` : `/${getCurrentLanguage()}/products`} 
+                        className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-300 transform hover:scale-105 shadow-md"
+                      >
+                        {t('viewModels')}
+                      </Link>
+                    </div>
                   </div>
-                  <img 
-                    src={condition.imageUrl} 
-                    alt={condition.name} 
-                    className="w-full h-full object-cover object-center transform transition-transform duration-700 hover:scale-110"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-2xl font-montserrat font-bold text-primary mb-3">{condition.name}</h3>
-                  <p className="text-neutral-600 mb-5">
-                    {condition.description}
-                  </p>
-                  <Link 
-                    href={isUsedChassis ? `/${getCurrentLanguage()}/used-chassis` : `/${getCurrentLanguage()}/products`} 
-                    className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-6 py-2 rounded transition-all duration-300 transform hover:scale-105 shadow-md"
-                  >
-                    {t('viewModels')}
-                  </Link>
-                </div>
-              </div>
-            );
+                );
               })
             )
           ) : (
