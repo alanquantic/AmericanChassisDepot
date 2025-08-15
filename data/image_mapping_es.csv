@@ -10,12 +10,10 @@ name,slug,size,characteristic,image_url,additional_images
 20/40/45 Extensible Triaxle,20-40-45-extendable-triaxle-esp,20-40-45ft,Extendable Triaxle,/assets/20-40-45-extendable-triaxle-esp.webp,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
 20ft ISO Tank Container Chassis (ESP),20ft-iso-tank-container-chassis-esp,20ft,Tandem,/assets/20ft-iso-tank-container-chassis-esp.webp,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
 20′ Flushback Chassis,20-flushback-chassis-esp,20ft,Tandem,/assets/og-image.jpg,""
-33 Slider Tri-Axle,33-slider-triaxle-container-chassis-esp,33ft,Triaxle,/assets/33-slider-triaxle-esp.webp,""
 33' SLIDER TRI-AXLE CONTAINER CHASSIS (ESP),33-slider-triaxle-esp,33ft,Triaxle,/assets/33-slider-triaxle-esp.webp,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
 40' GOOSENECK CONTAINER CHASSIS (ESP),40-gooseneck-esp,40ft,Gooseneck,/assets/40-gooseneck-esp.webp,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
 40' LIGHTWEIGHT FOUR-AXLE CHASSIS (ESP),40-lightweight-four-axle-esp,40ft,Four-Axle,/assets/40-lightweight-four-axle-esp.webp,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
 40/45 Extensible Tandem,40-45-extendable-container-chassis-esp,40-45ft,Extendable Tandem,/assets/40-45-extendable-container-chassis-esp.webp,/assets/40_45_Extendable_2.jpg;/assets/40_45_Extendable_3.jpg;/assets/40_45_Extendable_4.jpg
-40/45' EXTENDABLE CONTAINER CHASSIS (ESP),40-45-extendable-esp,40-45ft,Tandem,/assets/og-image.jpg,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
 40/45/48/53 Extensible Triaxle,40-45-48-53-extendable-triaxle-esp,40-45-48-53ft,Extendable Triaxle,/assets/40-45-48-53-extendable-triaxle-esp.webp,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
 40ft Gooseneck Lightweight,40ft-gooseneck-lightweight-esp,40ft,Gooseneck Tandem,/assets/40ft-gooseneck-lightweight-esp.webp,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
 40ft Gooseneck Triaxle,40ft-gooseneck-triaxle-esp,40ft,Gooseneck Triaxle,/assets/40ft-gooseneck-triaxle-esp.webp,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
@@ -23,7 +21,6 @@ name,slug,size,characteristic,image_url,additional_images
 40′ GN Tandem,40-gn-tandem-esp,40ft,Gooseneck Tandem,/assets/og-image.jpg,""
 40′ GN con Genset,40ft-gooseneck-genset-esp,40ft,Gooseneck Tandem,/assets/og-image.jpg,""
 45ft MULTIMODAL CHASSIS (ESP),45ft-multimodal-esp,45ft,Triaxle,/assets/og-image.jpg,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
-45ft Multimodal Chassis,45ft-multimodal-chassis-esp,45ft,Tandem,/assets/og-image.jpg,""
 53 Gooseneck Slider Tandem,53-gooseneck-slider-tandem-esp,53ft,Gooseneck Tandem,/assets/53-gooseneck-slider-tandem-esp.webp,https://images.unsplash.com/photo-1580674684081-7617fbf3d745?ixlib=rb-4.0.3
 53′ GN Tandem Intermodal,53-gn-tandem-intermodal-esp,53ft,Gooseneck Tandem,/assets/53-gn-tandem-intermodal-esp.webp,""
 Chasis Contenedor 20ft – 2 Ejes,20ft-container-chassis-2-axles-esp,20ft,Tandem,/assets/og-image.jpg,""
