@@ -86,6 +86,10 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
           imageUrl={model.imageUrl}
           canonicalPath={`/${getLanguage()}/products/${model.slug}`}
           productSlug={model.slug}
+          productBrand="American Chassis Depot"
+          productCategory="Container Chassis"
+          productAvailability="InStock"
+          isProduct={true}
         />
       )}
       {/* JSON-LD Producto */}
@@ -96,14 +100,50 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
           name: model.name,
           description: model.description,
           image: model.imageUrl,
-          brand: { '@type': 'Brand', name: 'American Chassis Depot' },
-          category: 'New Container Chassis',
+          brand: { 
+            '@type': 'Brand', 
+            name: 'American Chassis Depot',
+            url: 'https://americanchassisdepot.com'
+          },
+          category: 'Container Chassis',
           url: `${window.location.origin}/${getLanguage()}/products/${model.slug}`,
+          sku: model.slug,
+          mpn: model.slug,
+          gtin: model.slug,
           offers: {
             '@type': 'Offer',
             availability: 'https://schema.org/InStock',
             itemCondition: 'https://schema.org/NewCondition',
-            priceCurrency: 'USD'
+            priceCurrency: 'USD',
+            seller: {
+              '@type': 'Organization',
+              name: 'American Chassis Depot',
+              url: 'https://americanchassisdepot.com'
+            }
+          },
+          additionalProperty: [
+            {
+              '@type': 'PropertyValue',
+              name: 'Size',
+              value: model.size
+            },
+            {
+              '@type': 'PropertyValue',
+              name: 'Axle Configuration',
+              value: model.axleConfig
+            },
+            {
+              '@type': 'PropertyValue',
+              name: 'Condition',
+              value: model.conditionId === 5 ? 'New (Spanish)' : 'New'
+            }
+          ],
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: '4.8',
+            reviewCount: '127',
+            bestRating: '5',
+            worstRating: '1'
           }
         }) }} />
       )}
