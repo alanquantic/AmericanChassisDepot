@@ -4,7 +4,7 @@ import { z } from "zod";
 import { storage } from "./storage.js";
 import { insertContactMessageSchema } from "../shared/schema.js";
 import { ZodError } from "zod";
-import { sendContactNotification } from "./services/mail.js";
+import { sendContactNotification, sendCustomerConfirmationEmail } from "./services/mail.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API route prefix
@@ -171,34 +171,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Download brochure endpoint
   app.post(`${apiPrefix}/download-brochure`, async (req, res) => {
     try {
-      const { name, email, company, phone, chassisName, chassisSlug } = req.body;
+      const { 
+        name, 
+        email, 
+        company, 
+        phone, 
+        units,
+        interest,
+        message,
+        chassisName, 
+        chassisSlug,
+        actionType,
+        sourceUrl,
+        userAgent,
+        timestamp,
+        honeypot 
+      } = req.body;
+
+      // Security check: honeypot field should be empty
+      if (honeypot) {
+        console.warn("Bot detected via honeypot field");
+        return res.status(400).json({ message: "Invalid submission" });
+      }
+
+      // Security check: timestamp validation
+      const submissionTime = new Date(timestamp);
+      const now = new Date();
+      const timeDiff = now.getTime() - submissionTime.getTime();
+      const fiveMinutes = 5 * 60 * 1000;
       
-      // Save the brochure request to database (optional)
-      await storage.createContactMessage({
+      if (timeDiff > fiveMinutes) {
+        return res.status(400).json({ message: "Form submission expired" });
+      }
+      
+      // Save the brochure request to database with enhanced information
+      const contactMessage = await storage.createContactMessage({
         name,
         email,
         company: company || null,
         phone: phone || null,
-        message: `Brochure Request: ${chassisName} (${chassisSlug}) - User requested brochure for chassis`,
+        units: units || null,
+        interest: interest || null,
+        message: message || `Brochure Request: ${chassisName} (${chassisSlug}) - User requested brochure for chassis`,
+        sourceUrl: sourceUrl || null,
         createdAt: new Date().toISOString()
       });
 
-      // For now, return a simple PDF placeholder (in production you'd generate actual PDFs)
-      const pdfBuffer = Buffer.from(`
-        PDF PLACEHOLDER FOR ${chassisName}
+      // Send customer confirmation email
+      let customerEmailSent = false;
+      try {
+        const language = sourceUrl?.includes('/es/') ? 'es' : 'en';
+        customerEmailSent = await sendCustomerConfirmationEmail({
+          name,
+          email,
+          company: company || '',
+          phone: phone || '',
+          units: units || '',
+          interest: interest || '',
+          message: message || '',
+          chassisName,
+          chassisSlug,
+          actionType: 'brochure'
+        }, language);
         
-        Thank you ${name} from ${company} for your interest in our ${chassisName} chassis.
-        
-        Contact Information:
-        Email: ${email}
-        Phone: ${phone}
-        
-        This is a placeholder response. In production, this would be an actual PDF brochure.
-      `);
-      
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${chassisSlug}-brochure.pdf"`);
-      res.send(pdfBuffer);
+        if (customerEmailSent) {
+          console.log('Customer confirmation email sent successfully');
+        } else {
+          console.warn('Customer confirmation email was not sent');
+        }
+      } catch (emailError) {
+        console.error('Failed to send customer confirmation email:', emailError);
+      }
+
+      // Send internal notification
+      let internalEmailSent = false;
+      try {
+        internalEmailSent = await sendContactNotification(contactMessage, sourceUrl || 'Unknown source');
+        if (internalEmailSent) {
+          console.log('Internal notification email sent successfully');
+        }
+      } catch (emailError) {
+        console.error('Failed to send internal notification email:', emailError);
+      }
+
+      return res.status(200).json({
+        message: "Brochure request processed successfully",
+        customerEmailSent,
+        internalEmailSent,
+        data: contactMessage
+      });
       
     } catch (error) {
       console.error("Error processing brochure download:", error);
@@ -209,9 +270,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Submit contact form
   app.post(`${apiPrefix}/contact`, async (req, res) => {
     try {
+      const { 
+        name, 
+        email, 
+        company, 
+        phone, 
+        units,
+        interest,
+        message,
+        chassisName,
+        chassisSlug,
+        actionType,
+        sourceUrl,
+        userAgent,
+        timestamp,
+        honeypot 
+      } = req.body;
+
+      // Security check: honeypot field should be empty
+      if (honeypot) {
+        console.warn("Bot detected via honeypot field");
+        return res.status(400).json({ message: "Invalid submission" });
+      }
+
+      // Security check: timestamp validation
+      const submissionTime = new Date(timestamp);
+      const now = new Date();
+      const timeDiff = now.getTime() - submissionTime.getTime();
+      const fiveMinutes = 5 * 60 * 1000;
+      
+      if (timeDiff > fiveMinutes) {
+        return res.status(400).json({ message: "Form submission expired" });
+      }
+
       // Add timestamp to the message
       const messageData = {
-        ...req.body,
+        name,
+        email,
+        company: company || null,
+        phone: phone || null,
+        units: units || null,
+        interest: interest || null,
+        message: message || `Quote Request: ${chassisName} (${chassisSlug}) - User requested quote for chassis`,
+        sourceUrl: sourceUrl || null,
         createdAt: new Date().toISOString(),
       };
       
@@ -221,25 +322,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Store the contact message
       const newMessage = await storage.createContactMessage(validatedData);
       
-      // Send email notification
-      const sourceUrl = validatedData.sourceUrl || 'Unknown source';
-      
-      let emailSent = false;
+      // Send customer confirmation email
+      let customerEmailSent = false;
       try {
-        emailSent = await sendContactNotification(newMessage, sourceUrl);
-        if (emailSent) {
-          console.log('Contact notification email sent successfully');
+        const language = sourceUrl?.includes('/es/') ? 'es' : 'en';
+        customerEmailSent = await sendCustomerConfirmationEmail({
+          name,
+          email,
+          company: company || '',
+          phone: phone || '',
+          units: units || '',
+          interest: interest || '',
+          message: message || '',
+          chassisName,
+          chassisSlug,
+          actionType: 'quote'
+        }, language);
+        
+        if (customerEmailSent) {
+          console.log('Customer confirmation email sent successfully');
         } else {
-          console.warn('Contact notification email was not sent (Mailgun might not be configured)');
+          console.warn('Customer confirmation email was not sent');
         }
       } catch (emailError) {
-        console.error('Failed to send contact notification email:', emailError);
-        // Continue execution even if email fails
+        console.error('Failed to send customer confirmation email:', emailError);
+      }
+
+      // Send internal notification
+      let internalEmailSent = false;
+      try {
+        internalEmailSent = await sendContactNotification(newMessage, sourceUrl || 'Unknown source');
+        if (internalEmailSent) {
+          console.log('Internal notification email sent successfully');
+        } else {
+          console.warn('Internal notification email was not sent (Mailgun might not be configured)');
+        }
+      } catch (emailError) {
+        console.error('Failed to send internal notification email:', emailError);
       }
       
       return res.status(201).json({
         message: "Contact message submitted successfully",
-        emailSent: emailSent,
+        customerEmailSent,
+        internalEmailSent,
         data: newMessage
       });
     } catch (error) {

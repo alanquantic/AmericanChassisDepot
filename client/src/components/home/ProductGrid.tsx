@@ -7,6 +7,7 @@ import { getPrimaryCharacteristic } from '@/lib/chassisUtils';
 import { getConditions, getSizes, getCharacteristics } from '@/lib/constants';
 import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import { queryClient } from '@/lib/queryClient';
+import { UnifiedContactForm } from '@/components/shared/UnifiedContactForm';
 import type { ChassisModel } from '@shared/schema';
 
 interface ProductGridProps {
@@ -248,18 +249,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({ initialSize, showOnlyNew = fa
                       {model.description}
                     </p>
                     <div className="flex gap-2">
-            <Link
-              href={`/${getCurrentLanguage()}/products/${model.slug}`} 
+                      <Link
+                        href={`/${getCurrentLanguage()}/products/${model.slug}`} 
                         className="inline-block border border-primary text-primary hover:bg-primary hover:text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
                       >
                         {t('viewDetails')}
                       </Link>
-                      <Link
-                        href={`/${getCurrentLanguage()}/contact`} 
+                      <UnifiedContactForm
+                        chassisName={model.name}
+                        chassisSlug={model.slug}
+                        actionType="quote"
+                        triggerText={t('getAQuote')}
                         className="inline-block bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-4 py-2 rounded transition-all duration-200"
-                      >
-                        {t('getAQuote')}
-                      </Link>
+                      />
                     </div>
                   </div>
                 </div>
