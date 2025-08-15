@@ -276,211 +276,37 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
           </p>
         </DialogHeader>
         
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-6">
-            {/* Hidden honeypot field for bot protection */}
-            <input 
-              type="text" 
-              {...form.register('honeypot')} 
-              style={{ display: 'none' }} 
-              tabIndex={-1}
-              autoComplete="off"
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-montserrat font-medium">
-                      {t('fullName')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600" 
-                        placeholder={t('fullName')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-montserrat font-medium">
-                      {t('emailAddressLabel')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        type="email"
-                        className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600" 
-                        placeholder={t('emailAddressLabel')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="company"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-montserrat font-medium">
-                      {t('companyName')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600" 
-                        placeholder={t('companyName')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-montserrat font-medium">
-                      {t('phoneNumberLabel')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        type="tel"
-                        className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600" 
-                        placeholder={t('phoneNumberLabel')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="interest"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-montserrat font-medium">
-                      {t('interestedIn')} *
-                    </FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600">
-                          <SelectValue placeholder={t('selectChassisType')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {getConditions().filter(condition => condition.value !== 'all').map((condition) => (
-                          <SelectItem key={condition.value} value={condition.value}>
-                            {condition.name}
-                          </SelectItem>
-                        ))}
-                        <SelectItem value="other">{getCurrentLanguage() === 'es' ? 'Otro' : 'Other'}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="units"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-montserrat font-medium">
-                      {t('numberOfUnits')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        type="number"
-                        min="1"
-                        placeholder={t('howManyUnits')}
-                        className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600" 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-montserrat font-medium">
-                    {t('message')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      {...field} 
-                      rows={4}
-                      className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-primary bg-white/90 text-gray-900 placeholder-gray-600" 
-                      placeholder={actionType === 'quote' 
-                        ? (getCurrentLanguage() === 'es' 
-                            ? 'Describe tus necesidades específicas, requisitos especiales, o cualquier pregunta que tengas sobre este producto...'
-                            : 'Describe your specific needs, special requirements, or any questions you have about this product...')
-                        : (getCurrentLanguage() === 'es'
-                            ? 'Comentarios adicionales o preguntas sobre este producto...'
-                            : 'Additional comments or questions about this product...')
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="flex gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsOpen(false)}
-                className="flex-1 font-montserrat"
-              >
-                {t('cancel')}
-              </Button>
-              <Button
-                type="submit"
-                disabled={mutation.isPending}
-                className="flex-1 bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold"
-              >
-                {mutation.isPending 
-                  ? (getCurrentLanguage() === 'es' ? 'Enviando...' : 'Sending...')
-                  : (actionType === 'quote' 
-                      ? (getCurrentLanguage() === 'es' ? 'Enviar Solicitud' : 'Send Request')
-                      : (getCurrentLanguage() === 'es' ? 'Descargar Folleto' : 'Download Brochure')
-                    )
-                }
-              </Button>
-            </div>
-          </form>
-        </Form>
+        <div className="mt-6">
+          <p className="text-center text-gray-600">
+            {getCurrentLanguage() === 'es' 
+              ? 'Formulario temporalmente deshabilitado para debugging' 
+              : 'Form temporarily disabled for debugging'
+            }
+          </p>
+          <div className="flex gap-3 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsOpen(false)}
+              className="flex-1 font-montserrat"
+            >
+              {t('cancel')}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                console.log('Form submitted:', { chassisName, chassisSlug, actionType });
+                setIsOpen(false);
+              }}
+              className="flex-1 bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold"
+            >
+              {actionType === 'quote' 
+                ? (getCurrentLanguage() === 'es' ? 'Enviar Solicitud' : 'Send Request')
+                : (getCurrentLanguage() === 'es' ? 'Descargar Folleto' : 'Download Brochure')
+              }
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
