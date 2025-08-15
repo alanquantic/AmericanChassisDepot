@@ -324,6 +324,68 @@ export const newChassisData: InsertChassisModel[] = [
     ],
     featured: false,
     sortOrder: 6
+  },
+  {
+    name: "20'/40'/45' COMBO TRIDEM",
+    nameEs: "20'/40'/45' COMBO TRIDEM",
+    slug: "20-40-45-combo-tridem",
+    conditionId: 1, // New
+    manufacturer: "AXN",
+    size: "20-40-45ft",
+    axleConfig: "Tridem",
+    description: "High-strength tridem chassis designed for stevedoring and transporting 20', 40', and 45' containers with 100Kpsi materials and advanced suspension system.",
+    descriptionEs: "Chasis tridem de alta resistencia diseñado para estiba y transporte de contenedores de 20', 40' y 45' con materiales de 100Kpsi y sistema de suspensión avanzado.",
+    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
+    additionalImages: [
+      "https://images.unsplash.com/photo-1519648023493-d82b5f8d7b8a?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&h=400&fit=crop"
+    ],
+    overallLength: "46'-2 1/8'' (extended) or 31'-3 1/8'' (retracted)",
+    overallWidth: "96''",
+    fifthWheelHeight: "46 3/4''",
+    rearDeckHeight: "48 3/8''",
+    kingpinLocation: "17 1/2'' (From rear face of front bolster)",
+    landingGearLocation: "118 3/8'' (From rear face of front bolster)",
+    axleSpread: "61'' tridem configuration",
+    tareWeight: "11,300 lbs ±2%",
+    payload: "79,000 lbs for 40' and 45' containers, 77,000 lbs for 20' containers",
+    frameComponents: [
+      "Main Beam: 16''×5'' fabricated I-beam with 100Kpsi materials flanges",
+      "Slider Beam: Fabricated 14 3/4''×5'' I-beam, 2-pin locking system",
+      "Cross Member: 3/16'' thick fabricated channel type",
+      "Upper Coupler: 1/4'' pick up plate with JOST 2'' diameter square type kingpin",
+      "Front Bolster: 6 5/8'' wide x 7 3/8'' high, 1/4'' thick tube section",
+      "Center Bolster: 5'' wide x 3/8'' thick top plate with 5'' wide x 4 1/4'' deep x 1/4'' thick U-type bottom channel",
+      "Rear Bolster: Fabricated 6'' wide x 3/8'' thick top plate with 5'' wide x 4 5/8'' deep x 3/8'' thick tube type"
+    ],
+    suspensionDetails: [
+      "61'' axle spread tridem suspension with single leaf high arch spring",
+      "11,000 lb capacity per spring",
+      "Hutchen/AXN suspension system",
+      "Pre-painted BLACK color"
+    ],
+    brakeSystemDetails: [
+      "SEALCO valve system and WABCO 4S-2M system",
+      "Three tanks system (Capacity 2850 cu-in)",
+      "3/8'' air tubing",
+      "30/30 double diaphragm brake chambers",
+      "PHILLIPS glad hands 12-0081/12-0061/12-010"
+    ],
+    electricalDetails: [
+      "12 volt LED lighting system with wiring harness for ABS",
+      "4'' Stop/Turn lamp",
+      "2'' clearance lamp with flange mounting",
+      "GROTE lighting system"
+    ],
+    additionalEquipment: [
+      "AXN FW32E00J Landing Gear with 50,000 lbs capacity",
+      "WESTLAKE 255/70R22.5-16PR tubeless tires",
+      "JINGU 22.5×8.25 10-stud hub-piloted wheels",
+      "3M Conspicuity Tape per federal regulations",
+      "24''×24'' black rubber anti-sail mud flap"
+    ],
+    featured: true,
+    sortOrder: 7
   }
 ];
 
