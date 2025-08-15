@@ -74,6 +74,9 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [staticUrl, setStaticUrl] = useState<string | null>(null);
   
+  // Debug logging
+  console.log('UnifiedContactForm render:', { chassisName, chassisSlug, actionType, triggerText });
+  
   // Initialize form with security timestamp
   const form = useForm<UnifiedFormValues>({
     resolver: zodResolver(formSchema),
