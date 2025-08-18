@@ -6,7 +6,7 @@ export const getConditions = () => {
   return [
     { name: isSpanish ? "Todos los Chasis" : "All Chassis", value: "all" },
     { name: isSpanish ? "Chasis Nuevos" : "New Chassis", value: isSpanish ? "chassis-nuevos-espanol" : "new-chassis" },
-    { name: isSpanish ? "Chasis Usados" : "Used Chassis", value: "used-chassis" }
+    // Eliminamos opción de usados en UI: siempre mostraremos solo nuevos
   ];
 };
 

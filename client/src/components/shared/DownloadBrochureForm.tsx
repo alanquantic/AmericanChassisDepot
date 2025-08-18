@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useLanguage } from '@/lib/i18n-simple';
+import { useLanguage, getLanguage } from '@/lib/i18n-simple';
 import { useToast } from '@/hooks/use-toast';
 import { DownloadIcon } from 'lucide-react';
 
@@ -32,6 +32,7 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+  const [staticUrl, setStaticUrl] = useState<string | null>(null);
   
   const form = useForm<DownloadFormData>({
     resolver: zodResolver(downloadFormSchema),
@@ -42,6 +43,15 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       phone: ''
     }
   });
+
+  // Detectar brochure estático por idioma y slug: /brochures/{en|es}/{slug}.pdf
+  React.useEffect(() => {
+    const lang = getLanguage();
+    const url = `/brochures/${lang === 'es' ? 'es' : 'en'}/${chassisSlug}.pdf`;
+    fetch(url, { method: 'HEAD' }).then((res) => {
+      if (res.ok) setStaticUrl(url);
+    }).catch(() => {});
+  }, [chassisSlug]);
 
   const downloadMutation = useMutation({
     mutationFn: async (data: DownloadFormData & { chassisName: string; chassisSlug: string }) => {
@@ -70,9 +80,30 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
+      // GA4 events: brochure_download and file_download
+      try {
+        const lang = getLanguage();
+        // @ts-ignore
+        window.gtag && window.gtag('event', 'brochure_download', {
+          event_category: 'Engagement',
+          event_label: 'Download Brochure',
+          product_slug: chassisSlug,
+          product_name: chassisName,
+          language: lang
+        });
+        // @ts-ignore
+        window.gtag && window.gtag('event', 'file_download', {
+          link_text: 'Download Brochure',
+          file_name: `${chassisSlug}-brochure.pdf`,
+          product_slug: chassisSlug,
+          product_name: chassisName,
+          language: lang
+        });
+      } catch {}
+
       toast({
-        title: 'Download Started',
-        description: 'Your brochure is downloading now.',
+        title: t('downloadStartedTitle'),
+        description: t('downloadStartedDesc'),
       });
       
       setIsOpen(false);
@@ -81,13 +112,41 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
     onError: () => {
       toast({
         variant: 'destructive',
-        title: 'Download Failed',
-        description: 'There was an error downloading the brochure. Please try again.',
+        title: t('downloadFailedTitle'),
+        description: t('downloadFailedDesc'),
       });
     }
   });
 
   const onSubmit = (data: DownloadFormData) => {
+    // Si existe PDF estático, descargar sin invocar API
+    if (staticUrl) {
+      try {
+        const lang = getLanguage();
+        // @ts-ignore
+        window.gtag && window.gtag('event', 'brochure_download', {
+          event_category: 'Engagement',
+          event_label: 'Download Brochure',
+          product_slug: chassisSlug,
+          product_name: chassisName,
+          language: lang
+        });
+        // @ts-ignore
+        window.gtag && window.gtag('event', 'file_download', {
+          link_text: 'Download Brochure',
+          file_name: `${chassisSlug}.pdf`,
+          product_slug: chassisSlug,
+          product_name: chassisName,
+          language: lang
+        });
+      } catch {}
+      window.open(staticUrl, '_blank');
+      toast({ title: t('downloadStartedTitle'), description: t('downloadStartedDesc') });
+      setIsOpen(false);
+      form.reset();
+      return;
+    }
+    // Si no hay PDF estático, usar API (placeholder actual)
     downloadMutation.mutate({
       ...data,
       chassisName,
@@ -102,29 +161,29 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
           className="bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-medium px-6 py-3 rounded transition-all duration-200 flex items-center gap-2"
         >
           <DownloadIcon className="w-5 h-5" />
-          Download Brochure
+          {t('downloadBrochure')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="font-montserrat font-bold text-primary">
-            Download Brochure
+            {t('downloadBrochure')}
           </DialogTitle>
           <p className="text-sm text-neutral-600 mt-2">
-            Please fill out the form below to download the brochure for <strong>{chassisName}</strong>
+            {t('sendUsAMessage')}
           </p>
         </DialogHeader>
         
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
           <div className="space-y-2">
             <Label htmlFor="name" className="font-montserrat font-medium">
-              Full Name *
+              {t('fullName')} *
             </Label>
             <Input
               id="name"
               {...form.register('name')}
               className="font-montserrat"
-              placeholder="Enter your full name"
+              placeholder={t('fullName')}
             />
             {form.formState.errors.name && (
               <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
@@ -133,14 +192,14 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor="email" className="font-montserrat font-medium">
-              Email Address *
+              {t('emailAddressLabel')} *
             </Label>
             <Input
               id="email"
               type="email"
               {...form.register('email')}
               className="font-montserrat"
-              placeholder="Enter your email address"
+              placeholder={t('emailAddressLabel')}
             />
             {form.formState.errors.email && (
               <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
@@ -149,13 +208,13 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor="company" className="font-montserrat font-medium">
-              Company Name *
+              {t('companyName')} *
             </Label>
             <Input
               id="company"
               {...form.register('company')}
               className="font-montserrat"
-              placeholder="Enter your company name"
+              placeholder={t('companyName')}
             />
             {form.formState.errors.company && (
               <p className="text-sm text-red-500">{form.formState.errors.company.message}</p>
@@ -164,14 +223,14 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor="phone" className="font-montserrat font-medium">
-              Phone Number *
+              {t('phoneNumberLabel')} *
             </Label>
             <Input
               id="phone"
               type="tel"
               {...form.register('phone')}
               className="font-montserrat"
-              placeholder="Enter your phone number"
+              placeholder={t('phoneNumberLabel')}
             />
             {form.formState.errors.phone && (
               <p className="text-sm text-red-500">{form.formState.errors.phone.message}</p>
@@ -185,17 +244,14 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
               onClick={() => setIsOpen(false)}
               className="flex-1 font-montserrat"
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               type="submit"
               disabled={downloadMutation.isPending}
               className="flex-1 bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat"
             >
-              {downloadMutation.isPending 
-                ? 'Downloading...' 
-                : 'Download'
-              }
+              {downloadMutation.isPending ? t('downloading') : t('download')}
             </Button>
           </div>
         </form>

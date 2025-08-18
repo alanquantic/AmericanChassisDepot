@@ -104,3 +104,150 @@ ${contactMessage.message}
     return false;
   }
 }
+
+export async function sendCustomerConfirmationEmail(
+  contactData: {
+    name: string;
+    email: string;
+    company: string;
+    phone: string;
+    units: string;
+    interest: string;
+    message: string;
+    chassisName?: string;
+    chassisSlug?: string;
+    actionType: 'quote' | 'brochure';
+  },
+  language: 'en' | 'es' = 'en'
+): Promise<boolean> {
+  if (!mg) {
+    console.warn('Customer confirmation email skipped: Mailgun not configured');
+    return false;
+  }
+
+  try {
+    const isSpanish = language === 'es';
+    const actionText = contactData.actionType === 'quote' 
+      ? (isSpanish ? 'solicitud de cotización' : 'quote request')
+      : (isSpanish ? 'descarga de folleto' : 'brochure download');
+    
+    const subject = isSpanish 
+      ? `Confirmación de ${actionText} - American Chassis Depot`
+      : `${actionText.charAt(0).toUpperCase() + actionText.slice(1)} Confirmation - American Chassis Depot`;
+
+    const logoUrl = 'https://americanchassisdepot.com/assets/logo.png';
+    
+    const emailContent = isSpanish ? {
+      greeting: `Hola ${contactData.name},`,
+      thankYou: 'Gracias por tu interés en American Chassis Depot.',
+      confirmation: `Hemos recibido tu ${actionText} para el producto:`,
+      productInfo: contactData.chassisName ? `Producto: ${contactData.chassisName}` : 'Producto: General',
+      nextSteps: contactData.actionType === 'quote' 
+        ? 'Nuestro equipo de ventas revisará tu solicitud y se pondrá en contacto contigo en las próximas 24 horas con una cotización personalizada.'
+        : 'El folleto técnico se ha descargado correctamente. Si tienes alguna pregunta sobre las especificaciones, no dudes en contactarnos.',
+      contactInfo: 'Si tienes alguna pregunta urgente, puedes contactarnos directamente:',
+      phone: 'Teléfono: +1 (505) 433-0000',
+      email: 'Email: sales@americanchassisdepot.com',
+      website: 'Sitio web: www.americanchassisdepot.com',
+      footer: 'Saludos cordiales,\nEl equipo de American Chassis Depot'
+    } : {
+      greeting: `Hello ${contactData.name},`,
+      thankYou: 'Thank you for your interest in American Chassis Depot.',
+      confirmation: `We have received your ${actionText} for the product:`,
+      productInfo: contactData.chassisName ? `Product: ${contactData.chassisName}` : 'Product: General',
+      nextSteps: contactData.actionType === 'quote'
+        ? 'Our sales team will review your request and contact you within the next 24 hours with a personalized quote.'
+        : 'The technical brochure has been downloaded successfully. If you have any questions about the specifications, please don\'t hesitate to contact us.',
+      contactInfo: 'If you have any urgent questions, you can contact us directly:',
+      phone: 'Phone: +1 (505) 433-0000',
+      email: 'Email: sales@americanchassisdepot.com',
+      website: 'Website: www.americanchassisdepot.com',
+      footer: 'Best regards,\nThe American Chassis Depot Team'
+    };
+
+    const data = {
+      from: `American Chassis Depot <no-reply@${MAILGUN_DOMAIN}>`,
+      to: contactData.email,
+      subject: subject,
+      text: `
+${emailContent.greeting}
+
+${emailContent.thankYou}
+
+${emailContent.confirmation}
+${emailContent.productInfo}
+
+${emailContent.nextSteps}
+
+${emailContent.contactInfo}
+${emailContent.phone}
+${emailContent.email}
+${emailContent.website}
+
+${emailContent.footer}
+      `,
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${subject}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { max-width: 200px; height: auto; }
+        .content { background-color: #f9f9f9; padding: 30px; border-radius: 10px; }
+        .greeting { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
+        .product-info { background-color: #e8f4f8; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .contact-info { background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .footer { margin-top: 30px; padding-top: 20px; border-top: 2px solid #B22234; text-align: center; }
+        .accent { color: #B22234; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="${logoUrl}" alt="American Chassis Depot" class="logo">
+    </div>
+    
+    <div class="content">
+        <div class="greeting">${emailContent.greeting}</div>
+        
+        <p>${emailContent.thankYou}</p>
+        
+        <p>${emailContent.confirmation}</p>
+        
+        <div class="product-info">
+            <strong>${emailContent.productInfo}</strong>
+        </div>
+        
+        <p>${emailContent.nextSteps}</p>
+        
+        <div class="contact-info">
+            <p><strong>${emailContent.contactInfo}</strong></p>
+            <p>${emailContent.phone}</p>
+            <p>${emailContent.email}</p>
+            <p>${emailContent.website}</p>
+        </div>
+        
+        <p>${emailContent.footer}</p>
+    </div>
+    
+    <div class="footer">
+        <p style="color: #666; font-size: 12px;">
+            American Chassis Depot<br>
+            Your trusted partner in chassis solutions
+        </p>
+    </div>
+</body>
+</html>
+      `
+    };
+
+    await mg.messages().send(data);
+    return true;
+  } catch (error) {
+    console.error('Error sending customer confirmation email:', error);
+    return false;
+  }
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import ContactForm from '@/components/shared/ContactForm';
-import { useLanguage } from '@/lib/i18n-simple';
+import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import HeroVideo from '@assets/acd_home_1754946248802.mp4';
 
 const Hero: React.FC = () => {
@@ -39,13 +39,13 @@ const Hero: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
-                href="/products" 
+                href={`/${getCurrentLanguage()}/products`} 
                 className="bg-[#B22234] hover:bg-[#9A1E2E] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
               >
                 {t('viewProducts')}
               </Link>
               <Link 
-                href="/contact" 
+                href={`/${getCurrentLanguage()}/contact`} 
                 className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 text-center shadow-lg border border-white/30"
               >
                 {t('requestQuote')}
