@@ -10,7 +10,8 @@ import {
   type InsertContactMessage
 } from "../shared/schema.js";
 import { db } from "./db.js";
-import { eq, ilike, and, or } from "drizzle-orm";
+import { eq, ilike, and, or, inArray } from "drizzle-orm";
+import { ALLOWED_PRODUCT_SLUGS } from "./allowed-products.js";
 
 // Blocklist de imágenes que no deben mostrarse en ningún producto
 const BLOCKED_IMAGE_SUBSTRINGS = [
@@ -83,18 +84,28 @@ export class DatabaseStorage implements IStorage {
 
   // Chassis model operations
   async getAllChassisModels(): Promise<ChassisModel[]> {
-    const rows = await db.select().from(chassisModels);
+    const rows = await db.select()
+      .from(chassisModels)
+      .where(inArray(chassisModels.slug, ALLOWED_PRODUCT_SLUGS));
     return rows.map(sanitizeModelImages);
   }
 
   async getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]> {
     const rows = await db.select()
       .from(chassisModels)
-      .where(eq(chassisModels.conditionId, conditionId));
+      .where(and(
+        eq(chassisModels.conditionId, conditionId),
+        inArray(chassisModels.slug, ALLOWED_PRODUCT_SLUGS)
+      ));
     return rows.map(sanitizeModelImages);
   }
 
   async getChassisModelBySlug(slug: string): Promise<ChassisModel | undefined> {
+    // Solo permitir acceso a productos en la lista permitida
+    if (!ALLOWED_PRODUCT_SLUGS.includes(slug)) {
+      return undefined;
+    }
+    
     const [model] = await db.select()
       .from(chassisModels)
       .where(eq(chassisModels.slug, slug));
@@ -110,8 +121,11 @@ export class DatabaseStorage implements IStorage {
 
   async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string, characteristic?: string): Promise<ChassisModel[]> {
     try {
-      // First get all chassis models
-      const allModelsRaw = await db.select().from(chassisModels).execute();
+      // First get all chassis models (solo los permitidos)
+      const allModelsRaw = await db.select()
+        .from(chassisModels)
+        .where(inArray(chassisModels.slug, ALLOWED_PRODUCT_SLUGS))
+        .execute();
       const allModels = allModelsRaw.map(sanitizeModelImages);
       
       // Ensure allModels is an array
