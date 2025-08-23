@@ -52,3 +52,4 @@ export const ALLOWED_PRODUCT_SLUGS = [
 export function isProductAllowed(slug: string): boolean {
   return ALLOWED_PRODUCT_SLUGS.includes(slug);
 }
+

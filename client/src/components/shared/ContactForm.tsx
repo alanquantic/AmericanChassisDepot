@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { getConditions } from '@/lib/constants';
 import { useLocation } from 'wouter';
 import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
+import { sendAnalyticsEvent, sendGoogleAdsConversion } from '@/lib/gtag';
 import { 
   Form,
   FormControl,
@@ -72,15 +73,21 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
     onSuccess: (response: any) => {
       try {
         const lang = getCurrentLanguage();
-        // GA4 event for lead
-        // @ts-ignore
-        window.gtag && window.gtag('event', 'generate_lead', {
-          event_category: 'Lead',
-          event_label: 'Contact Form',
-          language: lang,
-          source_url: window.location.href
-        });
-      } catch {}
+        
+        // Google Analytics event for lead
+        sendAnalyticsEvent('generate_lead', 'Lead', 'Contact Form', 1);
+        
+        // Google Ads conversion event
+        sendGoogleAdsConversion(
+          'AW-17026781360',
+          'lead_generation', // Ajusta este label según tu configuración de Google Ads
+          1.0,
+          'USD'
+        );
+        
+      } catch (error) {
+        console.error('Error sending tracking events:', error);
+      }
       // Same friendly message regardless of email status
       toast({
         title: getCurrentLanguage() === 'es' ? "¡Gracias!" : "Thank You!",

@@ -12,9 +12,13 @@ import NewChassisPage from "@/pages/NewChassisPage";
 import UsedChassisPage from "@/pages/UsedChassisPage";
 import AllProductsPage from "@/pages/AllProductsPage";
 import { getCurrentLanguage, setLanguage } from "@/lib/i18n-simple";
+import { usePageTracking } from "./hooks/use-page-tracking";
 
 function Router() {
   const [location, navigate] = useLocation();
+  
+  // Activar tracking de páginas
+  usePageTracking();
 
   // Redirect root to language-prefixed path
   if (location === "/") {

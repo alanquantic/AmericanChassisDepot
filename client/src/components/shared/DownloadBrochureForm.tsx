@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useLanguage, getLanguage } from '@/lib/i18n-simple';
 import { useToast } from '@/hooks/use-toast';
 import { DownloadIcon } from 'lucide-react';
+import { sendAnalyticsEvent, sendGoogleAdsConversion } from '@/lib/gtag';
 
 const downloadFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -80,24 +81,25 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      // GA4 events: brochure_download and file_download
+      // Google Analytics and Google Ads events
       try {
         const lang = getLanguage();
-        // @ts-ignore
-        window.gtag && window.gtag('event', 'brochure_download', {
-          event_category: 'Engagement',
-          event_label: 'Download Brochure',
-          product_slug: chassisSlug,
-          product_name: chassisName,
-          language: lang
-        });
-        // @ts-ignore
-        window.gtag && window.gtag('event', 'file_download', {
-          link_text: 'Download Brochure',
-          file_name: `${chassisSlug}-brochure.pdf`,
-          product_slug: chassisSlug,
-          product_name: chassisName,
-          language: lang
+        
+        // Google Analytics events
+        sendAnalyticsEvent('brochure_download', 'Engagement', 'Download Brochure', 1);
+        sendAnalyticsEvent('file_download', 'Engagement', 'Download Brochure', 1);
+        
+        // Google Ads conversion event for brochure download
+        sendGoogleAdsConversion(
+          'AW-17026781360',
+          'brochure_download', // Ajusta este label según tu configuración de Google Ads
+          1.0,
+          'USD'
+        );
+        
+      } catch (error) {
+        console.error('Error sending tracking events:', error);
+      }
         });
       } catch {}
 
