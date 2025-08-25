@@ -100,8 +100,6 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       } catch (error) {
         console.error('Error sending tracking events:', error);
       }
-        });
-      } catch {}
 
       toast({
         title: t('downloadStartedTitle'),

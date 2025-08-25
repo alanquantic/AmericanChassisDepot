@@ -13,6 +13,7 @@ import UsedChassisPage from "@/pages/UsedChassisPage";
 import AllProductsPage from "@/pages/AllProductsPage";
 import { getCurrentLanguage, setLanguage } from "@/lib/i18n-simple";
 import { usePageTracking } from "./hooks/use-page-tracking";
+import ElevenLabsWidget from "@/components/shared/ElevenLabsWidget";
 
 function Router() {
   const [location, navigate] = useLocation();
@@ -100,6 +101,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router />
       <Toaster />
+      <ElevenLabsWidget />
     </QueryClientProvider>
   );
 }

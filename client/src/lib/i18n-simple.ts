@@ -155,7 +155,16 @@ export const translations = {
     usedChassisMessagePlaceholder: 'Describe your specific needs, cargo type, size requirements, etc.',
     sendInquiry: 'Send Inquiry',
     usedChassisInquirySent: 'Your used chassis inquiry has been sent. We will contact you soon.',
-    failedToSendInquiry: 'Failed to send inquiry. Please try again.'
+    failedToSendInquiry: 'Failed to send inquiry. Please try again.',
+    
+    // Form labels
+    name: 'Name',
+    email: 'Email',
+    company: 'Company',
+    phone: 'Phone',
+    success: 'Success',
+    error: 'Error',
+    lang: 'en'
   },
   es: {
     // Navigation  
@@ -309,7 +318,16 @@ export const translations = {
     usedChassisMessagePlaceholder: 'Describa sus necesidades específicas, tipo de carga, requisitos de tamaño, etc.',
     sendInquiry: 'Enviar Consulta',
     usedChassisInquirySent: 'Su consulta sobre chasis usados ha sido enviada. Nos pondremos en contacto pronto.',
-    failedToSendInquiry: 'Error al enviar la consulta. Por favor intente de nuevo.'
+    failedToSendInquiry: 'Error al enviar la consulta. Por favor intente de nuevo.',
+    
+    // Form labels
+    name: 'Nombre',
+    email: 'Email',
+    company: 'Empresa',
+    phone: 'Teléfono',
+    success: 'Éxito',
+    error: 'Error',
+    lang: 'es'
   }
 };
 

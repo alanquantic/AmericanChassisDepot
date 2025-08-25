@@ -7,7 +7,7 @@ export function usePageTracking() {
 
   useEffect(() => {
     // Enviar vista de página a Google Analytics
-    sendPageView(location.pathname + location.search);
+    sendPageView(location[0] + (location[0].includes('?') ? '' : ''));
     
     // Enviar evento de conversión de Google Ads para vista de página
     sendPageViewConversion();
