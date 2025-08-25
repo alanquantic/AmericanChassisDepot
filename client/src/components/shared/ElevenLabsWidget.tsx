@@ -52,7 +52,12 @@ const ElevenLabsWidget: React.FC = () => {
     return null;
   }
 
-  return <div ref={widgetRef} className="elevenlabs-widget-container" />;
+  return (
+    <div 
+      ref={widgetRef} 
+      className="elevenlabs-widget-container fixed bottom-4 right-4 md:bottom-6 md:right-6 z-40"
+    />
+  );
 };
 
 export default ElevenLabsWidget;
