@@ -16,87 +16,6 @@ import { ALLOWED_PRODUCT_SLUGS } from "./allowed-products.js";
 // Productos directamente en el código para evitar problemas de importación
 const PRODUCT_DATA = [
   {
-    name: "20/40' 12 Pins Triaxle Container Chassis",
-    nameEs: "Chasis Contenedor Triaxial 20/40' 12 Pines",
-    slug: "20-40-12-pins-triaxle",
-    conditionId: 1,
-    manufacturer: "AXN",
-    size: "20-40ft",
-    axleConfig: "Triaxle",
-    description: "Versatile triaxle container chassis designed for 20' and 40' containers with 12-pin configuration and hydraulic locking system.",
-    descriptionEs: "Chasis contenedor triaxial versátil diseñado para contenedores de 20' y 40' con configuración de 12 pines y sistema de bloqueo hidráulico.",
-    imageUrl: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=400&fit=crop",
-    additionalImages: [],
-    overallLength: "31'-7'' (retracted) or 40'-11'' (extended)",
-    overallWidth: "96''",
-    fifthWheelHeight: "47±1''",
-    rearDeckHeight: "48±1''",
-    axleSpread: "61''+61''",
-    tareWeight: "10,900 lbs ±2%",
-    payload: "66,100lbs for 20' loaded or 74,100lbs for 40' loaded",
-    frameComponents: ["Main Beam: 16''×5'' fabricated I-beam"],
-    suspensionDetails: ["AXN 61'' tri-axle, underslung configuration"],
-    brakeSystemDetails: ["SEALCO 110800 spring brake priority valve system"],
-    electricalDetails: ["PHILLIPS mold seal wiring harness"],
-    additionalEquipment: ["AXN FW32E00J Landing Gear"],
-    featured: true,
-    sortOrder: 1
-  },
-  {
-    name: "40FT Gooseneck with Genset",
-    nameEs: "Chasis Gooseneck 40FT con Generador",
-    slug: "40ft-gooseneck-genset",
-    conditionId: 1,
-    manufacturer: "SAF Holland",
-    size: "40ft",
-    axleConfig: "Tandem",
-    description: "Heavy-duty 40-foot gooseneck chassis equipped with generator set for specialized container transportation needs.",
-    descriptionEs: "Chasis gooseneck de servicio pesado de 40 pies equipado con generador para necesidades especializadas de transporte de contenedores.",
-    imageUrl: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&h=400&fit=crop",
-    additionalImages: [],
-    overallLength: "40'-11''",
-    overallWidth: "96''",
-    fifthWheelHeight: "48±1''",
-    rearDeckHeight: "48±1''",
-    axleSpread: "49''",
-    tareWeight: "6,600 lbs ±2%",
-    payload: "67,200 lbs",
-    frameComponents: ["Main Beam: WI209lb/ft hot-rolled H-beam"],
-    suspensionDetails: ["HUTCH H9700 mechanical tandem suspension"],
-    brakeSystemDetails: ["Standard ABS brake system"],
-    electricalDetails: ["Standard LED lighting"],
-    additionalEquipment: ["Standard landing gear"],
-    featured: true,
-    sortOrder: 2
-  },
-  {
-    name: "45ft Multimodal Chassis",
-    nameEs: "Chasis Multimodal 45ft",
-    slug: "45ft-multimodal-esp",
-    conditionId: 1,
-    manufacturer: "JOST",
-    size: "45ft",
-    axleConfig: "Tridem",
-    description: "Specialized 45-foot multimodal chassis designed for efficient intermodal transportation with enhanced load capacity.",
-    descriptionEs: "Chasis multimodal especializado de 45 pies diseñado para transporte intermodal eficiente con capacidad de carga mejorada.",
-    imageUrl: "https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?w=600&h=400&fit=crop",
-    additionalImages: [],
-    overallLength: "45'-2 33/64'' (13780 mm)",
-    overallWidth: "98'' (2490 mm)",
-    fifthWheelHeight: "46''±1'' (1170 mm)",
-    rearDeckHeight: "56''±1'' (1436 mm)",
-    axleSpread: "52'' (1310 mm)",
-    tareWeight: "14,991 lbs (±2%) (6800 kg)",
-    payload: "66,139 lbs (30000 kg)",
-    frameComponents: ["Main Beam: Fabricated H-beam H420x140x14x6x14mm"],
-    suspensionDetails: ["ZY brand with 22,046 lbs capacity"],
-    brakeSystemDetails: ["KORMEE ABS system"],
-    electricalDetails: ["LED lighting system, 12V"],
-    additionalEquipment: ["JOST Brand landing gear, 61,729 lbs capacity"],
-    featured: true,
-    sortOrder: 3
-  },
-  {
     name: "20' SL Tandem Container Chassis",
     nameEs: "Chasis Contenedor Tandem 20' SL",
     slug: "20-sl-tandem",
@@ -106,49 +25,159 @@ const PRODUCT_DATA = [
     axleConfig: "Tandem",
     description: "Lightweight tandem axle chassis specifically designed for 20-foot containers with superior maneuverability.",
     descriptionEs: "Chasis tándem ligero específicamente diseñado para contenedores de 20 pies con maniobrabilidad superior.",
-    imageUrl: "https://images.unsplash.com/photo-1551708297-7a8b264c6e27?w=600&h=400&fit=crop",
-    additionalImages: [],
+    imageUrl: "/assets/20-sl-tandem.webp",
+    additionalImages: [
+      "/assets/20_SL_Tandem_2.jpg",
+      "/assets/20_SL_Tandem_3.jpg"
+    ],
     overallLength: "31'-6''",
     overallWidth: "96''",
     fifthWheelHeight: "47±1''",
     rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
     axleSpread: "54''",
     tareWeight: "8,500 lbs ±2%",
     payload: "59,500 lbs",
-    frameComponents: ["Main Beam: High-strength steel I-beam construction"],
-    suspensionDetails: ["AXN tandem suspension system"],
-    brakeSystemDetails: ["ABS-equipped brake system"],
-    electricalDetails: ["LED lighting package"],
-    additionalEquipment: ["Heavy-duty landing gear"],
+    frameComponents: [
+      "Main Beam: High-strength steel I-beam construction",
+      "Front Bolster: Heavy-duty fabricated assembly",
+      "Rear Bolster: Reinforced construction for container locks"
+    ],
+    suspensionDetails: [
+      "AXN tandem suspension system",
+      "Air ride configuration",
+      "Enhanced stability design"
+    ],
+    brakeSystemDetails: [
+      "ABS-equipped brake system",
+      "Automatic slack adjusters",
+      "DOT compliant brake chambers"
+    ],
+    electricalDetails: [
+      "LED lighting package",
+      "Standard 7-way connector",
+      "ABS-ready wiring harness"
+    ],
+    additionalEquipment: [
+      "Heavy-duty landing gear",
+      "Premium tire package",
+      "DOT reflective tape",
+      "Container twist locks"
+    ],
     featured: true,
-    sortOrder: 4
+    sortOrder: 1
   },
   {
-    name: "20/40/45' Extendable Triaxle Container Chassis",
-    nameEs: "Chasis Contenedor Triaxial Extensible 20/40/45'",
-    slug: "20-40-45-extendable-triaxle",
+    name: "20' SL Tandem Extended Version",
+    nameEs: "Chasis Tándem 20' SL Versión Extendida",
+    slug: "20-sl-tandem-extended",
     conditionId: 1,
-    manufacturer: "Multi-Config",
-    size: "20-40-45ft",
-    axleConfig: "Triaxle",
-    description: "Ultra-versatile extendable triaxle chassis accommodating 20', 40', and 45' containers with advanced hydraulic extension system.",
-    descriptionEs: "Chasis triaxial extensible ultra versátil que acomoda contenedores de 20', 40' y 45' con sistema de extensión hidráulica avanzada.",
-    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
-    additionalImages: [],
-    overallLength: "Variable: 32'-45' depending on configuration",
+    manufacturer: "AXN",
+    size: "20ft",
+    axleConfig: "Tandem",
+    description: "Extended version of the 20' SL tandem chassis with enhanced features and capabilities.",
+    descriptionEs: "Versión extendida del chasis tándem 20' SL con características y capacidades mejoradas.",
+    imageUrl: "/assets/20-sl-tandem.webp",
+    additionalImages: [
+      "/assets/20_SL_Tandem_2.jpg",
+      "/assets/20_SL_Tandem_3.jpg"
+    ],
+    overallLength: "32'-6''",
     overallWidth: "96''",
     fifthWheelHeight: "47±1''",
     rearDeckHeight: "48±1''",
-    axleSpread: "Variable triaxle configuration",
-    tareWeight: "12,200 lbs ±2%",
-    payload: "Up to 75,800 lbs depending on configuration",
-    frameComponents: ["Extendable main beam with telescoping capability"],
-    suspensionDetails: ["Advanced triaxle air suspension"],
-    brakeSystemDetails: ["Full ABS brake system"],
-    electricalDetails: ["Advanced LED lighting system"],
-    additionalEquipment: ["Hydraulic extension system"],
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "8,800 lbs ±2%",
+    payload: "59,200 lbs",
+    frameComponents: [
+      "Extended main beam structure",
+      "Enhanced bolster assemblies",
+      "Reinforced connection points"
+    ],
+    suspensionDetails: [
+      "Advanced tandem suspension system",
+      "Extended range configuration",
+      "Enhanced stability design"
+    ],
+    brakeSystemDetails: [
+      "Extended ABS-equipped brake system",
+      "Advanced slack adjusters",
+      "Enhanced DOT compliant brake chambers"
+    ],
+    electricalDetails: [
+      "Extended LED lighting package",
+      "Advanced 7-way connector",
+      "Enhanced ABS-ready wiring harness"
+    ],
+    additionalEquipment: [
+      "Extended landing gear system",
+      "Advanced tire monitoring",
+      "Enhanced safety features"
+    ],
+    featured: false,
+    sortOrder: 2
+  },
+  {
+    name: "20/40' 12 Pins Triaxle Container Chassis",
+    nameEs: "Chasis Contenedor Triaxial 20/40' 12 Pines",
+    slug: "20-40-12-pins-triaxle",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "20-40ft",
+    axleConfig: "Triaxle",
+    description: "Versatile triaxle container chassis designed for 20' and 40' containers with 12-pin configuration and hydraulic locking system.",
+    descriptionEs: "Chasis contenedor triaxial versátil diseñado para contenedores de 20' y 40' con configuración de 12 pines y sistema de bloqueo hidráulico.",
+    imageUrl: "/assets/triaxle_20.webp",
+    additionalImages: [
+      "/assets/triaxle_20_2.webp",
+      "/assets/triaxle_20_3.webp",
+      "/assets/triaxle_20_4.webp",
+      "/assets/triaxle_20_5.webp"
+    ],
+    overallLength: "31'-7'' (retracted) or 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "61''+61''",
+    tareWeight: "10,900 lbs ±2%",
+    payload: "66,100lbs for 20' loaded or 74,100lbs for 40' loaded",
+    frameComponents: [
+      "Main Beam: 16''×5'' fabricated I-beam with high strength flanges",
+      "Upper Coupler: 5/16'' pick up plate with JOST 2'' diameter square type kingpin",
+      "Front Bolster: Fabricated bolster assembly with 89'' centers",
+      "Intermediate Bolster: Fabricated with retractable twistlocks",
+      "Rear Bolster: Tapered rectangle bolster with flip up twistlocks"
+    ],
+    suspensionDetails: [
+      "AXN 61'' tri-axle, underslung configuration",
+      "High-arch single spring (360-00)",
+      "Pre-painted BLACK color"
+    ],
+    brakeSystemDetails: [
+      "SEALCO 110800 spring brake priority valve system",
+      "WABCO 4S/2M ABS system",
+      "HALDEX Goldseal T30/30, 2.5'' stroke brake chamber",
+      "PHILLIPS glad hand 12-0061 and 12-0081"
+    ],
+    electricalDetails: [
+      "PHILLIPS mold seal wiring harness",
+      "OPTRONICS LED lights",
+      "Reserved PSI and GPS connector",
+      "10-year warranty electrical system"
+    ],
+    additionalEquipment: [
+      "AXN FW32E00J Landing Gear with 60,000 lbs capacity",
+      "WESTLAKE 255/70R22.5-16PR tubeless tires",
+      "JINGU 22.5×8.25 10-stud hub-piloted wheels",
+      "3M Conspicuity Tape per federal regulations"
+    ],
     featured: true,
-    sortOrder: 5
+    sortOrder: 3
   }
 ];
 
