@@ -85,9 +85,11 @@ export class DatabaseStorage implements IStorage {
   // Chassis model operations
   async getAllChassisModels(): Promise<ChassisModel[]> {
     const rows = await db.select()
-      .from(chassisModels)
-      .where(inArray(chassisModels.slug, ALLOWED_PRODUCT_SLUGS));
-    return rows.map(sanitizeModelImages);
+      .from(chassisModels);
+    console.log(`Found ${rows.length} total models in database`);
+    const filteredRows = rows.filter(row => ALLOWED_PRODUCT_SLUGS.includes(row.slug));
+    console.log(`Filtered to ${filteredRows.length} allowed models`);
+    return filteredRows.map(sanitizeModelImages);
   }
 
   async getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]> {
