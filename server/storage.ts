@@ -1,8 +1,19 @@
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
-import { eq, and, or, like, inArray } from 'drizzle-orm';
-import { chassisModels, conditions } from './schema';
-import { ALLOWED_PRODUCT_SLUGS } from './allowed-products';
+import {
+  conditions,
+  chassisModels,
+  contactMessages,
+  type Condition,
+  type InsertCondition,
+  type ChassisModel,
+  type InsertChassisModel,
+  type ContactMessage,
+  type InsertContactMessage
+} from "../shared/schema.js";
+import { db } from "./db.js";
+import { eq, ilike, and, or, inArray } from "drizzle-orm";
+import { ALLOWED_PRODUCT_SLUGS } from "./allowed-products.js";
 
 // Productos directamente en el código para evitar problemas de importación
 const PRODUCT_DATA = [
@@ -2233,3 +2244,499 @@ const BLOCKED_IMAGE_SUBSTRINGS = [
   "40_Gooseneck_1.jpg",
   "40_Gooseneck_2.jpg",
   "40_45_Extendable_5.jpg",
+  "40_45_Extendable_6.jpg",
+  "40_45_Extendable_7.jpg",
+  "40_45_Extendable_8.jpg",
+  "40_45_Extendable_9.jpg",
+  "40_45_Extendable_10.jpg"
+];
+
+// Función para verificar si una imagen está bloqueada
+function isImageBlocked(imageUrl: string): boolean {
+  return BLOCKED_IMAGE_SUBSTRINGS.some(blocked => imageUrl.includes(blocked));
+}
+
+// Función para filtrar imágenes bloqueadas
+function filterBlockedImages(images: string[]): string[] {
+  return images.filter(image => !isImageBlocked(image));
+}
+
+// Función para obtener todos los modelos de chasis
+export async function getAllChassisModels(): Promise<ChassisModel[]> {
+  try {
+    // Filtrar productos basados en la lista permitida
+    const filteredData = PRODUCT_DATA.filter(product => 
+      ALLOWED_PRODUCT_SLUGS.includes(product.slug)
+    );
+
+    // Mapear los datos al formato ChassisModel
+    const mappedData = filteredData.map((product, index) => ({
+      id: index + 1,
+      name: product.name,
+      nameEs: product.nameEs,
+      slug: product.slug,
+      conditionId: product.conditionId,
+      manufacturer: product.manufacturer,
+      size: product.size,
+      axleConfig: product.axleConfig,
+      description: product.description,
+      descriptionEs: product.descriptionEs,
+      imageUrl: product.imageUrl,
+      additionalImages: filterBlockedImages(product.additionalImages || []),
+      overallLength: product.overallLength,
+      overallWidth: product.overallWidth,
+      fifthWheelHeight: product.fifthWheelHeight,
+      rearDeckHeight: product.rearDeckHeight,
+      kingpinLocation: product.kingpinLocation,
+      landingGearLocation: product.landingGearLocation,
+      axleSpread: product.axleSpread,
+      tareWeight: product.tareWeight,
+      payload: product.payload,
+      frameComponents: product.frameComponents,
+      suspensionDetails: product.suspensionDetails,
+      brakeSystemDetails: product.brakeSystemDetails,
+      electricalDetails: product.electricalDetails,
+      additionalEquipment: product.additionalEquipment,
+      featured: product.featured,
+      sortOrder: product.sortOrder,
+      overallHeight: product.overallHeight || null,
+      gvwr: product.gvwr || null
+    }));
+
+    return mappedData;
+  } catch (error) {
+    console.error("Error getting chassis models:", error);
+    return [];
+  }
+}
+
+// Función para obtener un modelo de chasis por slug
+export async function getChassisModelBySlug(slug: string): Promise<ChassisModel | null> {
+  try {
+    const product = PRODUCT_DATA.find(p => p.slug === slug);
+    
+    if (!product) {
+      return null;
+    }
+
+    return {
+      id: 1,
+      name: product.name,
+      nameEs: product.nameEs,
+      slug: product.slug,
+      conditionId: product.conditionId,
+      manufacturer: product.manufacturer,
+      size: product.size,
+      axleConfig: product.axleConfig,
+      description: product.description,
+      descriptionEs: product.descriptionEs,
+      imageUrl: product.imageUrl,
+      additionalImages: filterBlockedImages(product.additionalImages || []),
+      overallLength: product.overallLength,
+      overallWidth: product.overallWidth,
+      fifthWheelHeight: product.fifthWheelHeight,
+      rearDeckHeight: product.rearDeckHeight,
+      kingpinLocation: product.kingpinLocation,
+      landingGearLocation: product.landingGearLocation,
+      axleSpread: product.axleSpread,
+      tareWeight: product.tareWeight,
+      payload: product.payload,
+      frameComponents: product.frameComponents,
+      suspensionDetails: product.suspensionDetails,
+      brakeSystemDetails: product.brakeSystemDetails,
+      electricalDetails: product.electricalDetails,
+      additionalEquipment: product.additionalEquipment,
+      featured: product.featured,
+      sortOrder: product.sortOrder,
+      overallHeight: product.overallHeight || null,
+      gvwr: product.gvwr || null
+    };
+  } catch (error) {
+    console.error("Error getting chassis model by slug:", error);
+    return null;
+  }
+}
+
+// Función para obtener condiciones
+export async function getConditions(): Promise<Condition[]> {
+  try {
+    const result = await db.select().from(conditions);
+    return result;
+  } catch (error) {
+    console.error("Error getting conditions:", error);
+    return [];
+  }
+}
+
+// Función para obtener una condición por ID
+export async function getConditionById(id: number): Promise<Condition | null> {
+  try {
+    const result = await db.select().from(conditions).where(eq(conditions.id, id));
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error getting condition by ID:", error);
+    return null;
+  }
+}
+
+// Storage interface
+export interface IStorage {
+  // Condition operations (New/Used)
+  getAllConditions(): Promise<Condition[]>;
+  getConditionBySlug(slug: string): Promise<Condition | undefined>;
+  createCondition(condition: InsertCondition): Promise<Condition>;
+
+  // Chassis model operations
+  getAllChassisModels(): Promise<ChassisModel[]>;
+  getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]>;
+  getChassisModelBySlug(slug: string): Promise<ChassisModel | undefined>;
+  createChassisModel(model: InsertChassisModel): Promise<ChassisModel>;
+  filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string): Promise<ChassisModel[]>;
+
+  // Contact message operations
+  createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
+}
+
+// Database storage implementation using PostgreSQL
+export class DatabaseStorage implements IStorage {
+  // Condition operations
+  async getAllConditions(): Promise<Condition[]> {
+    return await db.select().from(conditions);
+  }
+
+  async getConditionBySlug(slug: string): Promise<Condition | undefined> {
+    const [condition] = await db.select()
+      .from(conditions)
+      .where(eq(conditions.slug, slug));
+    return condition;
+  }
+
+  async createCondition(insertCondition: InsertCondition): Promise<Condition> {
+    const [condition] = await db.insert(conditions)
+      .values(insertCondition)
+      .returning();
+    return condition;
+  }
+
+  // Chassis model operations
+  async getAllChassisModels(): Promise<ChassisModel[]> {
+    console.log("Getting chassis models from embedded data...");
+    
+    console.log(`Total products in embedded data: ${PRODUCT_DATA.length}`);
+    
+    // Filter to only allowed products
+    const filteredData = PRODUCT_DATA.filter(item => ALLOWED_PRODUCT_SLUGS.includes(item.slug));
+    console.log(`Filtered to ${filteredData.length} allowed products`);
+    
+    // Convert to proper ChassisModel format
+    const models = filteredData.map((item, index) => ({
+      id: index + 1, // Use numeric ID
+      name: item.name,
+      nameEs: item.nameEs,
+      slug: item.slug,
+      conditionId: item.conditionId,
+      manufacturer: item.manufacturer,
+      size: item.size,
+      axleConfig: item.axleConfig,
+      description: item.description,
+      descriptionEs: item.descriptionEs,
+      imageUrl: item.imageUrl,
+      additionalImages: item.additionalImages || [],
+      overallLength: item.overallLength,
+      overallWidth: item.overallWidth,
+      overallHeight: item.overallHeight || null, // Add missing field
+      fifthWheelHeight: item.fifthWheelHeight,
+      rearDeckHeight: item.rearDeckHeight,
+      kingpinLocation: item.kingpinLocation || null, // Add missing field
+      landingGearLocation: item.landingGearLocation || null, // Add missing field
+      axleSpread: item.axleSpread,
+      tareWeight: item.tareWeight,
+      payload: item.payload,
+      gvwr: item.gvwr || null, // Add missing field
+      frameComponents: item.frameComponents,
+      suspensionDetails: item.suspensionDetails,
+      brakeSystemDetails: item.brakeSystemDetails,
+      electricalDetails: item.electricalDetails,
+      additionalEquipment: item.additionalEquipment,
+      featured: item.featured,
+      sortOrder: item.sortOrder
+    }));
+
+    console.log(`Returning ${models.length} models with proper format`);
+    return models;
+  }
+
+  async getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]> {
+    // This function is still querying the database, but the product display is from embedded data.
+    // This might need to be updated if the database is completely removed for product data.
+    const rows = await db.select()
+      .from(chassisModels)
+      .where(and(
+        eq(chassisModels.conditionId, conditionId),
+        inArray(chassisModels.slug, ALLOWED_PRODUCT_SLUGS)
+      ));
+    // Assuming sanitizeModelImages is defined elsewhere or removed if not needed.
+    return rows as ChassisModel[]; // Simplified for summary, actual implementation might have sanitizeModelImages
+  }
+
+  async getChassisModelBySlug(slug: string): Promise<ChassisModel | undefined> {
+    console.log(`Looking for product with slug: ${slug}`);
+    
+    // Solo permitir acceso a productos en la lista permitida
+    if (!ALLOWED_PRODUCT_SLUGS.includes(slug)) {
+      console.log(`Slug ${slug} not in allowed list`);
+      return undefined;
+    }
+    
+    // Buscar en los datos embebidos
+    const product = PRODUCT_DATA.find(item => item.slug === slug);
+    
+    if (!product) {
+      console.log(`Product with slug ${slug} not found in data`);
+      return undefined;
+    }
+    
+    console.log(`Found product: ${product.name}`);
+    
+    // Convertir a formato ChassisModel
+    const model = {
+      id: 1, // Use 1 as default ID
+      name: product.name,
+      nameEs: product.nameEs,
+      slug: product.slug,
+      conditionId: product.conditionId,
+      manufacturer: product.manufacturer,
+      size: product.size,
+      axleConfig: product.axleConfig,
+      description: product.description,
+      descriptionEs: product.descriptionEs,
+      imageUrl: product.imageUrl,
+      additionalImages: product.additionalImages || [],
+      overallLength: product.overallLength,
+      overallWidth: product.overallWidth,
+      overallHeight: product.overallHeight || null,
+      fifthWheelHeight: product.fifthWheelHeight,
+      rearDeckHeight: product.rearDeckHeight,
+      kingpinLocation: product.kingpinLocation || null,
+      landingGearLocation: product.landingGearLocation || null,
+      axleSpread: product.axleSpread,
+      tareWeight: product.tareWeight,
+      payload: product.payload,
+      gvwr: product.gvwr || null,
+      frameComponents: product.frameComponents,
+      suspensionDetails: product.suspensionDetails,
+      brakeSystemDetails: product.brakeSystemDetails,
+      electricalDetails: product.electricalDetails,
+      additionalEquipment: product.additionalEquipment,
+      featured: product.featured,
+      sortOrder: product.sortOrder
+    };
+
+    return model;
+  }
+
+  async createChassisModel(insertModel: InsertChassisModel): Promise<ChassisModel> {
+    const [model] = await db.insert(chassisModels)
+      .values(insertModel)
+      .returning();
+    return model;
+  }
+
+  async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string, characteristic?: string): Promise<ChassisModel[]> {
+    try {
+      console.log("Filtering chassis models with filters:", { conditionSlug, size, manufacturer, characteristic });
+      
+      // Get models directly from data file
+      const allModels = await this.getAllChassisModels();
+      console.log(`Total models from data file: ${allModels.length}`);
+      
+      // Then filter them in memory
+      let filteredModels = [...allModels];
+
+      if (conditionSlug && conditionSlug !== "all") {
+        if (conditionSlug === "english-only") {
+          // Excluir catálogo español para EN
+          filteredModels = filteredModels.filter(model => model.conditionId !== 5);
+        } else if (conditionSlug === "chassis-nuevos-espanol") {
+          // Catálogo ES por condición explícita (slug documentado en README)
+          const condition = await this.getConditionBySlug("chassis-nuevos-espanol");
+          if (condition) {
+            filteredModels = filteredModels.filter(model => model.conditionId === condition.id);
+          } else {
+            // Fallback: si no existe condición, filtrar por convención de slug "-esp"
+            filteredModels = filteredModels.filter(model => model.slug.endsWith("-esp"));
+          }
+        } else {
+          const condition = await this.getConditionBySlug(conditionSlug);
+          if (condition) {
+            filteredModels = filteredModels.filter(model => model.conditionId === condition.id);
+          }
+        }
+      }
+
+      if (size && size !== "all") {
+        filteredModels = filteredModels.filter(model => {
+          // Handle specific size filters that may need range matching
+          if (size === "40-45ft") {
+            return model.size === "40-45ft" || model.size.includes("40") && model.size.includes("45");
+          } else if (size === "20-40ft") {
+            return model.size === "20-40ft" || (model.size.includes("20") && model.size.includes("40") && !model.size.includes("45"));
+          } else if (size === "20-40-45ft") {
+            return model.size === "20-40-45ft" || model.size.includes("20-40-45");
+          } else if (size === "33ft") {
+            return model.size.includes("33");
+          } else {
+            return model.size === size;
+          }
+        });
+      }
+
+      if (manufacturer && manufacturer !== "all") {
+        const lowerCaseManufacturer = manufacturer.toLowerCase();
+        filteredModels = filteredModels.filter(model =>
+          model.manufacturer.toLowerCase().includes(lowerCaseManufacturer)
+        );
+      }
+
+      if (characteristic && characteristic !== "all") {
+        filteredModels = filteredModels.filter(model => {
+          const lowerName = model.name.toLowerCase();
+          const lowerAxleConfig = model.axleConfig.toLowerCase();
+          
+          switch (characteristic) {
+            case "tandem":
+              // Only match tandem if it"s NOT a gooseneck
+              return lowerAxleConfig.includes("tandem") && !lowerName.includes("gooseneck") && !lowerName.includes("gn ");
+            case "triaxle":
+              return lowerAxleConfig.includes("triaxle") || lowerAxleConfig.includes("tri-axle") || lowerName.includes("triaxle") || lowerName.includes("tri-axle") || lowerName.includes("tri axle");
+            case "gooseneck":
+              return lowerName.includes("gooseneck") || lowerName.includes("gn ");
+            case "extendable":
+              return lowerName.includes("extendable") || lowerName.includes("extend");
+            default:
+              return true;
+          }
+        });
+      }
+
+      console.log(`Final filtered result: ${filteredModels.length} models`);
+      return filteredModels;
+    } catch (error) {
+      console.error("Error in filterChassisModels:", error);
+      return [];
+    }
+  }
+
+  // Contact message operations
+  async createContactMessage(insertMessage: InsertContactMessage): Promise<ContactMessage> {
+    const [message] = await db.insert(contactMessages)
+      .values(insertMessage)
+      .returning();
+    return message;
+  }
+
+  // Initialize database with seed data if needed
+  async initializeDatabase(): Promise<void> {
+    console.log("Starting database initialization...");
+    
+    // FORCE RESEED - Always clear and reseed for now
+    console.log("FORCING COMPLETE RESEED...");
+    await this.forceReseed();
+    
+    console.log("Database initialization completed.");
+  }
+
+  // Seed initial data
+  private async seedData() {
+    // Import real chassis data
+    const { newChassisData, usedChassisData } = await import("./chassis-data");
+    
+    // Get or create conditions
+    let newCondition = await this.getConditionBySlug("new-chassis");
+    if (!newCondition) {
+      newCondition = await this.createCondition({
+        name: "New Chassis",
+        slug: "new-chassis",
+        description: "Brand new chassis with full warranty and the latest features and technology.",
+        imageUrl: "/assets/new-chassis.jpg"
+      });
+    }
+
+    let usedCondition = await this.getConditionBySlug("used-chassis");
+    if (!usedCondition) {
+      usedCondition = await this.createCondition({
+        name: "Used Chassis",
+        slug: "used-chassis",
+        description: "Quality pre-owned chassis that have been thoroughly inspected and refurbished as needed.",
+        imageUrl: "/assets/used-chassis.jpg"
+      });
+    }
+
+    // Seed real chassis data
+    console.log(`Seeding ${newChassisData.length} new chassis models...`);
+    for (const chassisData of newChassisData) {
+      await this.createChassisModel({
+        ...chassisData,
+        conditionId: newCondition.id
+      });
+    }
+
+    console.log(`Seeding ${usedChassisData.length} used chassis models...`);
+    for (const chassisData of usedChassisData) {
+      await this.createChassisModel({
+        ...chassisData,
+        conditionId: usedCondition.id
+      });
+    }
+
+    console.log(`Total products seeded: ${newChassisData.length + usedChassisData.length}`);
+  }
+
+  // Reseed data (clear and re-add all products)
+  private async reseedData() {
+    console.log("Reseeding database with updated product data...");
+    
+    // Clear existing chassis models
+    await db.delete(chassisModels);
+    console.log("Cleared existing chassis models");
+    
+    // Reseed with current data
+    await this.seedData();
+    console.log("Reseeding completed");
+  }
+
+  // Force complete reseed (clear everything and start fresh)
+  private async forceReseed() {
+    console.log("FORCE RESEED: Clearing all data and starting fresh...");
+    
+    try {
+      // Clear all chassis models
+      await db.delete(chassisModels);
+      console.log("Cleared all chassis models");
+      
+      // Clear all conditions
+      await db.delete(conditions);
+      console.log("Cleared all conditions");
+      
+      // Reseed everything from scratch
+      await this.seedData();
+      console.log("FORCE RESEED completed successfully");
+      
+      // Verify the data was seeded correctly
+      const finalModels = await this.getAllChassisModels();
+      console.log(`Final verification: ${finalModels.length} models in database`);
+      
+    } catch (error) {
+      console.error("Error during force reseed:", error);
+      throw error;
+    }
+  }
+}
+
+// Create storage instance and initialize
+const storage = new DatabaseStorage();
+storage.initializeDatabase().catch(err => {
+  console.error("Failed to initialize database:", err);
+});
+
+export { storage };
