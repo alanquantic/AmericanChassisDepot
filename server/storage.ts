@@ -132,12 +132,12 @@ const PRODUCT_DATA = [
     axleConfig: "Triaxle",
     description: "Versatile triaxle container chassis designed for 20' and 40' containers with 12-pin configuration and hydraulic locking system.",
     descriptionEs: "Chasis contenedor triaxial versátil diseñado para contenedores de 20' y 40' con configuración de 12 pines y sistema de bloqueo hidráulico.",
-    imageUrl: "/assets/triaxle_20.webp",
+    imageUrl: "/triaxle_20.webp",
     additionalImages: [
-      "/assets/triaxle_20_2.webp",
-      "/assets/triaxle_20_3.webp",
-      "/assets/triaxle_20_4.webp",
-      "/assets/triaxle_20_5.webp"
+      "/triaxle_20_2.webp",
+      "/triaxle_20_3.webp",
+      "/triaxle_20_4.webp",
+      "/triaxle_20_5.webp"
     ],
     overallLength: "31'-7'' (retracted) or 40'-11'' (extended)",
     overallWidth: "96''",
