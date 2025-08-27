@@ -162,7 +162,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                     {/* Main image */}
                     <div className="bg-white p-4 rounded-lg shadow-md h-80 md:h-96 flex items-center justify-center">
                       <img 
-                        src={selectedImage || model?.imageUrl} 
+                        src={`${selectedImage || model?.imageUrl}?v=${Date.now()}`} 
                         alt={model?.name} 
                         className="max-w-full max-h-full object-contain rounded"
                         onError={(e) => {
@@ -186,7 +186,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                           onClick={() => handleThumbnailClick(model.imageUrl)}
                         >
                           <img 
-                            src={model.imageUrl} 
+                            src={`${model.imageUrl}?v=${Date.now()}`} 
                             alt={`${model.name} thumbnail`} 
                             className="w-full h-full object-contain"
                           />
@@ -200,7 +200,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                             onClick={() => handleThumbnailClick(image)}
                           >
                             <img 
-                              src={image} 
+                              src={`${image}?v=${Date.now()}`} 
                               alt={`${model.name} view ${index + 1}`} 
                               className="w-full h-full object-contain"
                             />
