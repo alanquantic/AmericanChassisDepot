@@ -42,7 +42,7 @@ export const getContactInfo = () => {
   const isSpanish = getCurrentLanguage() === 'es';
   return {
     address: "4811 N McCarty St Suite C, Houston, TX 77013",
-    phone: "+1 (442) 257-9946",
+    phone: "+1 346 395 6739",
     email: "sales@americanchassisdepot.com",
     hours: [
       { 
