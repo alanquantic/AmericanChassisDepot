@@ -80,7 +80,7 @@ const PRODUCT_DATA = [
     axleConfig: "Tandem",
     description: "Extended version of the 20' SL tandem chassis with enhanced features and capabilities.",
     descriptionEs: "Versión extendida del chasis tándem 20' SL con características y capacidades mejoradas.",
-    imageUrl: "/assets/20-sl-tandem-extended.webp",
+    imageUrl: "/assets/20-sl-tandem.webp",
     additionalImages: [
       "/assets/20_SL_Tandem_2.jpg",
       "/assets/20_SL_Tandem_3.jpg"
