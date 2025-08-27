@@ -6,12 +6,8 @@ const ElevenLabsWidget: React.FC = () => {
   const scriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => {
-    const currentLanguage = getCurrentLanguage();
-    
-    // Solo mostrar el widget en inglés
-    if (currentLanguage !== 'en') {
-      return;
-    }
+    // El widget ahora aparece en ambos idiomas (inglés y español)
+    // Removemos la restricción de idioma
 
     // Crear el elemento del widget
     const widgetElement = document.createElement('elevenlabs-convai');
@@ -46,11 +42,7 @@ const ElevenLabsWidget: React.FC = () => {
     };
   }, []);
 
-  // Solo renderizar el contenedor si estamos en inglés
-  const currentLanguage = getCurrentLanguage();
-  if (currentLanguage !== 'en') {
-    return null;
-  }
+  // El widget ahora aparece en ambos idiomas
 
   return (
     <div 
