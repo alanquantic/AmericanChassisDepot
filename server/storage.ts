@@ -1075,6 +1075,532 @@ const PRODUCT_DATA = [
     ],
     featured: false,
     sortOrder: 20
+  },
+  {
+    name: "20/40' Extendable Tandem Container Chassis With PSI - Español",
+    nameEs: "Chasis Contenedor Tándem Extensible 20/40' con PSI",
+    slug: "20-40-extendable-tandem-psi-esp",
+    conditionId: 1,
+    manufacturer: "FlexFrame",
+    size: "20-40ft",
+    axleConfig: "Tandem",
+    description: "Advanced extendable tandem chassis with PSI integration for enhanced monitoring and control.",
+    descriptionEs: "Chasis tándem extensible avanzado con integración PSI para monitoreo y control mejorados.",
+    imageUrl: "/assets/20-40-extendable-tandem-psi-esp.webp",
+    additionalImages: [
+      "/assets/20_40_Extendable_Tandem_1.jpg",
+      "/assets/20_40_Extendable_Tandem_2.jpg"
+    ],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "10,200 lbs ±2%",
+    payload: "Up to 70,800 lbs",
+    frameComponents: [
+      "PSI-integrated main beam",
+      "Advanced extension mechanism",
+      "Enhanced bolster assemblies",
+      "Integrated monitoring system"
+    ],
+    suspensionDetails: [
+      "PSI-monitored tandem suspension",
+      "Advanced load-leveling capability",
+      "Enhanced stability control"
+    ],
+    brakeSystemDetails: [
+      "PSI-integrated ABS brake system",
+      "Advanced electronic brake distribution",
+      "Enhanced brake monitoring"
+    ],
+    electricalDetails: [
+      "PSI-compatible LED lighting",
+      "Advanced wiring harness",
+      "Integrated monitoring controls"
+    ],
+    additionalEquipment: [
+      "PSI-integrated extension system",
+      "Advanced container locks",
+      "Enhanced landing gear",
+      "Comprehensive monitoring package"
+    ],
+    featured: false,
+    sortOrder: 21
+  },
+  {
+    name: "20'/40'/45' COMBO TRIDEM - Español",
+    nameEs: "20'/40'/45' COMBO TRIDEM",
+    slug: "20-40-45-combo-tandem-esp",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "20-40-45ft",
+    axleConfig: "Tridem",
+    description: "High-strength tridem chassis designed for stevedoring and transporting 20', 40', and 45' containers with 100Kpsi materials and advanced suspension system.",
+    descriptionEs: "Chasis tridem de alta resistencia diseñado para estiba y transporte de contenedores de 20', 40' y 45' con materiales de 100Kpsi y sistema de suspensión avanzado.",
+    imageUrl: "/assets/20-40-45-combo-tridem-esp.webp",
+    additionalImages: [],
+    overallLength: "46'-2 1/8'' (extended) or 31'-3 1/8'' (retracted)",
+    overallWidth: "96''",
+    fifthWheelHeight: "46 3/4''",
+    rearDeckHeight: "48 3/8''",
+    kingpinLocation: "17 1/2'' (From rear face of front bolster)",
+    landingGearLocation: "118 3/8'' (From rear face of front bolster)",
+    axleSpread: "61'' tridem configuration",
+    tareWeight: "11,300 lbs ±2%",
+    payload: "79,000 lbs for 40' and 45' containers, 77,000 lbs for 20' containers",
+    frameComponents: [
+      "Main Beam: 16''×5'' fabricated I-beam with 100Kpsi materials flanges",
+      "Slider Beam: Fabricated 14 3/4''×5'' I-beam, 2-pin locking system",
+      "Cross Member: 3/16'' thick fabricated channel type",
+      "Upper Coupler: 1/4'' pick up plate with JOST 2'' diameter square type kingpin",
+      "Front Bolster: 6 5/8'' wide x 7 3/8'' high, 1/4'' thick tube section",
+      "Center Bolster: 5'' wide x 3/8'' thick top plate with 5'' wide x 4 1/4'' deep x 1/4'' thick U-type bottom channel",
+      "Rear Bolster: Fabricated 6'' wide x 3/8'' thick top plate with 5'' wide x 4 5/8'' deep x 3/8'' thick tube type"
+    ],
+    suspensionDetails: [
+      "61'' axle spread tridem suspension with single leaf high arch spring",
+      "11,000 lb capacity per spring",
+      "Hutchen/AXN suspension system",
+      "Pre-painted BLACK color"
+    ],
+    brakeSystemDetails: [
+      "SEALCO valve system and WABCO 4S-2M system",
+      "Three tanks system (Capacity 2850 cu-in)",
+      "3/8'' air tubing",
+      "30/30 double diaphragm brake chambers",
+      "PHILLIPS glad hands 12-0081/12-0061/12-010"
+    ],
+    electricalDetails: [
+      "12 volt LED lighting system with wiring harness for ABS",
+      "4'' Stop/Turn lamp",
+      "2'' clearance lamp with flange mounting",
+      "GROTE lighting system"
+    ],
+    additionalEquipment: [
+      "AXN FW32E00J Landing Gear with 50,000 lbs capacity",
+      "WESTLAKE 255/70R22.5-16PR tubeless tires",
+      "JINGU 22.5×8.25 10-stud hub-piloted wheels",
+      "3M Conspicuity Tape per federal regulations",
+      "24''×24'' black rubber anti-sail mud flap"
+    ],
+    featured: false,
+    sortOrder: 22
+  },
+  {
+    name: "20ft ISO Tank Container Chassis - Español",
+    nameEs: "Chasis Contenedor ISO Tank 20ft",
+    slug: "20ft-iso-tank-container-chassis-esp",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "20ft",
+    axleConfig: "Tandem",
+    description: "Specialized chassis designed for ISO tank containers with enhanced safety and stability features.",
+    descriptionEs: "Chasis especializado diseñado para contenedores ISO tank con características mejoradas de seguridad y estabilidad.",
+    imageUrl: "/assets/20ft-iso-tank-container-chassis-esp.webp",
+    additionalImages: [],
+    overallLength: "31'-6''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "8,200 lbs ±2%",
+    payload: "58,800 lbs",
+    frameComponents: [
+      "ISO tank-specific main beam",
+      "Enhanced safety bolster assemblies",
+      "Specialized connection points",
+      "Reinforced structure"
+    ],
+    suspensionDetails: [
+      "ISO tank tandem suspension",
+      "Enhanced stability design",
+      "Load-specific configuration"
+    ],
+    brakeSystemDetails: [
+      "Enhanced ABS brake system",
+      "Safety-focused brake components",
+      "DOT inspection certified"
+    ],
+    electricalDetails: [
+      "ISO tank LED lighting",
+      "Enhanced wiring harness",
+      "Safety-compliant connections"
+    ],
+    additionalEquipment: [
+      "ISO tank landing gear",
+      "Safety monitoring system",
+      "Enhanced tire package",
+      "Comprehensive safety features"
+    ],
+    featured: false,
+    sortOrder: 23
+  },
+  {
+    name: "33' Slider Tri-Axle Container Chassis - Español",
+    nameEs: "Chasis Contenedor Triaxial Slider 33'",
+    slug: "33ft-slider-tri-axle-esp",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "33ft",
+    axleConfig: "Triaxle",
+    description: "Heavy-duty 33-foot tri-axle slider chassis for specialized container transportation needs.",
+    descriptionEs: "Chasis triaxial slider de servicio pesado de 33 pies para necesidades especializadas de transporte de contenedores.",
+    imageUrl: "/assets/33-slider-triaxle-esp.webp",
+    additionalImages: [],
+    overallLength: "33'-0''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "61''+61''",
+    tareWeight: "11,200 lbs ±2%",
+    payload: "71,800 lbs",
+    frameComponents: [
+      "33ft tri-axle main beam",
+      "Slider extension mechanism",
+      "Enhanced bolster assemblies",
+      "Heavy-duty connection points"
+    ],
+    suspensionDetails: [
+      "Tri-axle slider suspension",
+      "Enhanced load distribution",
+      "Advanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Tri-axle ABS brake system",
+      "Advanced brake distribution",
+      "Enhanced brake monitoring"
+    ],
+    electricalDetails: [
+      "Advanced LED lighting",
+      "Enhanced wiring harness",
+      "Integrated control systems"
+    ],
+    additionalEquipment: [
+      "Tri-axle landing gear",
+      "Advanced extension system",
+      "Enhanced tire package",
+      "Comprehensive monitoring"
+    ],
+    featured: false,
+    sortOrder: 24
+  },
+  {
+    name: "40FT Gooseneck with Genset - Español",
+    nameEs: "Chasis Gooseneck 40FT con Generador",
+    slug: "40ft-gooseneck-genset-esp",
+    conditionId: 1,
+    manufacturer: "SAF Holland",
+    size: "40ft",
+    axleConfig: "Tandem",
+    description: "Heavy-duty 40-foot gooseneck chassis equipped with generator set for specialized container transportation needs.",
+    descriptionEs: "Chasis gooseneck de servicio pesado de 40 pies equipado con generador para necesidades especializadas de transporte de contenedores.",
+    imageUrl: "/assets/40ft-gooseneck-genset-esp.webp",
+    additionalImages: [
+      "/assets/40_Gooseneck_4.jpg",
+      "/assets/40_Gooseneck_5.jpg"
+    ],
+    overallLength: "40'-11''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "49''",
+    tareWeight: "6,600 lbs ±2% (exclude Genset weight)",
+    payload: "67,200 lbs (30,480kgs)",
+    frameComponents: [
+      "Main Beam: WI209lb/ft hot-rolled H-beam, ASTM A572 Grade 50",
+      "Cross Member: 3/16'' thick x 3'' wide x 9'' deep channel",
+      "GN Member: 5-1/4'' deep×4'' wide hot-rolled H-beam",
+      "Upper Coupler: 1/4'' pick up plate with JOST 2'' diameter kingpin",
+      "Front Bolster: 8'' wide x 10'' high ×1/4'' thick open section"
+    ],
+    suspensionDetails: [
+      "HUTCH H9700 mechanical tandem suspension",
+      "Overslung configuration with CASC high-arch 3-leaf spring",
+      "Pre-painted BLACK color"
+    ],
+    brakeSystemDetails: [
+      "SAF Holland York axles with Q+ 16.5''×7'' 4515Q brake",
+      "HALDEX 6.0'' automatic slack adjusters",
+      "ABS ready front, non-ABS rear configuration"
+    ],
+    electricalDetails: [
+      "PHILLIPS mold seal wiring harness",
+      "OPTRONICS LED lights with theft proof design",
+      "PHILLIPS 16-724 plastic receptacle with split pins"
+    ],
+    additionalEquipment: [
+      "SAF-HOLLAND ATLAS65 with 65,000 lbs capacity landing gear",
+      "WESTLAKE 11R22.5-14PR tubeless tires",
+      "SUNRISE 22.5×8.25 10-stud hub-piloted wheels",
+      "Generator set unit equipped",
+      "TPC 30''×24''×1/4'' Black PVC mud flaps"
+    ],
+    featured: false,
+    sortOrder: 25
+  },
+  {
+    name: "45ft Multimodal Chassis - Español",
+    nameEs: "Chasis Multimodal 45ft",
+    slug: "45ft-multimodal",
+    conditionId: 1,
+    manufacturer: "JOST",
+    size: "45ft",
+    axleConfig: "Tridem",
+    description: "Specialized 45-foot multimodal chassis designed for efficient intermodal transportation with enhanced load capacity.",
+    descriptionEs: "Chasis multimodal especializado de 45 pies diseñado para transporte intermodal eficiente con capacidad de carga mejorada.",
+    imageUrl: "/assets/45ft-multimodal-esp.webp",
+    additionalImages: [],
+    overallLength: "45'-2 33/64'' (13780 mm)",
+    overallWidth: "98'' (2490 mm)",
+    fifthWheelHeight: "46''±1'' (1170 mm)",
+    rearDeckHeight: "56''±1'' (1436 mm)",
+    kingpinLocation: "33'' (830 mm)",
+    landingGearLocation: "",
+    axleSpread: "52'' (1310 mm)",
+    tareWeight: "14,991 lbs (±2%) (6800 kg)",
+    payload: "66,139 lbs (30000 kg)",
+    frameComponents: [
+      "Main Beam: Fabricated H-beam H420x140x14x6x14mm, ASTM A572 Grade 50",
+      "Cross Member: 'U' channel, width 3.1'' x height 1.6'' x thick 1/6''",
+      "Front Bolster: 1/5 inches thick x 7 inches height x 8.7 inches width",
+      "Rear Bolster: 1/5 inches thick x 7 inches height x 8.7 inches width",
+      "King Pin: Welding 2 inches, JOST Brand"
+    ],
+    suspensionDetails: [
+      "ZY brand with 22,046 lbs capacity",
+      "Mechanical tridem suspension with 3 leaf springs"
+    ],
+    brakeSystemDetails: [
+      "KORMEE ABS system",
+      "Dual line trailer brake system",
+      "Sealco valve, 30/30 brake chamber"
+    ],
+    electricalDetails: [
+      "LED lighting system, 12V",
+      "Phillips brand electric socket"
+    ],
+    additionalEquipment: [
+      "JOST Brand landing gear, 61,729 lbs capacity",
+      "DRC 11R22.5 16 PR tires",
+      "8.25×22.5, 10 holes ISO rims",
+      "Standard marking and rubber mud flap"
+    ],
+    featured: false,
+    sortOrder: 26
+  },
+  {
+    name: "Used 40' Gooseneck Chassis Refurbished - Español",
+    nameEs: "Chasis Gooseneck 40' Usado Reacondicionado",
+    slug: "used-40-gooseneck-chassis-refurbished-esp",
+    conditionId: 2,
+    manufacturer: "SAF Holland",
+    size: "40ft",
+    axleConfig: "Tandem",
+    description: "High-quality refurbished 40-foot gooseneck chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis gooseneck de 40 pies reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-40-gooseneck-chassis-refurbished-esp.webp",
+    additionalImages: [],
+    overallLength: "40'-11''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "49''",
+    tareWeight: "6,600 lbs ±2%",
+    payload: "67,200 lbs (30,480kgs)",
+    frameComponents: [
+      "Refurbished main beam with structural integrity verified",
+      "Restored bolster assemblies",
+      "Enhanced connection points",
+      "Comprehensive quality assurance"
+    ],
+    suspensionDetails: [
+      "Refurbished tandem suspension",
+      "Restored spring system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored tire package",
+      "Enhanced safety features",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 27
+  },
+  {
+    name: "Used 20' SL Tandem Container Chassis Refurbished - Español",
+    nameEs: "Chasis Contenedor Tandem 20' SL Usado Reacondicionado",
+    slug: "used-20-sl-tandem-container-chassis-refurbished-esp",
+    conditionId: 2,
+    manufacturer: "AXN",
+    size: "20ft",
+    axleConfig: "Tandem",
+    description: "Premium refurbished 20-foot SL tandem container chassis with comprehensive restoration and quality assurance.",
+    descriptionEs: "Chasis contenedor tándem 20' SL reacondicionado premium con restauración integral y garantía de calidad.",
+    imageUrl: "/assets/used-20-sl-tandem-container-chassis-refurbished-esp.webp",
+    additionalImages: [],
+    overallLength: "31'-6''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "8,500 lbs ±2%",
+    payload: "59,500 lbs",
+    frameComponents: [
+      "Refurbished main beam with structural verification",
+      "Restored bolster assemblies",
+      "Enhanced connection points",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished tandem suspension",
+      "Restored spring system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored tire package",
+      "Enhanced safety features",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 28
+  },
+  {
+    name: "Used 20/40' 12 Pins Triaxle Container Chassis Refurbished - Español",
+    nameEs: "Chasis Contenedor Triaxial 20/40' 12 Pines Usado Reacondicionado",
+    slug: "used-20-40-12-pins-triaxle-container-chassis-refurbished-esp",
+    conditionId: 2,
+    manufacturer: "AXN",
+    size: "20-40ft",
+    axleConfig: "Triaxle",
+    description: "High-quality refurbished triaxle container chassis with 12-pin configuration and comprehensive restoration.",
+    descriptionEs: "Chasis contenedor triaxial reacondicionado de alta calidad con configuración de 12 pines y restauración integral.",
+    imageUrl: "/assets/used-20-40-12-pins-triaxle-container-chassis-refurbished-esp.webp",
+    additionalImages: [],
+    overallLength: "31'-7'' (retracted) or 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "61''+61''",
+    tareWeight: "10,900 lbs ±2%",
+    payload: "66,100lbs for 20' loaded or 74,100lbs for 40' loaded",
+    frameComponents: [
+      "Refurbished main beam with structural verification",
+      "Restored bolster assemblies",
+      "Enhanced connection points",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished triaxle suspension",
+      "Restored spring system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored tire package",
+      "Enhanced safety features",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 29
+  },
+  {
+    name: "20' SL Tandem Extended Version - Español",
+    nameEs: "Chasis Tándem 20' SL Versión Extendida",
+    slug: "20-sl-tandem-extended-esp",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "20ft",
+    axleConfig: "Tandem",
+    description: "Extended version of the 20' SL tandem chassis with enhanced features and capabilities.",
+    descriptionEs: "Versión extendida del chasis tándem 20' SL con características y capacidades mejoradas.",
+    imageUrl: "/assets/20-sl-tandem-extended-esp.webp",
+    additionalImages: [
+      "/assets/20_SL_Tandem_2.jpg",
+      "/assets/20_SL_Tandem_3.jpg"
+    ],
+    overallLength: "32'-6''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "8,800 lbs ±2%",
+    payload: "59,200 lbs",
+    frameComponents: [
+      "Extended main beam structure",
+      "Enhanced bolster assemblies",
+      "Reinforced connection points"
+    ],
+    suspensionDetails: [
+      "Advanced tandem suspension system",
+      "Extended range configuration",
+      "Enhanced stability design"
+    ],
+    brakeSystemDetails: [
+      "Extended ABS-equipped brake system",
+      "Advanced slack adjusters",
+      "Enhanced DOT compliant brake chambers"
+    ],
+    electricalDetails: [
+      "Extended LED lighting package",
+      "Advanced 7-way connector",
+      "Enhanced ABS-ready wiring harness"
+    ],
+    additionalEquipment: [
+      "Extended landing gear system",
+      "Advanced tire monitoring",
+      "Enhanced safety features"
+    ],
+    featured: false,
+    sortOrder: 30
   }
 ];
 
