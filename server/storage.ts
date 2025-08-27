@@ -257,23 +257,29 @@ export class DatabaseStorage implements IStorage {
     // Import real chassis data
     const { newChassisData, usedChassisData } = await import('../data/chassis-data');
     
-    // Seed conditions
-    const newCondition = await this.createCondition({
-      name: "New Chassis",
-      slug: "new-chassis",
-      description: "Brand new chassis with full warranty and the latest features and technology.",
-      imageUrl: "/assets/new-chassis.jpg"
-    });
+    // Get or create conditions
+    let newCondition = await this.getConditionBySlug("new-chassis");
+    if (!newCondition) {
+      newCondition = await this.createCondition({
+        name: "New Chassis",
+        slug: "new-chassis",
+        description: "Brand new chassis with full warranty and the latest features and technology.",
+        imageUrl: "/assets/new-chassis.jpg"
+      });
+    }
     
-    const usedCondition = await this.createCondition({
-      name: "Used Chassis",
-      slug: "used-chassis",
-      description: "Quality pre-owned chassis that have been thoroughly inspected and refurbished as needed.",
-      imageUrl: "/assets/used-chassis.jpg"
-    });
+    let usedCondition = await this.getConditionBySlug("used-chassis");
+    if (!usedCondition) {
+      usedCondition = await this.createCondition({
+        name: "Used Chassis",
+        slug: "used-chassis",
+        description: "Quality pre-owned chassis that have been thoroughly inspected and refurbished as needed.",
+        imageUrl: "/assets/used-chassis.jpg"
+      });
+    }
     
     // Seed real chassis data
-    console.log("Seeding new chassis models...");
+    console.log(`Seeding ${newChassisData.length} new chassis models...`);
     for (const chassisData of newChassisData) {
       await this.createChassisModel({
         ...chassisData,
@@ -281,13 +287,15 @@ export class DatabaseStorage implements IStorage {
       });
     }
     
-    console.log("Seeding used chassis models...");
+    console.log(`Seeding ${usedChassisData.length} used chassis models...`);
     for (const chassisData of usedChassisData) {
       await this.createChassisModel({
         ...chassisData,
         conditionId: usedCondition.id
       });
     }
+    
+    console.log(`Total products seeded: ${newChassisData.length + usedChassisData.length}`);
   }
 
   // Reseed data (clear and re-add all products)
