@@ -78,7 +78,7 @@ const PRODUCT_DATA = [
     axleConfig: "Tandem",
     description: "Extended version of the 20' SL tandem chassis with enhanced features and capabilities.",
     descriptionEs: "Versión extendida del chasis tándem 20' SL con características y capacidades mejoradas.",
-    imageUrl: "/assets/20-sl-tandem.webp",
+    imageUrl: "/assets/20-sl-tandem-extended.webp",
     additionalImages: [
       "/assets/20_SL_Tandem_2.jpg",
       "/assets/20_SL_Tandem_3.jpg"
@@ -178,6 +178,112 @@ const PRODUCT_DATA = [
     ],
     featured: true,
     sortOrder: 3
+  },
+  {
+    name: "20/40' Extendable Tandem Container Chassis",
+    nameEs: "Chasis Contenedor Tándem Extensible 20/40'",
+    slug: "20-40-extendable-tandem",
+    conditionId: 1,
+    manufacturer: "FlexFrame",
+    size: "20-40ft",
+    axleConfig: "Tandem",
+    description: "Efficient extendable tandem chassis for 20' and 40' containers with reliable extension mechanism and superior fuel economy.",
+    descriptionEs: "Chasis tándem extensible eficiente para contenedores de 20' y 40' con mecanismo de extensión confiable y economía de combustible superior.",
+    imageUrl: "/assets/20-40-extendable-tandem.webp",
+    additionalImages: [
+      "/assets/20_40_Extendable_Tandem_2.jpg"
+    ],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "9,800 lbs ±2%",
+    payload: "Up to 70,200 lbs",
+    frameComponents: [
+      "Lightweight extendable main beam",
+      "Precision extension mechanism",
+      "Reinforced bolster assemblies",
+      "Integrated locking system"
+    ],
+    suspensionDetails: [
+      "High-efficiency tandem suspension",
+      "Optimized for fuel economy",
+      "Reduced maintenance design"
+    ],
+    brakeSystemDetails: [
+      "Standard ABS brake system",
+      "Reliable brake components",
+      "Easy maintenance access"
+    ],
+    electricalDetails: [
+      "Standard LED lighting",
+      "Reliable wiring harness",
+      "Weather-resistant connections"
+    ],
+    additionalEquipment: [
+      "Manual extension system",
+      "Standard container locks",
+      "Efficient landing gear",
+      "DOT compliance package"
+    ],
+    featured: false,
+    sortOrder: 4
+  },
+  {
+    name: "20/40' Extendable Tandem Container Chassis With PSI",
+    nameEs: "Chasis Contenedor Tándem Extensible 20/40' con PSI",
+    slug: "20-40-extendable-tandem-psi",
+    conditionId: 1,
+    manufacturer: "FlexFrame",
+    size: "20-40ft",
+    axleConfig: "Tandem",
+    description: "Advanced extendable tandem chassis with PSI integration for enhanced monitoring and control.",
+    descriptionEs: "Chasis tándem extensible avanzado con integración PSI para monitoreo y control mejorados.",
+    imageUrl: "/assets/20-40-extendable-tandem.webp",
+    additionalImages: [
+      "/assets/20_40_Extendable_Tandem_2.jpg"
+    ],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "10,200 lbs ±2%",
+    payload: "Up to 70,800 lbs",
+    frameComponents: [
+      "PSI-integrated main beam",
+      "Advanced extension mechanism",
+      "Enhanced bolster assemblies",
+      "Integrated monitoring system"
+    ],
+    suspensionDetails: [
+      "PSI-monitored tandem suspension",
+      "Advanced load-leveling capability",
+      "Enhanced stability control"
+    ],
+    brakeSystemDetails: [
+      "PSI-integrated ABS brake system",
+      "Advanced electronic brake distribution",
+      "Enhanced brake monitoring"
+    ],
+    electricalDetails: [
+      "PSI-compatible LED lighting",
+      "Advanced wiring harness",
+      "Integrated monitoring controls"
+    ],
+    additionalEquipment: [
+      "PSI-integrated extension system",
+      "Advanced container locks",
+      "Enhanced landing gear",
+      "Comprehensive monitoring package"
+    ],
+    featured: false,
+    sortOrder: 5
   }
 ];
 
