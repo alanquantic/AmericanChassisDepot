@@ -225,6 +225,16 @@ export class DatabaseStorage implements IStorage {
     if (existingConditions.length === 0) {
       console.log("Initializing database with seed data...");
       await this.seedData();
+    } else {
+      // Check if we need to update the database with new products
+      const existingModels = await this.getAllChassisModels();
+      console.log(`Found ${existingModels.length} existing models in database`);
+      
+      // If we have fewer models than expected, reseed the data
+      if (existingModels.length < ALLOWED_PRODUCT_SLUGS.length) {
+        console.log(`Database has ${existingModels.length} models but expected ${ALLOWED_PRODUCT_SLUGS.length}. Reseeding...`);
+        await this.reseedData();
+      }
     }
   }
 
@@ -264,6 +274,19 @@ export class DatabaseStorage implements IStorage {
         conditionId: usedCondition.id
       });
     }
+  }
+
+  // Reseed data (clear and re-add all products)
+  private async reseedData() {
+    console.log("Reseeding database with updated product data...");
+    
+    // Clear existing chassis models
+    await db.delete(chassisModels);
+    console.log("Cleared existing chassis models");
+    
+    // Reseed with current data
+    await this.seedData();
+    console.log("Reseeding completed");
   }
 }
 
