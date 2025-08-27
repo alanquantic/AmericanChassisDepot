@@ -232,15 +232,19 @@ export class DatabaseStorage implements IStorage {
 
   // Initialize database with seed data if needed
   async initializeDatabase(): Promise<void> {
+    console.log("Starting database initialization...");
+    
     const existingConditions = await this.getAllConditions();
+    console.log(`Found ${existingConditions.length} existing conditions`);
     
     if (existingConditions.length === 0) {
-      console.log("Initializing database with seed data...");
+      console.log("No conditions found. Initializing database with seed data...");
       await this.seedData();
     } else {
       // Check if we need to update the database with new products
       const existingModels = await this.getAllChassisModels();
       console.log(`Found ${existingModels.length} existing models in database`);
+      console.log(`Expected ${ALLOWED_PRODUCT_SLUGS.length} models`);
       
       // Always reseed if we don't have the expected number of products
       if (existingModels.length !== ALLOWED_PRODUCT_SLUGS.length) {
@@ -250,6 +254,8 @@ export class DatabaseStorage implements IStorage {
         console.log(`Database has correct number of models: ${existingModels.length}`);
       }
     }
+    
+    console.log("Database initialization completed.");
   }
 
   // Seed initial data
