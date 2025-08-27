@@ -2555,8 +2555,8 @@ export class DatabaseStorage implements IStorage {
 
       if (conditionSlug && conditionSlug !== "all") {
         if (conditionSlug === "english-only") {
-          // Excluir catálogo español para EN
-          filteredModels = filteredModels.filter(model => model.conditionId !== 5);
+          // Excluir catálogo español para EN - filtrar por slug
+          filteredModels = filteredModels.filter(model => !model.slug.endsWith("-esp"));
         } else if (conditionSlug === "chassis-nuevos-espanol") {
           // Catálogo ES por condición explícita (slug documentado en README)
           const condition = await this.getConditionBySlug("chassis-nuevos-espanol");
