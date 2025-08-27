@@ -13,6 +13,91 @@ import { db } from "./db.js";
 import { eq, ilike, and, or, inArray } from "drizzle-orm";
 import { ALLOWED_PRODUCT_SLUGS } from "./allowed-products.js";
 
+// Productos directamente en el código para evitar problemas de importación
+const PRODUCT_DATA = [
+  {
+    name: "20/40' 12 Pins Triaxle Container Chassis",
+    nameEs: "Chasis Contenedor Triaxial 20/40' 12 Pines",
+    slug: "20-40-12-pins-triaxle",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "20-40ft",
+    axleConfig: "Triaxle",
+    description: "Versatile triaxle container chassis designed for 20' and 40' containers with 12-pin configuration and hydraulic locking system.",
+    descriptionEs: "Chasis contenedor triaxial versátil diseñado para contenedores de 20' y 40' con configuración de 12 pines y sistema de bloqueo hidráulico.",
+    imageUrl: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=400&fit=crop",
+    additionalImages: [],
+    overallLength: "31'-7'' (retracted) or 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    axleSpread: "61''+61''",
+    tareWeight: "10,900 lbs ±2%",
+    payload: "66,100lbs for 20' loaded or 74,100lbs for 40' loaded",
+    frameComponents: ["Main Beam: 16''×5'' fabricated I-beam"],
+    suspensionDetails: ["AXN 61'' tri-axle, underslung configuration"],
+    brakeSystemDetails: ["SEALCO 110800 spring brake priority valve system"],
+    electricalDetails: ["PHILLIPS mold seal wiring harness"],
+    additionalEquipment: ["AXN FW32E00J Landing Gear"],
+    featured: true,
+    sortOrder: 1
+  },
+  {
+    name: "40FT Gooseneck with Genset",
+    nameEs: "Chasis Gooseneck 40FT con Generador",
+    slug: "40ft-gooseneck-genset",
+    conditionId: 1,
+    manufacturer: "SAF Holland",
+    size: "40ft",
+    axleConfig: "Tandem",
+    description: "Heavy-duty 40-foot gooseneck chassis equipped with generator set for specialized container transportation needs.",
+    descriptionEs: "Chasis gooseneck de servicio pesado de 40 pies equipado con generador para necesidades especializadas de transporte de contenedores.",
+    imageUrl: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&h=400&fit=crop",
+    additionalImages: [],
+    overallLength: "40'-11''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    axleSpread: "49''",
+    tareWeight: "6,600 lbs ±2%",
+    payload: "67,200 lbs",
+    frameComponents: ["Main Beam: WI209lb/ft hot-rolled H-beam"],
+    suspensionDetails: ["HUTCH H9700 mechanical tandem suspension"],
+    brakeSystemDetails: ["Standard ABS brake system"],
+    electricalDetails: ["Standard LED lighting"],
+    additionalEquipment: ["Standard landing gear"],
+    featured: true,
+    sortOrder: 2
+  },
+  {
+    name: "20ft Container Chassis 2 Axles",
+    nameEs: "Chasis Contenedor 20ft 2 Ejes",
+    slug: "20ft-container-chassis-2-axles-esp",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "20ft",
+    axleConfig: "Tandem",
+    description: "Standard 20-foot container chassis with 2-axle configuration for reliable container transportation.",
+    descriptionEs: "Chasis contenedor estándar de 20 pies con configuración de 2 ejes para transporte confiable de contenedores.",
+    imageUrl: "/assets/20ft-container-chassis-2-axles.webp",
+    additionalImages: [],
+    overallLength: "31'-6''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    axleSpread: "54''",
+    tareWeight: "8,000 lbs ±2%",
+    payload: "59,000 lbs",
+    frameComponents: ["Standard 2-axle main beam"],
+    suspensionDetails: ["Standard 2-axle tandem suspension"],
+    brakeSystemDetails: ["Standard ABS brake system"],
+    electricalDetails: ["Standard LED lighting"],
+    additionalEquipment: ["Standard landing gear"],
+    featured: false,
+    sortOrder: 43
+  }
+];
+
 // Blocklist de imágenes que no deben mostrarse en ningún producto
 const BLOCKED_IMAGE_SUBSTRINGS = [
   "photo-1580674684081-7617fbf3d745",
@@ -84,19 +169,15 @@ export class DatabaseStorage implements IStorage {
 
   // Chassis model operations
   async getAllChassisModels(): Promise<ChassisModel[]> {
-    console.log("Getting chassis models directly from data file...");
+    console.log("Getting chassis models from embedded data...");
     
-    // Import data directly from file
-    const { newChassisData, usedChassisData } = await import('./chassis-data');
-    const allData = [...newChassisData, ...usedChassisData];
-    
-    console.log(`Total products in data file: ${allData.length}`);
+    console.log(`Total products in embedded data: ${PRODUCT_DATA.length}`);
     
     // Filter to only allowed products
-    const filteredData = allData.filter(item => ALLOWED_PRODUCT_SLUGS.includes(item.slug));
+    const filteredData = PRODUCT_DATA.filter(item => ALLOWED_PRODUCT_SLUGS.includes(item.slug));
     console.log(`Filtered to ${filteredData.length} allowed products`);
     
-    // Return the data directly without complex type conversion
+    // Return the data directly
     console.log(`Returning ${filteredData.length} models`);
     return filteredData as any; // Temporary fix to bypass type issues
   }
