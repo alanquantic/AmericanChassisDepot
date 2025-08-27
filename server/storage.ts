@@ -1601,6 +1601,669 @@ const PRODUCT_DATA = [
     ],
     featured: false,
     sortOrder: 30
+  },
+  {
+    name: "20/40' Maximizer 12-Pin 3-Axle Flip-Up Rear Bolster Chassis",
+    nameEs: "Chasis Maximizer 20/40' 12-Pines 3-Ejes con Respaldo Trasero Abatible",
+    slug: "20-40-maximizer-12-pin-3-axle-flip-up-rear-bolster-chassis",
+    conditionId: 1,
+    manufacturer: "Maximizer",
+    size: "20-40ft",
+    axleConfig: "Triaxle",
+    description: "Advanced maximizer chassis with 12-pin configuration and flip-up rear bolster for enhanced container handling.",
+    descriptionEs: "Chasis maximizer avanzado con configuración de 12 pines y respaldo trasero abatible para manejo mejorado de contenedores.",
+    imageUrl: "/assets/20-40-maximizer-12-pin-3-axle-flip-up-rear-bolster-chassis.webp",
+    additionalImages: [],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "61''+61''",
+    tareWeight: "11,200 lbs ±2%",
+    payload: "Up to 71,800 lbs",
+    frameComponents: [
+      "Maximizer main beam design",
+      "Flip-up rear bolster system",
+      "12-pin connection mechanism",
+      "Enhanced structural integrity"
+    ],
+    suspensionDetails: [
+      "Tri-axle maximizer suspension",
+      "Advanced load distribution",
+      "Enhanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Advanced ABS brake system",
+      "Enhanced brake distribution",
+      "Premium brake components"
+    ],
+    electricalDetails: [
+      "Advanced LED lighting system",
+      "Enhanced wiring harness",
+      "Integrated control systems"
+    ],
+    additionalEquipment: [
+      "Maximizer landing gear",
+      "Advanced extension system",
+      "Enhanced tire package",
+      "Comprehensive monitoring"
+    ],
+    featured: false,
+    sortOrder: 31
+  },
+  {
+    name: "20/40' Maximizer 12-Pin 3-Axle Flip-Up Rear Bolster Chassis - Español",
+    nameEs: "Chasis Maximizer 20/40' 12-Pines 3-Ejes con Respaldo Trasero Abatible",
+    slug: "20-40-maximizer-12-pin-3-axle-flip-up-rear-bolster-chassis-esp",
+    conditionId: 1,
+    manufacturer: "Maximizer",
+    size: "20-40ft",
+    axleConfig: "Triaxle",
+    description: "Advanced maximizer chassis with 12-pin configuration and flip-up rear bolster for enhanced container handling.",
+    descriptionEs: "Chasis maximizer avanzado con configuración de 12 pines y respaldo trasero abatible para manejo mejorado de contenedores.",
+    imageUrl: "/assets/20-40-maximizer-12-pin-3-axle-flip-up-rear-bolster-chassis-esp.webp",
+    additionalImages: [],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "61''+61''",
+    tareWeight: "11,200 lbs ±2%",
+    payload: "Up to 71,800 lbs",
+    frameComponents: [
+      "Maximizer main beam design",
+      "Flip-up rear bolster system",
+      "12-pin connection mechanism",
+      "Enhanced structural integrity"
+    ],
+    suspensionDetails: [
+      "Tri-axle maximizer suspension",
+      "Advanced load distribution",
+      "Enhanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Advanced ABS brake system",
+      "Enhanced brake distribution",
+      "Premium brake components"
+    ],
+    electricalDetails: [
+      "Advanced LED lighting system",
+      "Enhanced wiring harness",
+      "Integrated control systems"
+    ],
+    additionalEquipment: [
+      "Maximizer landing gear",
+      "Advanced extension system",
+      "Enhanced tire package",
+      "Comprehensive monitoring"
+    ],
+    featured: false,
+    sortOrder: 32
+  },
+  {
+    name: "Used 20/40' Extendable Tandem Container Chassis Refurbished",
+    nameEs: "Chasis Contenedor Tándem Extensible 20/40' Usado Reacondicionado",
+    slug: "used-20-40-extendable-tandem-container-chassis-refurbished",
+    conditionId: 2,
+    manufacturer: "FlexFrame",
+    size: "20-40ft",
+    axleConfig: "Tandem",
+    description: "High-quality refurbished extendable tandem chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis tándem extensible reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-20-40-extendable-tandem-container-chassis-refurbished.webp",
+    additionalImages: [],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "9,800 lbs ±2%",
+    payload: "Up to 70,200 lbs",
+    frameComponents: [
+      "Refurbished extendable main beam",
+      "Restored extension mechanism",
+      "Enhanced bolster assemblies",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished tandem suspension",
+      "Restored extension system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored extension system",
+      "Enhanced tire package",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 33
+  },
+  {
+    name: "Used 20/40' Extendable Tandem Container Chassis Refurbished - Español",
+    nameEs: "Chasis Contenedor Tándem Extensible 20/40' Usado Reacondicionado",
+    slug: "used-20-40-extendable-tandem-container-chassis-refurbished-esp",
+    conditionId: 2,
+    manufacturer: "FlexFrame",
+    size: "20-40ft",
+    axleConfig: "Tandem",
+    description: "High-quality refurbished extendable tandem chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis tándem extensible reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-20-40-extendable-tandem-container-chassis-refurbished-esp.webp",
+    additionalImages: [],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "9,800 lbs ±2%",
+    payload: "Up to 70,200 lbs",
+    frameComponents: [
+      "Refurbished extendable main beam",
+      "Restored extension mechanism",
+      "Enhanced bolster assemblies",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished tandem suspension",
+      "Restored extension system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored extension system",
+      "Enhanced tire package",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 34
+  },
+  {
+    name: "Used 20/40' Slider 12pins Container Chassis Tandem Refurbished",
+    nameEs: "Chasis Contenedor Tándem 20/40' Slider 12 Pines Usado Reacondicionado",
+    slug: "used-20-40-slider-12pins-container-chassis-tandem-refurbished",
+    conditionId: 2,
+    manufacturer: "AXN",
+    size: "20-40ft",
+    axleConfig: "Tandem",
+    description: "High-quality refurbished slider tandem chassis with 12-pin configuration and comprehensive restoration.",
+    descriptionEs: "Chasis tándem slider reacondicionado de alta calidad con configuración de 12 pines y restauración integral.",
+    imageUrl: "/assets/used-20-40-slider-12pins-container-chassis-tandem-refurbished.webp",
+    additionalImages: [],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "9,500 lbs ±2%",
+    payload: "Up to 69,500 lbs",
+    frameComponents: [
+      "Refurbished slider main beam",
+      "Restored 12-pin connection system",
+      "Enhanced bolster assemblies",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished slider tandem suspension",
+      "Restored extension system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored slider extension system",
+      "Enhanced tire package",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 35
+  },
+  {
+    name: "Used 20/40' Slider 12pins Container Chassis Tandem Refurbished - Español",
+    nameEs: "Chasis Contenedor Tándem 20/40' Slider 12 Pines Usado Reacondicionado",
+    slug: "used-20-40-slider-12pins-container-chassis-tandem-refurbished-esp",
+    conditionId: 2,
+    manufacturer: "AXN",
+    size: "20-40ft",
+    axleConfig: "Tandem",
+    description: "High-quality refurbished slider tandem chassis with 12-pin configuration and comprehensive restoration.",
+    descriptionEs: "Chasis tándem slider reacondicionado de alta calidad con configuración de 12 pines y restauración integral.",
+    imageUrl: "/assets/used-20-40-slider-12pins-container-chassis-tandem-refurbished-esp.webp",
+    additionalImages: [],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "9,500 lbs ±2%",
+    payload: "Up to 69,500 lbs",
+    frameComponents: [
+      "Refurbished slider main beam",
+      "Restored 12-pin connection system",
+      "Enhanced bolster assemblies",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished slider tandem suspension",
+      "Restored extension system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored slider extension system",
+      "Enhanced tire package",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 36
+  },
+  {
+    name: "Used 20/40/45' Extendable Triaxle Container Chassis Refurbished",
+    nameEs: "Chasis Contenedor Triaxial Extensible 20/40/45' Usado Reacondicionado",
+    slug: "used-20-40-45-extendable-triaxle-container-chassis-refurbished",
+    conditionId: 2,
+    manufacturer: "Multi-Config",
+    size: "20-40-45ft",
+    axleConfig: "Triaxle",
+    description: "High-quality refurbished extendable triaxle chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis triaxial extensible reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-20-40-45-extendable-triaxle-container-chassis-refurbished.webp",
+    additionalImages: [],
+    overallLength: "Variable: 32'-45' depending on configuration",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "Variable triaxle configuration",
+    tareWeight: "12,200 lbs ±2%",
+    payload: "Up to 75,800 lbs depending on configuration",
+    frameComponents: [
+      "Refurbished extendable main beam",
+      "Restored extension mechanism",
+      "Enhanced bolster assemblies",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished triaxle suspension",
+      "Restored extension system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored extension system",
+      "Enhanced tire package",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 37
+  },
+  {
+    name: "Used 20/40/45' Extendable Triaxle Container Chassis Refurbished - Español",
+    nameEs: "Chasis Contenedor Triaxial Extensible 20/40/45' Usado Reacondicionado",
+    slug: "used-20-40-45-extendable-triaxle-container-chassis-refurbished-esp",
+    conditionId: 2,
+    manufacturer: "Multi-Config",
+    size: "20-40-45ft",
+    axleConfig: "Triaxle",
+    description: "High-quality refurbished extendable triaxle chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis triaxial extensible reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-20-40-45-extendable-triaxle-container-chassis-refurbished-esp.webp",
+    additionalImages: [],
+    overallLength: "Variable: 32'-45' depending on configuration",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "Variable triaxle configuration",
+    tareWeight: "12,200 lbs ±2%",
+    payload: "Up to 75,800 lbs depending on configuration",
+    frameComponents: [
+      "Refurbished extendable main beam",
+      "Restored extension mechanism",
+      "Enhanced bolster assemblies",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished triaxle suspension",
+      "Restored extension system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored extension system",
+      "Enhanced tire package",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 38
+  },
+  {
+    name: "Used 20'/40'/45' COMBO TRIDEM Refurbished",
+    nameEs: "20'/40'/45' COMBO TRIDEM Usado Reacondicionado",
+    slug: "used-20-40-45-combo-tandem-refurbished",
+    conditionId: 2,
+    manufacturer: "AXN",
+    size: "20-40-45ft",
+    axleConfig: "Tridem",
+    description: "High-quality refurbished tridem chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis tridem reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-20-40-45-combo-tandem-refurbished.webp",
+    additionalImages: [],
+    overallLength: "46'-2 1/8'' (extended) or 31'-3 1/8'' (retracted)",
+    overallWidth: "96''",
+    fifthWheelHeight: "46 3/4''",
+    rearDeckHeight: "48 3/8''",
+    kingpinLocation: "17 1/2'' (From rear face of front bolster)",
+    landingGearLocation: "118 3/8'' (From rear face of front bolster)",
+    axleSpread: "61'' tridem configuration",
+    tareWeight: "11,300 lbs ±2%",
+    payload: "79,000 lbs for 40' and 45' containers, 77,000 lbs for 20' containers",
+    frameComponents: [
+      "Refurbished main beam with structural verification",
+      "Restored bolster assemblies",
+      "Enhanced connection points",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished tridem suspension",
+      "Restored spring system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored tire package",
+      "Enhanced safety features",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 39
+  },
+  {
+    name: "Used 20'/40'/45' COMBO TRIDEM Refurbished - Español",
+    nameEs: "20'/40'/45' COMBO TRIDEM Usado Reacondicionado",
+    slug: "used-20-40-45-combo-tandem-refurbished-esp",
+    conditionId: 2,
+    manufacturer: "AXN",
+    size: "20-40-45ft",
+    axleConfig: "Tridem",
+    description: "High-quality refurbished tridem chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis tridem reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-20-40-45-combo-tandem-refurbished-esp.webp",
+    additionalImages: [],
+    overallLength: "46'-2 1/8'' (extended) or 31'-3 1/8'' (retracted)",
+    overallWidth: "96''",
+    fifthWheelHeight: "46 3/4''",
+    rearDeckHeight: "48 3/8''",
+    kingpinLocation: "17 1/2'' (From rear face of front bolster)",
+    landingGearLocation: "118 3/8'' (From rear face of front bolster)",
+    axleSpread: "61'' tridem configuration",
+    tareWeight: "11,300 lbs ±2%",
+    payload: "79,000 lbs for 40' and 45' containers, 77,000 lbs for 20' containers",
+    frameComponents: [
+      "Refurbished main beam with structural verification",
+      "Restored bolster assemblies",
+      "Enhanced connection points",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished tridem suspension",
+      "Restored spring system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored tire package",
+      "Enhanced safety features",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 40
+  },
+  {
+    name: "Used 20ft ISO Tank Container Chassis Refurbished",
+    nameEs: "Chasis Contenedor ISO Tank 20ft Usado Reacondicionado",
+    slug: "used-20ft-iso-tank-container-chassis-refurbished",
+    conditionId: 2,
+    manufacturer: "AXN",
+    size: "20ft",
+    axleConfig: "Tandem",
+    description: "High-quality refurbished ISO tank container chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis contenedor ISO tank reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-20ft-iso-tank-container-chassis-refurbished.webp",
+    additionalImages: [],
+    overallLength: "31'-6''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "8,200 lbs ±2%",
+    payload: "58,800 lbs",
+    frameComponents: [
+      "Refurbished ISO tank main beam",
+      "Restored bolster assemblies",
+      "Enhanced connection points",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished tandem suspension",
+      "Restored spring system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored tire package",
+      "Enhanced safety features",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 41
+  },
+  {
+    name: "Used 20ft ISO Tank Container Chassis Refurbished - Español",
+    nameEs: "Chasis Contenedor ISO Tank 20ft Usado Reacondicionado",
+    slug: "used-20ft-iso-tank-container-chassis-refurbished-esp",
+    conditionId: 2,
+    manufacturer: "AXN",
+    size: "20ft",
+    axleConfig: "Tandem",
+    description: "High-quality refurbished ISO tank container chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis contenedor ISO tank reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-20ft-iso-tank-container-chassis-refurbished-esp.webp",
+    additionalImages: [],
+    overallLength: "31'-6''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "8,200 lbs ±2%",
+    payload: "58,800 lbs",
+    frameComponents: [
+      "Refurbished ISO tank main beam",
+      "Restored bolster assemblies",
+      "Enhanced connection points",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished tandem suspension",
+      "Restored spring system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored tire package",
+      "Enhanced safety features",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 42
+  },
+  {
+    name: "Used 33' Slider Tri-Axle Container Chassis Refurbished",
+    nameEs: "Chasis Contenedor Triaxial Slider 33' Usado Reacondicionado",
+    slug: "used-33ft-slider-tri-axle-container-chassis-refurbished",
+    conditionId: 2,
+    manufacturer: "AXN",
+    size: "33ft",
+    axleConfig: "Triaxle",
+    description: "High-quality refurbished 33-foot tri-axle slider chassis with comprehensive restoration and testing.",
+    descriptionEs: "Chasis triaxial slider de 33 pies reacondicionado de alta calidad con restauración integral y pruebas.",
+    imageUrl: "/assets/used-33ft-slider-tri-axle-container-chassis-refurbished.webp",
+    additionalImages: [],
+    overallLength: "33'-0''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "61''+61''",
+    tareWeight: "11,200 lbs ±2%",
+    payload: "71,800 lbs",
+    frameComponents: [
+      "Refurbished tri-axle main beam",
+      "Restored slider extension mechanism",
+      "Enhanced bolster assemblies",
+      "Comprehensive quality testing"
+    ],
+    suspensionDetails: [
+      "Refurbished tri-axle slider suspension",
+      "Restored extension system",
+      "Enhanced stability features"
+    ],
+    brakeSystemDetails: [
+      "Refurbished ABS brake system",
+      "Restored brake components",
+      "Enhanced safety features"
+    ],
+    electricalDetails: [
+      "Refurbished LED lighting",
+      "Restored wiring harness",
+      "Enhanced electrical system"
+    ],
+    additionalEquipment: [
+      "Refurbished landing gear",
+      "Restored extension system",
+      "Enhanced tire package",
+      "Comprehensive testing completed"
+    ],
+    featured: false,
+    sortOrder: 43
   }
 ];
 
