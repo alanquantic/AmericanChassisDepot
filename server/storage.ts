@@ -87,7 +87,7 @@ export class DatabaseStorage implements IStorage {
     console.log("Getting chassis models directly from data file...");
     
     // Import data directly from file
-    const { newChassisData, usedChassisData } = await import('../data/chassis-data');
+    const { newChassisData, usedChassisData } = await import('./chassis-data');
     const allData = [...newChassisData, ...usedChassisData];
     
     console.log(`Total products in data file: ${allData.length}`);
@@ -237,7 +237,7 @@ export class DatabaseStorage implements IStorage {
   // Seed initial data
   private async seedData() {
     // Import real chassis data
-    const { newChassisData, usedChassisData } = await import('../data/chassis-data');
+    const { newChassisData, usedChassisData } = await import('./chassis-data');
     
     // Get or create conditions
     let newCondition = await this.getConditionBySlug("new-chassis");
