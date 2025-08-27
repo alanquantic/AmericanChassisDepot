@@ -26,12 +26,18 @@
   "routes": [
     { "handle": "filesystem" },
     {
-      "src": "/assets/triaxle_20\\.webp",
-      "dest": "/triaxle_20.webp"
+      "src": "/triaxle_20\\.webp",
+      "dest": "/dist/assets/triaxle_20.webp",
+      "headers": {
+        "Content-Type": "image/webp"
+      }
     },
     {
-      "src": "/assets/triaxle_20_([0-9])\\.webp",
-      "dest": "/triaxle_20_$1.webp"
+      "src": "/triaxle_20_([0-9])\\.webp",
+      "dest": "/dist/assets/triaxle_20_$1.webp",
+      "headers": {
+        "Content-Type": "image/webp"
+      }
     },
     {
       "src": "/api/(.*)",
