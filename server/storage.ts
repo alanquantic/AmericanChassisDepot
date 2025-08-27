@@ -232,10 +232,12 @@ export class DatabaseStorage implements IStorage {
       const existingModels = await this.getAllChassisModels();
       console.log(`Found ${existingModels.length} existing models in database`);
       
-      // If we have fewer models than expected, reseed the data
-      if (existingModels.length < ALLOWED_PRODUCT_SLUGS.length) {
+      // Always reseed if we don't have the expected number of products
+      if (existingModels.length !== ALLOWED_PRODUCT_SLUGS.length) {
         console.log(`Database has ${existingModels.length} models but expected ${ALLOWED_PRODUCT_SLUGS.length}. Reseeding...`);
         await this.reseedData();
+      } else {
+        console.log(`Database has correct number of models: ${existingModels.length}`);
       }
     }
   }
