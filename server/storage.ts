@@ -1546,7 +1546,10 @@ const PRODUCT_DATA = [
     featured: false,
     sortOrder: 34
   },
-
+  {
+    name: "20/40' 12 Pins Triaxle Container Chassis - Español",
+    nameEs: "Chasis Contenedor Triaxial 20/40' 12 Pines",
+  },
   {
     name: "20' Flushback Chassis - Español",
     nameEs: "Chasis Flushback 20'",
