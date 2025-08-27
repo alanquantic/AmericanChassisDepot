@@ -21,6 +21,11 @@
       "config": {
         "distDir": "dist"
       }
+    },
+    {
+      "src": "client/public/assets/(.*)",
+      "use": "@vercel/static",
+      "dest": "/assets/$1"
     }
   ],
   "routes": [
