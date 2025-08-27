@@ -26,8 +26,12 @@
   "routes": [
     { "handle": "filesystem" },
     {
-      "src": "/assets/(.*)",
-      "dest": "/$1"
+      "src": "/assets/triaxle_20\\.webp",
+      "dest": "/triaxle_20.webp"
+    },
+    {
+      "src": "/assets/triaxle_20_([0-9])\\.webp",
+      "dest": "/triaxle_20_$1.webp"
     },
     {
       "src": "/api/(.*)",
