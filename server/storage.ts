@@ -1132,6 +1132,419 @@ const PRODUCT_DATA = [
     ],
     featured: false,
     sortOrder: 26
+  },
+  {
+    name: "40ft Lightweight Four Axle Container Chassis",
+    nameEs: "Chasis Contenedor Cuatro Ejes Ligero 40ft",
+    slug: "40ft-lightweight-four-axle",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "40ft",
+    axleConfig: "Quad",
+    description: "Lightweight four-axle container chassis designed for maximum efficiency and reduced tare weight.",
+    descriptionEs: "Chasis contenedor de cuatro ejes ligero diseñado para máxima eficiencia y peso tara reducido.",
+    imageUrl: "/assets/40ft-lightweight-four-axle.webp",
+    additionalImages: [],
+    overallLength: "40'-11''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "Variable quad configuration",
+    tareWeight: "8,200 lbs ±2%",
+    payload: "65,800 lbs",
+    frameComponents: [
+      "Lightweight main beam construction",
+      "Optimized bolster assemblies",
+      "Enhanced structural efficiency",
+      "Weight-reduced components"
+    ],
+    suspensionDetails: [
+      "Four-axle lightweight suspension",
+      "Optimized load distribution",
+      "Enhanced fuel efficiency"
+    ],
+    brakeSystemDetails: [
+      "Advanced ABS brake system",
+      "Lightweight brake components",
+      "Enhanced efficiency design"
+    ],
+    electricalDetails: [
+      "Lightweight LED lighting",
+      "Optimized wiring harness",
+      "Enhanced electrical efficiency"
+    ],
+    additionalEquipment: [
+      "Lightweight landing gear",
+      "Efficiency-optimized tires",
+      "Weight-reduced components",
+      "Enhanced fuel economy features"
+    ],
+    featured: false,
+    sortOrder: 27
+  },
+  {
+    name: "40-45 Extendable Container Chassis",
+    nameEs: "Chasis Contenedor Extensible 40-45",
+    slug: "40-45-extendable",
+    conditionId: 1,
+    manufacturer: "FlexFrame",
+    size: "40-45ft",
+    axleConfig: "Tandem",
+    description: "Versatile extendable chassis for 40' and 45' containers with reliable extension mechanism.",
+    descriptionEs: "Chasis extensible versátil para contenedores de 40' y 45' con mecanismo de extensión confiable.",
+    imageUrl: "/assets/40-45-extendable.webp",
+    additionalImages: [
+      "/assets/40_45_Extendable_1.jpg",
+      "/assets/40_45_Extendable_2.jpg",
+      "/assets/40_45_Extendable_3.jpg",
+      "/assets/40_45_Extendable_4.jpg"
+    ],
+    overallLength: "40'-11'' (retracted) to 45'-2'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "7,800 lbs ±2%",
+    payload: "66,200 lbs",
+    frameComponents: [
+      "Extendable main beam design",
+      "Precision extension mechanism",
+      "Reinforced connection points",
+      "Integrated locking system"
+    ],
+    suspensionDetails: [
+      "Extendable tandem suspension",
+      "Flexible load distribution",
+      "Enhanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Standard ABS brake system",
+      "Reliable brake components",
+      "Easy maintenance access"
+    ],
+    electricalDetails: [
+      "Standard LED lighting",
+      "Reliable wiring harness",
+      "Weather-resistant connections"
+    ],
+    additionalEquipment: [
+      "Manual extension system",
+      "Standard container locks",
+      "Efficient landing gear",
+      "DOT compliance package"
+    ],
+    featured: false,
+    sortOrder: 28
+  },
+  {
+    name: "40-45-48-53 Extendable Triaxle Container Chassis",
+    nameEs: "Chasis Contenedor Triaxial Extensible 40-45-48-53",
+    slug: "40-45-48-53-extendable-triaxle",
+    conditionId: 1,
+    manufacturer: "Multi-Config",
+    size: "40-45-48-53ft",
+    axleConfig: "Triaxle",
+    description: "Ultra-versatile extendable triaxle chassis accommodating 40', 45', 48', and 53' containers.",
+    descriptionEs: "Chasis triaxial extensible ultra versátil que acomoda contenedores de 40', 45', 48' y 53'.",
+    imageUrl: "/assets/40-45-48-53-extendable-triaxle.webp",
+    additionalImages: [],
+    overallLength: "Variable: 40'-53' depending on configuration",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "Variable triaxle configuration",
+    tareWeight: "12,800 lbs ±2%",
+    payload: "Up to 71,200 lbs depending on configuration",
+    frameComponents: [
+      "Multi-configuration main beam",
+      "Advanced extension mechanism",
+      "Reinforced connection points",
+      "Heavy-duty extension cylinders"
+    ],
+    suspensionDetails: [
+      "Advanced triaxle air suspension",
+      "Load-leveling capability",
+      "Enhanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Full ABS brake system",
+      "Electronic brake distribution",
+      "Premium brake components"
+    ],
+    electricalDetails: [
+      "Advanced LED lighting system",
+      "Multi-configuration wiring harness",
+      "Electronic extension controls"
+    ],
+    additionalEquipment: [
+      "Hydraulic extension system",
+      "Multi-position container locks",
+      "Heavy-duty landing gear",
+      "Advanced tire monitoring system"
+    ],
+    featured: false,
+    sortOrder: 29
+  },
+  {
+    name: "40ft Gooseneck Triaxle Container Chassis",
+    nameEs: "Chasis Contenedor Gooseneck Triaxial 40ft",
+    slug: "40ft-gooseneck-triaxle",
+    conditionId: 1,
+    manufacturer: "SAF Holland",
+    size: "40ft",
+    axleConfig: "Triaxle",
+    description: "Heavy-duty 40-foot gooseneck triaxle chassis for specialized container transportation.",
+    descriptionEs: "Chasis gooseneck triaxial de servicio pesado de 40 pies para transporte especializado de contenedores.",
+    imageUrl: "/assets/40ft-gooseneck-triaxle.webp",
+    additionalImages: [],
+    overallLength: "40'-11''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "61''+61''",
+    tareWeight: "8,800 lbs ±2%",
+    payload: "65,200 lbs",
+    frameComponents: [
+      "Triaxle main beam construction",
+      "Enhanced bolster assemblies",
+      "Heavy-duty connection points",
+      "Reinforced structural design"
+    ],
+    suspensionDetails: [
+      "Triaxle gooseneck suspension",
+      "Enhanced load distribution",
+      "Advanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Triaxle ABS brake system",
+      "Advanced brake distribution",
+      "Enhanced brake monitoring"
+    ],
+    electricalDetails: [
+      "Advanced LED lighting",
+      "Enhanced wiring harness",
+      "Integrated control systems"
+    ],
+    additionalEquipment: [
+      "Triaxle landing gear",
+      "Advanced extension system",
+      "Enhanced tire package",
+      "Comprehensive monitoring"
+    ],
+    featured: false,
+    sortOrder: 30
+  },
+  {
+    name: "40ft Gooseneck Lightweight Container Chassis",
+    nameEs: "Chasis Contenedor Gooseneck Ligero 40ft",
+    slug: "40ft-gooseneck-lightweight",
+    conditionId: 1,
+    manufacturer: "SAF Holland",
+    size: "40ft",
+    axleConfig: "Tandem",
+    description: "Lightweight 40-foot gooseneck chassis designed for maximum efficiency and reduced tare weight.",
+    descriptionEs: "Chasis gooseneck ligero de 40 pies diseñado para máxima eficiencia y peso tara reducido.",
+    imageUrl: "/assets/40ft-gooseneck-lightweight.webp",
+    additionalImages: [],
+    overallLength: "40'-11''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "49''",
+    tareWeight: "5,800 lbs ±2%",
+    payload: "68,200 lbs",
+    frameComponents: [
+      "Lightweight main beam construction",
+      "Optimized bolster assemblies",
+      "Weight-reduced components",
+      "Enhanced structural efficiency"
+    ],
+    suspensionDetails: [
+      "Lightweight tandem suspension",
+      "Optimized load distribution",
+      "Enhanced fuel efficiency"
+    ],
+    brakeSystemDetails: [
+      "Lightweight ABS brake system",
+      "Efficiency-optimized components",
+      "Enhanced fuel economy"
+    ],
+    electricalDetails: [
+      "Lightweight LED lighting",
+      "Optimized wiring harness",
+      "Enhanced electrical efficiency"
+    ],
+    additionalEquipment: [
+      "Lightweight landing gear",
+      "Efficiency-optimized tires",
+      "Weight-reduced components",
+      "Enhanced fuel economy features"
+    ],
+    featured: false,
+    sortOrder: 31
+  },
+  {
+    name: "40 GN Lightweight 4 Axles Container Chassis",
+    nameEs: "Chasis Contenedor 4 Ejes Ligero GN 40",
+    slug: "40-gn-lightweight-4-axles",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "40ft",
+    axleConfig: "Quad",
+    description: "Lightweight four-axle gooseneck chassis designed for maximum efficiency and payload capacity.",
+    descriptionEs: "Chasis gooseneck de cuatro ejes ligero diseñado para máxima eficiencia y capacidad de carga.",
+    imageUrl: "/assets/40-gn-lightweight-4-axles.webp",
+    additionalImages: [],
+    overallLength: "40'-11''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "Variable quad configuration",
+    tareWeight: "7,200 lbs ±2%",
+    payload: "66,800 lbs",
+    frameComponents: [
+      "Lightweight quad main beam",
+      "Optimized bolster assemblies",
+      "Weight-reduced components",
+      "Enhanced structural efficiency"
+    ],
+    suspensionDetails: [
+      "Lightweight quad suspension",
+      "Optimized load distribution",
+      "Enhanced fuel efficiency"
+    ],
+    brakeSystemDetails: [
+      "Lightweight quad ABS brake system",
+      "Efficiency-optimized components",
+      "Enhanced fuel economy"
+    ],
+    electricalDetails: [
+      "Lightweight LED lighting",
+      "Optimized wiring harness",
+      "Enhanced electrical efficiency"
+    ],
+    additionalEquipment: [
+      "Lightweight quad landing gear",
+      "Efficiency-optimized tires",
+      "Weight-reduced components",
+      "Enhanced fuel economy features"
+    ],
+    featured: false,
+    sortOrder: 32
+  },
+  {
+    name: "53 GN Slider Tandem Container Chassis",
+    nameEs: "Chasis Contenedor Tándem Slider GN 53",
+    slug: "53-gn-slider-tandem",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "53ft",
+    axleConfig: "Tandem",
+    description: "Heavy-duty 53-foot gooseneck slider tandem chassis for specialized container transportation.",
+    descriptionEs: "Chasis gooseneck slider tándem de servicio pesado de 53 pies para transporte especializado de contenedores.",
+    imageUrl: "/assets/53-gn-slider-tandem.webp",
+    additionalImages: [],
+    overallLength: "53'-0''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "8,600 lbs ±2%",
+    payload: "65,400 lbs",
+    frameComponents: [
+      "53ft slider main beam",
+      "Slider extension mechanism",
+      "Enhanced bolster assemblies",
+      "Heavy-duty connection points"
+    ],
+    suspensionDetails: [
+      "Slider tandem suspension",
+      "Enhanced load distribution",
+      "Advanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Slider ABS brake system",
+      "Advanced brake distribution",
+      "Enhanced brake monitoring"
+    ],
+    electricalDetails: [
+      "Advanced LED lighting",
+      "Enhanced wiring harness",
+      "Integrated control systems"
+    ],
+    additionalEquipment: [
+      "Slider landing gear",
+      "Advanced extension system",
+      "Enhanced tire package",
+      "Comprehensive monitoring"
+    ],
+    featured: false,
+    sortOrder: 33
+  },
+  {
+    name: "53ft Gooseneck Slider Tandem Container Chassis",
+    nameEs: "Chasis Contenedor Gooseneck Slider Tándem 53ft",
+    slug: "53ft-gooseneck-slider-tandem",
+    conditionId: 1,
+    manufacturer: "SAF Holland",
+    size: "53ft",
+    axleConfig: "Tandem",
+    description: "Heavy-duty 53-foot gooseneck slider tandem chassis for specialized container transportation.",
+    descriptionEs: "Chasis gooseneck slider tándem de servicio pesado de 53 pies para transporte especializado de contenedores.",
+    imageUrl: "/assets/53ft-gooseneck-slider-tandem.webp",
+    additionalImages: [],
+    overallLength: "53'-0''",
+    overallWidth: "96''",
+    fifthWheelHeight: "48±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "30'' (From rear face of front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "8,600 lbs ±2%",
+    payload: "65,400 lbs",
+    frameComponents: [
+      "53ft slider main beam",
+      "Slider extension mechanism",
+      "Enhanced bolster assemblies",
+      "Heavy-duty connection points"
+    ],
+    suspensionDetails: [
+      "Slider tandem suspension",
+      "Enhanced load distribution",
+      "Advanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Slider ABS brake system",
+      "Advanced brake distribution",
+      "Enhanced brake monitoring"
+    ],
+    electricalDetails: [
+      "Advanced LED lighting",
+      "Enhanced wiring harness",
+      "Integrated control systems"
+    ],
+    additionalEquipment: [
+      "Slider landing gear",
+      "Advanced extension system",
+      "Enhanced tire package",
+      "Comprehensive monitoring"
+    ],
+    featured: false,
+    sortOrder: 34
   }
 ];
 
