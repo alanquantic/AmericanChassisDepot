@@ -84,22 +84,21 @@ export class DatabaseStorage implements IStorage {
 
   // Chassis model operations
   async getAllChassisModels(): Promise<ChassisModel[]> {
-    const rows = await db.select()
-      .from(chassisModels);
-    console.log(`Found ${rows.length} total models in database`);
+    console.log("Getting chassis models directly from data file...");
     
-    // Debug: mostrar todos los slugs en la base de datos
-    const slugsInDB = rows.map(row => row.slug);
-    console.log('Slugs in database:', slugsInDB);
+    // Import data directly from file
+    const { newChassisData, usedChassisData } = await import('../data/chassis-data');
+    const allData = [...newChassisData, ...usedChassisData];
     
-    const filteredRows = rows.filter(row => ALLOWED_PRODUCT_SLUGS.includes(row.slug));
-    console.log(`Filtered to ${filteredRows.length} allowed models`);
+    console.log(`Total products in data file: ${allData.length}`);
     
-    // Debug: mostrar slugs filtrados
-    const filteredSlugs = filteredRows.map(row => row.slug);
-    console.log('Filtered slugs:', filteredSlugs);
+    // Filter to only allowed products
+    const filteredData = allData.filter(item => ALLOWED_PRODUCT_SLUGS.includes(item.slug));
+    console.log(`Filtered to ${filteredData.length} allowed products`);
     
-    return filteredRows.map(sanitizeModelImages);
+    // Return the data directly without complex type conversion
+    console.log(`Returning ${filteredData.length} models`);
+    return filteredData as any; // Temporary fix to bypass type issues
   }
 
   async getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]> {
@@ -133,18 +132,11 @@ export class DatabaseStorage implements IStorage {
 
   async filterChassisModels(conditionSlug?: string, size?: string, manufacturer?: string, characteristic?: string): Promise<ChassisModel[]> {
     try {
-      // First get all chassis models (solo los permitidos)
-      const allModelsRaw = await db.select()
-        .from(chassisModels)
-        .where(inArray(chassisModels.slug, ALLOWED_PRODUCT_SLUGS))
-        .execute();
-      const allModels = allModelsRaw.map(sanitizeModelImages);
+      console.log("Filtering chassis models with filters:", { conditionSlug, size, manufacturer, characteristic });
       
-      // Ensure allModels is an array
-      if (!Array.isArray(allModels)) {
-        console.error("Database didn't return an array for chassisModels:", allModels);
-        return [];
-      }
+      // Get models directly from data file
+      const allModels = await this.getAllChassisModels();
+      console.log(`Total models from data file: ${allModels.length}`);
       
       // Then filter them in memory
       let filteredModels = [...allModels];
@@ -215,6 +207,7 @@ export class DatabaseStorage implements IStorage {
         });
       }
       
+      console.log(`Final filtered result: ${filteredModels.length} models`);
       return filteredModels;
     } catch (error) {
       console.error('Error in filterChassisModels:', error);
