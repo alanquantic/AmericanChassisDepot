@@ -234,26 +234,9 @@ export class DatabaseStorage implements IStorage {
   async initializeDatabase(): Promise<void> {
     console.log("Starting database initialization...");
     
-    const existingConditions = await this.getAllConditions();
-    console.log(`Found ${existingConditions.length} existing conditions`);
-    
-    if (existingConditions.length === 0) {
-      console.log("No conditions found. Initializing database with seed data...");
-      await this.seedData();
-    } else {
-      // Check if we need to update the database with new products
-      const existingModels = await this.getAllChassisModels();
-      console.log(`Found ${existingModels.length} existing models in database`);
-      console.log(`Expected ${ALLOWED_PRODUCT_SLUGS.length} models`);
-      
-      // Always reseed if we don't have the expected number of products
-      if (existingModels.length !== ALLOWED_PRODUCT_SLUGS.length) {
-        console.log(`Database has ${existingModels.length} models but expected ${ALLOWED_PRODUCT_SLUGS.length}. Reseeding...`);
-        await this.reseedData();
-      } else {
-        console.log(`Database has correct number of models: ${existingModels.length}`);
-      }
-    }
+    // FORCE RESEED - Always clear and reseed for now
+    console.log("FORCING COMPLETE RESEED...");
+    await this.forceReseed();
     
     console.log("Database initialization completed.");
   }
@@ -315,6 +298,33 @@ export class DatabaseStorage implements IStorage {
     // Reseed with current data
     await this.seedData();
     console.log("Reseeding completed");
+  }
+
+  // Force complete reseed (clear everything and start fresh)
+  private async forceReseed() {
+    console.log("FORCE RESEED: Clearing all data and starting fresh...");
+    
+    try {
+      // Clear all chassis models
+      await db.delete(chassisModels);
+      console.log("Cleared all chassis models");
+      
+      // Clear all conditions
+      await db.delete(conditions);
+      console.log("Cleared all conditions");
+      
+      // Reseed everything from scratch
+      await this.seedData();
+      console.log("FORCE RESEED completed successfully");
+      
+      // Verify the data was seeded correctly
+      const finalModels = await this.getAllChassisModels();
+      console.log(`Final verification: ${finalModels.length} models in database`);
+      
+    } catch (error) {
+      console.error("Error during force reseed:", error);
+      throw error;
+    }
   }
 }
 
