@@ -309,15 +309,59 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getChassisModelBySlug(slug: string): Promise<ChassisModel | undefined> {
+    console.log(`Looking for product with slug: ${slug}`);
+    
     // Solo permitir acceso a productos en la lista permitida
     if (!ALLOWED_PRODUCT_SLUGS.includes(slug)) {
+      console.log(`Slug ${slug} not in allowed list`);
       return undefined;
     }
     
-    const [model] = await db.select()
-      .from(chassisModels)
-      .where(eq(chassisModels.slug, slug));
-    return model ? sanitizeModelImages(model) : model;
+    // Buscar en los datos embebidos
+    const product = PRODUCT_DATA.find(item => item.slug === slug);
+    
+    if (!product) {
+      console.log(`Product with slug ${slug} not found in data`);
+      return undefined;
+    }
+    
+    console.log(`Found product: ${product.name}`);
+    
+    // Convertir a formato ChassisModel
+    const model = {
+      id: 1, // Use 1 as default ID
+      name: product.name,
+      nameEs: product.nameEs,
+      slug: product.slug,
+      conditionId: product.conditionId,
+      manufacturer: product.manufacturer,
+      size: product.size,
+      axleConfig: product.axleConfig,
+      description: product.description,
+      descriptionEs: product.descriptionEs,
+      imageUrl: product.imageUrl,
+      additionalImages: product.additionalImages || [],
+      overallLength: product.overallLength,
+      overallWidth: product.overallWidth,
+      overallHeight: null,
+      fifthWheelHeight: product.fifthWheelHeight,
+      rearDeckHeight: product.rearDeckHeight,
+      kingpinLocation: product.kingpinLocation || null,
+      landingGearLocation: product.landingGearLocation || null,
+      axleSpread: product.axleSpread,
+      tareWeight: product.tareWeight,
+      payload: product.payload,
+      gvwr: null,
+      frameComponents: product.frameComponents,
+      suspensionDetails: product.suspensionDetails,
+      brakeSystemDetails: product.brakeSystemDetails,
+      electricalDetails: product.electricalDetails,
+      additionalEquipment: product.additionalEquipment,
+      featured: product.featured,
+      sortOrder: product.sortOrder
+    };
+    
+    return model;
   }
 
   async createChassisModel(insertModel: InsertChassisModel): Promise<ChassisModel> {
