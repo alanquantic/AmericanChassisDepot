@@ -284,6 +284,269 @@ const PRODUCT_DATA = [
     ],
     featured: false,
     sortOrder: 5
+  },
+  {
+    name: "20/40' Slider 12pins Container Chassis Tandem",
+    nameEs: "Chasis Contenedor Tándem 20/40' Slider 12 Pines",
+    slug: "20-40-slider-12pins-tandem",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "20-40ft",
+    axleConfig: "Tandem",
+    description: "Versatile slider tandem chassis with 12-pin configuration for flexible container handling.",
+    descriptionEs: "Chasis tándem slider versátil con configuración de 12 pines para manejo flexible de contenedores.",
+    imageUrl: "/assets/20-40-slider-12pins-tandem.webp",
+    additionalImages: [],
+    overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "9,500 lbs ±2%",
+    payload: "Up to 69,500 lbs",
+    frameComponents: [
+      "Slider main beam design",
+      "12-pin connection system",
+      "Flexible bolster assemblies",
+      "Advanced locking mechanism"
+    ],
+    suspensionDetails: [
+      "Slider tandem suspension",
+      "Flexible load distribution",
+      "Enhanced maneuverability"
+    ],
+    brakeSystemDetails: [
+      "Standard ABS brake system",
+      "Reliable brake components",
+      "Easy maintenance access"
+    ],
+    electricalDetails: [
+      "Standard LED lighting",
+      "Reliable wiring harness",
+      "Weather-resistant connections"
+    ],
+    additionalEquipment: [
+      "Slider extension system",
+      "12-pin container locks",
+      "Standard landing gear",
+      "DOT compliance package"
+    ],
+    featured: false,
+    sortOrder: 6
+  },
+  {
+    name: "20/40/45' Extendable Triaxle Container Chassis",
+    nameEs: "Chasis Contenedor Triaxial Extensible 20/40/45'",
+    slug: "20-40-45-extendable-triaxle",
+    conditionId: 1,
+    manufacturer: "Multi-Config",
+    size: "20-40-45ft",
+    axleConfig: "Triaxle",
+    description: "Ultra-versatile extendable triaxle chassis accommodating 20', 40', and 45' containers with advanced hydraulic extension system.",
+    descriptionEs: "Chasis triaxial extensible ultra versátil que acomoda contenedores de 20', 40' y 45' con sistema de extensión hidráulica avanzada.",
+    imageUrl: "/assets/20-40-45-extendable-triaxle.webp",
+    additionalImages: [],
+    overallLength: "Variable: 32'-45' depending on configuration",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "Variable triaxle configuration",
+    tareWeight: "12,200 lbs ±2%",
+    payload: "Up to 75,800 lbs depending on configuration",
+    frameComponents: [
+      "Extendable main beam with telescoping capability",
+      "Reinforced connection points for extension mechanism",
+      "Multi-position bolster system",
+      "Heavy-duty extension cylinders"
+    ],
+    suspensionDetails: [
+      "Advanced triaxle air suspension",
+      "Load-leveling capability",
+      "Enhanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Full ABS brake system",
+      "Electronic brake distribution",
+      "Premium brake components"
+    ],
+    electricalDetails: [
+      "Advanced LED lighting system",
+      "Multi-configuration wiring harness",
+      "Electronic extension controls"
+    ],
+    additionalEquipment: [
+      "Hydraulic extension system",
+      "Multi-position container locks",
+      "Heavy-duty landing gear",
+      "Advanced tire monitoring system"
+    ],
+    featured: true,
+    sortOrder: 7
+  },
+  {
+    name: "20'/40'/45' COMBO TRIDEM",
+    nameEs: "20'/40'/45' COMBO TRIDEM",
+    slug: "20-40-45-combo-tandem",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "20-40-45ft",
+    axleConfig: "Tridem",
+    description: "High-strength tridem chassis designed for stevedoring and transporting 20', 40', and 45' containers with 100Kpsi materials and advanced suspension system.",
+    descriptionEs: "Chasis tridem de alta resistencia diseñado para estiba y transporte de contenedores de 20', 40' y 45' con materiales de 100Kpsi y sistema de suspensión avanzado.",
+    imageUrl: "/assets/20-40-45-combo-tridem.webp",
+    additionalImages: [],
+    overallLength: "46'-2 1/8'' (extended) or 31'-3 1/8'' (retracted)",
+    overallWidth: "96''",
+    fifthWheelHeight: "46 3/4''",
+    rearDeckHeight: "48 3/8''",
+    kingpinLocation: "17 1/2'' (From rear face of front bolster)",
+    landingGearLocation: "118 3/8'' (From rear face of front bolster)",
+    axleSpread: "61'' tridem configuration",
+    tareWeight: "11,300 lbs ±2%",
+    payload: "79,000 lbs for 40' and 45' containers, 77,000 lbs for 20' containers",
+    frameComponents: [
+      "Main Beam: 16''×5'' fabricated I-beam with 100Kpsi materials flanges",
+      "Slider Beam: Fabricated 14 3/4''×5'' I-beam, 2-pin locking system",
+      "Cross Member: 3/16'' thick fabricated channel type",
+      "Upper Coupler: 1/4'' pick up plate with JOST 2'' diameter square type kingpin",
+      "Front Bolster: 6 5/8'' wide x 7 3/8'' high, 1/4'' thick tube section",
+      "Center Bolster: 5'' wide x 3/8'' thick top plate with 5'' wide x 4 1/4'' deep x 1/4'' thick U-type bottom channel",
+      "Rear Bolster: Fabricated 6'' wide x 3/8'' thick top plate with 5'' wide x 4 5/8'' deep x 3/8'' thick tube type"
+    ],
+    suspensionDetails: [
+      "61'' axle spread tridem suspension with single leaf high arch spring",
+      "11,000 lb capacity per spring",
+      "Hutchen/AXN suspension system",
+      "Pre-painted BLACK color"
+    ],
+    brakeSystemDetails: [
+      "SEALCO valve system and WABCO 4S-2M system",
+      "Three tanks system (Capacity 2850 cu-in)",
+      "3/8'' air tubing",
+      "30/30 double diaphragm brake chambers",
+      "PHILLIPS glad hands 12-0081/12-0061/12-010"
+    ],
+    electricalDetails: [
+      "12 volt LED lighting system with wiring harness for ABS",
+      "4'' Stop/Turn lamp",
+      "2'' clearance lamp with flange mounting",
+      "GROTE lighting system"
+    ],
+    additionalEquipment: [
+      "AXN FW32E00J Landing Gear with 50,000 lbs capacity",
+      "WESTLAKE 255/70R22.5-16PR tubeless tires",
+      "JINGU 22.5×8.25 10-stud hub-piloted wheels",
+      "3M Conspicuity Tape per federal regulations",
+      "24''×24'' black rubber anti-sail mud flap"
+    ],
+    featured: true,
+    sortOrder: 8
+  },
+  {
+    name: "20ft ISO Tank Container Chassis",
+    nameEs: "Chasis Contenedor ISO Tank 20ft",
+    slug: "20ft-iso-tank-container-chassis",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "20ft",
+    axleConfig: "Tandem",
+    description: "Specialized chassis designed for ISO tank containers with enhanced safety and stability features.",
+    descriptionEs: "Chasis especializado diseñado para contenedores ISO tank con características mejoradas de seguridad y estabilidad.",
+    imageUrl: "/assets/20ft-iso-tank-container-chassis.webp",
+    additionalImages: [],
+    overallLength: "31'-6''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "54''",
+    tareWeight: "8,200 lbs ±2%",
+    payload: "58,800 lbs",
+    frameComponents: [
+      "ISO tank-specific main beam",
+      "Enhanced safety bolster assemblies",
+      "Specialized connection points",
+      "Reinforced structure"
+    ],
+    suspensionDetails: [
+      "ISO tank tandem suspension",
+      "Enhanced stability design",
+      "Load-specific configuration"
+    ],
+    brakeSystemDetails: [
+      "Enhanced ABS brake system",
+      "Safety-focused brake components",
+      "DOT inspection certified"
+    ],
+    electricalDetails: [
+      "ISO tank LED lighting",
+      "Enhanced wiring harness",
+      "Safety-compliant connections"
+    ],
+    additionalEquipment: [
+      "ISO tank landing gear",
+      "Safety monitoring system",
+      "Enhanced tire package",
+      "Comprehensive safety features"
+    ],
+    featured: false,
+    sortOrder: 9
+  },
+  {
+    name: "33' Slider Tri-Axle Container Chassis",
+    nameEs: "Chasis Contenedor Triaxial Slider 33'",
+    slug: "33ft-slider-tri-axle",
+    conditionId: 1,
+    manufacturer: "AXN",
+    size: "33ft",
+    axleConfig: "Triaxle",
+    description: "Heavy-duty 33-foot tri-axle slider chassis for specialized container transportation needs.",
+    descriptionEs: "Chasis triaxial slider de servicio pesado de 33 pies para necesidades especializadas de transporte de contenedores.",
+    imageUrl: "/assets/33-slider-triaxle.webp",
+    additionalImages: [],
+    overallLength: "33'-0''",
+    overallWidth: "96''",
+    fifthWheelHeight: "47±1''",
+    rearDeckHeight: "48±1''",
+    kingpinLocation: "18'' (From the rear of the front bolster)",
+    landingGearLocation: "100'' (From the kingpin center)",
+    axleSpread: "61''+61''",
+    tareWeight: "11,200 lbs ±2%",
+    payload: "71,800 lbs",
+    frameComponents: [
+      "33ft tri-axle main beam",
+      "Slider extension mechanism",
+      "Enhanced bolster assemblies",
+      "Heavy-duty connection points"
+    ],
+    suspensionDetails: [
+      "Tri-axle slider suspension",
+      "Enhanced load distribution",
+      "Advanced stability control"
+    ],
+    brakeSystemDetails: [
+      "Tri-axle ABS brake system",
+      "Advanced brake distribution",
+      "Enhanced brake monitoring"
+    ],
+    electricalDetails: [
+      "Advanced LED lighting",
+      "Enhanced wiring harness",
+      "Integrated control systems"
+    ],
+    additionalEquipment: [
+      "Tri-axle landing gear",
+      "Advanced extension system",
+      "Enhanced tire package",
+      "Comprehensive monitoring"
+    ],
+    featured: false,
+    sortOrder: 10
   }
 ];
 
