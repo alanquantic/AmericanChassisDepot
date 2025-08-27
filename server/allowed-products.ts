@@ -27,7 +27,6 @@ export const ALLOWED_PRODUCT_SLUGS = [
   "20-40-extendable-tandem-esp",
   "20-40-extendable-tandem-psi-esp",
   "20-40-slider-12pins-tandem-esp",
-  "20-40-12pins-triaxle-esp",
   "20-40-45-combo-tandem-esp",
   "20-40-45-extendable-triaxle-esp",
   "20ft-iso-tank-container-chassis-esp",

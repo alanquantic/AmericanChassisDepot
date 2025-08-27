@@ -1546,64 +1546,7 @@ const PRODUCT_DATA = [
     featured: false,
     sortOrder: 34
   },
-  {
-    name: "20/40' 12 Pins Triaxle Container Chassis - Español",
-    nameEs: "Chasis Contenedor Triaxial 20/40' 12 Pines",
-    slug: "20-40-12pins-triaxle-esp",
-    conditionId: 1,
-    manufacturer: "AXN",
-    size: "20-40ft",
-    axleConfig: "Triaxle",
-    description: "Versatile triaxle container chassis designed for 20' and 40' containers with 12-pin configuration and hydraulic locking system.",
-    descriptionEs: "Chasis contenedor triaxial versátil diseñado para contenedores de 20' y 40' con configuración de 12 pines y sistema de bloqueo hidráulico.",
-    imageUrl: "/assets/20-40-12pins-triaxle-esp.webp",
-    additionalImages: [
-      "/assets/20_40_12_Pins_Triaxle_1.jpg",
-      "/assets/20_40_12_Pins_Triaxle_2.jpg",
-      "/assets/20_40_12_Pins_Triaxle_3.jpg"
-    ],
-    overallLength: "31'-7'' (retracted) or 40'-11'' (extended)",
-    overallWidth: "96''",
-    fifthWheelHeight: "47±1''",
-    rearDeckHeight: "48±1''",
-    kingpinLocation: "18'' (From the rear of the front bolster)",
-    landingGearLocation: "100'' (From the kingpin center)",
-    axleSpread: "61''+61''",
-    tareWeight: "10,900 lbs ±2%",
-    payload: "66,100lbs for 20' loaded or 74,100lbs for 40' loaded",
-    frameComponents: [
-      "Main Beam: 16''×5'' fabricated I-beam with high strength flanges",
-      "Upper Coupler: 5/16'' pick up plate with JOST 2'' diameter square type kingpin",
-      "Front Bolster: Fabricated bolster assembly with 89'' centers",
-      "Intermediate Bolster: Fabricated with retractable twistlocks",
-      "Rear Bolster: Tapered rectangle bolster with flip up twistlocks"
-    ],
-    suspensionDetails: [
-      "AXN 61'' tri-axle, underslung configuration",
-      "High-arch single spring (360-00)",
-      "Pre-painted BLACK color"
-    ],
-    brakeSystemDetails: [
-      "SEALCO 110800 spring brake priority valve system",
-      "WABCO 4S/2M ABS system",
-      "HALDEX Goldseal T30/30, 2.5'' stroke brake chamber",
-      "PHILLIPS glad hand 12-0061 and 12-0081"
-    ],
-    electricalDetails: [
-      "PHILLIPS mold seal wiring harness",
-      "OPTRONICS LED lights",
-      "Reserved PSI and GPS connector",
-      "10-year warranty electrical system"
-    ],
-    additionalEquipment: [
-      "AXN FW32E00J Landing Gear with 60,000 lbs capacity",
-      "WESTLAKE 255/70R22.5-16PR tubeless tires",
-      "JINGU 22.5×8.25 10-stud hub-piloted wheels",
-      "3M Conspicuity Tape per federal regulations"
-    ],
-    featured: false,
-    sortOrder: 35
-  },
+
   {
     name: "20' Flushback Chassis - Español",
     nameEs: "Chasis Flushback 20'",
