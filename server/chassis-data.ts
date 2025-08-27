@@ -1099,12 +1099,12 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Triaxle",
     description: "Heavy-duty triaxle container chassis with 12-pin configuration for versatile container handling.",
     descriptionEs: "Chasis contenedor triaxial de servicio pesado con configuración de 12 pines para manejo versátil de contenedores.",
-    imageUrl: "/triaxle_20.webp",
+    imageUrl: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop",
     additionalImages: [
-      "/triaxle_20_2.webp",
-      "/triaxle_20_3.webp",
-      "/triaxle_20_4.webp",
-      "/triaxle_20_5.webp"
+      "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586236490904-a3f1c05cbe3c?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586236490768-b9ad1c80b1d2?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop"
     ],
     overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
     overallWidth: "96''",
@@ -1304,12 +1304,12 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Triaxle",
     description: "Heavy-duty triaxle container chassis with 12-pin configuration for versatile container handling.",
     descriptionEs: "Chasis contenedor triaxial de servicio pesado con configuración de 12 pines para manejo versátil de contenedores.",
-    imageUrl: "/triaxle_20.webp",
+    imageUrl: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop",
     additionalImages: [
-      "/triaxle_20_2.webp",
-      "/triaxle_20_3.webp",
-      "/triaxle_20_4.webp",
-      "/triaxle_20_5.webp"
+      "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586236490904-a3f1c05cbe3c?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586236490768-b9ad1c80b1d2?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop"
     ],
     overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
     overallWidth: "96''",
