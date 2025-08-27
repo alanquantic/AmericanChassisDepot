@@ -560,7 +560,7 @@ const PRODUCT_DATA = [
     axleConfig: "Tandem",
     description: "Heavy-duty 40-foot gooseneck chassis equipped with generator set for specialized container transportation needs.",
     descriptionEs: "Chasis gooseneck de servicio pesado de 40 pies equipado con generador para necesidades especializadas de transporte de contenedores.",
-    imageUrl: "/assets/40ft-gooseneck-genset.webp",
+    imageUrl: "/assets/40ft-gooseneck-container.webp",
     additionalImages: [
       "/assets/40_Gooseneck_4.jpg",
       "/assets/40_Gooseneck_5.jpg"
@@ -1046,7 +1046,7 @@ const PRODUCT_DATA = [
     axleConfig: "Tandem",
     description: "Heavy-duty 40-foot gooseneck chassis equipped with generator set for specialized container transportation needs.",
     descriptionEs: "Chasis gooseneck de servicio pesado de 40 pies equipado con generador para necesidades especializadas de transporte de contenedores.",
-    imageUrl: "/assets/40ft-gooseneck-genset-esp.webp",
+    imageUrl: "/assets/40-gooseneck-esp.webp",
     additionalImages: [
       "/assets/40_Gooseneck_4.jpg",
       "/assets/40_Gooseneck_5.jpg"
