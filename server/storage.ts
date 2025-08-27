@@ -87,8 +87,18 @@ export class DatabaseStorage implements IStorage {
     const rows = await db.select()
       .from(chassisModels);
     console.log(`Found ${rows.length} total models in database`);
+    
+    // Debug: mostrar todos los slugs en la base de datos
+    const slugsInDB = rows.map(row => row.slug);
+    console.log('Slugs in database:', slugsInDB);
+    
     const filteredRows = rows.filter(row => ALLOWED_PRODUCT_SLUGS.includes(row.slug));
     console.log(`Filtered to ${filteredRows.length} allowed models`);
+    
+    // Debug: mostrar slugs filtrados
+    const filteredSlugs = filteredRows.map(row => row.slug);
+    console.log('Filtered slugs:', filteredSlugs);
+    
     return filteredRows.map(sanitizeModelImages);
   }
 
