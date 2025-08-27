@@ -165,7 +165,16 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
                         src={selectedImage || model?.imageUrl} 
                         alt={model?.name} 
                         className="max-w-full max-h-full object-contain rounded"
+                        onError={(e) => {
+                          console.error('Error loading image:', selectedImage || model?.imageUrl);
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                        }}
                       />
+                      <div className="hidden text-center text-neutral-500">
+                        <p className="text-lg font-semibold mb-2">Image not available</p>
+                        <p className="text-sm">Please contact us for product images</p>
+                      </div>
                     </div>
                     
                     {/* Thumbnail gallery */}
