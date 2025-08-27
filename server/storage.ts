@@ -231,9 +231,42 @@ export class DatabaseStorage implements IStorage {
     const filteredData = PRODUCT_DATA.filter(item => ALLOWED_PRODUCT_SLUGS.includes(item.slug));
     console.log(`Filtered to ${filteredData.length} allowed products`);
     
-    // Return the data directly
-    console.log(`Returning ${filteredData.length} models`);
-    return filteredData as any; // Temporary fix to bypass type issues
+    // Convert to proper ChassisModel format
+    const models = filteredData.map((item, index) => ({
+      id: index + 1, // Use numeric ID
+      name: item.name,
+      nameEs: item.nameEs,
+      slug: item.slug,
+      conditionId: item.conditionId,
+      manufacturer: item.manufacturer,
+      size: item.size,
+      axleConfig: item.axleConfig,
+      description: item.description,
+      descriptionEs: item.descriptionEs,
+      imageUrl: item.imageUrl,
+      additionalImages: item.additionalImages || [],
+      overallLength: item.overallLength,
+      overallWidth: item.overallWidth,
+      overallHeight: null, // Add missing field
+      fifthWheelHeight: item.fifthWheelHeight,
+      rearDeckHeight: item.rearDeckHeight,
+      kingpinLocation: null, // Add missing field
+      landingGearLocation: null, // Add missing field
+      axleSpread: item.axleSpread,
+      tareWeight: item.tareWeight,
+      payload: item.payload,
+      gvwr: null, // Add missing field
+      frameComponents: item.frameComponents,
+      suspensionDetails: item.suspensionDetails,
+      brakeSystemDetails: item.brakeSystemDetails,
+      electricalDetails: item.electricalDetails,
+      additionalEquipment: item.additionalEquipment,
+      featured: item.featured,
+      sortOrder: item.sortOrder
+    }));
+    
+    console.log(`Returning ${models.length} models with proper format`);
+    return models;
   }
 
   async getChassisModelsByCondition(conditionId: number): Promise<ChassisModel[]> {
