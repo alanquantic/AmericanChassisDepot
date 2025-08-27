@@ -1099,12 +1099,12 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Triaxle",
     description: "Heavy-duty triaxle container chassis with 12-pin configuration for versatile container handling.",
     descriptionEs: "Chasis contenedor triaxial de servicio pesado con configuración de 12 pines para manejo versátil de contenedores.",
-    imageUrl: "https://www.americanchassisdepot.com/dist/assets/triaxle_20.webp",
+    imageUrl: "/dist/assets/triaxle_20.webp",
     additionalImages: [
-      "https://www.americanchassisdepot.com/dist/assets/triaxle_20_2.webp",
-      "https://www.americanchassisdepot.com/dist/assets/triaxle_20_3.webp",
-      "https://www.americanchassisdepot.com/dist/assets/triaxle_20_4.webp",
-      "https://www.americanchassisdepot.com/dist/assets/triaxle_20_5.webp"
+      "/dist/assets/triaxle_20_2.webp",
+      "/dist/assets/triaxle_20_3.webp",
+      "/dist/assets/triaxle_20_4.webp",
+      "/dist/assets/triaxle_20_5.webp"
     ],
     overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
     overallWidth: "96''",
@@ -1304,12 +1304,12 @@ export const newChassisData: InsertChassisModel[] = [
     axleConfig: "Triaxle",
     description: "Heavy-duty triaxle container chassis with 12-pin configuration for versatile container handling.",
     descriptionEs: "Chasis contenedor triaxial de servicio pesado con configuración de 12 pines para manejo versátil de contenedores.",
-    imageUrl: "https://www.americanchassisdepot.com/dist/assets/triaxle_20.webp",
+    imageUrl: "/dist/assets/triaxle_20.webp",
     additionalImages: [
-      "https://www.americanchassisdepot.com/dist/assets/triaxle_20_2.webp",
-      "https://www.americanchassisdepot.com/dist/assets/triaxle_20_3.webp",
-      "https://www.americanchassisdepot.com/dist/assets/triaxle_20_4.webp",
-      "https://www.americanchassisdepot.com/dist/assets/triaxle_20_5.webp"
+      "/dist/assets/triaxle_20_2.webp",
+      "/dist/assets/triaxle_20_3.webp",
+      "/dist/assets/triaxle_20_4.webp",
+      "/dist/assets/triaxle_20_5.webp"
     ],
     overallLength: "31'-7'' (retracted) to 40'-11'' (extended)",
     overallWidth: "96''",
