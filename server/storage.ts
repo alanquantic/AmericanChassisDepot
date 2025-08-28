@@ -1516,7 +1516,7 @@ const PRODUCT_DATA = [
     axleConfig: "Tandem",
     description: "Heavy-duty 53-foot gooseneck slider tandem chassis for specialized container transportation.",
     descriptionEs: "Chasis gooseneck slider tándem de servicio pesado de 53 pies para transporte especializado de contenedores.",
-    imageUrl: "/assets/53ft-gooseneck-slider-tandem.webp",
+    imageUrl: "/assets/53-gn-slider-tandem.webp",
     additionalImages: [],
     overallLength: "53'-0''",
     overallWidth: "96''",
