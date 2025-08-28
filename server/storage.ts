@@ -2555,16 +2555,16 @@ export class DatabaseStorage implements IStorage {
 
       if (conditionSlug && conditionSlug !== "all") {
         if (conditionSlug === "english-only") {
-          // Excluir catálogo español para EN - filtrar por slug
-          filteredModels = filteredModels.filter(model => !model.slug.endsWith("-esp"));
+          // Excluir catálogo español para EN - filtrar por nombre que contiene " - Español"
+          filteredModels = filteredModels.filter(model => !model.name.includes(" - Español"));
         } else if (conditionSlug === "chassis-nuevos-espanol") {
           // Catálogo ES por condición explícita (slug documentado en README)
           const condition = await this.getConditionBySlug("chassis-nuevos-espanol");
           if (condition) {
             filteredModels = filteredModels.filter(model => model.conditionId === condition.id);
           } else {
-            // Fallback: si no existe condición, filtrar por convención de slug "-esp"
-            filteredModels = filteredModels.filter(model => model.slug.endsWith("-esp"));
+            // Fallback: si no existe condición, filtrar por nombre que contiene " - Español"
+            filteredModels = filteredModels.filter(model => model.name.includes(" - Español"));
           }
         } else {
           const condition = await this.getConditionBySlug(conditionSlug);
