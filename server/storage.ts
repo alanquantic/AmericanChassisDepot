@@ -1102,7 +1102,7 @@ const PRODUCT_DATA = [
     axleConfig: "Tandem",
     description: "Heavy-duty 40-foot gooseneck tandem chassis for specialized container transportation.",
     descriptionEs: "Chasis gooseneck tándem de servicio pesado de 40 pies para transporte especializado de contenedores.",
-    imageUrl: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&h=400&fit=crop",
+    imageUrl: "/assets/40ft-gooseneck-container.webp",
     additionalImages: [],
     overallLength: "40'-11''",
     overallWidth: "96''",
