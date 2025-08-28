@@ -509,7 +509,7 @@ const PRODUCT_DATA = [
     axleConfig: "Triaxle",
     description: "Heavy-duty 33-foot tri-axle slider chassis for specialized container transportation needs.",
     descriptionEs: "Chasis triaxial slider de servicio pesado de 33 pies para necesidades especializadas de transporte de contenedores.",
-    imageUrl: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=400&fit=crop",
+    imageUrl: "/assets/33-slider-triaxle.webp",
     additionalImages: [],
     overallLength: "33'-0''",
     overallWidth: "96''",
@@ -560,7 +560,7 @@ const PRODUCT_DATA = [
     axleConfig: "Tandem",
     description: "Heavy-duty 40-foot gooseneck chassis equipped with generator set for specialized container transportation needs.",
     descriptionEs: "Chasis gooseneck de servicio pesado de 40 pies equipado con generador para necesidades especializadas de transporte de contenedores.",
-    imageUrl: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=600&h=400&fit=crop",
+    imageUrl: "/assets/40ft-gooseneck-container.webp",
     additionalImages: [
       "/assets/40_Gooseneck_4.jpg",
       "/assets/40_Gooseneck_5.jpg"
