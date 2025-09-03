@@ -222,6 +222,7 @@ export async function processFormSubmission(data: FormSubmissionData): Promise<F
       name: `${data.actionType === 'contact' ? 'Contacto General' : data.actionType === 'quote' ? 'Cotización' : 'Descarga Folleto'} - ${data.name}`,
       email_from: data.email,
       phone: data.phone || '',
+      contact_name: data.name, // Campo específico para el nombre del contacto
       description: `
 ${data.actionType === 'contact' ? 'Solicitud de Contacto General' : data.actionType === 'quote' ? 'Solicitud de Cotización' : 'Descarga de Folleto Técnico'}
 
