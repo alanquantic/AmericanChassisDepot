@@ -40,15 +40,19 @@ function parseXmlRpcResponse(xmlResponse: string): any {
   try {
     // Verificar si es un fault (error)
     if (xmlResponse.includes('<fault>')) {
+      console.log('🚨 Raw fault response:', xmlResponse);
+      
+      // Extraer faultCode - buscar el valor int dentro de faultCode
       const faultCodeMatch = xmlResponse.match(/<faultCode>\s*<value>\s*<int>(\d+)<\/int>\s*<\/value>\s*<\/faultCode>/);
       const faultStringMatch = xmlResponse.match(/<faultString>\s*<value>\s*<string>([\s\S]*?)<\/string>\s*<\/value>\s*<\/faultString>/);
       
       const faultCode = faultCodeMatch ? parseInt(faultCodeMatch[1]) : 0;
-      const faultString = faultStringMatch ? faultStringMatch[1] : 'Unknown error';
+      const faultString = faultStringMatch ? faultStringMatch[1].trim() : 'Unknown error';
       
       console.error(`🚨 Odoo XML-RPC Fault detected:`);
       console.error(`🚨 Fault Code: ${faultCode}`);
       console.error(`🚨 Fault String: ${faultString}`);
+      console.error(`🚨 Full fault response:`, xmlResponse);
       
       // Lanzar error para que sea manejado por el caller
       throw new Error(`Odoo XML-RPC Fault: ${faultCode} - ${faultString}`);
