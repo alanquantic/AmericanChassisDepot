@@ -1,5 +1,3 @@
-import xmlrpc from 'xmlrpc';
-
 // Configuración de Odoo desde variables de entorno
 const ODOO_CONFIG = {
   url: process.env.ODOO_URL || 'https://alpha-tauro.odoo.com',
@@ -9,89 +7,146 @@ const ODOO_CONFIG = {
   database: process.env.ODOO_DATABASE || 'alpha-tauro'
 };
 
-// Función para crear cliente XML-RPC con configuración robusta
-function createOdooClient(endpoint: 'common' | 'object') {
-  const url = new URL(ODOO_CONFIG.url);
-  const port = url.port ? parseInt(url.port) : (url.protocol === 'https:' ? 443 : 80);
-  
-  console.log(`🔧 Creating Odoo client for endpoint: ${endpoint}`);
-  console.log(`🔧 Host: ${url.hostname}, Port: ${port}, Path: /xmlrpc/2/${endpoint}`);
-  
-  return xmlrpc.createClient({
-    host: url.hostname,
-    port: port,
-    path: `/xmlrpc/2/${endpoint}`,
-    headers: {
-      'User-Agent': 'AmericanChassisDepot/1.0',
-      'Accept': 'text/xml, application/xml',
-      'Content-Type': 'text/xml'
+// Función para crear XML-RPC request manualmente
+function createXmlRpcRequest(methodName: string, params: any[]): string {
+  const xmlParams = params.map(param => {
+    if (typeof param === 'string') {
+      return `<value><string>${param}</string></value>`;
+    } else if (typeof param === 'number') {
+      return `<value><int>${param}</int></value>`;
+    } else if (typeof param === 'boolean') {
+      return `<value><boolean>${param ? 1 : 0}</boolean></value>`;
+    } else if (Array.isArray(param)) {
+      return `<value><array><data>${param.map(item => createXmlRpcRequest('', [item]).replace(/<value>|<\/value>/g, '')).join('')}</data></array></value>`;
+    } else if (typeof param === 'object') {
+      const members = Object.entries(param).map(([key, value]) => 
+        `<member><name>${key}</name>${createXmlRpcRequest('', [value]).replace(/<value>|<\/value>/g, '')}</member>`
+      ).join('');
+      return `<value><struct>${members}</struct></value>`;
+    } else {
+      return `<value><string>${String(param)}</string></value>`;
     }
-  });
+  }).join('');
+
+  return `<?xml version="1.0"?>
+<methodCall>
+<methodName>${methodName}</methodName>
+<params>${xmlParams}</params>
+</methodCall>`;
 }
 
-// Función para autenticarse en Odoo con debugging detallado
+// Función para parsear respuesta XML-RPC
+function parseXmlRpcResponse(xmlResponse: string): any {
+  try {
+    // Extraer el valor de la respuesta XML-RPC
+    const valueMatch = xmlResponse.match(/<value>([\s\S]*?)<\/value>/);
+    if (!valueMatch) {
+      throw new Error('No value found in XML-RPC response');
+    }
+
+    const valueContent = valueMatch[1];
+    
+    // Parsear diferentes tipos de valores
+    if (valueContent.includes('<int>')) {
+      const intMatch = valueContent.match(/<int>(\d+)<\/int>/);
+      return intMatch ? parseInt(intMatch[1]) : null;
+    } else if (valueContent.includes('<string>')) {
+      const stringMatch = valueContent.match(/<string>([\s\S]*?)<\/string>/);
+      return stringMatch ? stringMatch[1] : null;
+    } else if (valueContent.includes('<boolean>')) {
+      const boolMatch = valueContent.match(/<boolean>(\d+)<\/boolean>/);
+      return boolMatch ? (parseInt(boolMatch[1]) === 1) : null;
+    } else if (valueContent.includes('<struct>')) {
+      // Parsear struct (objeto)
+      const memberMatches = valueContent.match(/<member>([\s\S]*?)<\/member>/g);
+      if (memberMatches) {
+        const result: any = {};
+        memberMatches.forEach(member => {
+          const nameMatch = member.match(/<name>([\s\S]*?)<\/name>/);
+          const valueMatch = member.match(/<value>([\s\S]*?)<\/value>/);
+          if (nameMatch && valueMatch) {
+            result[nameMatch[1]] = parseXmlRpcResponse(`<value>${valueMatch[1]}</value>`);
+          }
+        });
+        return result;
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error parsing XML-RPC response:', error);
+    return null;
+  }
+}
+
+// Función para hacer request XML-RPC a Odoo
+async function makeOdooRequest(endpoint: 'common' | 'object', methodName: string, params: any[]): Promise<any> {
+  try {
+    const xmlRequest = createXmlRpcRequest(methodName, params);
+    const requestUrl = `${ODOO_CONFIG.url}/xmlrpc/2/${endpoint}`;
+    
+    console.log(`📤 Making XML-RPC request to: ${requestUrl}`);
+    console.log(`📤 Method: ${methodName}`);
+    console.log(`📤 Params:`, params);
+    
+    const response = await fetch(requestUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/xml',
+        'User-Agent': 'AmericanChassisDepot/1.0',
+        'Accept': 'text/xml, application/xml'
+      },
+      body: xmlRequest
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseText = await response.text();
+    console.log(`📥 Raw XML-RPC response:`, responseText.substring(0, 200) + '...');
+    
+    // Verificar que la respuesta sea XML válido
+    if (!responseText.includes('<?xml') || !responseText.includes('<methodResponse>')) {
+      throw new Error(`Invalid XML-RPC response: ${responseText.substring(0, 200)}`);
+    }
+
+    const result = parseXmlRpcResponse(responseText);
+    console.log(`✅ Parsed result:`, result);
+    
+    return result;
+  } catch (error) {
+    console.error(`❌ Error making Odoo request:`, error);
+    throw error;
+  }
+}
+
+// Función para autenticarse en Odoo
 async function authenticateOdoo(): Promise<number | null> {
-  return new Promise((resolve) => {
+  try {
     console.log('🔐 Starting Odoo authentication...');
     console.log(`🔐 Database: ${ODOO_CONFIG.database}`);
     console.log(`🔐 Username: ${ODOO_CONFIG.username}`);
     console.log(`🔐 URL: ${ODOO_CONFIG.url}`);
     
-    const authClient = createOdooClient('common');
-    
-    // Timeout de 20 segundos
-    const timeout = setTimeout(() => {
-      console.error('⏰ Odoo authentication timeout after 20 seconds');
-      resolve(null);
-    }, 20000);
-
-    // Nota: xmlrpc Client no tiene eventos 'on', pero podemos hacer debugging del request
-
-    console.log('📤 Sending authentication request...');
-    
-    authClient.methodCall('authenticate', [
+    const uid = await makeOdooRequest('common', 'authenticate', [
       ODOO_CONFIG.database,
       ODOO_CONFIG.username,
       ODOO_CONFIG.password,
       {}
-    ], (error: any, uid: any) => {
-      clearTimeout(timeout);
-      
-      if (error) {
-        console.error('❌ Error authenticating with Odoo:', error);
-        
-        // Análisis detallado del error
-        if (error.message) {
-          if (error.message.includes('Unknown XML-RPC tag')) {
-            console.error('🚨 CRITICAL: Odoo is returning HTML instead of XML-RPC');
-            console.error('🚨 This usually means the endpoint is wrong or there are redirects');
-            console.error('🚨 Expected: XML-RPC response');
-            console.error('🚨 Received: HTML response (likely login page)');
-          } else if (error.message.includes('ECONNREFUSED')) {
-            console.error('🚨 CRITICAL: Connection refused - check host/port');
-          } else if (error.message.includes('timeout')) {
-            console.error('🚨 CRITICAL: Connection timeout - check network/firewall');
-          }
-        }
-        
-        resolve(null);
-        return;
-      }
-      
-      console.log('📥 Raw response from Odoo:', uid);
-      console.log('📥 Response type:', typeof uid);
-      console.log('📥 Response value:', uid);
-      
-      if (uid && typeof uid === 'number') {
-        console.log('✅ Successfully authenticated with Odoo, UID:', uid);
-        resolve(uid);
-      } else {
-        console.error('❌ Invalid UID received from Odoo:', uid);
-        console.error('❌ Expected: number, Received:', typeof uid, uid);
-        resolve(null);
-      }
-    });
-  });
+    ]);
+    
+    if (uid && typeof uid === 'number') {
+      console.log('✅ Successfully authenticated with Odoo, UID:', uid);
+      return uid;
+    } else {
+      console.error('❌ Invalid UID received from Odoo:', uid);
+      return null;
+    }
+  } catch (error) {
+    console.error('❌ Error authenticating with Odoo:', error);
+    return null;
+  }
 }
 
 // Función para crear lead en Odoo
@@ -158,33 +213,22 @@ ${leadData.message}
 
     console.log('📤 Sending lead creation request...');
 
-    return new Promise((resolve) => {
-      const objectClient = createOdooClient('object');
-      
-      const timeout = setTimeout(() => {
-        console.error('⏰ Odoo lead creation timeout after 20 seconds');
-        resolve(null);
-      }, 20000);
+    const leadId = await makeOdooRequest('object', 'execute_kw', [
+      ODOO_CONFIG.database,
+      uid,
+      ODOO_CONFIG.password,
+      'crm.lead',
+      'create',
+      [leadValues]
+    ]);
 
-      objectClient.methodCall('execute_kw', [
-        ODOO_CONFIG.database,
-        uid,
-        ODOO_CONFIG.password,
-        'crm.lead',
-        'create',
-        [leadValues]
-      ], (error: any, leadId: any) => {
-        clearTimeout(timeout);
-        
-        if (error) {
-          console.error('❌ Error creating lead in Odoo:', error);
-          resolve(null);
-        } else {
-          console.log('✅ Successfully created lead in Odoo, ID:', leadId);
-          resolve(leadId);
-        }
-      });
-    });
+    if (leadId && typeof leadId === 'number') {
+      console.log('✅ Successfully created lead in Odoo, ID:', leadId);
+      return leadId;
+    } else {
+      console.error('❌ Invalid lead ID received:', leadId);
+      return null;
+    }
 
   } catch (error) {
     console.error('❌ Error in createOdooLead:', error);
@@ -233,33 +277,22 @@ Contacto creado desde American Chassis Depot Website
 
     console.log('📤 Sending contact creation request...');
 
-    return new Promise((resolve) => {
-      const objectClient = createOdooClient('object');
-      
-      const timeout = setTimeout(() => {
-        console.error('⏰ Odoo contact creation timeout after 20 seconds');
-        resolve(null);
-      }, 20000);
+    const contactId = await makeOdooRequest('object', 'execute_kw', [
+      ODOO_CONFIG.database,
+      uid,
+      ODOO_CONFIG.password,
+      'res.partner',
+      'create',
+      [contactValues]
+    ]);
 
-      objectClient.methodCall('execute_kw', [
-        ODOO_CONFIG.database,
-        uid,
-        ODOO_CONFIG.password,
-        'res.partner',
-        'create',
-        [contactValues]
-      ], (error: any, contactId: any) => {
-        clearTimeout(timeout);
-        
-        if (error) {
-          console.error('❌ Error creating contact in Odoo:', error);
-          resolve(null);
-        } else {
-          console.log('✅ Successfully created contact in Odoo, ID:', contactId);
-          resolve(contactId);
-        }
-      });
-    });
+    if (contactId && typeof contactId === 'number') {
+      console.log('✅ Successfully created contact in Odoo, ID:', contactId);
+      return contactId;
+    } else {
+      console.error('❌ Invalid contact ID received:', contactId);
+      return null;
+    }
 
   } catch (error) {
     console.error('❌ Error in createOdooContact:', error);
@@ -434,52 +467,37 @@ export async function getOdooLeadStats(): Promise<{
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
 
-    return new Promise((resolve) => {
-      const objectClient = createOdooClient('object');
-      
-      const timeout = setTimeout(() => {
-        console.error('⏰ Odoo stats timeout after 20 seconds');
-        resolve({
-          success: false,
-          message: 'Timeout obteniendo estadísticas de Odoo'
-        });
-      }, 20000);
+    const todayCount = await makeOdooRequest('object', 'execute_kw', [
+      ODOO_CONFIG.database,
+      uid,
+      ODOO_CONFIG.password,
+      'crm.lead',
+      'search_count',
+      [[
+        ['create_date', '>=', todayStr],
+        ['name', 'ilike', 'American Chassis Depot']
+      ]]
+    ]);
 
-      objectClient.methodCall('execute_kw', [
-        ODOO_CONFIG.database,
-        uid,
-        ODOO_CONFIG.password,
-        'crm.lead',
-        'search_count',
-        [[
-          ['create_date', '>=', todayStr],
-          ['name', 'ilike', 'American Chassis Depot']
-        ]]
-      ], (error: any, todayCount: any) => {
-        clearTimeout(timeout);
-        
-        if (error) {
-          console.error('❌ Error getting Odoo stats:', error);
-          resolve({
-            success: false,
-            message: `Error obteniendo estadísticas: ${error}`
-          });
-          return;
-        }
-
-        console.log('✅ Odoo stats retrieved successfully');
-        resolve({
-          success: true,
-          stats: {
-            totalLeads: 0,
-            todayLeads: todayCount || 0,
-            thisWeekLeads: 0,
-            thisMonthLeads: 0
-          },
-          message: 'Estadísticas obtenidas exitosamente'
-        });
-      });
-    });
+    if (typeof todayCount === 'number') {
+      console.log('✅ Odoo stats retrieved successfully');
+      return {
+        success: true,
+        stats: {
+          totalLeads: 0,
+          todayLeads: todayCount,
+          thisWeekLeads: 0,
+          thisMonthLeads: 0
+        },
+        message: 'Estadísticas obtenidas exitosamente'
+      };
+    } else {
+      console.error('❌ Invalid stats response:', todayCount);
+      return {
+        success: false,
+        message: 'Respuesta inválida de estadísticas de Odoo'
+      };
+    }
 
   } catch (error) {
     console.error('❌ Error getting Odoo lead stats:', error);
