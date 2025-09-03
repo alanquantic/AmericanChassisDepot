@@ -1,29 +1,57 @@
-import Odoo from 'odoo-xmlrpc';
+import xmlrpc from 'xmlrpc';
 
-// Configuración de Odoo
+// Configuración de Odoo desde variables de entorno
 const ODOO_CONFIG = {
-  url: 'https://alpha-tauro.odoo.com',
-  port: 443,
-  db: 'alpha-tauro',
-  username: 'alan.avalos@alpha-tauro.com',
-  password: 'pqa6zxj-uej2zrz1GFP'
+  url: process.env.ODOO_URL || 'https://alpha-tauro.odoo.com',
+  username: process.env.ODOO_USERNAME || 'alan.avalos@alpha-tauro.com',
+  password: process.env.ODOO_PASSWORD || 'pqa6zxj-uej2zrz1GFP',
+  companyId: parseInt(process.env.ODOO_COMPANY_ID || '1'),
+  database: process.env.ODOO_DATABASE || 'alpha-tauro'
 };
 
-// Cliente Odoo
-const odoo = new Odoo(ODOO_CONFIG);
+// Función para crear cliente XML-RPC
+function createOdooClient(endpoint: 'common' | 'object') {
+  const url = new URL(ODOO_CONFIG.url);
+  const port = url.port ? parseInt(url.port) : (url.protocol === 'https:' ? 443 : 80);
+  return xmlrpc.createClient({
+    host: url.hostname,
+    port: port,
+    path: `/xmlrpc/2/${endpoint}`
+  });
+}
 
 // Función para autenticarse en Odoo
 async function authenticateOdoo(): Promise<number | null> {
   return new Promise((resolve) => {
-    odoo.connect((err: any) => {
-      if (err) {
-        console.error('Error connecting to Odoo:', err);
+    const authClient = createOdooClient('common');
+    
+    // Timeout de 15 segundos
+    const timeout = setTimeout(() => {
+      console.error('Odoo authentication timeout after 15 seconds');
+      resolve(null);
+    }, 15000);
+
+    authClient.methodCall('authenticate', [
+      ODOO_CONFIG.database,
+      ODOO_CONFIG.username,
+      ODOO_CONFIG.password,
+      {}
+    ], (error: any, uid: any) => {
+      clearTimeout(timeout);
+      
+      if (error) {
+        console.error('Error authenticating with Odoo:', error);
         resolve(null);
         return;
       }
       
-      console.log('Successfully connected to Odoo');
-      resolve(odoo.uid);
+      if (uid && typeof uid === 'number') {
+        console.log('Successfully authenticated with Odoo, UID:', uid);
+        resolve(uid);
+      } else {
+        console.error('Invalid UID received from Odoo:', uid);
+        resolve(null);
+      }
     });
   });
 }
@@ -81,7 +109,7 @@ ${leadData.message}
       partner_name: leadData.company || leadData.name,
       type: 'lead',
       team_id: false,
-      company_id: 1,
+      company_id: ODOO_CONFIG.companyId,
       user_id: uid,
       stage_id: 1,
       source_id: false,
@@ -90,9 +118,25 @@ ${leadData.message}
     };
 
     return new Promise((resolve) => {
-      odoo.execute_kw('crm.lead', 'create', [[leadValues]], (err: any, leadId: any) => {
-        if (err) {
-          console.error('Error creating lead in Odoo:', err);
+      const objectClient = createOdooClient('object');
+      
+      const timeout = setTimeout(() => {
+        console.error('Odoo lead creation timeout after 15 seconds');
+        resolve(null);
+      }, 15000);
+
+      objectClient.methodCall('execute_kw', [
+        ODOO_CONFIG.database,
+        uid,
+        ODOO_CONFIG.password,
+        'crm.lead',
+        'create',
+        [leadValues]
+      ], (error: any, leadId: any) => {
+        clearTimeout(timeout);
+        
+        if (error) {
+          console.error('Error creating lead in Odoo:', error);
           resolve(null);
         } else {
           console.log('Successfully created lead in Odoo, ID:', leadId);
@@ -141,14 +185,30 @@ Contacto creado desde American Chassis Depot Website
 - Fuente: Website
 - Timestamp: ${new Date().toISOString()}
       `,
-      company_id: 1,
+      company_id: ODOO_CONFIG.companyId,
       user_id: uid
     };
 
     return new Promise((resolve) => {
-      odoo.execute_kw('res.partner', 'create', [[contactValues]], (err: any, contactId: any) => {
-        if (err) {
-          console.error('Error creating contact in Odoo:', err);
+      const objectClient = createOdooClient('object');
+      
+      const timeout = setTimeout(() => {
+        console.error('Odoo contact creation timeout after 15 seconds');
+        resolve(null);
+      }, 15000);
+
+      objectClient.methodCall('execute_kw', [
+        ODOO_CONFIG.database,
+        uid,
+        ODOO_CONFIG.password,
+        'res.partner',
+        'create',
+        [contactValues]
+      ], (error: any, contactId: any) => {
+        clearTimeout(timeout);
+        
+        if (error) {
+          console.error('Error creating contact in Odoo:', error);
           resolve(null);
         } else {
           console.log('Successfully created contact in Odoo, ID:', contactId);
@@ -184,6 +244,15 @@ export async function processFormSubmission(formData: {
 }> {
   try {
     console.log('Processing form submission for Odoo:', formData);
+
+    // Verificar que las variables de entorno estén configuradas
+    if (!process.env.ODOO_PASSWORD || process.env.ODOO_PASSWORD === 'your_odoo_password') {
+      console.warn('Odoo credentials not properly configured, skipping Odoo integration');
+      return {
+        success: false,
+        message: 'Formulario procesado localmente (Odoo no configurado)'
+      };
+    }
 
     // Intentar crear lead en Odoo
     const leadId = await createOdooLead(formData);
@@ -228,25 +297,63 @@ export async function testOdooConnection(): Promise<{
   success: boolean;
   message: string;
   uid?: number;
+  config?: {
+    url: string;
+    database: string;
+    username: string;
+    hasPassword: boolean;
+  };
 }> {
   try {
+    // Verificar configuración
+    if (!process.env.ODOO_PASSWORD || process.env.ODOO_PASSWORD === 'your_odoo_password') {
+      return {
+        success: false,
+        message: 'Credenciales de Odoo no configuradas correctamente',
+        config: {
+          url: ODOO_CONFIG.url,
+          database: ODOO_CONFIG.database,
+          username: ODOO_CONFIG.username,
+          hasPassword: false
+        }
+      };
+    }
+
     const uid = await authenticateOdoo();
     if (uid) {
       return {
         success: true,
         message: `Conexión exitosa con Odoo. UID: ${uid}`,
-        uid
+        uid,
+        config: {
+          url: ODOO_CONFIG.url,
+          database: ODOO_CONFIG.database,
+          username: ODOO_CONFIG.username,
+          hasPassword: true
+        }
       };
     } else {
       return {
         success: false,
-        message: 'No se pudo autenticar con Odoo'
+        message: 'No se pudo autenticar con Odoo',
+        config: {
+          url: ODOO_CONFIG.url,
+          database: ODOO_CONFIG.database,
+          username: ODOO_CONFIG.username,
+          hasPassword: true
+        }
       };
     }
   } catch (error) {
     return {
       success: false,
-      message: `Error de conexión: ${error}`
+      message: `Error de conexión: ${error}`,
+      config: {
+        url: ODOO_CONFIG.url,
+        database: ODOO_CONFIG.database,
+        username: ODOO_CONFIG.username,
+        hasPassword: !!(process.env.ODOO_PASSWORD && process.env.ODOO_PASSWORD !== 'your_odoo_password')
+      }
     };
   }
 }
@@ -275,14 +382,33 @@ export async function getOdooLeadStats(): Promise<{
     const todayStr = today.toISOString().split('T')[0];
 
     return new Promise((resolve) => {
-      odoo.execute_kw('crm.lead', 'search_count', [[
-        ['create_date', '>=', todayStr],
-        ['name', 'ilike', 'American Chassis Depot']
-      ]], (err: any, todayCount: any) => {
-        if (err) {
+      const objectClient = createOdooClient('object');
+      
+      const timeout = setTimeout(() => {
+        console.error('Odoo stats timeout after 15 seconds');
+        resolve({
+          success: false,
+          message: 'Timeout obteniendo estadísticas de Odoo'
+        });
+      }, 15000);
+
+      objectClient.methodCall('execute_kw', [
+        ODOO_CONFIG.database,
+        uid,
+        ODOO_CONFIG.password,
+        'crm.lead',
+        'search_count',
+        [[
+          ['create_date', '>=', todayStr],
+          ['name', 'ilike', 'American Chassis Depot']
+        ]]
+      ], (error: any, todayCount: any) => {
+        clearTimeout(timeout);
+        
+        if (error) {
           resolve({
             success: false,
-            message: `Error obteniendo estadísticas: ${err}`
+            message: `Error obteniendo estadísticas: ${error}`
           });
           return;
         }
