@@ -42,12 +42,34 @@ function parseXmlRpcResponse(xmlResponse: string): any {
     if (xmlResponse.includes('<fault>')) {
       console.log('🚨 Raw fault response:', xmlResponse);
       
-      // Extraer faultCode - buscar el valor int dentro de faultCode con regex más robusto
-      const faultCodeMatch = xmlResponse.match(/<faultCode>[\s\S]*?<value>[\s\S]*?<int>(\d+)<\/int>[\s\S]*?<\/value>[\s\S]*?<\/faultCode>/);
-      const faultStringMatch = xmlResponse.match(/<faultString>[\s\S]*?<value>[\s\S]*?<string>([\s\S]*?)<\/string>[\s\S]*?<\/value>[\s\S]*?<\/faultString>/);
+      // Extraer faultCode usando búsqueda simple de strings
+      let faultCode = 0;
+      let faultString = 'Unknown error';
       
-      const faultCode = faultCodeMatch ? parseInt(faultCodeMatch[1]) : 0;
-      const faultString = faultStringMatch ? faultStringMatch[1].trim() : 'Unknown error';
+      // Buscar faultCode
+      const faultCodeStart = xmlResponse.indexOf('<faultCode>');
+      if (faultCodeStart !== -1) {
+        const intStart = xmlResponse.indexOf('<int>', faultCodeStart);
+        if (intStart !== -1) {
+          const intEnd = xmlResponse.indexOf('</int>', intStart);
+          if (intEnd !== -1) {
+            const codeStr = xmlResponse.substring(intStart + 5, intEnd);
+            faultCode = parseInt(codeStr) || 0;
+          }
+        }
+      }
+      
+      // Buscar faultString
+      const faultStringStart = xmlResponse.indexOf('<faultString>');
+      if (faultStringStart !== -1) {
+        const stringStart = xmlResponse.indexOf('<string>', faultStringStart);
+        if (stringStart !== -1) {
+          const stringEnd = xmlResponse.indexOf('</string>', stringStart);
+          if (stringEnd !== -1) {
+            faultString = xmlResponse.substring(stringStart + 8, stringEnd).trim();
+          }
+        }
+      }
       
       console.error(`🚨 Odoo XML-RPC Fault detected:`);
       console.error(`🚨 Fault Code: ${faultCode}`);
