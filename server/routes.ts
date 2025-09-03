@@ -5,6 +5,7 @@ import { storage } from "./storage.js";
 import { insertContactMessageSchema } from "../shared/schema.js";
 import { ZodError } from "zod";
 import { sendContactNotification, sendCustomerConfirmationEmail } from "./services/mail.js";
+import { processFormSubmission, testOdooConnection, getOdooLeadStats } from "./services/odoo.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API route prefix
@@ -378,6 +379,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       return res.status(500).json({ message: "Failed to submit contact form" });
+    }
+  });
+
+  // ===== ENDPOINTS DE ODOO =====
+  
+  // Test de conexión con Odoo
+  app.get(`${apiPrefix}/odoo/test`, async (_req, res) => {
+    try {
+      const result = await testOdooConnection();
+      return res.json(result);
+    } catch (error) {
+      console.error("Error testing Odoo connection:", error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Error testing Odoo connection" 
+      });
+    }
+  });
+
+  // Estadísticas de leads en Odoo
+  app.get(`${apiPrefix}/odoo/stats`, async (_req, res) => {
+    try {
+      const result = await getOdooLeadStats();
+      return res.json(result);
+    } catch (error) {
+      console.error("Error getting Odoo stats:", error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Error getting Odoo stats" 
+      });
+    }
+  });
+
+  // Procesar formulario y enviar a Odoo
+  app.post(`${apiPrefix}/odoo/submit`, async (req, res) => {
+    try {
+      const {
+        name,
+        email,
+        company,
+        phone,
+        message,
+        source,
+        product,
+        actionType,
+        language,
+        units,
+        interest
+      } = req.body;
+
+      // Validar campos requeridos
+      if (!name || !email || !message || !actionType || !language) {
+        return res.status(400).json({
+          success: false,
+          message: "Campos requeridos faltantes"
+        });
+      }
+
+      // Procesar en Odoo
+      const result = await processFormSubmission({
+        name,
+        email,
+        company: company || '',
+        phone: phone || '',
+        message,
+        source: source || 'Website',
+        product,
+        actionType,
+        language,
+        units,
+        interest
+      });
+
+      if (result.success) {
+        return res.status(200).json({
+          success: true,
+          message: "Formulario procesado exitosamente en Odoo",
+          odooLeadId: result.odooLeadId,
+          odooContactId: result.odooContactId
+        });
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: result.message
+        });
+      }
+
+    } catch (error) {
+      console.error("Error processing form for Odoo:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error interno del servidor"
+      });
     }
   });
 

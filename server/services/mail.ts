@@ -1,6 +1,7 @@
 
 import mailgun from 'mailgun-js';
 import { ContactMessage } from '@shared/schema';
+import { processFormSubmission } from './odoo.js';
 
 // Only initialize Mailgun if credentials are available
 const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
@@ -29,6 +30,55 @@ export async function sendContactNotification(
   if (!mg) {
     console.warn('Email notification skipped: Mailgun not configured');
     return false;
+  }
+
+  // INTEGRACIÓN CON ODOO - Crear lead automáticamente
+  try {
+    const language = sourceUrl?.includes('/es/') ? 'es' : 'en';
+    
+    // Determinar tipo de acción basado en el mensaje
+    let actionType: 'contact' | 'quote' | 'brochure' = 'contact';
+    if (contactMessage.message?.toLowerCase().includes('cotización') || 
+        contactMessage.message?.toLowerCase().includes('quote')) {
+      actionType = 'quote';
+    } else if (contactMessage.message?.toLowerCase().includes('brochure') || 
+               contactMessage.message?.toLowerCase().includes('folleto')) {
+      actionType = 'brochure';
+    }
+
+    // Extraer información del producto si está disponible
+    let product = undefined;
+    if (contactMessage.interest) {
+      product = contactMessage.interest;
+    }
+
+    // Procesar en Odoo
+    const odooResult = await processFormSubmission({
+      name: contactMessage.name,
+      email: contactMessage.email,
+      company: contactMessage.company || '',
+      phone: contactMessage.phone || '',
+      message: contactMessage.message,
+      source: sourceUrl,
+      product,
+      actionType,
+      language,
+      units: contactMessage.units || undefined,
+      interest: contactMessage.interest || undefined
+    });
+
+    if (odooResult.success) {
+      console.log('✅ Lead creado exitosamente en Odoo:', {
+        leadId: odooResult.odooLeadId,
+        contactId: odooResult.odooContactId
+      });
+    } else {
+      console.warn('⚠️ Error creando lead en Odoo:', odooResult.message);
+    }
+
+  } catch (odooError) {
+    console.error('❌ Error en integración con Odoo:', odooError);
+    // Continuar con el envío de email aunque falle Odoo
   }
 
   try {
