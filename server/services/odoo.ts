@@ -1,59 +1,29 @@
-import xmlrpc from 'xmlrpc';
+import Odoo from 'odoo-xmlrpc';
 
 // Configuración de Odoo
 const ODOO_CONFIG = {
   url: 'https://alpha-tauro.odoo.com',
-  apiKey: '85822f6ca279aa3dd5e9eda2709bbef0e63c1324',
+  port: 443,
+  db: 'alpha-tauro',
   username: 'alan.avalos@alpha-tauro.com',
-  password: 'pqa6zxj-uej2zrz1GFP',
-  companyId: 1,
-  database: 'alpha-tauro'
+  password: 'pqa6zxj-uej2zrz1GFP'
 };
 
-// Cliente XML-RPC para Odoo
-const odooClient = xmlrpc.createClient({
-  host: 'alpha-tauro.odoo.com',
-  port: 443,
-  path: '/xmlrpc/2/object'
-});
+// Cliente Odoo
+const odoo = new Odoo(ODOO_CONFIG);
 
 // Función para autenticarse en Odoo
 async function authenticateOdoo(): Promise<number | null> {
   return new Promise((resolve) => {
-    const authClient = xmlrpc.createClient({
-      host: 'alpha-tauro.odoo.com',
-      port: 443,
-      path: '/xmlrpc/2/common'
-    });
-
-    // Agregar timeout y mejor manejo de errores
-    const timeout = setTimeout(() => {
-      console.error('Odoo authentication timeout');
-      resolve(null);
-    }, 10000); // 10 segundos timeout
-
-    authClient.methodCall('authenticate', [
-      ODOO_CONFIG.database,
-      ODOO_CONFIG.username,
-      ODOO_CONFIG.password,
-      {}
-    ], (error: any, uid: any) => {
-      clearTimeout(timeout);
-      
-      if (error) {
-        console.error('Error authenticating with Odoo:', error);
-        // Si es un error de XML-RPC, puede ser que Odoo esté devolviendo HTML
-        if (error.message && error.message.includes('Unknown XML-RPC tag')) {
-          console.error('Odoo está devolviendo HTML en lugar de XML-RPC. Verificar configuración del servidor.');
-        }
+    odoo.connect((err: any) => {
+      if (err) {
+        console.error('Error connecting to Odoo:', err);
         resolve(null);
-      } else if (uid && typeof uid === 'number') {
-        console.log('Successfully authenticated with Odoo, UID:', uid);
-        resolve(uid);
-      } else {
-        console.error('Invalid UID received from Odoo:', uid);
-        resolve(null);
+        return;
       }
+      
+      console.log('Successfully connected to Odoo');
+      resolve(odoo.uid);
     });
   });
 }
@@ -110,34 +80,19 @@ ${leadData.message}
       `,
       partner_name: leadData.company || leadData.name,
       type: 'lead',
-      team_id: false, // Sin equipo asignado por defecto
-      company_id: ODOO_CONFIG.companyId,
-      user_id: uid, // Asignar al usuario autenticado
-      stage_id: 1, // Etapa inicial del lead
+      team_id: false,
+      company_id: 1,
+      user_id: uid,
+      stage_id: 1,
       source_id: false,
       medium_id: false,
-      campaign_id: false,
-      tag_ids: [
-        // Tags para categorización
-        leadData.actionType === 'contact' ? 'Contacto General' :
-        leadData.actionType === 'quote' ? 'Cotización' : 'Brochure',
-        leadData.language === 'es' ? 'Español' : 'English',
-        'Website',
-        'American Chassis Depot'
-      ].filter(Boolean)
+      campaign_id: false
     };
 
     return new Promise((resolve) => {
-      odooClient.methodCall('execute_kw', [
-        ODOO_CONFIG.database,
-        uid,
-        ODOO_CONFIG.password,
-        'crm.lead',
-        'create',
-        [leadValues]
-      ], (error: any, leadId: any) => {
-        if (error) {
-          console.error('Error creating lead in Odoo:', error);
+      odoo.execute_kw('crm.lead', 'create', [[leadValues]], (err: any, leadId: any) => {
+        if (err) {
+          console.error('Error creating lead in Odoo:', err);
           resolve(null);
         } else {
           console.log('Successfully created lead in Odoo, ID:', leadId);
@@ -186,26 +141,14 @@ Contacto creado desde American Chassis Depot Website
 - Fuente: Website
 - Timestamp: ${new Date().toISOString()}
       `,
-      company_id: ODOO_CONFIG.companyId,
-      user_id: uid,
-      tag_ids: [
-        'Website',
-        'American Chassis Depot',
-        contactData.language === 'es' ? 'Español' : 'English'
-      ].filter(Boolean)
+      company_id: 1,
+      user_id: uid
     };
 
     return new Promise((resolve) => {
-      odooClient.methodCall('execute_kw', [
-        ODOO_CONFIG.database,
-        uid,
-        ODOO_CONFIG.password,
-        'res.partner',
-        'create',
-        [contactValues]
-      ], (error: any, contactId: any) => {
-        if (error) {
-          console.error('Error creating contact in Odoo:', error);
+      odoo.execute_kw('res.partner', 'create', [[contactValues]], (err: any, contactId: any) => {
+        if (err) {
+          console.error('Error creating contact in Odoo:', err);
           resolve(null);
         } else {
           console.log('Successfully created contact in Odoo, ID:', contactId);
@@ -329,37 +272,28 @@ export async function getOdooLeadStats(): Promise<{
     }
 
     const today = new Date();
-    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const todayStr = today.toISOString().split('T')[0];
 
     return new Promise((resolve) => {
-      odooClient.methodCall('execute_kw', [
-        ODOO_CONFIG.database,
-        uid,
-        ODOO_CONFIG.password,
-        'crm.lead',
-        'search_count',
-        [[
-          ['create_date', '>=', today.toISOString().split('T')[0]],
-          ['name', 'ilike', 'American Chassis Depot']
-        ]]
-      ], (error: any, todayCount: any) => {
-        if (error) {
+      odoo.execute_kw('crm.lead', 'search_count', [[
+        ['create_date', '>=', todayStr],
+        ['name', 'ilike', 'American Chassis Depot']
+      ]], (err: any, todayCount: any) => {
+        if (err) {
           resolve({
             success: false,
-            message: `Error obteniendo estadísticas: ${error}`
+            message: `Error obteniendo estadísticas: ${err}`
           });
           return;
         }
 
-        // Obtener más estadísticas...
         resolve({
           success: true,
           stats: {
-            totalLeads: 0, // Implementar si es necesario
+            totalLeads: 0,
             todayLeads: todayCount || 0,
-            thisWeekLeads: 0, // Implementar si es necesario
-            thisMonthLeads: 0 // Implementar si es necesario
+            thisWeekLeads: 0,
+            thisMonthLeads: 0
           },
           message: 'Estadísticas obtenidas exitosamente'
         });
