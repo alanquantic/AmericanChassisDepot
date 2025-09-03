@@ -38,7 +38,23 @@ function createXmlRpcRequest(methodName: string, params: any[]): string {
 // Función para parsear respuesta XML-RPC
 function parseXmlRpcResponse(xmlResponse: string): any {
   try {
-    // Extraer el valor de la respuesta XML-RPC
+    // Verificar si es un fault (error)
+    if (xmlResponse.includes('<fault>')) {
+      const faultCodeMatch = xmlResponse.match(/<faultCode>\s*<value>\s*<int>(\d+)<\/int>\s*<\/value>\s*<\/faultCode>/);
+      const faultStringMatch = xmlResponse.match(/<faultString>\s*<value>\s*<string>([\s\S]*?)<\/string>\s*<\/value>\s*<\/faultString>/);
+      
+      const faultCode = faultCodeMatch ? parseInt(faultCodeMatch[1]) : 0;
+      const faultString = faultStringMatch ? faultStringMatch[1] : 'Unknown error';
+      
+      console.error(`🚨 Odoo XML-RPC Fault detected:`);
+      console.error(`🚨 Fault Code: ${faultCode}`);
+      console.error(`🚨 Fault String: ${faultString}`);
+      
+      // Lanzar error para que sea manejado por el caller
+      throw new Error(`Odoo XML-RPC Fault: ${faultCode} - ${faultString}`);
+    }
+
+    // Extraer el valor de la respuesta XML-RPC exitosa
     const valueMatch = xmlResponse.match(/<value>([\s\S]*?)<\/value>/);
     if (!valueMatch) {
       throw new Error('No value found in XML-RPC response');
@@ -75,7 +91,7 @@ function parseXmlRpcResponse(xmlResponse: string): any {
     return null;
   } catch (error) {
     console.error('Error parsing XML-RPC response:', error);
-    return null;
+    throw error; // Re-lanzar el error para que sea manejado
   }
 }
 
