@@ -42,9 +42,9 @@ function parseXmlRpcResponse(xmlResponse: string): any {
     if (xmlResponse.includes('<fault>')) {
       console.log('🚨 Raw fault response:', xmlResponse);
       
-      // Extraer faultCode - buscar el valor int dentro de faultCode
-      const faultCodeMatch = xmlResponse.match(/<faultCode>\s*<value>\s*<int>(\d+)<\/int>\s*<\/value>\s*<\/faultCode>/);
-      const faultStringMatch = xmlResponse.match(/<faultString>\s*<value>\s*<string>([\s\S]*?)<\/string>\s*<\/value>\s*<\/faultString>/);
+      // Extraer faultCode - buscar el valor int dentro de faultCode con regex más robusto
+      const faultCodeMatch = xmlResponse.match(/<faultCode>[\s\S]*?<value>[\s\S]*?<int>(\d+)<\/int>[\s\S]*?<\/value>[\s\S]*?<\/faultCode>/);
+      const faultStringMatch = xmlResponse.match(/<faultString>[\s\S]*?<value>[\s\S]*?<string>([\s\S]*?)<\/string>[\s\S]*?<\/value>[\s\S]*?<\/faultString>/);
       
       const faultCode = faultCodeMatch ? parseInt(faultCodeMatch[1]) : 0;
       const faultString = faultStringMatch ? faultStringMatch[1].trim() : 'Unknown error';
