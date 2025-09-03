@@ -34,7 +34,7 @@ export async function sendContactNotification(
   try {
     const data = {
       from: `American Chassis Depot Website <no-reply@${MAILGUN_DOMAIN}>`,
-      to: ['sales@americanchassisdepot.com', 'alan@ceosnm.com'],
+      to: ['alan@ceosnm.com'], // Temporarily disabled: 'sales@americanchassisdepot.com'
       subject: `New Contact Form Submission from ${contactMessage.name}`,
       text: `
 New contact form submission from the American Chassis Depot website.
@@ -147,7 +147,7 @@ export async function sendCustomerConfirmationEmail(
         : 'El folleto técnico se ha descargado correctamente. Si tienes alguna pregunta sobre las especificaciones, no dudes en contactarnos.',
       contactInfo: 'Si tienes alguna pregunta urgente, puedes contactarnos directamente:',
       phone: 'Teléfono: +1 346 395 6739',
-      email: 'Email: sales@americanchassisdepot.com',
+      email: 'Email: alan@ceosnm.com', // Temporarily disabled: 'sales@americanchassisdepot.com'
       website: 'Sitio web: www.americanchassisdepot.com',
       footer: 'Saludos cordiales,\nEl equipo de American Chassis Depot'
     } : {
@@ -160,7 +160,7 @@ export async function sendCustomerConfirmationEmail(
         : 'The technical brochure has been downloaded successfully. If you have any questions about the specifications, please don\'t hesitate to contact us.',
       contactInfo: 'If you have any urgent questions, you can contact us directly:',
       phone: 'Phone: +1 346 395 6739',
-      email: 'Email: sales@americanchassisdepot.com',
+      email: 'Email: alan@ceosnm.com', // Temporarily disabled: 'sales@americanchassisdepot.com'
       website: 'Website: www.americanchassisdepot.com',
       footer: 'Best regards,\nThe American Chassis Depot Team'
     };
