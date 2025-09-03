@@ -2729,10 +2729,9 @@ export class DatabaseStorage implements IStorage {
     console.log("Database initialization completed.");
   }
 
-  // Seed initial data
+  // Seed initial data - Simplified version without external imports
   private async seedData() {
-    // Import real chassis data
-    const { newChassisData, usedChassisData } = await import("./chassis-data");
+    console.log("Seeding database with basic conditions...");
     
     // Get or create conditions
     let newCondition = await this.getConditionBySlug("new-chassis");
@@ -2755,24 +2754,7 @@ export class DatabaseStorage implements IStorage {
       });
     }
 
-    // Seed real chassis data
-    console.log(`Seeding ${newChassisData.length} new chassis models...`);
-    for (const chassisData of newChassisData) {
-      await this.createChassisModel({
-        ...chassisData,
-        conditionId: newCondition.id
-      });
-    }
-
-    console.log(`Seeding ${usedChassisData.length} used chassis models...`);
-    for (const chassisData of usedChassisData) {
-      await this.createChassisModel({
-        ...chassisData,
-        conditionId: usedCondition.id
-      });
-    }
-
-    console.log(`Total products seeded: ${newChassisData.length + usedChassisData.length}`);
+    console.log("Basic conditions seeded successfully");
   }
 
   // Reseed data (clear and re-add all products)
