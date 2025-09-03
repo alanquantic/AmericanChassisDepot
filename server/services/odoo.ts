@@ -42,32 +42,62 @@ function parseXmlRpcResponse(xmlResponse: string): any {
     if (xmlResponse.includes('<fault>')) {
       console.log('🚨 Raw fault response:', xmlResponse);
       
-      // Extraer faultCode usando búsqueda simple de strings
+      // DEBUG: Mostrar la estructura completa del fault
+      console.log('🔍 DEBUG: Analizando estructura del fault...');
+      
+      // Extraer faultCode usando múltiples métodos
       let faultCode = 0;
       let faultString = 'Unknown error';
       
-      // Buscar faultCode
-      const faultCodeStart = xmlResponse.indexOf('<faultCode>');
-      if (faultCodeStart !== -1) {
-        const intStart = xmlResponse.indexOf('<int>', faultCodeStart);
-        if (intStart !== -1) {
-          const intEnd = xmlResponse.indexOf('</int>', intStart);
-          if (intEnd !== -1) {
-            const codeStr = xmlResponse.substring(intStart + 5, intEnd);
-            faultCode = parseInt(codeStr) || 0;
-          }
+      // MÉTODO 1: Búsqueda directa de <int> dentro de faultCode
+      const faultCodeSection = xmlResponse.substring(
+        xmlResponse.indexOf('<faultCode>'),
+        xmlResponse.indexOf('</faultCode>') + 11
+      );
+      console.log('🔍 DEBUG: Sección faultCode encontrada:', faultCodeSection);
+      
+      if (faultCodeSection.includes('<int>')) {
+        const intStart = faultCodeSection.indexOf('<int>') + 5;
+        const intEnd = faultCodeSection.indexOf('</int>');
+        if (intStart > 4 && intEnd > intStart) {
+          const codeStr = faultCodeSection.substring(intStart, intEnd);
+          faultCode = parseInt(codeStr) || 0;
+          console.log('🔍 DEBUG: faultCode extraído:', faultCode, 'de string:', codeStr);
         }
       }
       
-      // Buscar faultString
-      const faultStringStart = xmlResponse.indexOf('<faultString>');
-      if (faultStringStart !== -1) {
-        const stringStart = xmlResponse.indexOf('<string>', faultStringStart);
-        if (stringStart !== -1) {
-          const stringEnd = xmlResponse.indexOf('</string>', stringStart);
-          if (stringEnd !== -1) {
-            faultString = xmlResponse.substring(stringStart + 8, stringEnd).trim();
-          }
+      // MÉTODO 2: Búsqueda directa de <string> dentro de faultString
+      const faultStringSection = xmlResponse.substring(
+        xmlResponse.indexOf('<faultString>'),
+        xmlResponse.indexOf('</faultString>') + 13
+      );
+      console.log('🔍 DEBUG: Sección faultString encontrada:', faultStringSection.substring(0, 200) + '...');
+      
+      if (faultStringSection.includes('<string>')) {
+        const stringStart = faultStringSection.indexOf('<string>') + 8;
+        const stringEnd = faultStringSection.indexOf('</string>');
+        if (stringStart > 7 && stringEnd > stringStart) {
+          faultString = faultStringSection.substring(stringStart, stringEnd).trim();
+          console.log('🔍 DEBUG: faultString extraído (primeros 100 chars):', faultString.substring(0, 100) + '...');
+        }
+      }
+      
+      // MÉTODO 3: Fallback con regex simple si los métodos anteriores fallan
+      if (faultCode === 0 || faultString === 'Unknown error') {
+        console.log('⚠️ DEBUG: Métodos directos fallaron, usando regex de fallback...');
+        
+        // Regex simple para faultCode
+        const codeMatch = xmlResponse.match(/<faultCode>[\s\S]*?<int>(\d+)<\/int>/);
+        if (codeMatch) {
+          faultCode = parseInt(codeMatch[1]) || 0;
+          console.log('🔍 DEBUG: faultCode via regex:', faultCode);
+        }
+        
+        // Regex simple para faultString
+        const stringMatch = xmlResponse.match(/<faultString>[\s\S]*?<string>([\s\S]*?)<\/string>/);
+        if (stringMatch) {
+          faultString = stringMatch[1].trim();
+          console.log('🔍 DEBUG: faultString via regex (primeros 100 chars):', faultString.substring(0, 100) + '...');
         }
       }
       
