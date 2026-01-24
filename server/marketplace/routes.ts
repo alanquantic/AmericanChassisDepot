@@ -629,6 +629,13 @@ router.put('/offers/:id/respond', authenticateToken, requireSeller, async (req: 
     );
     
     // Get buyer and listing info for notifications
+    if (!offer.buyerId || !offer.listingId) {
+      return res.json({
+        message: `Offer ${newStatus}`,
+        offer: updatedOffer
+      });
+    }
+    
     const buyer = await storage.getUserById(offer.buyerId);
     const listing = await storage.getListingById(offer.listingId);
     

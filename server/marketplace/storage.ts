@@ -604,6 +604,7 @@ export async function getOffersByUser(userId: number, type: 'sent' | 'received')
       id: marketplaceOffers.id,
       offerNumber: marketplaceOffers.offerNumber,
       listingId: marketplaceOffers.listingId,
+      buyerId: marketplaceOffers.buyerId,
       quantity: marketplaceOffers.quantity,
       pricePerUnit: marketplaceOffers.pricePerUnit,
       totalAmount: marketplaceOffers.totalAmount,
@@ -993,15 +994,19 @@ export async function getConversationById(conversationId: number) {
     return null;
   }
   
-  // Get listing details
-  const [listing] = await db
-    .select()
-    .from(marketplaceListings)
-    .where(eq(marketplaceListings.id, conversation.listingId))
-    .limit(1);
+  // Get listing details if listingId exists
+  let listing = null;
+  if (conversation.listingId) {
+    const [listingResult] = await db
+      .select()
+      .from(marketplaceListings)
+      .where(eq(marketplaceListings.id, conversation.listingId))
+      .limit(1);
+    listing = listingResult || null;
+  }
     
   return {
     ...conversation,
-    listing: listing || null,
+    listing,
   };
 }

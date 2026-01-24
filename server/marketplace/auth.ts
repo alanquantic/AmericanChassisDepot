@@ -26,6 +26,7 @@ export interface AuthenticatedRequest extends Request {
     firstName?: string;
     lastName?: string;
     companyName?: string;
+    preferredLanguage?: string;
   };
 }
 
@@ -99,6 +100,7 @@ export async function authenticateToken(
         companyName: marketplaceUsers.companyName,
         isActive: marketplaceUsers.isActive,
         isSuspended: marketplaceUsers.isSuspended,
+        preferredLanguage: marketplaceUsers.preferredLanguage,
       })
       .from(marketplaceUsers)
       .where(eq(marketplaceUsers.id, payload.userId))
@@ -115,6 +117,7 @@ export async function authenticateToken(
       firstName: user.firstName || undefined,
       lastName: user.lastName || undefined,
       companyName: user.companyName || undefined,
+      preferredLanguage: user.preferredLanguage || undefined,
     };
 
     next();
