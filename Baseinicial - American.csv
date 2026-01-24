@@ -1,0 +1,51 @@
+state,City,Type,Condition, ChassisQty,Chassis Price(U$)
+AZ,Phoenix,Gooseneck 40',Road-worthy,20,$11.700 
+AZ,Phoenix,Gooseneck 53',Road-worthy,10,$14.300 
+CA,Antioch,Gooseneck 40',Road-worthy,11,$9.100 
+CA,Antioch,Slider 20',ASIS,1,$6.500 
+CA,Carson,Gooseneck 40',Road-worthy,25,$19.500 
+CA,Fontana,Extendable 20-40,Road-worthy,2,$32.500 
+CA,Fontana,Extendable 40-45,Road-worthy,5,$17.550 
+CA,Fontana,Gooseneck 40',Road-worthy,5,$11.700 
+CA,Fontana,Slider 20',Road-worthy,5,$11.700 
+CA,Los Angeles,Gooseneck 40',ASIS,30,$7.150 
+CA,Los Angeles,Gooseneck 40',Road-worthy,6,$9.100 
+CA,Los Angeles,Gooseneck 53',Road-worthy,10,$13.650 
+CA,Los Angeles,Slider 20',ASIS,1,$5.850 
+CA,Los Angeles,Slider 20',Road-worthy,20,$11.700 
+CA,Oakland,Extendable 20-40,Road-worthy,2,$29.250 
+CA,Oakland,Gooseneck 40',ASIS,14,$6.500 
+CA,Oakland,Gooseneck 40',Road-worthy,25,$9.100 
+CA,West Sacramento,Extendable 20-40,1New,2,$29.900 
+CA,Wilmington CA,Gooseneck 40',Road-worthy,10,$13.650 
+FL,Jacksonville,Gooseneck 40',ASIS,10,$7.150 
+FL,Jacksonville,Slider 20',ASIS,7,$6.500 
+FL,Medley,Gooseneck 40',Road-worthy,50,$14.950 
+FL,Medley,Slider 20',Road-worthy,50,$14.300 
+FL,Miami,Slider 20',ASIS,20,$7.150 
+GA,Atlanta,Gooseneck 40',Road-worthy,1,$11.700 
+GA,Savannah,Gooseneck 40',ASIS,10,$5.850 
+GA,Savannah,Gooseneck 40',Road-worthy,21,$9.750 
+IL,Bolingbrook,Slider 20',Road-worthy,7,$20.150 
+IL,Chicago,Gooseneck 40',ASIS,1,$6.305 
+IL,Chicago,Gooseneck 40',Road-worthy,10,$8.125 
+IL,Joliet,Gooseneck 40',Road-worthy,17,$18.850 
+IN,Indianapolis,Gooseneck 40',ASIS,9,$6.500 
+KY,Louisville,Slider 20',ASIS,1,$6.500 
+MA,Springfield,Gooseneck 53',Road-worthy,4,$11.700 
+NJ,East Rutherford,Extendable 20-40,Road-worthy,2,$19.500 
+NJ,Hope,Slider 20',Road-worthy,10,$20.150 
+NJ,Newark,Gooseneck 40',ASIS,1,$7.800 
+OH,Cleveland,Gooseneck 40',ASIS,1,$7.150 
+OR,Troutdale,Gooseneck 40',1New,5,$24.050 
+TX,Amarillo,Spread 40',Road-worthy,5,$22.100 
+TX,Dallas,Gooseneck 40',ASIS,15,$7.150 
+TX,Houston,Extendable 20-40,Road-worthy,5,$20.800 
+TX,Laredo,Extendable 40-45-48,Road-worthy,1,$14.950 
+TX,Laredo,Gooseneck 53',1New,15,$28.600 
+VA,Norfolk,Gooseneck 40',ASIS,1,$7.800 
+VA,Norfolk,Gooseneck 40',Road-worthy,4,$18.850 
+VA,Norfolk,Gooseneck 45',Road-worthy,2,$9.750 
+WA,Seattle,Gooseneck 40',ASIS,9,$7.150 
+WA,Seattle,Gooseneck 40',Road-worthy,1,$11.700 
+WA,Seattle,Slider 20',ASIS,2,$6.500 
