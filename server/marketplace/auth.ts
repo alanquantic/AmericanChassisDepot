@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { eq, and } from 'drizzle-orm';
 import { getMarketplaceDb } from './db.js';
 import { marketplaceUsers } from '../../shared/marketplace-schema.js';
 
 // JWT Configuration
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
-const JWT_ACCESS_EXPIRY = process.env.JWT_ACCESS_TOKEN_EXPIRY || '15m';
-const JWT_REFRESH_EXPIRY = process.env.JWT_REFRESH_TOKEN_EXPIRY || '7d';
+const JWT_ACCESS_EXPIRY: SignOptions['expiresIn'] = (process.env.JWT_ACCESS_TOKEN_EXPIRY || '15m') as SignOptions['expiresIn'];
+const JWT_REFRESH_EXPIRY: SignOptions['expiresIn'] = (process.env.JWT_REFRESH_TOKEN_EXPIRY || '7d') as SignOptions['expiresIn'];
 
 // Types
 export interface JWTPayload {
@@ -47,7 +47,7 @@ export function generateAccessToken(user: { id: number; email: string; role: str
     role: user.role,
     type: 'access'
   };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_ACCESS_EXPIRY as string });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_ACCESS_EXPIRY });
 }
 
 export function generateRefreshToken(user: { id: number; email: string; role: string }): string {
@@ -57,7 +57,7 @@ export function generateRefreshToken(user: { id: number; email: string; role: st
     role: user.role,
     type: 'refresh'
   };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_REFRESH_EXPIRY as string });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_REFRESH_EXPIRY });
 }
 
 export function verifyToken(token: string): JWTPayload | null {
