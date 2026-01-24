@@ -420,6 +420,46 @@ export async function getMarketplaceStats(): Promise<any> {
   return apiRequest('/admin/stats');
 }
 
+// =============================================
+// STRIPE PAYMENTS
+// =============================================
+
+export async function startStripeOnboarding(): Promise<{ url: string; accountId: string }> {
+  return apiRequest('/payments/connect/onboard', { method: 'POST' });
+}
+
+export async function getStripeAccountStatus(): Promise<{
+  hasAccount: boolean;
+  accountId?: string;
+  chargesEnabled?: boolean;
+  payoutsEnabled?: boolean;
+  detailsSubmitted?: boolean;
+}> {
+  return apiRequest('/payments/connect/status');
+}
+
+export async function getStripeDashboardUrl(): Promise<{ url: string }> {
+  return apiRequest('/payments/connect/dashboard');
+}
+
+export async function createCheckout(offerId: number): Promise<{ url: string }> {
+  return apiRequest('/payments/checkout', {
+    method: 'POST',
+    body: JSON.stringify({ offerId }),
+  });
+}
+
+export async function getCheckoutSession(sessionId: string): Promise<{
+  id: string;
+  status: string;
+  paymentStatus: string;
+  amountTotal: number;
+  currency: string;
+  customerEmail?: string;
+}> {
+  return apiRequest(`/payments/checkout/${sessionId}`);
+}
+
 export async function getPendingListings(): Promise<any[]> {
   return apiRequest('/admin/listings/pending');
 }

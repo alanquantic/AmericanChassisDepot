@@ -14,8 +14,12 @@ import {
 import * as storage from './storage';
 import { isMarketplaceAvailable } from './db';
 import { sendOfferNotification, sendListingApprovalNotification } from './email';
+import stripeRoutes from './stripe-routes';
 
 const router = Router();
+
+// Mount Stripe routes
+router.use('/payments', stripeRoutes);
 
 // Middleware to check if marketplace is available
 router.use((req, res, next) => {
