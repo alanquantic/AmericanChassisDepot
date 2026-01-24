@@ -64,16 +64,20 @@ const registerSchema = z.object({
 
 router.post('/auth/register', registerRateLimiter, async (req: Request, res: Response) => {
   try {
+    console.log('Registration attempt for:', req.body.email);
     const data = registerSchema.parse(req.body);
+    console.log('Schema validated, registering user...');
+    
     const user = await registerUser(data);
+    console.log('User registered successfully:', user.id);
     
-    // Audit log for registration
-    await auditUser.create(req as AuthenticatedRequest, user.id, { email: user.email, role: user.role });
+    // Audit log for registration (non-blocking)
+    auditUser.create(req as AuthenticatedRequest, user.id, { email: user.email, role: user.role }).catch(e => console.error('Audit log error:', e));
     
-    // Send welcome email to new user (determines language from request)
+    // Send welcome email to new user (non-blocking)
     const language = req.headers['accept-language']?.includes('es') ? 'es' : 'en';
     const userName = user.firstName || user.email.split('@')[0];
-    await sendWelcomeEmail(user.email, userName, language);
+    sendWelcomeEmail(user.email, userName, language).catch(e => console.error('Welcome email error:', e));
     
     res.status(201).json({
       message: 'Registration successful',
@@ -86,11 +90,15 @@ router.post('/auth/register', registerRateLimiter, async (req: Request, res: Res
       }
     });
   } catch (error: any) {
-    console.error('Registration error:', error);
+    console.error('Registration error:', error.message, error.stack);
     if (error.message === 'Email already registered') {
       return res.status(400).json({ message: error.message });
     }
-    res.status(500).json({ message: 'Registration failed' });
+    // Return more specific error info in development
+    const errorDetail = process.env.NODE_ENV === 'production' 
+      ? 'Registration failed' 
+      : `Registration failed: ${error.message}`;
+    res.status(500).json({ message: errorDetail, error: error.message });
   }
 });
 
