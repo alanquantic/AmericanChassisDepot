@@ -169,6 +169,9 @@ export const marketplaceTranslations = {
     registrationSuccessful: 'Registration Successful!',
     accountCreated: 'Your account has been created. Redirecting to login...',
     creatingAccount: 'Creating Account...',
+    
+    // Reference Images
+    referenceImage: 'Reference image',
   },
   es: {
     // Page titles
@@ -338,8 +341,90 @@ export const marketplaceTranslations = {
     registrationSuccessful: '¡Registro Exitoso!',
     accountCreated: 'Tu cuenta ha sido creada. Redirigiendo al inicio de sesión...',
     creatingAccount: 'Creando Cuenta...',
+    
+    // Reference Images
+    referenceImage: 'Imagen de referencia',
   },
 };
+
+// Reference images by chassis type (lowercase, normalized)
+const chassisReferenceImages: Record<string, string> = {
+  // Gooseneck variants
+  'gooseneck': '/assets/40ft-gooseneck-container.webp',
+  'gooseneck tandem': '/assets/40ft-gooseneck-container.webp',
+  'gooseneck triaxle': '/assets/40ft-gooseneck-triaxle.webp',
+  'gooseneck lightweight': '/assets/40ft-gooseneck-lightweight.webp',
+  '40ft gooseneck': '/assets/40ft-gooseneck-container.webp',
+  '53ft gooseneck': '/assets/53-gn-tandem-intermodal.webp',
+  
+  // Slider variants
+  'slider': '/assets/20-40-slider-12pins-tandem.webp',
+  'slider tandem': '/assets/20-40-slider-12pins-tandem.webp',
+  'slider triaxle': '/assets/33-slider-triaxle.webp',
+  '33 slider': '/assets/33-slider-triaxle.webp',
+  '53 slider': '/assets/53-gn-slider-tandem.webp',
+  
+  // Extendable variants
+  'extendable': '/assets/40-45-extendable.webp',
+  'extendable tandem': '/assets/20-40-extendable-tandem.webp',
+  'extendable triaxle': '/assets/40-45-48-53-extendable-triaxle.webp',
+  '20-40 extendable': '/assets/20-40-extendable-tandem.webp',
+  '40-45 extendable': '/assets/40-45-extendable.webp',
+  '40-45-48-53 extendable': '/assets/40-45-48-53-extendable-triaxle.webp',
+  
+  // Triaxle variants
+  'triaxle': '/assets/20-40-12-pins-triaxle.webp',
+  '12 pins triaxle': '/assets/20-40-12-pins-triaxle.webp',
+  '20-40 triaxle': '/assets/20-40-12-pins-triaxle.webp',
+  
+  // Tandem variants
+  'tandem': '/assets/20-sl-tandem.webp',
+  '20 tandem': '/assets/20-sl-tandem.webp',
+  '20-40 tandem': '/assets/20-40-slider-12pins-tandem.webp',
+  
+  // Four axle
+  'four axle': '/assets/40ft-lightweight-four-axle.webp',
+  'lightweight four axle': '/assets/40ft-lightweight-four-axle.webp',
+  
+  // Tank
+  'tank': '/assets/20ft-iso-tank-container-chassis.webp',
+  'iso tank': '/assets/20ft-iso-tank-container-chassis.webp',
+  
+  // Default fallback
+  'default': '/assets/40ft-gooseneck-container.webp',
+};
+
+/**
+ * Get reference image URL based on chassis type
+ * Returns null if no reference image should be shown
+ */
+export function getReferenceImage(chassisType: string, chassisSize?: string): string {
+  if (!chassisType) return chassisReferenceImages['default'];
+  
+  const normalizedType = chassisType.toLowerCase().trim();
+  const normalizedSize = chassisSize?.toLowerCase().trim() || '';
+  
+  // Try specific combination first (size + type)
+  const combinedKey = `${normalizedSize} ${normalizedType}`.trim();
+  if (chassisReferenceImages[combinedKey]) {
+    return chassisReferenceImages[combinedKey];
+  }
+  
+  // Try just the type
+  if (chassisReferenceImages[normalizedType]) {
+    return chassisReferenceImages[normalizedType];
+  }
+  
+  // Try partial matches
+  for (const [key, url] of Object.entries(chassisReferenceImages)) {
+    if (normalizedType.includes(key) || key.includes(normalizedType)) {
+      return url;
+    }
+  }
+  
+  // Return default
+  return chassisReferenceImages['default'];
+}
 
 export function t(key: keyof typeof marketplaceTranslations.en): string {
   const lang = getCurrentLanguage() as 'en' | 'es';

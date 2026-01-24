@@ -44,7 +44,7 @@ import {
   isAuthenticated,
   getStoredUser,
 } from '@/lib/marketplace-api';
-import { t, formatPrice, formatDate, getLocalizedField } from '@/lib/marketplace-i18n';
+import { t, formatPrice, formatDate, getLocalizedField, getReferenceImage } from '@/lib/marketplace-i18n';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
 
 interface Props {
@@ -200,11 +200,12 @@ export default function ListingDetailPage({ slug }: Props) {
     );
   }
 
+  const hasOwnImages = !!(listing.primaryImageUrl || listing.images?.length);
   const images = listing.images?.length 
     ? [listing.primaryImageUrl, ...listing.images.map((img: any) => img.url || img)].filter(Boolean)
     : listing.primaryImageUrl 
       ? [listing.primaryImageUrl] 
-      : [];
+      : [getReferenceImage(listing.chassisType, listing.chassisSize)]; // Use reference image as fallback
 
   const conditionColors: Record<string, string> = {
     'ASIS': 'bg-red-500',
@@ -283,47 +284,48 @@ export default function ListingDetailPage({ slug }: Props) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              {images.length > 0 ? (
-                <>
-                  <img
-                    src={images[currentImageIndex]}
-                    alt={getLocalizedField(listing, 'title')}
-                    className="w-full h-full object-cover"
-                  />
-                  
-                  {images.length > 1 && (
-                    <>
-                      <button
-                        onClick={() => setCurrentImageIndex((i) => (i - 1 + images.length) % images.length)}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg"
-                      >
-                        <ChevronLeft className="w-6 h-6" />
-                      </button>
-                      <button
-                        onClick={() => setCurrentImageIndex((i) => (i + 1) % images.length)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg"
-                      >
-                        <ChevronRight className="w-6 h-6" />
-                      </button>
-                      
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                        {images.map((_, i) => (
-                          <button
-                            key={i}
-                            onClick={() => setCurrentImageIndex(i)}
-                            className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                              i === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                  <Truck className="w-24 h-24 text-gray-300" />
+              <img
+                src={images[currentImageIndex]}
+                alt={getLocalizedField(listing, 'title')}
+                className={`w-full h-full object-cover ${!hasOwnImages ? 'opacity-90' : ''}`}
+              />
+              
+              {/* Reference image indicator */}
+              {!hasOwnImages && (
+                <div className="absolute bottom-4 left-4">
+                  <span className="text-xs px-3 py-1.5 bg-black/60 text-white rounded-full backdrop-blur-sm">
+                    {t('referenceImage')}
+                  </span>
                 </div>
+              )}
+              
+              {images.length > 1 && hasOwnImages && (
+                <>
+                  <button
+                    onClick={() => setCurrentImageIndex((i) => (i - 1 + images.length) % images.length)}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentImageIndex((i) => (i + 1) % images.length)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                  
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    {images.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentImageIndex(i)}
+                        className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                          i === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
               )}
               
               {/* Badges */}
@@ -341,7 +343,7 @@ export default function ListingDetailPage({ slug }: Props) {
             </motion.div>
 
             {/* Thumbnail Strip */}
-            {images.length > 1 && (
+            {images.length > 1 && hasOwnImages && (
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {images.map((img, i) => (
                   <button

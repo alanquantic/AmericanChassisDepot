@@ -49,7 +49,7 @@ import {
   type MarketplaceListing,
   type ListingFilters 
 } from '@/lib/marketplace-api';
-import { t, formatPrice, getLocalizedField } from '@/lib/marketplace-i18n';
+import { t, formatPrice, getLocalizedField, getReferenceImage } from '@/lib/marketplace-i18n';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
 
 // Listing Card Component
@@ -104,9 +104,19 @@ function ListingCard({ listing, onFavoriteToggle }: {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-              <Truck className="w-16 h-16 text-gray-300" />
-            </div>
+            <>
+              <img
+                src={getReferenceImage(listing.chassisType, listing.chassisSize)}
+                alt={getLocalizedField(listing, 'title')}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+              />
+              {/* Reference image indicator */}
+              <div className="absolute bottom-2 left-2">
+                <span className="text-[10px] px-2 py-0.5 bg-black/60 text-white rounded-full backdrop-blur-sm">
+                  {t('referenceImage')}
+                </span>
+              </div>
+            </>
           )}
           
           {/* Badges */}
