@@ -16,6 +16,8 @@ import { isMarketplaceAvailable } from './db.js';
 import { sendOfferNotification, sendListingApprovalNotification } from './email.js';
 import stripeRoutes from './stripe-routes.js';
 import sitemapRoutes from './sitemap.js';
+import { authRateLimiter, registerRateLimiter } from './rate-limiter.js';
+import { auditUser, auditListing, auditOffer, auditOrder } from './audit-logger.js';
 
 const router = Router();
 
@@ -50,10 +52,13 @@ const registerSchema = z.object({
   phone: z.string().optional(),
 });
 
-router.post('/auth/register', async (req: Request, res: Response) => {
+router.post('/auth/register', registerRateLimiter, async (req: Request, res: Response) => {
   try {
     const data = registerSchema.parse(req.body);
     const user = await registerUser(data);
+    
+    // Audit log for registration
+    await auditUser.create(req as AuthenticatedRequest, user.id, { email: user.email, role: user.role });
     
     res.status(201).json({
       message: 'Registration successful',
@@ -80,7 +85,7 @@ const loginSchema = z.object({
   password: z.string(),
 });
 
-router.post('/auth/login', async (req: Request, res: Response) => {
+router.post('/auth/login', authRateLimiter, async (req: Request, res: Response) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
     const result = await loginUser(email, password);
@@ -680,6 +685,9 @@ router.put('/admin/listings/:id/approve', authenticateToken, requireAdmin, async
     const listingId = Number(req.params.id);
     const listing = await storage.approveListing(listingId, req.user!.id);
     
+    // Audit log
+    await auditListing.approve(req, listingId);
+    
     // Notify seller
     if (listing.sellerId) {
       await storage.createNotification({
@@ -715,6 +723,9 @@ router.put('/admin/listings/:id/reject', authenticateToken, requireAdmin, async 
     }
     
     const listing = await storage.rejectListing(listingId, req.user!.id, reason);
+    
+    // Audit log
+    await auditListing.reject(req, listingId, reason);
     
     // Notify seller
     if (listing.sellerId) {

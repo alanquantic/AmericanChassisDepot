@@ -639,6 +639,38 @@ export const marketplaceEmailTemplates = pgTable("marketplace_email_templates", 
 });
 
 // =============================================
+// AUDIT LOGS (Administrative Actions)
+// =============================================
+export const marketplaceAuditLogs = pgTable("marketplace_audit_logs", {
+  id: serial("id").primaryKey(),
+  
+  // Who performed the action
+  userId: integer("user_id").references(() => marketplaceUsers.id),
+  userEmail: text("user_email").notNull(),
+  userRole: text("user_role").notNull(),
+  
+  // What action was performed
+  action: text("action").notNull(), // e.g., 'user.suspend', 'listing.approve', 'order.refund'
+  entityType: text("entity_type").notNull(), // 'user', 'listing', 'offer', 'order', 'payment', 'system'
+  entityId: text("entity_id"), // ID of the affected entity
+  
+  // Change details
+  previousValue: text("previous_value"), // JSON string of previous state
+  newValue: text("new_value"), // JSON string of new state
+  metadata: text("metadata"), // Additional context as JSON
+  
+  // Request context
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  
+  // Classification
+  severity: text("severity").default("info"), // 'info', 'warning', 'critical'
+  reason: text("reason"), // Optional reason/notes for the action
+  
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// =============================================
 // ZOD SCHEMAS & TYPES
 // =============================================
 
@@ -698,3 +730,7 @@ export type MarketplaceSetting = typeof marketplaceSettings.$inferSelect;
 
 // Seller stats
 export type MarketplaceSellerStats = typeof marketplaceSellerStats.$inferSelect;
+
+// Audit logs
+export type MarketplaceAuditLog = typeof marketplaceAuditLogs.$inferSelect;
+export type InsertAuditLog = typeof marketplaceAuditLogs.$inferInsert;

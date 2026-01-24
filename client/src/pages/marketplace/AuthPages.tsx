@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Truck, AlertCircle, CheckCircle } from 'lucide-react';
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { PasswordStrengthIndicator } from '@/components/marketplace/PasswordStrengthIndicator';
 import { login, register } from '@/lib/marketplace-api';
 import { t } from '@/lib/marketplace-i18n';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
@@ -156,6 +157,7 @@ export function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [isPasswordStrong, setIsPasswordStrong] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -166,18 +168,22 @@ export function RegisterPage() {
     phone: '',
   });
 
+  const handlePasswordStrengthChange = useCallback((isStrong: boolean) => {
+    setIsPasswordStrong(isStrong);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError(lang === 'es' ? 'Las contraseñas no coinciden' : 'Passwords do not match');
       return;
     }
 
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters');
+    if (!isPasswordStrong) {
+      setError(lang === 'es' ? 'La contraseña no cumple los requisitos de seguridad' : 'Password does not meet security requirements');
       return;
     }
 
@@ -326,11 +332,12 @@ export function RegisterPage() {
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Min. 8 characters"
+                      placeholder={lang === 'es' ? 'Crear contraseña segura' : 'Create secure password'}
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       required
                       autoComplete="new-password"
+                      className={formData.password && !isPasswordStrong ? 'border-orange-300 focus:border-orange-500' : ''}
                     />
                     <button
                       type="button"
@@ -340,6 +347,13 @@ export function RegisterPage() {
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
+                  <PasswordStrengthIndicator 
+                    password={formData.password}
+                    language={lang as 'en' | 'es'}
+                    onStrengthChange={handlePasswordStrengthChange}
+                    showRules={true}
+                    minScore={4}
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -347,12 +361,19 @@ export function RegisterPage() {
                   <Input
                     id="confirmPassword"
                     type="password"
-                    placeholder="Confirm your password"
+                    placeholder={lang === 'es' ? 'Confirmar contraseña' : 'Confirm your password'}
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     required
                     autoComplete="new-password"
+                    className={formData.confirmPassword && formData.password !== formData.confirmPassword ? 'border-red-300 focus:border-red-500' : ''}
                   />
+                  {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                    <p className="text-xs text-red-500 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {lang === 'es' ? 'Las contraseñas no coinciden' : 'Passwords do not match'}
+                    </p>
+                  )}
                 </div>
 
                 <Button 

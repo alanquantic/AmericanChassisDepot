@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -366,18 +366,58 @@ export default function MarketplacePage() {
   const [, navigate] = useLocation();
   const lang = getCurrentLanguage();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [filters, setFilters] = useState<ListingFilters>({
-    page: 1,
-    limit: 20,
+  const [filters, setFilters] = useState<Omit<ListingFilters, 'page'>>({
+    limit: 12,
     sortBy: 'date_desc',
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  // Fetch data
-  const { data: listingsData, isLoading: listingsLoading, refetch } = useQuery({
-    queryKey: ['marketplace-listings', filters],
-    queryFn: () => getListings(filters),
+  // Infinite scroll query
+  const { 
+    data: listingsData, 
+    isLoading: listingsLoading, 
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    refetch 
+  } = useInfiniteQuery({
+    queryKey: ['marketplace-listings-infinite', filters],
+    queryFn: ({ pageParam = 1 }) => getListings({ ...filters, page: pageParam }),
+    getNextPageParam: (lastPage) => {
+      if (lastPage.pagination.hasMore) {
+        return (lastPage.pagination.page || 1) + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
   });
+
+  // Flatten all listings from all pages
+  const allListings = listingsData?.pages.flatMap(page => page.listings) || [];
+  const totalCount = listingsData?.pages[0]?.pagination.total || 0;
+
+  // Intersection Observer for infinite scroll
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    const [target] = entries;
+    if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: '200px',
+      threshold: 0,
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   const { data: chassisTypes = [] } = useQuery({
     queryKey: ['chassis-types'],
@@ -396,11 +436,11 @@ export default function MarketplacePage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setFilters({ ...filters, search: searchQuery, page: 1 });
+    setFilters({ ...filters, search: searchQuery });
   };
 
   const clearFilters = () => {
-    setFilters({ page: 1, limit: 20, sortBy: 'date_desc' });
+    setFilters({ limit: 12, sortBy: 'date_desc' });
     setSearchQuery('');
   };
 
@@ -547,11 +587,11 @@ export default function MarketplacePage() {
                   </Sheet>
 
                   {/* Results count */}
-                  {listingsData && (
+                  {totalCount > 0 && (
                     <p className="text-sm text-gray-600">
                       {t('showingResults')
-                        .replace('{count}', String(listingsData.listings.length))
-                        .replace('{total}', String(listingsData.pagination.total))}
+                        .replace('{count}', String(allListings.length))
+                        .replace('{total}', String(totalCount))}
                     </p>
                   )}
                 </div>
@@ -654,7 +694,7 @@ export default function MarketplacePage() {
               )}
 
               {/* Listings Grid */}
-              {listingsLoading ? (
+              {listingsLoading && allListings.length === 0 ? (
                 <div className={`grid gap-6 ${
                   viewMode === 'grid' 
                     ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3' 
@@ -664,7 +704,7 @@ export default function MarketplacePage() {
                     <ListingSkeleton key={i} />
                   ))}
                 </div>
-              ) : listingsData?.listings.length === 0 ? (
+              ) : allListings.length === 0 ? (
                 <div className="text-center py-16">
                   <Truck className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-700 mb-2">
@@ -685,7 +725,7 @@ export default function MarketplacePage() {
                         ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3' 
                         : 'grid-cols-1'
                     }`}>
-                      {listingsData?.listings.map((listing) => (
+                      {allListings.map((listing) => (
                         <ListingCard 
                           key={listing.id} 
                           listing={listing}
@@ -695,28 +735,24 @@ export default function MarketplacePage() {
                     </div>
                   </AnimatePresence>
 
-                  {/* Pagination */}
-                  {listingsData && listingsData.pagination.totalPages > 1 && (
-                    <div className="flex justify-center gap-2 mt-8">
-                      <Button
-                        variant="outline"
-                        disabled={filters.page === 1}
-                        onClick={() => setFilters({ ...filters, page: (filters.page || 1) - 1 })}
-                      >
-                        Previous
-                      </Button>
-                      <span className="flex items-center px-4 text-sm text-gray-600">
-                        Page {filters.page} of {listingsData.pagination.totalPages}
-                      </span>
-                      <Button
-                        variant="outline"
-                        disabled={!listingsData.pagination.hasMore}
-                        onClick={() => setFilters({ ...filters, page: (filters.page || 1) + 1 })}
-                      >
-                        Next
-                      </Button>
-                    </div>
-                  )}
+                  {/* Infinite Scroll Sentinel */}
+                  <div ref={loadMoreRef} className="w-full py-8">
+                    {isFetchingNextPage && (
+                      <div className="flex justify-center items-center gap-3">
+                        <div className="w-6 h-6 border-2 border-[#0A3161] border-t-transparent rounded-full animate-spin" />
+                        <span className="text-sm text-gray-600">
+                          {lang === 'es' ? 'Cargando más...' : 'Loading more...'}
+                        </span>
+                      </div>
+                    )}
+                    {!hasNextPage && allListings.length > 0 && (
+                      <p className="text-center text-sm text-gray-500">
+                        {lang === 'es' 
+                          ? `Mostrando todos los ${totalCount} chassis` 
+                          : `Showing all ${totalCount} chassis`}
+                      </p>
+                    )}
+                  </div>
                 </>
               )}
             </main>
