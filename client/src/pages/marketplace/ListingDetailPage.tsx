@@ -114,8 +114,12 @@ export default function ListingDetailPage({ slug }: Props) {
     }
     
     try {
-      const conversation = await startConversation(listing!.id);
-      navigate(`/${lang}/marketplace/messages/${conversation.id}`);
+      await startConversation(listing!.id);
+      toast({
+        title: lang === 'es' ? 'Conversación iniciada' : 'Conversation started',
+        description: lang === 'es' ? 'Ve a tu dashboard para ver los mensajes' : 'Go to your dashboard to view messages',
+      });
+      navigate(`/${lang}/marketplace/dashboard`);
     } catch (error: any) {
       toast({
         title: t('error'),

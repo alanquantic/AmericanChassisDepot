@@ -1,14 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { MenuIcon, XIcon, ChevronDownIcon, ChevronUpIcon } from '@/lib/icons';
+import { User, LogOut } from 'lucide-react';
 import LanguageSelector from '@/components/shared/LanguageSelector-simple';
 import { useLanguage } from '@/lib/i18n-simple';
+import { isAuthenticated, getStoredUser, logout } from '@/lib/marketplace-api';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileBrandsOpen, setIsMobileBrandsOpen] = useState(false);
-  const [location] = useLocation();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [location, navigate] = useLocation();
   const { t } = useLanguage();
+
+  // Check auth status
+  useEffect(() => {
+    const checkAuth = () => {
+      const authenticated = isAuthenticated();
+      setIsLoggedIn(authenticated);
+      if (authenticated) {
+        setUser(getStoredUser());
+      } else {
+        setUser(null);
+      }
+    };
+    checkAuth();
+    // Re-check on storage changes
+    window.addEventListener('storage', checkAuth);
+    // Re-check periodically for same-tab changes
+    const interval = setInterval(checkAuth, 1000);
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setIsLoggedIn(false);
+    setUser(null);
+    setIsUserMenuOpen(false);
+    navigate(`${langPrefix}/chassis-marketplace`);
+  };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -87,6 +122,50 @@ const Header: React.FC = () => {
             </Link>
           </nav>
           
+          {/* User Menu / Login */}
+          {isLoggedIn && user ? (
+            <div className="relative">
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#0A3161] flex items-center justify-center text-white text-sm font-medium">
+                  {(user.firstName?.[0] || user.email[0]).toUpperCase()}
+                </div>
+                <span className="hidden lg:inline text-sm font-medium text-gray-700 max-w-[100px] truncate">
+                  {user.firstName || user.email.split('@')[0]}
+                </span>
+              </button>
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border py-2 z-50">
+                  <Link
+                    href={`${langPrefix}/marketplace/dashboard`}
+                    onClick={() => setIsUserMenuOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <User className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    {location.startsWith('/es') ? 'Cerrar Sesión' : 'Log Out'}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href={`${langPrefix}/marketplace/login`}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-[#0A3161] text-[#0A3161] hover:bg-[#0A3161] hover:text-white transition text-sm font-medium"
+            >
+              <User className="w-4 h-4" />
+              {location.startsWith('/es') ? 'Iniciar Sesión' : 'Login'}
+            </Link>
+          )}
+          
           {/* Language Selector */}
           <LanguageSelector />
         </div>
@@ -153,6 +232,42 @@ const Header: React.FC = () => {
             >
               {t('marketplace')}
             </Link>
+            
+            {/* Mobile User Section */}
+            {isLoggedIn && user ? (
+              <div className="mt-4 pt-4 border-t">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-[#0A3161] flex items-center justify-center text-white font-medium">
+                    {(user.firstName?.[0] || user.email[0]).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{user.firstName || user.email.split('@')[0]}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
+                </div>
+                <Link
+                  href={`${langPrefix}/marketplace/dashboard`}
+                  onClick={closeMobileMenu}
+                  className="block py-2 px-4 text-center rounded-lg bg-gray-100 text-gray-700 font-medium mb-2"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => { handleLogout(); closeMobileMenu(); }}
+                  className="block w-full py-2 px-4 text-center rounded-lg bg-red-50 text-red-600 font-medium"
+                >
+                  {location.startsWith('/es') ? 'Cerrar Sesión' : 'Log Out'}
+                </button>
+              </div>
+            ) : (
+              <Link
+                href={`${langPrefix}/marketplace/login`}
+                onClick={closeMobileMenu}
+                className="block mt-4 py-3 px-4 text-center font-montserrat font-semibold rounded-lg border-2 border-[#0A3161] text-[#0A3161] hover:bg-[#0A3161] hover:text-white transition duration-200"
+              >
+                {location.startsWith('/es') ? 'Iniciar Sesión' : 'Login'}
+              </Link>
+            )}
           </nav>
         </div>
       )}
