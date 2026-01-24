@@ -160,6 +160,15 @@ drizzle/
 .yarn/install-state.gz
 .pnp.*
 
-# Allow versioning of public assets under client/public/assets
+# Allow versioning of public assets under client/public
+!client/public/
 !client/public/assets/
 !client/public/assets/**
+!client/public/manifest.json
+!client/public/sw.js
+!client/public/robots.txt
+!client/public/sitemap.xml
+!client/public/brochures/
+!client/public/brochures/**
+!client/public/videos/
+!client/public/videos/**

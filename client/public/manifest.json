@@ -1,0 +1,54 @@
+{
+  "name": "American Chassis Depot - Marketplace",
+  "short_name": "ACD Market",
+  "description": "Buy and sell container chassis. Find quality used and new chassis from verified sellers across the USA.",
+  "start_url": "/en/marketplace",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0A3161",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/acn.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/acn.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshot-marketplace.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Marketplace Home"
+    }
+  ],
+  "categories": ["business", "shopping"],
+  "shortcuts": [
+    {
+      "name": "Browse Chassis",
+      "short_name": "Browse",
+      "description": "Browse all chassis listings",
+      "url": "/en/chassis-marketplace",
+      "icons": [{ "src": "/acn.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "My Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard",
+      "url": "/en/marketplace/dashboard",
+      "icons": [{ "src": "/acn.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
