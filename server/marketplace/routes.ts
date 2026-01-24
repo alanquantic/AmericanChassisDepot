@@ -13,7 +13,17 @@ import {
 } from './auth.js';
 import * as storage from './storage.js';
 import { isMarketplaceAvailable } from './db.js';
-import { sendOfferNotification, sendListingApprovalNotification } from './email.js';
+import { 
+  sendOfferNotification, 
+  sendListingApprovalNotification,
+  sendWelcomeEmail,
+  sendOfferConfirmationToBuyer,
+  sendNewListingNotificationToAdmin,
+  sendMessageNotification,
+  sendSellerApplicationEmail,
+  sendSellerApprovalEmail,
+  sendOfferResponseEmail,
+} from './email.js';
 import stripeRoutes from './stripe-routes.js';
 import sitemapRoutes from './sitemap.js';
 import { authRateLimiter, registerRateLimiter } from './rate-limiter.js';
@@ -59,6 +69,11 @@ router.post('/auth/register', registerRateLimiter, async (req: Request, res: Res
     
     // Audit log for registration
     await auditUser.create(req as AuthenticatedRequest, user.id, { email: user.email, role: user.role });
+    
+    // Send welcome email to new user (determines language from request)
+    const language = req.headers['accept-language']?.includes('es') ? 'es' : 'en';
+    const userName = user.firstName || user.email.split('@')[0];
+    await sendWelcomeEmail(user.email, userName, language);
     
     res.status(201).json({
       message: 'Registration successful',
@@ -407,6 +422,42 @@ router.post('/conversations/:id/messages', authenticateToken, async (req: Authen
       ...data,
     });
     
+    // Get conversation details to send email notification
+    try {
+      const conversation = await storage.getConversationById(conversationId);
+      if (conversation && conversation.listing) {
+        // Determine who is the recipient (the other party in the conversation)
+        const recipientId = conversation.buyerId === req.user!.id 
+          ? conversation.sellerId 
+          : conversation.buyerId;
+        
+        if (recipientId) {
+          const recipient = await storage.getUserById(recipientId);
+          if (recipient && recipient.email) {
+            const senderName = req.user!.firstName || req.user!.companyName || req.user!.email.split('@')[0];
+            const recipientName = recipient.firstName || recipient.companyName || recipient.email.split('@')[0];
+            const recipientLanguage = recipient.preferredLanguage === 'es' ? 'es' : 'en';
+            const messagePreview = data.message.length > 150 
+              ? data.message.substring(0, 150) + '...' 
+              : data.message;
+            
+            await sendMessageNotification(
+              recipient.email,
+              recipientName,
+              senderName,
+              req.user!.email,
+              messagePreview,
+              conversation.listing,
+              recipientLanguage
+            );
+          }
+        }
+      }
+    } catch (emailError) {
+      console.error('Error sending message notification email:', emailError);
+      // Don't fail the request if email fails
+    }
+    
     res.status(201).json(newMessage);
   } catch (error: any) {
     console.error('Error sending message:', error);
@@ -483,8 +534,13 @@ router.post('/offers', authenticateToken, async (req: AuthenticatedRequest, res:
       actionUrl: `/marketplace/seller/offers`,
     });
     
-    // Also notify admins
+    // Notify admins/seller
     await sendOfferNotification(offer, listing, req.user!);
+    
+    // Send confirmation email to buyer
+    const buyerLanguage = req.user!.preferredLanguage === 'es' ? 'es' : 'en';
+    const buyerName = req.user!.firstName || req.user!.email.split('@')[0];
+    await sendOfferConfirmationToBuyer(req.user!.email, buyerName, offer, listing, buyerLanguage);
     
     res.status(201).json({
       message: 'Offer submitted successfully',
@@ -572,8 +628,46 @@ router.put('/offers/:id/respond', authenticateToken, requireSeller, async (req: 
       data.counterQuantity
     );
     
-    // TODO: Create notification for buyer
-    // TODO: If accepted, create order
+    // Get buyer and listing info for notifications
+    const buyer = await storage.getUserById(offer.buyerId);
+    const listing = await storage.getListingById(offer.listingId);
+    
+    if (buyer && listing) {
+      // Create notification for buyer
+      await storage.createNotification({
+        userId: buyer.id,
+        type: `offer_${newStatus}`,
+        category: 'offer',
+        title: newStatus === 'accepted' ? 'Offer Accepted!' : 
+               newStatus === 'rejected' ? 'Offer Rejected' : 'Counter Offer Received',
+        titleEs: newStatus === 'accepted' ? '¡Oferta Aceptada!' : 
+                 newStatus === 'rejected' ? 'Oferta Rechazada' : 'Contra Oferta Recibida',
+        message: `Your offer on "${listing.title}" has been ${newStatus}`,
+        messageEs: `Tu oferta en "${listing.titleEs || listing.title}" ha sido ${newStatus === 'accepted' ? 'aceptada' : newStatus === 'rejected' ? 'rechazada' : 'respondida con una contra oferta'}`,
+        listingId: listing.id,
+        offerId: offer.id,
+        fromUserId: req.user!.id,
+        actionUrl: `/marketplace/dashboard`,
+      });
+      
+      // Send email notification to buyer
+      const buyerName = buyer.firstName || buyer.companyName || buyer.email.split('@')[0];
+      const buyerLanguage = buyer.preferredLanguage === 'es' ? 'es' : 'en';
+      const counterOfferDetails = data.action === 'counter' && data.counterPrice ? {
+        price: data.counterPrice,
+        quantity: data.counterQuantity || offer.quantity,
+      } : undefined;
+      
+      await sendOfferResponseEmail(
+        buyer.email,
+        buyerName,
+        offer,
+        listing,
+        data.action as 'accepted' | 'rejected' | 'countered',
+        counterOfferDetails,
+        buyerLanguage
+      );
+    }
     
     res.json({
       message: `Offer ${newStatus}`,

@@ -963,3 +963,45 @@ export async function getMarketplaceStats() {
     offers: offerStats,
   };
 }
+
+// =============================================
+// ADDITIONAL HELPER FUNCTIONS
+// =============================================
+
+export async function getUserById(userId: number) {
+  const db = getMarketplaceDb();
+  
+  const [user] = await db
+    .select()
+    .from(marketplaceUsers)
+    .where(eq(marketplaceUsers.id, userId))
+    .limit(1);
+    
+  return user || null;
+}
+
+export async function getConversationById(conversationId: number) {
+  const db = getMarketplaceDb();
+  
+  const [conversation] = await db
+    .select()
+    .from(marketplaceConversations)
+    .where(eq(marketplaceConversations.id, conversationId))
+    .limit(1);
+    
+  if (!conversation) {
+    return null;
+  }
+  
+  // Get listing details
+  const [listing] = await db
+    .select()
+    .from(marketplaceListings)
+    .where(eq(marketplaceListings.id, conversation.listingId))
+    .limit(1);
+    
+  return {
+    ...conversation,
+    listing: listing || null,
+  };
+}

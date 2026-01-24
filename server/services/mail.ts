@@ -1,37 +1,123 @@
-
-import mailgun from 'mailgun-js';
+import sgMail from '@sendgrid/mail';
 import { ContactMessage } from '@shared/schema';
 import { processFormSubmission } from './odoo.js';
 
-// Only initialize Mailgun if credentials are available
-const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
-const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
+// =============================================
+// SENDGRID CONFIGURATION
+// =============================================
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'sales@americanchassisdepot.com';
+const FROM_NAME = process.env.SENDGRID_FROM_NAME || 'American Chassis Depot';
+const ADMIN_EMAIL = process.env.MARKETPLACE_ADMIN_EMAIL || 'sales@americanchassisdepot.com';
 
-if (!MAILGUN_API_KEY || !MAILGUN_DOMAIN) {
-  console.error('ERROR: Missing Mailgun credentials. MAILGUN_API_KEY and MAILGUN_DOMAIN are required.');
+// Initialize SendGrid
+if (SENDGRID_API_KEY) {
+  sgMail.setApiKey(SENDGRID_API_KEY);
+  console.log('✅ SendGrid initialized successfully');
+} else {
+  console.warn('⚠️ SendGrid API key not configured. Email notifications will be disabled.');
 }
 
-const mg = MAILGUN_API_KEY && MAILGUN_DOMAIN ? mailgun({
-  apiKey: MAILGUN_API_KEY,
-  domain: MAILGUN_DOMAIN,
-  timeout: 10000 // 10 second timeout
-}) : null;
-
-console.log('Mailgun Configuration Status:', {
-  hasApiKey: !!MAILGUN_API_KEY,
-  hasDomain: !!MAILGUN_DOMAIN,
-  isInitialized: !!mg
+console.log('SendGrid Configuration Status:', {
+  hasApiKey: !!SENDGRID_API_KEY,
+  fromEmail: FROM_EMAIL,
+  adminEmail: ADMIN_EMAIL
 });
+
+// Generic email sender
+async function sendEmail(options: {
+  to: string | string[];
+  subject: string;
+  html: string;
+  text?: string;
+  replyTo?: string;
+}): Promise<boolean> {
+  if (!SENDGRID_API_KEY) {
+    console.warn('Email skipped: SendGrid API key not configured');
+    return false;
+  }
+
+  try {
+    await sgMail.send({
+      to: options.to,
+      from: {
+        email: FROM_EMAIL,
+        name: FROM_NAME,
+      },
+      replyTo: options.replyTo,
+      subject: options.subject,
+      html: options.html,
+      text: options.text || options.html.replace(/<[^>]*>/g, ''),
+    });
+    console.log(`✅ Email sent successfully to ${Array.isArray(options.to) ? options.to.join(', ') : options.to}`);
+    return true;
+  } catch (error: any) {
+    console.error('❌ Error sending email:', error.response?.body || error.message);
+    return false;
+  }
+}
+
+// =============================================
+// EMAIL TEMPLATES
+// =============================================
+
+function getBaseEmailTemplate(content: string, language: 'en' | 'es' = 'en'): string {
+  const footer = language === 'es' 
+    ? `
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #B22234; text-align: center;">
+        <p style="color: #666; font-size: 12px;">
+          American Chassis Depot<br>
+          4811 N McCarty St Suite C, Houston, TX 77013<br>
+          <a href="tel:+14422579946" style="color: #0A3161;">+1 (442) 257-9946</a> | 
+          <a href="mailto:sales@americanchassisdepot.com" style="color: #0A3161;">sales@americanchassisdepot.com</a>
+        </p>
+        <p style="color: #999; font-size: 10px;">
+          © ${new Date().getFullYear()} American Chassis Depot. Todos los derechos reservados.
+        </p>
+      </div>
+    `
+    : `
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #B22234; text-align: center;">
+        <p style="color: #666; font-size: 12px;">
+          American Chassis Depot<br>
+          4811 N McCarty St Suite C, Houston, TX 77013<br>
+          <a href="tel:+14422579946" style="color: #0A3161;">+1 (442) 257-9946</a> | 
+          <a href="mailto:sales@americanchassisdepot.com" style="color: #0A3161;">sales@americanchassisdepot.com</a>
+        </p>
+        <p style="color: #999; font-size: 10px;">
+          © ${new Date().getFullYear()} American Chassis Depot. All rights reserved.
+        </p>
+      </div>
+    `;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+      <div style="background: linear-gradient(135deg, #0A3161 0%, #1a4a8a 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <img src="https://americanchassisdepot.com/assets/logo.png" alt="American Chassis Depot" style="max-width: 180px; height: auto;">
+      </div>
+      <div style="background: #fff; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        ${content}
+        ${footer}
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+// =============================================
+// CONTACT FORM NOTIFICATIONS
+// =============================================
 
 export async function sendContactNotification(
   contactMessage: ContactMessage, 
   sourceUrl: string
 ): Promise<boolean> {
-  if (!mg) {
-    console.warn('Email notification skipped: Mailgun not configured');
-    return false;
-  }
-
   // INTEGRACIÓN CON ODOO - Crear lead automáticamente
   try {
     const language = sourceUrl?.includes('/es/') ? 'es' : 'en';
@@ -81,78 +167,73 @@ export async function sendContactNotification(
     // Continuar con el envío de email aunque falle Odoo
   }
 
-  try {
-    const data = {
-      from: `American Chassis Depot Website <no-reply@${MAILGUN_DOMAIN}>`,
-              to: ['sales@americanchassisdepot.com', 'alan@ceosnm.com'], // Restaurado: sales@americanchassisdepot.com
-      subject: `New Contact Form Submission from ${contactMessage.name}`,
-      text: `
-New contact form submission from the American Chassis Depot website.
+  // Send notification to admins via SendGrid
+  const adminContent = `
+    <h2 style="color: #0A3161; margin-top: 0;">📬 New Contact Form Submission</h2>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #333;">Contact Details</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; width: 140px;">Name:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">${contactMessage.name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Email:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            <a href="mailto:${contactMessage.email}" style="color: #0A3161;">${contactMessage.email}</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Phone:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            ${contactMessage.phone ? `<a href="tel:${contactMessage.phone}" style="color: #0A3161;">${contactMessage.phone}</a>` : 'Not provided'}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Company:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">${contactMessage.company || 'Not provided'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Units Needed:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">${contactMessage.units || 'Not specified'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Interested In:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">${contactMessage.interest || 'Not specified'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Source URL:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            <a href="${sourceUrl}" style="color: #0A3161; word-break: break-all;">${sourceUrl}</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; font-weight: bold;">Submitted:</td>
+          <td style="padding: 10px;">${new Date(contactMessage.createdAt).toLocaleString()}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #333;">Message</h3>
+      <p style="white-space: pre-line; margin-bottom: 0;">${contactMessage.message}</p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="mailto:${contactMessage.email}?subject=Re: Your inquiry to American Chassis Depot" 
+         style="background: #0A3161; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
+        Reply to Customer
+      </a>
+    </div>
+  `;
 
-Submission Details:
--------------------
-Name: ${contactMessage.name}
-Email: ${contactMessage.email}
-Phone: ${contactMessage.phone || 'Not provided'}
-Company: ${contactMessage.company || 'Not provided'}
-Number of Units: ${contactMessage.units || 'Not provided'}
-Interested In: ${contactMessage.interest || 'Not specified'}
-Source URL: ${sourceUrl}
-Submitted on: ${new Date(contactMessage.createdAt).toLocaleString()}
-
-Message:
-${contactMessage.message}
-      `,
-      html: `
-<h2>New contact form submission from the American Chassis Depot website.</h2>
-
-<h3>Submission Details:</h3>
-<table style="border-collapse: collapse; width: 100%;">
-  <tr style="background-color: #f2f2f2;">
-    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Name:</strong></td>
-    <td style="padding: 8px; border: 1px solid #ddd;">${contactMessage.name}</td>
-  </tr>
-  <tr>
-    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Email:</strong></td>
-    <td style="padding: 8px; border: 1px solid #ddd;">${contactMessage.email}</td>
-  </tr>
-  <tr style="background-color: #f2f2f2;">
-    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Phone:</strong></td>
-    <td style="padding: 8px; border: 1px solid #ddd;">${contactMessage.phone || 'Not provided'}</td>
-  </tr>
-  <tr>
-    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Company:</strong></td>
-    <td style="padding: 8px; border: 1px solid #ddd;">${contactMessage.company || 'Not provided'}</td>
-  </tr>
-  <tr style="background-color: #f2f2f2;">
-    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Number of Units:</strong></td>
-    <td style="padding: 8px; border: 1px solid #ddd;">${contactMessage.units || 'Not provided'}</td>
-  </tr>
-  <tr>
-    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Interested In:</strong></td>
-    <td style="padding: 8px; border: 1px solid #ddd;">${contactMessage.interest || 'Not specified'}</td>
-  </tr>
-  <tr style="background-color: #f2f2f2;">
-    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Source URL:</strong></td>
-    <td style="padding: 8px; border: 1px solid #ddd;">${sourceUrl}</td>
-  </tr>
-  <tr>
-    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Submitted on:</strong></td>
-    <td style="padding: 8px; border: 1px solid #ddd;">${new Date(contactMessage.createdAt).toLocaleString()}</td>
-  </tr>
-</table>
-
-<h3>Message:</h3>
-<p style="white-space: pre-line; background-color: #f9f9f9; padding: 15px; border-radius: 5px;">${contactMessage.message}</p>
-      `
-    };
-
-    await mg.messages().send(data);
-    return true;
-  } catch (error) {
-    console.error('Error sending contact notification email:', error);
-    return false;
-  }
+  return sendEmail({
+    to: ADMIN_EMAIL,
+    subject: `📬 New Contact: ${contactMessage.name} - ${contactMessage.interest || 'General Inquiry'}`,
+    html: getBaseEmailTemplate(adminContent),
+    replyTo: contactMessage.email,
+  });
 }
 
 export async function sendCustomerConfirmationEmail(
@@ -170,134 +251,97 @@ export async function sendCustomerConfirmationEmail(
   },
   language: 'en' | 'es' = 'en'
 ): Promise<boolean> {
-  if (!mg) {
-    console.warn('Customer confirmation email skipped: Mailgun not configured');
-    return false;
-  }
+  const isSpanish = language === 'es';
+  
+  const actionText = contactData.actionType === 'quote' 
+    ? (isSpanish ? 'solicitud de cotización' : 'quote request')
+    : (isSpanish ? 'descarga de folleto' : 'brochure download');
 
-  try {
-    const isSpanish = language === 'es';
-    const actionText = contactData.actionType === 'quote' 
-      ? (isSpanish ? 'solicitud de cotización' : 'quote request')
-      : (isSpanish ? 'descarga de folleto' : 'brochure download');
+  const content = isSpanish ? `
+    <h2 style="color: #0A3161; margin-top: 0;">¡Gracias por contactarnos!</h2>
     
-    const subject = isSpanish 
-      ? `Confirmación de ${actionText} - American Chassis Depot`
-      : `${actionText.charAt(0).toUpperCase() + actionText.slice(1)} Confirmation - American Chassis Depot`;
-
-    const logoUrl = 'https://americanchassisdepot.com/assets/logo.png';
+    <p>Hola ${contactData.name},</p>
     
-    const emailContent = isSpanish ? {
-      greeting: `Hola ${contactData.name},`,
-      thankYou: 'Gracias por tu interés en American Chassis Depot.',
-      confirmation: `Hemos recibido tu ${actionText} para el producto:`,
-      productInfo: contactData.chassisName ? `Producto: ${contactData.chassisName}` : 'Producto: General',
-      nextSteps: contactData.actionType === 'quote' 
-        ? 'Nuestro equipo de ventas revisará tu solicitud y se pondrá en contacto contigo en las próximas 24 horas con una cotización personalizada.'
-        : 'El folleto técnico se ha descargado correctamente. Si tienes alguna pregunta sobre las especificaciones, no dudes en contactarnos.',
-      contactInfo: 'Si tienes alguna pregunta urgente, puedes contactarnos directamente:',
-      phone: 'Teléfono: +1 346 395 6739',
-      email: 'Email: sales@americanchassisdepot.com', // Restaurado: sales@americanchassisdepot.com
-      website: 'Sitio web: www.americanchassisdepot.com',
-      footer: 'Saludos cordiales,\nEl equipo de American Chassis Depot'
-    } : {
-      greeting: `Hello ${contactData.name},`,
-      thankYou: 'Thank you for your interest in American Chassis Depot.',
-      confirmation: `We have received your ${actionText} for the product:`,
-      productInfo: contactData.chassisName ? `Product: ${contactData.chassisName}` : 'Product: General',
-      nextSteps: contactData.actionType === 'quote'
-        ? 'Our sales team will review your request and contact you within the next 24 hours with a personalized quote.'
-        : 'The technical brochure has been downloaded successfully. If you have any questions about the specifications, please don\'t hesitate to contact us.',
-      contactInfo: 'If you have any urgent questions, you can contact us directly:',
-      phone: 'Phone: +1 346 395 6739',
-      email: 'Email: sales@americanchassisdepot.com', // Restaurado: sales@americanchassisdepot.com
-      website: 'Website: www.americanchassisdepot.com',
-      footer: 'Best regards,\nThe American Chassis Depot Team'
-    };
-
-    const data = {
-      from: `American Chassis Depot <no-reply@${MAILGUN_DOMAIN}>`,
-      to: contactData.email,
-      subject: subject,
-      text: `
-${emailContent.greeting}
-
-${emailContent.thankYou}
-
-${emailContent.confirmation}
-${emailContent.productInfo}
-
-${emailContent.nextSteps}
-
-${emailContent.contactInfo}
-${emailContent.phone}
-${emailContent.email}
-${emailContent.website}
-
-${emailContent.footer}
-      `,
-      html: `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${subject}</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .logo { max-width: 200px; height: auto; }
-        .content { background-color: #f9f9f9; padding: 30px; border-radius: 10px; }
-        .greeting { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
-        .product-info { background-color: #e8f4f8; padding: 15px; border-radius: 5px; margin: 20px 0; }
-        .contact-info { background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; }
-        .footer { margin-top: 30px; padding-top: 20px; border-top: 2px solid #B22234; text-align: center; }
-        .accent { color: #B22234; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <img src="${logoUrl}" alt="American Chassis Depot" class="logo">
+    <p>Hemos recibido tu ${actionText} y nuestro equipo la está revisando.</p>
+    
+    ${contactData.chassisName ? `
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="margin-top: 0;">Producto de Interés</h3>
+        <p style="margin-bottom: 0; font-weight: bold;">${contactData.chassisName}</p>
+        ${contactData.chassisSlug ? `
+          <a href="https://www.americanchassisdepot.com/es/product/${contactData.chassisSlug}" 
+             style="color: #0A3161;">Ver detalles del producto</a>
+        ` : ''}
+      </div>
+    ` : ''}
+    
+    <div style="background: #d4edda; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #155724;">¿Qué sigue?</h3>
+      <ul style="margin-bottom: 0;">
+        ${contactData.actionType === 'quote' ? `
+          <li>Nuestro equipo de ventas revisará tu solicitud</li>
+          <li>Te contactaremos en las próximas 24 horas con una cotización personalizada</li>
+          <li>Estamos disponibles para responder cualquier pregunta</li>
+        ` : `
+          <li>Tu folleto técnico se ha descargado correctamente</li>
+          <li>Si tienes preguntas sobre las especificaciones, contáctanos</li>
+          <li>Nuestro equipo está listo para ayudarte</li>
+        `}
+      </ul>
     </div>
     
-    <div class="content">
-        <div class="greeting">${emailContent.greeting}</div>
-        
-        <p>${emailContent.thankYou}</p>
-        
-        <p>${emailContent.confirmation}</p>
-        
-        <div class="product-info">
-            <strong>${emailContent.productInfo}</strong>
-        </div>
-        
-        <p>${emailContent.nextSteps}</p>
-        
-        <div class="contact-info">
-            <p><strong>${emailContent.contactInfo}</strong></p>
-            <p>${emailContent.phone}</p>
-            <p>${emailContent.email}</p>
-            <p>${emailContent.website}</p>
-        </div>
-        
-        <p>${emailContent.footer}</p>
+    <p><strong>¿Necesitas ayuda urgente?</strong></p>
+    <p>
+      📞 Llámanos: <a href="tel:+14422579946" style="color: #0A3161;">+1 (442) 257-9946</a><br>
+      ✉️ Email: <a href="mailto:sales@americanchassisdepot.com" style="color: #0A3161;">sales@americanchassisdepot.com</a>
+    </p>
+  ` : `
+    <h2 style="color: #0A3161; margin-top: 0;">Thank you for contacting us!</h2>
+    
+    <p>Hello ${contactData.name},</p>
+    
+    <p>We have received your ${actionText} and our team is reviewing it.</p>
+    
+    ${contactData.chassisName ? `
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="margin-top: 0;">Product of Interest</h3>
+        <p style="margin-bottom: 0; font-weight: bold;">${contactData.chassisName}</p>
+        ${contactData.chassisSlug ? `
+          <a href="https://www.americanchassisdepot.com/en/product/${contactData.chassisSlug}" 
+             style="color: #0A3161;">View product details</a>
+        ` : ''}
+      </div>
+    ` : ''}
+    
+    <div style="background: #d4edda; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #155724;">What's Next?</h3>
+      <ul style="margin-bottom: 0;">
+        ${contactData.actionType === 'quote' ? `
+          <li>Our sales team will review your request</li>
+          <li>We'll contact you within 24 hours with a personalized quote</li>
+          <li>We're available to answer any questions</li>
+        ` : `
+          <li>Your technical brochure has been downloaded successfully</li>
+          <li>If you have questions about specifications, contact us</li>
+          <li>Our team is ready to help</li>
+        `}
+      </ul>
     </div>
     
-    <div class="footer">
-        <p style="color: #666; font-size: 12px;">
-            American Chassis Depot<br>
-            Your trusted partner in chassis solutions
-        </p>
-    </div>
-</body>
-</html>
-      `
-    };
+    <p><strong>Need urgent assistance?</strong></p>
+    <p>
+      📞 Call us: <a href="tel:+14422579946" style="color: #0A3161;">+1 (442) 257-9946</a><br>
+      ✉️ Email: <a href="mailto:sales@americanchassisdepot.com" style="color: #0A3161;">sales@americanchassisdepot.com</a>
+    </p>
+  `;
 
-    await mg.messages().send(data);
-    return true;
-  } catch (error) {
-    console.error('Error sending customer confirmation email:', error);
-    return false;
-  }
+  const subject = isSpanish 
+    ? `✅ Confirmación: ${actionText} - American Chassis Depot`
+    : `✅ Confirmation: ${actionText} - American Chassis Depot`;
+
+  return sendEmail({
+    to: contactData.email,
+    subject,
+    html: getBaseEmailTemplate(content, language),
+  });
 }
