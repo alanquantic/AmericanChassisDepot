@@ -15,6 +15,9 @@ import { getCurrentLanguage, setLanguage } from "@/lib/i18n-simple";
 import { usePageTracking } from "./hooks/use-page-tracking";
 import ElevenLabsWidget from "@/components/shared/ElevenLabsWidget";
 
+// Marketplace Pages
+import { MarketplacePage, ListingDetailPage, LoginPage, RegisterPage } from "@/pages/marketplace";
+
 function Router() {
   const [location, navigate] = useLocation();
   
@@ -89,6 +92,43 @@ function Router() {
           return <HomePage key={`size-${params.size}-${lang}`} initialSize={params.size} />;
         }}
       </Route>
+      
+      {/* ========== MARKETPLACE ROUTES ========== */}
+      {/* Marketplace main page */}
+      <Route path="/:lang/chassis-marketplace">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <MarketplacePage key={`marketplace-${lang}`} />;
+        }}
+      </Route>
+      
+      {/* Marketplace listing detail */}
+      <Route path="/:lang/chassis-marketplace/:slug">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <ListingDetailPage slug={params.slug} key={`listing-${params.slug}`} />;
+        }}
+      </Route>
+      
+      {/* Marketplace auth */}
+      <Route path="/:lang/marketplace/login">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <LoginPage key={`login-${lang}`} />;
+        }}
+      </Route>
+      
+      <Route path="/:lang/marketplace/register">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <RegisterPage key={`register-${lang}`} />;
+        }}
+      </Route>
+      
       <Route>
         {() => <NotFound />}
       </Route>

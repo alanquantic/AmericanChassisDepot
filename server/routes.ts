@@ -6,10 +6,14 @@ import { insertContactMessageSchema } from "../shared/schema.js";
 import { ZodError } from "zod";
 import { sendContactNotification, sendCustomerConfirmationEmail } from "./services/mail.js";
 import { processFormSubmission, testOdooConnection, getOdooLeadStats } from "./services/odoo.js";
+import marketplaceRoutes from "./marketplace/routes.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API route prefix
   const apiPrefix = "/api";
+
+  // Register marketplace routes
+  app.use(`${apiPrefix}/marketplace`, marketplaceRoutes);
 
   // Get all conditions (new/used)
   app.get(`${apiPrefix}/conditions`, async (_req, res) => {
