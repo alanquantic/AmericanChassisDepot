@@ -328,7 +328,7 @@ export function MarketplaceLandingPage() {
                   </Button>
                 </Link>
                 <Link href="/marketplace/register?role=seller">
-                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg">
+                  <Button size="lg" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#1B3A5F] px-8 py-6 text-lg">
                     <TrendingUp className="w-5 h-5 mr-2" />
                     {t('heroSecondaryCta')}
                   </Button>
