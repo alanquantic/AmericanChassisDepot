@@ -5,6 +5,7 @@ import { User, LogOut } from 'lucide-react';
 import LanguageSelector from '@/components/shared/LanguageSelector-simple';
 import { useLanguage } from '@/lib/i18n-simple';
 import { isAuthenticated, getStoredUser, logout } from '@/lib/marketplace-api';
+import { t as tMarketplace } from '@/lib/marketplace-i18n';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -144,14 +145,14 @@ const Header: React.FC = () => {
                     className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <User className="w-4 h-4" />
-                    Dashboard
+                    {tMarketplace('dashboard')}
                   </Link>
                   <button
                     onClick={handleLogout}
                     className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                   >
                     <LogOut className="w-4 h-4" />
-                    {location.startsWith('/es') ? 'Cerrar Sesión' : 'Log Out'}
+                    {tMarketplace('logout')}
                   </button>
                 </div>
               )}
@@ -162,7 +163,7 @@ const Header: React.FC = () => {
               className="flex items-center gap-2 px-3 py-2 rounded-lg border border-[#0A3161] text-[#0A3161] hover:bg-[#0A3161] hover:text-white transition text-sm font-medium"
             >
               <User className="w-4 h-4" />
-              {location.startsWith('/es') ? 'Iniciar Sesión' : 'Login'}
+              {tMarketplace('login')}
             </Link>
           )}
           
@@ -188,7 +189,7 @@ const Header: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white pb-4 px-4">
           <div className="flex justify-between items-center mb-4">
-            <span className="font-montserrat font-medium text-primary">Menu</span>
+            <span className="font-montserrat font-medium text-primary">{tMarketplace('menu')}</span>
             <LanguageSelector />
           </div>
           <nav aria-label="Mobile Navigation">
@@ -250,13 +251,13 @@ const Header: React.FC = () => {
                   onClick={closeMobileMenu}
                   className="block py-2 px-4 text-center rounded-lg bg-gray-100 text-gray-700 font-medium mb-2"
                 >
-                  Dashboard
+                  {tMarketplace('dashboard')}
                 </Link>
                 <button
                   onClick={() => { handleLogout(); closeMobileMenu(); }}
                   className="block w-full py-2 px-4 text-center rounded-lg bg-red-50 text-red-600 font-medium"
                 >
-                  {location.startsWith('/es') ? 'Cerrar Sesión' : 'Log Out'}
+                  {tMarketplace('logout')}
                 </button>
               </div>
             ) : (
@@ -265,7 +266,7 @@ const Header: React.FC = () => {
                 onClick={closeMobileMenu}
                 className="block mt-4 py-3 px-4 text-center font-montserrat font-semibold rounded-lg border-2 border-[#0A3161] text-[#0A3161] hover:bg-[#0A3161] hover:text-white transition duration-200"
               >
-                {location.startsWith('/es') ? 'Iniciar Sesión' : 'Login'}
+                {tMarketplace('login')}
               </Link>
             )}
           </nav>

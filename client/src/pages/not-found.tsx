@@ -1,11 +1,15 @@
 import React from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useLanguage } from '@/lib/i18n-simple';
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
 const NotFound: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const [location] = useLocation();
+  
+  // Determine language prefix from URL or current language
+  const langPrefix = location.startsWith('/es') ? '/es' : location.startsWith('/en') ? '/en' : `/${language}`;
   
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
@@ -20,7 +24,7 @@ const NotFound: React.FC = () => {
             {t('pageNotFoundDescription')}
           </p>
           
-          <Link href="/" className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+          <Link href={langPrefix} className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
             {t('goHomeButton')}
           </Link>
         </CardContent>

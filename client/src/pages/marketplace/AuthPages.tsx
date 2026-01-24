@@ -126,7 +126,7 @@ export function LoginPage() {
                   className="w-full bg-[#0A3161] hover:bg-[#0A3161]/90"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Loading...' : t('login')}
+                  {isLoading ? t('loading') : t('login')}
                 </Button>
               </form>
 
@@ -226,10 +226,10 @@ export function RegisterPage() {
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Registration Successful!
+              {t('registrationSuccessful')}
             </h1>
             <p className="text-gray-600 mb-4">
-              Your account has been created. Redirecting to login...
+              {t('accountCreated')}
             </p>
           </motion.div>
         </main>
@@ -255,7 +255,7 @@ export function RegisterPage() {
               </div>
               <CardTitle className="text-2xl">{t('registerTitle')}</CardTitle>
               <CardDescription>
-                Join the {t('marketplace')}
+                {t('joinMarketplace')} {t('marketplace')}
               </CardDescription>
             </CardHeader>
             
@@ -381,7 +381,7 @@ export function RegisterPage() {
                   className="w-full bg-[#0A3161] hover:bg-[#0A3161]/90"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Creating Account...' : t('register')}
+                  {isLoading ? t('creatingAccount') : t('register')}
                 </Button>
               </form>
 

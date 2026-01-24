@@ -100,7 +100,7 @@ export default function DashboardPage() {
 
   const stats = [
     {
-      label: 'Active Listings',
+      label: t('activeListings'),
       value: listings?.pagination?.total || 0,
       icon: Package,
       color: 'text-blue-600',
@@ -108,7 +108,7 @@ export default function DashboardPage() {
       show: isSeller,
     },
     {
-      label: 'Offers Received',
+      label: t('offersReceived'),
       value: receivedOffers?.filter(o => o.status === 'pending').length || 0,
       icon: DollarSign,
       color: 'text-green-600',
@@ -116,7 +116,7 @@ export default function DashboardPage() {
       show: isSeller,
     },
     {
-      label: 'Offers Sent',
+      label: t('offersSent'),
       value: sentOffers?.filter(o => o.status === 'pending').length || 0,
       icon: TrendingUp,
       color: 'text-purple-600',
@@ -124,7 +124,7 @@ export default function DashboardPage() {
       show: true,
     },
     {
-      label: 'Favorites',
+      label: t('favorites'),
       value: favorites?.length || 0,
       icon: Heart,
       color: 'text-red-600',
@@ -132,7 +132,7 @@ export default function DashboardPage() {
       show: true,
     },
     {
-      label: 'Unread Messages',
+      label: t('unreadMessages'),
       value: conversations?.reduce((acc, c) => acc + (c.buyerUnreadCount || 0) + (c.sellerUnreadCount || 0), 0) || 0,
       icon: MessageSquare,
       color: 'text-amber-600',
@@ -140,7 +140,7 @@ export default function DashboardPage() {
       show: true,
     },
     {
-      label: 'Notifications',
+      label: t('notifications'),
       value: notifications?.length || 0,
       icon: Bell,
       color: 'text-indigo-600',
@@ -265,12 +265,10 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h1 className="text-2xl font-bold mb-2">
-                        {lang === 'es' ? 'Bienvenido' : 'Welcome'}, {user.firstName || 'User'}!
+                        {t('welcome')}, {user.firstName || 'User'}!
                       </h1>
                       <p className="text-blue-100">
-                        {lang === 'es' 
-                          ? 'Administra tu cuenta del marketplace desde aquí.' 
-                          : 'Manage your marketplace account from here.'}
+                        {t('manageYourAccount')}
                       </p>
                     </div>
                     {isSeller && (
@@ -279,7 +277,7 @@ export default function DashboardPage() {
                         className="bg-white text-[#0A3161] hover:bg-gray-100"
                       >
                         <Plus className="w-4 h-4 mr-2" />
-                        New Listing
+                        {t('newListing')}
                       </Button>
                     )}
                   </div>
@@ -315,8 +313,8 @@ export default function DashboardPage() {
                 {/* Recent Activity */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
-                    <CardDescription>Your latest marketplace activity</CardDescription>
+                    <CardTitle>{t('recentActivity')}</CardTitle>
+                    <CardDescription>{t('yourLatestActivity')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {notifications && notifications.length > 0 ? (
@@ -340,7 +338,7 @@ export default function DashboardPage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-center text-gray-500 py-8">No recent activity</p>
+                      <p className="text-center text-gray-500 py-8">{t('noRecentActivity')}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -352,7 +350,7 @@ export default function DashboardPage() {
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle>{t('myListings')}</CardTitle>
-                    <CardDescription>Manage your chassis listings</CardDescription>
+                    <CardDescription>{t('manageListings')}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -376,7 +374,7 @@ export default function DashboardPage() {
                           <div className="flex-1">
                             <p className="font-medium">{listing.title}</p>
                             <p className="text-sm text-gray-500">
-                              {listing.city}, {listing.state} • {listing.quantityAvailable} units
+                              {listing.city}, {listing.state} • {listing.quantityAvailable} {t('units')}
                             </p>
                           </div>
                           <div className="text-right">
@@ -391,7 +389,7 @@ export default function DashboardPage() {
                   ) : (
                     <div className="text-center py-8">
                       <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500 mb-4">No listings yet</p>
+                      <p className="text-gray-500 mb-4">{t('noListingsYet')}</p>
                     </div>
                   )}
                 </CardContent>
@@ -403,16 +401,16 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle>{t('myOffers')}</CardTitle>
                   <CardDescription>
-                    {isSeller ? 'Offers you sent and received' : 'Offers you sent'}
+                    {isSeller ? t('offersDescription') : t('offersSent')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="sent">
                     <TabsList className="mb-4">
-                      <TabsTrigger value="sent">Sent ({sentOffers?.length || 0})</TabsTrigger>
+                      <TabsTrigger value="sent">{t('sent')} ({sentOffers?.length || 0})</TabsTrigger>
                       {isSeller && (
                         <TabsTrigger value="received">
-                          Received ({receivedOffers?.filter(o => o.status === 'pending').length || 0})
+                          {t('received')} ({receivedOffers?.filter(o => o.status === 'pending').length || 0})
                         </TabsTrigger>
                       )}
                     </TabsList>
@@ -425,7 +423,7 @@ export default function DashboardPage() {
                               <div className="flex-1">
                                 <p className="font-medium">{offer.listingTitle}</p>
                                 <p className="text-sm text-gray-500">
-                                  {offer.quantity} units @ {formatPrice(offer.pricePerUnit)}/unit
+                                  {offer.quantity} {t('units')} @ {formatPrice(offer.pricePerUnit)}/{t('unit')}
                                 </p>
                               </div>
                               <div className="text-right">
@@ -444,7 +442,7 @@ export default function DashboardPage() {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-center text-gray-500 py-8">No offers sent</p>
+                        <p className="text-center text-gray-500 py-8">{t('noOffersSent')}</p>
                       )}
                     </TabsContent>
 
@@ -457,7 +455,7 @@ export default function DashboardPage() {
                                 <div className="flex-1">
                                   <p className="font-medium">{offer.listingTitle}</p>
                                   <p className="text-sm text-gray-500">
-                                    {offer.quantity} units @ {formatPrice(offer.pricePerUnit)}/unit
+                                    {offer.quantity} {t('units')} @ {formatPrice(offer.pricePerUnit)}/{t('unit')}
                                   </p>
                                 </div>
                                 <div className="text-right">
@@ -472,7 +470,7 @@ export default function DashboardPage() {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-center text-gray-500 py-8">No offers received</p>
+                          <p className="text-center text-gray-500 py-8">{t('noOffersReceived')}</p>
                         )}
                       </TabsContent>
                     )}
@@ -485,7 +483,7 @@ export default function DashboardPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>{t('messages')}</CardTitle>
-                  <CardDescription>Your conversations with buyers and sellers</CardDescription>
+                  <CardDescription>{t('messagesDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {conversations && conversations.length > 0 ? (
@@ -496,8 +494,8 @@ export default function DashboardPage() {
                             <MessageSquare className="w-5 h-5 text-[#0A3161]" />
                           </div>
                           <div className="flex-1">
-                            <p className="font-medium">{conversation.listingTitle || 'Conversation'}</p>
-                            <p className="text-sm text-gray-500 truncate">{conversation.lastMessagePreview || 'No messages yet'}</p>
+                            <p className="font-medium">{conversation.listingTitle || t('conversation')}</p>
+                            <p className="text-sm text-gray-500 truncate">{conversation.lastMessagePreview || t('noMessagesYet')}</p>
                           </div>
                           {(conversation.buyerUnreadCount > 0 || conversation.sellerUnreadCount > 0) && (
                             <Badge variant="default">
@@ -510,8 +508,8 @@ export default function DashboardPage() {
                   ) : (
                     <div className="text-center py-8">
                       <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">No conversations yet</p>
-                      <p className="text-sm text-gray-400 mt-2">Start a conversation by contacting a seller on a listing</p>
+                      <p className="text-gray-500">{t('noMessagesYet')}</p>
+                      <p className="text-sm text-gray-400 mt-2">{t('startConversation')}</p>
                     </div>
                   )}
                 </CardContent>
@@ -522,7 +520,7 @@ export default function DashboardPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>{t('favorites')}</CardTitle>
-                  <CardDescription>Listings you saved for later</CardDescription>
+                  <CardDescription>{t('favoritesDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {favorites && favorites.length > 0 ? (
@@ -557,14 +555,14 @@ export default function DashboardPage() {
                   ) : (
                     <div className="text-center py-8">
                       <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">No favorites yet</p>
-                      <p className="text-sm text-gray-400 mt-2">Save listings you like by clicking the heart icon</p>
+                      <p className="text-gray-500">{t('noFavoritesYet')}</p>
+                      <p className="text-sm text-gray-400 mt-2">{t('saveFavorites')}</p>
                       <Button 
                         onClick={() => navigate(`/${lang}/chassis-marketplace`)} 
                         className="mt-4"
                         variant="outline"
                       >
-                        Browse Marketplace
+                        {t('browseMarketplace')}
                       </Button>
                     </div>
                   )}
@@ -576,24 +574,24 @@ export default function DashboardPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>{t('settings')}</CardTitle>
-                  <CardDescription>Manage your account settings</CardDescription>
+                  <CardDescription>{t('settingsDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h3 className="font-medium mb-2">Account Information</h3>
+                      <h3 className="font-medium mb-2">{t('accountInformation')}</h3>
                       <div className="space-y-2 text-sm">
-                        <p><strong>Email:</strong> {user.email}</p>
-                        <p><strong>Name:</strong> {user.firstName || 'Not set'} {user.lastName || ''}</p>
-                        <p><strong>Company:</strong> {user.companyName || 'Not set'}</p>
-                        <p><strong>Role:</strong> <Badge variant="secondary" className="capitalize">{user.role}</Badge></p>
+                        <p><strong>{t('email')}:</strong> {user.email}</p>
+                        <p><strong>{lang === 'es' ? 'Nombre' : 'Name'}:</strong> {user.firstName || (lang === 'es' ? 'No establecido' : 'Not set')} {user.lastName || ''}</p>
+                        <p><strong>{lang === 'es' ? 'Empresa' : 'Company'}:</strong> {user.companyName || (lang === 'es' ? 'No establecido' : 'Not set')}</p>
+                        <p><strong>{lang === 'es' ? 'Rol' : 'Role'}:</strong> <Badge variant="secondary" className="capitalize">{user.role}</Badge></p>
                       </div>
                     </div>
                     
                     <div className="p-4 bg-blue-50 rounded-lg">
-                      <h3 className="font-medium mb-2 text-blue-900">Need Help?</h3>
+                      <h3 className="font-medium mb-2 text-blue-900">{t('needHelp')}</h3>
                       <p className="text-sm text-blue-700">
-                        Contact us at <a href="mailto:sales@americanchassisdepot.com" className="underline">sales@americanchassisdepot.com</a> or call <a href="tel:+14422579946" className="underline">+1 (442) 257-9946</a>
+                        {t('contactSupport')} <a href="mailto:sales@americanchassisdepot.com" className="underline">sales@americanchassisdepot.com</a> {lang === 'es' ? 'o llama al' : 'or call'} <a href="tel:+14422579946" className="underline">+1 (442) 257-9946</a>
                       </p>
                     </div>
                   </div>
