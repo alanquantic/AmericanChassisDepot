@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { getMarketplaceDb } from './db';
-import { marketplaceUsers, marketplaceOrders, marketplaceOrderItems, marketplaceOffers, marketplaceListings } from '../../shared/marketplace-schema';
+import { marketplaceUsers, marketplaceOrders, marketplaceOffers, marketplaceListings } from '../../shared/marketplace-schema';
 
 // Initialize Stripe
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -324,7 +324,7 @@ export async function handleCheckoutComplete(session: Stripe.Checkout.Session): 
 
   // Create order
   const [countResult] = await db
-    .select({ count: require('drizzle-orm').sql`count(*)` })
+    .select({ count: sql<number>`count(*)` })
     .from(marketplaceOrders);
   
   const orderNumber = `ORD-${new Date().getFullYear()}-${String(Number(countResult?.count || 0) + 1).padStart(5, '0')}`;
@@ -337,30 +337,19 @@ export async function handleCheckoutComplete(session: Stripe.Checkout.Session): 
       sellerId,
       listingId,
       offerId,
+      quantity: offer.quantity,
+      pricePerUnit: offer.pricePerUnit,
+      subtotal: totalAmount.toString(),
+      platformFee: platformFee.toString(),
+      totalAmount: totalAmount.toString(),
       status: 'paid',
       paymentStatus: 'completed',
-      totalAmount: totalAmount.toString(),
-      platformFee: platformFee.toString(),
-      sellerAmount: sellerAmount.toString(),
       stripePaymentIntentId: session.payment_intent as string,
-      stripeSessionId: session.id,
       paidAt: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
     })
     .returning();
-
-  // Create order item
-  await db
-    .insert(marketplaceOrderItems)
-    .values({
-      orderId: order.id,
-      listingId,
-      quantity: offer.quantity,
-      pricePerUnit: offer.pricePerUnit,
-      totalPrice: totalAmount.toString(),
-      createdAt: new Date(),
-    });
 
   // Update offer status
   await db
@@ -383,7 +372,7 @@ export async function handleCheckoutComplete(session: Stripe.Checkout.Session): 
     const newQuantity = (listing.quantityAvailable || 0) - offer.quantity;
     const updates: any = {
       quantityAvailable: newQuantity,
-      soldCount: (listing.soldCount || 0) + offer.quantity,
+      quantitySold: (listing.quantitySold || 0) + offer.quantity,
       updatedAt: new Date(),
     };
 

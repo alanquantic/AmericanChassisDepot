@@ -39,6 +39,7 @@ export const marketplaceUsers = pgTable("marketplace_users", {
   
   // Stripe
   stripeCustomerId: text("stripe_customer_id"),
+  stripeConnectedAccountId: text("stripe_connected_account_id"),
   stripeAccountId: text("stripe_account_id"),
   stripeAccountStatus: text("stripe_account_status"),
   
@@ -305,6 +306,10 @@ export const marketplaceOffers = pgTable("marketplace_offers", {
   adminNotifiedAt: timestamp("admin_notified_at"),
   adminReviewedBy: integer("admin_reviewed_by").references(() => marketplaceUsers.id),
   adminNotes: text("admin_notes"),
+  
+  // Stripe
+  stripeSessionId: text("stripe_session_id"),
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
   
   // Fechas
   expiresAt: timestamp("expires_at"),
