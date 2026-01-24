@@ -22,7 +22,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
 import { formatPrice } from '@/lib/marketplace-i18n';
-import { marketplaceApi } from '@/lib/marketplace-api';
+import { getListings } from '@/lib/marketplace-api';
 
 // Landing page translations
 const landingTranslations = {
@@ -225,7 +225,7 @@ export function MarketplaceLandingPage() {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await marketplaceApi.getListings({ limit: 12 });
+        const response = await getListings({ limit: 12 });
         // Shuffle and take 6
         const shuffled = response.listings.sort(() => 0.5 - Math.random());
         setListings(shuffled.slice(0, 6));
