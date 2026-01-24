@@ -8,7 +8,7 @@ const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const platformFeePercent = parseFloat(process.env.STRIPE_PLATFORM_FEE_PERCENT || '3.5');
 
 export const stripe = stripeSecretKey 
-  ? new Stripe(stripeSecretKey, { apiVersion: '2024-06-20' })
+  ? new Stripe(stripeSecretKey)
   : null;
 
 export function isStripeAvailable(): boolean {
@@ -202,6 +202,10 @@ export async function createCheckoutSession(params: CreateCheckoutParams): Promi
     throw new Error('Only the buyer can checkout');
   }
 
+  if (!offer.listingId) {
+    throw new Error('Offer has no associated listing');
+  }
+
   // Get the listing
   const [listing] = await db
     .select()
@@ -211,6 +215,10 @@ export async function createCheckoutSession(params: CreateCheckoutParams): Promi
 
   if (!listing) {
     throw new Error('Listing not found');
+  }
+
+  if (!offer.sellerId) {
+    throw new Error('Offer has no associated seller');
   }
 
   // Get seller's connected account
@@ -443,7 +451,6 @@ export async function createRefund(orderId: number, reason?: string): Promise<St
     .set({
       status: 'refunded',
       paymentStatus: 'refunded',
-      refundedAt: new Date(),
       updatedAt: new Date(),
     })
     .where(eq(marketplaceOrders.id, orderId));

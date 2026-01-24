@@ -47,7 +47,7 @@ export function generateAccessToken(user: { id: number; email: string; role: str
     role: user.role,
     type: 'access'
   };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_ACCESS_EXPIRY });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_ACCESS_EXPIRY as string });
 }
 
 export function generateRefreshToken(user: { id: number; email: string; role: string }): string {
@@ -57,7 +57,7 @@ export function generateRefreshToken(user: { id: number; email: string; role: st
     role: user.role,
     type: 'refresh'
   };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_REFRESH_EXPIRY });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_REFRESH_EXPIRY as string });
 }
 
 export function verifyToken(token: string): JWTPayload | null {
