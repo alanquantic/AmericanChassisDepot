@@ -365,7 +365,7 @@ export function MarketplaceLandingPage() {
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
-                <Link href="/marketplace/register?role=seller">
+                <Link href={`/${lang}/marketplace/register?role=seller`}>
                   <Button 
                     size="lg" 
                     className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#1B3A5F] px-8 py-6 text-lg"
@@ -634,7 +634,7 @@ export function MarketplaceLandingPage() {
                   <p className="text-gray-600 mb-6">
                     {t('buyerCtaDesc')}
                   </p>
-                  <Link href="/marketplace/register?role=buyer">
+                  <Link href={`/${lang}/marketplace/register?role=buyer`}>
                     <Button className="w-full bg-[#1B3A5F] hover:bg-[#0D1F33]">
                       {t('buyerCtaButton')}
                       <ArrowRight className="w-5 h-5 ml-2" />
@@ -655,7 +655,7 @@ export function MarketplaceLandingPage() {
                   <p className="text-red-100 mb-6">
                     {t('sellerCtaDesc')}
                   </p>
-                  <Link href="/marketplace/register?role=seller">
+                  <Link href={`/${lang}/marketplace/register?role=seller`}>
                     <Button className="w-full bg-white text-[#A93226] hover:bg-gray-100">
                       {t('sellerCtaButton')}
                       <ArrowRight className="w-5 h-5 ml-2" />
