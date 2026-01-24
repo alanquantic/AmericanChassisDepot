@@ -418,7 +418,6 @@ export default function MarketplacePage() {
       description: 'Encuentra chassis para contenedores usados y nuevos de vendedores verificados en EE.UU. Chassis Gooseneck, slider, extensibles. Compara precios y haz ofertas directamente.',
     }
   };
-  const lang = getCurrentLanguage();
   const seo = seoContent[lang as keyof typeof seoContent] || seoContent.en;
 
   return (
