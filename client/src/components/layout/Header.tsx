@@ -77,6 +77,14 @@ const Header: React.FC = () => {
             >
               {t('contact')}
             </Link>
+            <Link 
+              href={`${langPrefix}/chassis-marketplace`} 
+              className={`font-montserrat font-semibold px-4 py-2 rounded-lg ${location.includes('/chassis-marketplace') || location.includes('/marketplace') ? 'bg-[#B22234] text-white' : 'bg-[#0A3161] text-white hover:bg-[#B22234]'} transition duration-200`}
+              aria-label="Chassis Marketplace"
+              title="Buy & Sell Used Chassis"
+            >
+              {t('marketplace')}
+            </Link>
           </nav>
           
           {/* Language Selector */}
@@ -136,6 +144,14 @@ const Header: React.FC = () => {
               aria-label="Contact us"
             >
               {t('contact')}
+            </Link>
+            <Link 
+              href={`${langPrefix}/chassis-marketplace`} 
+              onClick={closeMobileMenu} 
+              className="block mt-4 py-3 px-4 text-center font-montserrat font-semibold rounded-lg bg-[#0A3161] text-white hover:bg-[#B22234] transition duration-200"
+              aria-label="Chassis Marketplace"
+            >
+              {t('marketplace')}
             </Link>
           </nav>
         </div>

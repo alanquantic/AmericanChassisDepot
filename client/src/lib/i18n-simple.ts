@@ -9,6 +9,7 @@ export const translations = {
     products: 'Products', 
     about: 'About',
     contact: 'Contact',
+    marketplace: 'Marketplace',
     
     // Hero
     heroTitle: 'Premium Chassis Solutions for Every Need',
@@ -172,6 +173,7 @@ export const translations = {
     products: 'Productos',
     about: 'Acerca de', 
     contact: 'Contacto',
+    marketplace: 'Mercado',
     
     // Hero
     heroTitle: 'Soluciones Premium de Chasis para Cada Necesidad',
