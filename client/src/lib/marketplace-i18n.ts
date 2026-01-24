@@ -172,6 +172,16 @@ export const marketplaceTranslations = {
     
     // Reference Images
     referenceImage: 'Reference image',
+    
+    // Registration Roles
+    registerAsBuyer: 'Register as Buyer',
+    registerAsSeller: 'Register as Seller',
+    buyerDescription: 'Create a buyer account to make offers, save favorites, and message sellers.',
+    sellerDescription: 'Create a seller account to list your chassis inventory and reach buyers nationwide.',
+    wantToBuyer: 'Want to buy instead?',
+    wantToSeller: 'Want to sell instead?',
+    registerAsBuyerLink: 'Register as buyer',
+    registerAsSellerLink: 'Register as seller',
   },
   es: {
     // Page titles
@@ -344,6 +354,16 @@ export const marketplaceTranslations = {
     
     // Reference Images
     referenceImage: 'Imagen de referencia',
+    
+    // Registration Roles
+    registerAsBuyer: 'Registrarse como Comprador',
+    registerAsSeller: 'Registrarse como Vendedor',
+    buyerDescription: 'Crea una cuenta de comprador para hacer ofertas, guardar favoritos y contactar vendedores.',
+    sellerDescription: 'Crea una cuenta de vendedor para listar tu inventario de chassis y alcanzar compradores en todo el país.',
+    wantToBuyer: '¿Quieres comprar?',
+    wantToSeller: '¿Quieres vender?',
+    registerAsBuyerLink: 'Registrarse como comprador',
+    registerAsSellerLink: 'Registrarse como vendedor',
   },
 };
 

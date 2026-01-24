@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Truck, AlertCircle, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, Truck, AlertCircle, CheckCircle, ShoppingCart, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -158,6 +158,7 @@ export function RegisterPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [isPasswordStrong, setIsPasswordStrong] = useState(false);
+  const [role, setRole] = useState<'buyer' | 'seller'>('buyer');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -167,6 +168,17 @@ export function RegisterPage() {
     companyName: '',
     phone: '',
   });
+
+  // Read role from URL params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const roleParam = params.get('role');
+    if (roleParam === 'seller') {
+      setRole('seller');
+    } else {
+      setRole('buyer');
+    }
+  }, []);
 
   const handlePasswordStrengthChange = useCallback((isStrong: boolean) => {
     setIsPasswordStrong(isStrong);
@@ -197,6 +209,7 @@ export function RegisterPage() {
         lastName: formData.lastName,
         companyName: formData.companyName,
         phone: formData.phone,
+        role: role,
       });
       
       setSuccess(true);
@@ -250,12 +263,14 @@ export function RegisterPage() {
         >
           <Card className="shadow-xl border-0">
             <CardHeader className="text-center pb-2">
-              <div className="w-16 h-16 bg-[#0A3161] rounded-full flex items-center justify-center mx-auto mb-4">
-                <Truck className="w-8 h-8 text-white" />
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${role === 'seller' ? 'bg-[#A93226]' : 'bg-[#0A3161]'}`}>
+                {role === 'seller' ? <TrendingUp className="w-8 h-8 text-white" /> : <ShoppingCart className="w-8 h-8 text-white" />}
               </div>
-              <CardTitle className="text-2xl">{t('registerTitle')}</CardTitle>
+              <CardTitle className="text-2xl">
+                {role === 'seller' ? t('registerAsSeller') : t('registerAsBuyer')}
+              </CardTitle>
               <CardDescription>
-                {t('joinMarketplace')} {t('marketplace')}
+                {role === 'seller' ? t('sellerDescription') : t('buyerDescription')}
               </CardDescription>
             </CardHeader>
             
@@ -378,14 +393,27 @@ export function RegisterPage() {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-[#0A3161] hover:bg-[#0A3161]/90"
+                  className={`w-full ${role === 'seller' ? 'bg-[#A93226] hover:bg-[#922B21]' : 'bg-[#0A3161] hover:bg-[#0A3161]/90'}`}
                   disabled={isLoading}
                 >
                   {isLoading ? t('creatingAccount') : t('register')}
                 </Button>
               </form>
 
-              <div className="mt-6 text-center text-sm">
+              {/* Switch role link */}
+              <div className="mt-4 text-center text-sm border-t pt-4">
+                <span className="text-gray-600">
+                  {role === 'seller' ? t('wantToBuyer') : t('wantToSeller')}{' '}
+                </span>
+                <button 
+                  onClick={() => navigate(`/${lang}/marketplace/register?role=${role === 'seller' ? 'buyer' : 'seller'}`)}
+                  className={`font-medium hover:underline ${role === 'seller' ? 'text-[#0A3161]' : 'text-[#A93226]'}`}
+                >
+                  {role === 'seller' ? t('registerAsBuyerLink') : t('registerAsSellerLink')}
+                </button>
+              </div>
+
+              <div className="mt-4 text-center text-sm">
                 <span className="text-gray-600">{t('haveAccount')} </span>
                 <button 
                   onClick={() => navigate(`/${lang}/marketplace/login`)}

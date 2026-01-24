@@ -187,6 +187,7 @@ export async function register(data: {
   lastName?: string;
   companyName?: string;
   phone?: string;
+  role?: 'buyer' | 'seller';
 }): Promise<{ message: string; user: MarketplaceUser }> {
   return apiRequest('/auth/register', {
     method: 'POST',
