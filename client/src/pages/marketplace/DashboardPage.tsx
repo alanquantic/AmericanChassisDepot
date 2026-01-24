@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
@@ -44,6 +44,7 @@ export default function DashboardPage() {
   const [, navigate] = useLocation();
   const lang = getCurrentLanguage();
   const user = getStoredUser();
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'listings' | 'offers' | 'messages' | 'favorites' | 'settings'>('dashboard');
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -179,8 +180,8 @@ export default function DashboardPage() {
                 {/* Navigation */}
                 <nav className="space-y-1">
                   <button
-                    onClick={() => navigate(`/${lang}/marketplace/dashboard`)}
-                    className="w-full flex items-center gap-3 px-4 py-2 rounded-lg bg-[#0A3161]/10 text-[#0A3161] font-medium"
+                    onClick={() => setActiveSection('dashboard')}
+                    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg ${activeSection === 'dashboard' ? 'bg-[#0A3161]/10 text-[#0A3161] font-medium' : 'hover:bg-gray-100 text-gray-700'}`}
                   >
                     <LayoutDashboard className="w-5 h-5" />
                     {t('dashboard')}
@@ -188,8 +189,8 @@ export default function DashboardPage() {
                   
                   {isSeller && (
                     <button
-                      onClick={() => navigate(`/${lang}/marketplace/seller/listings`)}
-                      className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
+                      onClick={() => setActiveSection('listings')}
+                      className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg ${activeSection === 'listings' ? 'bg-[#0A3161]/10 text-[#0A3161] font-medium' : 'hover:bg-gray-100 text-gray-700'}`}
                     >
                       <Package className="w-5 h-5" />
                       {t('myListings')}
@@ -197,24 +198,24 @@ export default function DashboardPage() {
                   )}
                   
                   <button
-                    onClick={() => navigate(`/${lang}/marketplace/offers`)}
-                    className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
+                    onClick={() => setActiveSection('offers')}
+                    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg ${activeSection === 'offers' ? 'bg-[#0A3161]/10 text-[#0A3161] font-medium' : 'hover:bg-gray-100 text-gray-700'}`}
                   >
                     <DollarSign className="w-5 h-5" />
                     {t('myOffers')}
                   </button>
                   
                   <button
-                    onClick={() => navigate(`/${lang}/marketplace/messages`)}
-                    className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
+                    onClick={() => setActiveSection('messages')}
+                    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg ${activeSection === 'messages' ? 'bg-[#0A3161]/10 text-[#0A3161] font-medium' : 'hover:bg-gray-100 text-gray-700'}`}
                   >
                     <MessageSquare className="w-5 h-5" />
                     {t('messages')}
                   </button>
                   
                   <button
-                    onClick={() => navigate(`/${lang}/marketplace/favorites`)}
-                    className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
+                    onClick={() => setActiveSection('favorites')}
+                    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg ${activeSection === 'favorites' ? 'bg-[#0A3161]/10 text-[#0A3161] font-medium' : 'hover:bg-gray-100 text-gray-700'}`}
                   >
                     <Heart className="w-5 h-5" />
                     {t('favorites')}
@@ -233,8 +234,8 @@ export default function DashboardPage() {
                   <div className="border-t my-4"></div>
                   
                   <button
-                    onClick={() => navigate(`/${lang}/marketplace/settings`)}
-                    className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
+                    onClick={() => setActiveSection('settings')}
+                    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg ${activeSection === 'settings' ? 'bg-[#0A3161]/10 text-[#0A3161] font-medium' : 'hover:bg-gray-100 text-gray-700'}`}
                   >
                     <Settings className="w-5 h-5" />
                     {t('settings')}
@@ -308,15 +309,10 @@ export default function DashboardPage() {
               ))}
             </div>
 
-            {/* Content Tabs */}
-            <Tabs defaultValue="activity" className="space-y-4">
-              <TabsList>
-                <TabsTrigger value="activity">Recent Activity</TabsTrigger>
-                {isSeller && <TabsTrigger value="listings">My Listings</TabsTrigger>}
-                <TabsTrigger value="offers">Offers</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="activity">
+            {/* Content based on activeSection */}
+            {activeSection === 'dashboard' && (
+              <div className="space-y-6">
+                {/* Recent Activity */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Recent Activity</CardTitle>
@@ -348,92 +344,115 @@ export default function DashboardPage() {
                     )}
                   </CardContent>
                 </Card>
-              </TabsContent>
+              </div>
+            )}
 
-              {isSeller && (
-                <TabsContent value="listings">
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between">
-                      <div>
-                        <CardTitle>{t('myListings')}</CardTitle>
-                        <CardDescription>Manage your chassis listings</CardDescription>
-                      </div>
-                      <Button onClick={() => navigate(`/${lang}/marketplace/seller/listings`)}>
-                        View All
-                        <ChevronRight className="w-4 h-4 ml-1" />
-                      </Button>
-                    </CardHeader>
-                    <CardContent>
-                      {listings?.listings && listings.listings.length > 0 ? (
-                        <div className="space-y-4">
-                          {listings.listings.slice(0, 5).map((listing) => (
-                            <div 
-                              key={listing.id}
-                              className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100"
-                              onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.slug}`)}
-                            >
-                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200">
-                                {listing.primaryImageUrl ? (
-                                  <img src={listing.primaryImageUrl} alt="" className="w-full h-full object-cover" />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center">
-                                    <Package className="w-6 h-6 text-gray-400" />
-                                  </div>
-                                )}
+            {activeSection === 'listings' && isSeller && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>{t('myListings')}</CardTitle>
+                    <CardDescription>Manage your chassis listings</CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {listings?.listings && listings.listings.length > 0 ? (
+                    <div className="space-y-4">
+                      {listings.listings.map((listing) => (
+                        <div 
+                          key={listing.id}
+                          className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100"
+                          onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.slug}`)}
+                        >
+                          <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200">
+                            {listing.primaryImageUrl ? (
+                              <img src={listing.primaryImageUrl} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Package className="w-6 h-6 text-gray-400" />
                               </div>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium">{listing.title}</p>
+                            <p className="text-sm text-gray-500">
+                              {listing.city}, {listing.state} • {listing.quantityAvailable} units
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-[#0A3161]">{formatPrice(listing.pricePerUnit)}</p>
+                            <Badge variant={listing.status === 'active' ? 'default' : 'secondary'}>
+                              {listing.status}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-500 mb-4">No listings yet</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {activeSection === 'offers' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('myOffers')}</CardTitle>
+                  <CardDescription>
+                    {isSeller ? 'Offers you sent and received' : 'Offers you sent'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue="sent">
+                    <TabsList className="mb-4">
+                      <TabsTrigger value="sent">Sent ({sentOffers?.length || 0})</TabsTrigger>
+                      {isSeller && (
+                        <TabsTrigger value="received">
+                          Received ({receivedOffers?.filter(o => o.status === 'pending').length || 0})
+                        </TabsTrigger>
+                      )}
+                    </TabsList>
+
+                    <TabsContent value="sent">
+                      {sentOffers && sentOffers.length > 0 ? (
+                        <div className="space-y-4">
+                          {sentOffers.map((offer: any) => (
+                            <div key={offer.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                               <div className="flex-1">
-                                <p className="font-medium">{listing.title}</p>
+                                <p className="font-medium">{offer.listingTitle}</p>
                                 <p className="text-sm text-gray-500">
-                                  {listing.city}, {listing.state} • {listing.quantityAvailable} units
+                                  {offer.quantity} units @ {formatPrice(offer.pricePerUnit)}/unit
                                 </p>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-[#0A3161]">{formatPrice(listing.pricePerUnit)}</p>
-                                <Badge variant={listing.status === 'active' ? 'default' : 'secondary'}>
-                                  {listing.status}
+                                <p className="font-bold">{formatPrice(offer.totalAmount)}</p>
+                                <Badge 
+                                  variant={
+                                    offer.status === 'accepted' ? 'default' :
+                                    offer.status === 'rejected' ? 'destructive' :
+                                    'secondary'
+                                  }
+                                >
+                                  {offer.status}
                                 </Badge>
                               </div>
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <div className="text-center py-8">
-                          <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                          <p className="text-gray-500 mb-4">No listings yet</p>
-                          <Button onClick={() => navigate(`/${lang}/marketplace/seller/create`)}>
-                            <Plus className="w-4 h-4 mr-2" />
-                            Create Your First Listing
-                          </Button>
-                        </div>
+                        <p className="text-center text-gray-500 py-8">No offers sent</p>
                       )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              )}
+                    </TabsContent>
 
-              <TabsContent value="offers">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t('myOffers')}</CardTitle>
-                    <CardDescription>
-                      {isSeller ? 'Offers you sent and received' : 'Offers you sent'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Tabs defaultValue="sent">
-                      <TabsList className="mb-4">
-                        <TabsTrigger value="sent">Sent ({sentOffers?.length || 0})</TabsTrigger>
-                        {isSeller && (
-                          <TabsTrigger value="received">
-                            Received ({receivedOffers?.filter(o => o.status === 'pending').length || 0})
-                          </TabsTrigger>
-                        )}
-                      </TabsList>
-
-                      <TabsContent value="sent">
-                        {sentOffers && sentOffers.length > 0 ? (
+                    {isSeller && (
+                      <TabsContent value="received">
+                        {receivedOffers && receivedOffers.length > 0 ? (
                           <div className="space-y-4">
-                            {sentOffers.slice(0, 5).map((offer: any) => (
+                            {receivedOffers.map((offer: any) => (
                               <div key={offer.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                                 <div className="flex-1">
                                   <p className="font-medium">{offer.listingTitle}</p>
@@ -444,11 +463,7 @@ export default function DashboardPage() {
                                 <div className="text-right">
                                   <p className="font-bold">{formatPrice(offer.totalAmount)}</p>
                                   <Badge 
-                                    variant={
-                                      offer.status === 'accepted' ? 'default' :
-                                      offer.status === 'rejected' ? 'destructive' :
-                                      'secondary'
-                                    }
+                                    variant={offer.status === 'pending' ? 'default' : 'secondary'}
                                   >
                                     {offer.status}
                                   </Badge>
@@ -457,43 +472,134 @@ export default function DashboardPage() {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-center text-gray-500 py-8">No offers sent</p>
+                          <p className="text-center text-gray-500 py-8">No offers received</p>
                         )}
                       </TabsContent>
+                    )}
+                  </Tabs>
+                </CardContent>
+              </Card>
+            )}
 
-                      {isSeller && (
-                        <TabsContent value="received">
-                          {receivedOffers && receivedOffers.length > 0 ? (
-                            <div className="space-y-4">
-                              {receivedOffers.slice(0, 5).map((offer: any) => (
-                                <div key={offer.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-                                  <div className="flex-1">
-                                    <p className="font-medium">{offer.listingTitle}</p>
-                                    <p className="text-sm text-gray-500">
-                                      {offer.quantity} units @ {formatPrice(offer.pricePerUnit)}/unit
-                                    </p>
-                                  </div>
-                                  <div className="text-right">
-                                    <p className="font-bold">{formatPrice(offer.totalAmount)}</p>
-                                    <Badge 
-                                      variant={offer.status === 'pending' ? 'default' : 'secondary'}
-                                    >
-                                      {offer.status}
-                                    </Badge>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-center text-gray-500 py-8">No offers received</p>
+            {activeSection === 'messages' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('messages')}</CardTitle>
+                  <CardDescription>Your conversations with buyers and sellers</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {conversations && conversations.length > 0 ? (
+                    <div className="space-y-4">
+                      {conversations.map((conversation: any) => (
+                        <div key={conversation.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                          <div className="w-10 h-10 rounded-full bg-[#0A3161]/10 flex items-center justify-center">
+                            <MessageSquare className="w-5 h-5 text-[#0A3161]" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium">{conversation.listingTitle || 'Conversation'}</p>
+                            <p className="text-sm text-gray-500 truncate">{conversation.lastMessagePreview || 'No messages yet'}</p>
+                          </div>
+                          {(conversation.buyerUnreadCount > 0 || conversation.sellerUnreadCount > 0) && (
+                            <Badge variant="default">
+                              {conversation.buyerUnreadCount + conversation.sellerUnreadCount} new
+                            </Badge>
                           )}
-                        </TabsContent>
-                      )}
-                    </Tabs>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-500">No conversations yet</p>
+                      <p className="text-sm text-gray-400 mt-2">Start a conversation by contacting a seller on a listing</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {activeSection === 'favorites' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('favorites')}</CardTitle>
+                  <CardDescription>Listings you saved for later</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {favorites && favorites.length > 0 ? (
+                    <div className="space-y-4">
+                      {favorites.map((favorite: any) => (
+                        <div 
+                          key={favorite.id} 
+                          className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100"
+                          onClick={() => navigate(`/${lang}/chassis-marketplace/${favorite.listing?.slug}`)}
+                        >
+                          <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200">
+                            {favorite.listing?.primaryImageUrl ? (
+                              <img src={favorite.listing.primaryImageUrl} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Heart className="w-6 h-6 text-gray-400" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium">{favorite.listing?.title || 'Listing'}</p>
+                            <p className="text-sm text-gray-500">
+                              {favorite.listing?.city}, {favorite.listing?.state}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-[#0A3161]">{formatPrice(favorite.listing?.pricePerUnit)}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-500">No favorites yet</p>
+                      <p className="text-sm text-gray-400 mt-2">Save listings you like by clicking the heart icon</p>
+                      <Button 
+                        onClick={() => navigate(`/${lang}/chassis-marketplace`)} 
+                        className="mt-4"
+                        variant="outline"
+                      >
+                        Browse Marketplace
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {activeSection === 'settings' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('settings')}</CardTitle>
+                  <CardDescription>Manage your account settings</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <h3 className="font-medium mb-2">Account Information</h3>
+                      <div className="space-y-2 text-sm">
+                        <p><strong>Email:</strong> {user.email}</p>
+                        <p><strong>Name:</strong> {user.firstName || 'Not set'} {user.lastName || ''}</p>
+                        <p><strong>Company:</strong> {user.companyName || 'Not set'}</p>
+                        <p><strong>Role:</strong> <Badge variant="secondary" className="capitalize">{user.role}</Badge></p>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <h3 className="font-medium mb-2 text-blue-900">Need Help?</h3>
+                      <p className="text-sm text-blue-700">
+                        Contact us at <a href="mailto:sales@americanchassisdepot.com" className="underline">sales@americanchassisdepot.com</a> or call <a href="tel:+14422579946" className="underline">+1 (442) 257-9946</a>
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </main>
