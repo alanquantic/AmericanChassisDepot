@@ -38,6 +38,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import SEOHead from '@/components/marketplace/SEOHead';
 import { 
   getListings, 
   getChassisTypes, 
@@ -406,8 +407,54 @@ export default function MarketplacePage() {
   const hasActiveFilters = filters.chassisType || filters.chassisSize || filters.condition || 
     filters.state || filters.minPrice || filters.maxPrice || filters.search;
 
+  // SEO translations
+  const seoContent = {
+    en: {
+      title: 'Browse Container Chassis for Sale | Marketplace | American Chassis Depot',
+      description: 'Find quality used and new container chassis from verified sellers across the USA. Gooseneck, slider, extendable, and spread axle chassis. Compare prices and make offers directly.',
+    },
+    es: {
+      title: 'Comprar Chassis para Contenedores | Marketplace | American Chassis Depot',
+      description: 'Encuentra chassis para contenedores usados y nuevos de vendedores verificados en EE.UU. Chassis Gooseneck, slider, extensibles. Compara precios y haz ofertas directamente.',
+    }
+  };
+  const lang = getCurrentLanguage();
+  const seo = seoContent[lang as keyof typeof seoContent] || seoContent.en;
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead
+        title={seo.title}
+        description={seo.description}
+        canonicalPath={`/${lang}/chassis-marketplace`}
+        type="website"
+        breadcrumbs={[
+          { name: lang === 'es' ? 'Inicio' : 'Home', url: `/${lang}` },
+          { name: 'Marketplace', url: `/${lang}/marketplace` },
+          { name: lang === 'es' ? 'Catálogo' : 'Browse', url: `/${lang}/chassis-marketplace` },
+        ]}
+        faqs={[
+          {
+            question: lang === 'es' ? '¿Cómo compro un chassis?' : 'How do I buy a chassis?',
+            answer: lang === 'es' 
+              ? 'Navega por los listings, contacta al vendedor y haz una oferta. Una vez aceptada, completa el pago de forma segura.'
+              : 'Browse listings, contact the seller, and make an offer. Once accepted, complete the payment securely.'
+          },
+          {
+            question: lang === 'es' ? '¿Los vendedores están verificados?' : 'Are sellers verified?',
+            answer: lang === 'es'
+              ? 'Sí, todos los vendedores pasan por un proceso de verificación para garantizar transacciones seguras.'
+              : 'Yes, all sellers go through a verification process to ensure safe transactions.'
+          },
+          {
+            question: lang === 'es' ? '¿Puedo negociar el precio?' : 'Can I negotiate the price?',
+            answer: lang === 'es'
+              ? 'Sí, la mayoría de los listings permiten ofertas. Puedes enviar una oferta directamente al vendedor.'
+              : 'Yes, most listings accept offers. You can send an offer directly to the seller.'
+          }
+        ]}
+      />
+      
       <Header />
       
       {/* Hero Section */}

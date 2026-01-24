@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { 
   Truck, 
   Shield, 
@@ -23,6 +22,8 @@ import { Badge } from '@/components/ui/badge';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
 import { formatPrice } from '@/lib/marketplace-i18n';
 import { getListings } from '@/lib/marketplace-api';
+import SEOHead from '@/components/marketplace/SEOHead';
+import { trackCTAClick, trackListingClick, trackListingImpressions } from '@/lib/marketplace-analytics';
 
 // Landing page translations
 const landingTranslations = {
@@ -265,29 +266,62 @@ export function MarketplaceLandingPage() {
     return lang === 'es' && listing.titleEs ? listing.titleEs : listing.title;
   };
 
+  // Track listing impressions when they load
+  useEffect(() => {
+    if (listings.length > 0) {
+      trackListingImpressions(
+        listings.slice(0, 6).map((listing, index) => ({
+          id: listing.id,
+          title: listing.title,
+          price: parseFloat(listing.pricePerUnit),
+          chassisType: listing.chassisType,
+          position: index + 1,
+        }))
+      );
+    }
+  }, [listings]);
+
+  // FAQ content for SEO structured data
+  const faqContent = [
+    {
+      question: lang === 'es' ? '¿Qué es el Chassis Marketplace?' : 'What is the Chassis Marketplace?',
+      answer: lang === 'es' 
+        ? 'Es la plataforma B2B más grande para comprar y vender chassis para contenedores en EE.UU., conectando vendedores verificados con compradores.'
+        : 'It\'s the largest B2B platform for buying and selling container chassis in the USA, connecting verified sellers with buyers.'
+    },
+    {
+      question: lang === 'es' ? '¿Cómo funciona?' : 'How does it work?',
+      answer: lang === 'es'
+        ? 'Busca chassis disponibles, contacta al vendedor, negocia el precio y completa la transacción de forma segura con Stripe.'
+        : 'Browse available chassis, contact the seller, negotiate the price, and complete the transaction securely with Stripe.'
+    },
+    {
+      question: lang === 'es' ? '¿Qué tipos de chassis están disponibles?' : 'What types of chassis are available?',
+      answer: lang === 'es'
+        ? 'Tenemos Gooseneck, Slider, Spread Axle, Extendables y más en tamaños de 20ft a 53ft.'
+        : 'We have Gooseneck, Slider, Spread Axle, Extendables and more in sizes from 20ft to 53ft.'
+    },
+    {
+      question: lang === 'es' ? '¿Los vendedores están verificados?' : 'Are sellers verified?',
+      answer: lang === 'es'
+        ? 'Sí, todos los vendedores pasan por un proceso de verificación para garantizar transacciones seguras y confiables.'
+        : 'Yes, all sellers go through a verification process to ensure safe and reliable transactions.'
+    },
+  ];
+
   return (
     <>
-      <Helmet>
-        <title>{t('metaTitle')}</title>
-        <meta name="description" content={t('metaDescription')} />
-        <meta property="og:title" content={t('metaTitle')} />
-        <meta property="og:description" content={t('metaDescription')} />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href={`https://www.americanchassisdepot.com/${lang}/marketplace`} />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            "name": t('heroTitle'),
-            "description": t('metaDescription'),
-            "provider": {
-              "@type": "Organization",
-              "name": "American Chassis Depot",
-              "url": "https://www.americanchassisdepot.com"
-            }
-          })}
-        </script>
-      </Helmet>
+      <SEOHead
+        title={t('metaTitle')}
+        description={t('metaDescription')}
+        canonicalPath={`/${lang}/marketplace`}
+        type="website"
+        breadcrumbs={[
+          { name: lang === 'es' ? 'Inicio' : 'Home', url: `/${lang}` },
+          { name: 'Marketplace', url: `/${lang}/marketplace` },
+        ]}
+        faqs={faqContent}
+      />
 
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
         {/* Hero Section */}
@@ -321,14 +355,22 @@ export function MarketplaceLandingPage() {
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
                 <Link href={`/${lang}/chassis-marketplace`}>
-                  <Button size="lg" className="bg-[#A93226] hover:bg-[#922B21] text-white px-8 py-6 text-lg">
+                  <Button 
+                    size="lg" 
+                    className="bg-[#A93226] hover:bg-[#922B21] text-white px-8 py-6 text-lg"
+                    onClick={() => trackCTAClick('browse_chassis', 'hero', '/chassis-marketplace')}
+                  >
                     <Search className="w-5 h-5 mr-2" />
                     {t('heroCta')}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
                 <Link href="/marketplace/register?role=seller">
-                  <Button size="lg" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#1B3A5F] px-8 py-6 text-lg">
+                  <Button 
+                    size="lg" 
+                    className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#1B3A5F] px-8 py-6 text-lg"
+                    onClick={() => trackCTAClick('become_seller', 'hero', '/marketplace/register')}
+                  >
                     <TrendingUp className="w-5 h-5 mr-2" />
                     {t('heroSecondaryCta')}
                   </Button>

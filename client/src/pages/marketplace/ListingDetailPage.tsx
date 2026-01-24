@@ -35,6 +35,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import SEOHead from '@/components/marketplace/SEOHead';
 import { 
   getListingBySlug, 
   toggleFavorite,
@@ -208,8 +209,48 @@ export default function ListingDetailPage({ slug }: Props) {
     'Certified': 'bg-purple-500',
   };
 
+  // SEO data
+  const seoTitle = `${getLocalizedField(listing, 'title')} | ${formatPrice(listing.pricePerUnit)} | American Chassis Depot`;
+  const seoDescription = listing.description 
+    ? `${getLocalizedField(listing, 'description')?.slice(0, 155)}...`
+    : `${listing.chassisType} ${listing.chassisSize} chassis in ${listing.condition} condition. Located in ${listing.city}, ${listing.state}. ${listing.quantityAvailable} units available at ${formatPrice(listing.pricePerUnit)} per unit.`;
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonicalPath={`/${lang}/chassis-marketplace/${listing.slug}`}
+        image={listing.primaryImageUrl || undefined}
+        type="product"
+        product={{
+          name: getLocalizedField(listing, 'title') || listing.title,
+          description: seoDescription,
+          image: listing.primaryImageUrl || '',
+          price: parseFloat(listing.pricePerUnit),
+          priceCurrency: 'USD',
+          availability: listing.quantityAvailable > 0 ? 'InStock' : 'OutOfStock',
+          condition: listing.condition === 'New' ? 'NewCondition' : 'UsedCondition',
+          brand: listing.seller?.companyName || 'American Chassis Depot',
+          sku: listing.listingNumber,
+          category: `${listing.chassisType} Chassis`,
+          seller: {
+            name: listing.seller?.companyName || 'American Chassis Depot',
+          },
+          location: {
+            city: listing.city,
+            state: listing.state,
+            country: 'US',
+          },
+        }}
+        breadcrumbs={[
+          { name: lang === 'es' ? 'Inicio' : 'Home', url: `/${lang}` },
+          { name: 'Marketplace', url: `/${lang}/marketplace` },
+          { name: lang === 'es' ? 'Catálogo' : 'Browse', url: `/${lang}/chassis-marketplace` },
+          { name: getLocalizedField(listing, 'title') || listing.title, url: `/${lang}/chassis-marketplace/${listing.slug}` },
+        ]}
+      />
+      
       <Header />
       
       {/* Breadcrumb */}

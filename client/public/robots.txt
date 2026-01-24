@@ -1,3 +1,6 @@
+# American Chassis Depot - Robots.txt
+# Last updated: 2026-01-24
+
 User-agent: *
 Allow: /
 
@@ -8,5 +11,22 @@ Disallow: /contact$
 Disallow: /new-chassis$
 Disallow: /used-chassis$
 
-Sitemap: https://americanchassisdepot.com/sitemap.xml
+# Disallow private marketplace pages
+Disallow: /*/marketplace/dashboard
+Disallow: /*/marketplace/admin
+Disallow: /marketplace/login
+Disallow: /marketplace/register
+Disallow: /api/
 
+# Allow crawling of important marketplace pages
+Allow: /en/marketplace
+Allow: /es/marketplace
+Allow: /en/chassis-marketplace
+Allow: /es/chassis-marketplace
+
+# Sitemaps
+Sitemap: https://www.americanchassisdepot.com/sitemap.xml
+Sitemap: https://www.americanchassisdepot.com/api/marketplace/sitemap-marketplace.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
