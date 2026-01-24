@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import * as schema from '../../shared/marketplace-schema';
+import * as schema from '../../shared/marketplace-schema.js';
 
 // Marketplace database connection
 const marketplaceConnectionString = process.env.MARKETPLACE_DATABASE_URL || process.env.DATABASE_URL;

@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { eq, and } from 'drizzle-orm';
-import { getMarketplaceDb } from './db';
-import { marketplaceUsers } from '../../shared/marketplace-schema';
+import { getMarketplaceDb } from './db.js';
+import { marketplaceUsers } from '../../shared/marketplace-schema.js';
 
 // JWT Configuration
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';

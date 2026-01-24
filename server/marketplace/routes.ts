@@ -10,11 +10,11 @@ import {
   loginUser,
   refreshAccessToken,
   AuthenticatedRequest,
-} from './auth';
-import * as storage from './storage';
-import { isMarketplaceAvailable } from './db';
-import { sendOfferNotification, sendListingApprovalNotification } from './email';
-import stripeRoutes from './stripe-routes';
+} from './auth.js';
+import * as storage from './storage.js';
+import { isMarketplaceAvailable } from './db.js';
+import { sendOfferNotification, sendListingApprovalNotification } from './email.js';
+import stripeRoutes from './stripe-routes.js';
 
 const router = Router();
 

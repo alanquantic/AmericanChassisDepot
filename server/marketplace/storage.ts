@@ -1,5 +1,5 @@
 import { eq, and, or, desc, asc, sql, ilike, gte, lte, inArray } from 'drizzle-orm';
-import { getMarketplaceDb } from './db';
+import { getMarketplaceDb } from './db.js';
 import {
   marketplaceUsers,
   marketplaceListings,
@@ -22,7 +22,7 @@ import {
   type MarketplaceOffer,
   type MarketplaceOrder,
   type MarketplaceNotification,
-} from '../../shared/marketplace-schema';
+} from '../../shared/marketplace-schema.js';
 
 // =============================================
 // LISTINGS

@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { eq, sql } from 'drizzle-orm';
-import { getMarketplaceDb } from './db';
-import { marketplaceUsers, marketplaceOrders, marketplaceOffers, marketplaceListings } from '../../shared/marketplace-schema';
+import { getMarketplaceDb } from './db.js';
+import { marketplaceUsers, marketplaceOrders, marketplaceOffers, marketplaceListings } from '../../shared/marketplace-schema.js';
 
 // Initialize Stripe
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { authenticateToken, requireSeller, requireAdmin, AuthenticatedRequest } from './auth';
+import { authenticateToken, requireSeller, requireAdmin, AuthenticatedRequest } from './auth.js';
 import { 
   isStripeAvailable,
   stripe,
@@ -9,7 +9,7 @@ import {
   handleCheckoutComplete,
   handlePaymentFailed,
   createRefund
-} from './stripe';
+} from './stripe.js';
 
 const router = Router();
 
