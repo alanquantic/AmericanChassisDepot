@@ -55,11 +55,14 @@ import {
   checkUploadStatus,
   uploadImage,
   uploadImageFromUrl,
+  updateListing,
   fileToBase64,
   type ListingImage,
   type MarketplaceListing,
 } from '@/lib/marketplace-api';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
+import { Switch } from '@/components/ui/switch';
+import { getReferenceImage } from '@/lib/marketplace-i18n';
 
 // Image compression constants
 const MAX_FILE_SIZE = 500 * 1024; // 500KB
@@ -166,6 +169,7 @@ export default function ListingImagesPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus2, setUploadStatus2] = useState('');
   const [dragOver, setDragOver] = useState(false);
+  const [showReferenceImage, setShowReferenceImage] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -201,6 +205,42 @@ export default function ListingImagesPage() {
       setImages(listingImages);
     }
   }, [listingImages]);
+
+  // Initialize showReferenceImage from listing specs
+  useEffect(() => {
+    if (listing?.specs) {
+      const specs = typeof listing.specs === 'string' ? JSON.parse(listing.specs) : listing.specs;
+      setShowReferenceImage(specs?.showReferenceImage || false);
+    }
+  }, [listing]);
+
+  // Update showReferenceImage mutation
+  const updateReferenceImageMutation = useMutation({
+    mutationFn: async (show: boolean) => {
+      const currentSpecs = typeof listing?.specs === 'string' ? JSON.parse(listing.specs) : (listing?.specs || {});
+      return updateListing(listingId, {
+        specs: { ...currentSpecs, showReferenceImage: show }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listing-edit', listingId] });
+      toast({
+        title: showReferenceImage
+          ? (lang === 'es' ? 'Imagen de referencia ocultada' : 'Reference image hidden')
+          : (lang === 'es' ? 'Imagen de referencia incluida' : 'Reference image included'),
+      });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      // Revert on error
+      setShowReferenceImage(!showReferenceImage);
+    },
+  });
+
+  const handleToggleReferenceImage = (checked: boolean) => {
+    setShowReferenceImage(checked);
+    updateReferenceImageMutation.mutate(checked);
+  };
 
   // Set primary mutation
   const setPrimaryMutation = useMutation({
@@ -521,6 +561,46 @@ export default function ListingImagesPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Reference Image Toggle */}
+              {listing && (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-12 rounded overflow-hidden bg-gray-200 flex-shrink-0">
+                        <img 
+                          src={getReferenceImage(listing.chassisType, listing.chassisSize)}
+                          alt="Reference"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {lang === 'es' ? 'Imagen de Referencia' : 'Reference Image'}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {lang === 'es' 
+                            ? 'Incluir imagen genérica del tipo de chassis'
+                            : 'Include generic chassis type image'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">
+                        {showReferenceImage 
+                          ? (lang === 'es' ? 'Incluida' : 'Included')
+                          : (lang === 'es' ? 'Oculta' : 'Hidden')
+                        }
+                      </span>
+                      <Switch
+                        checked={showReferenceImage}
+                        onCheckedChange={handleToggleReferenceImage}
+                        disabled={updateReferenceImageMutation.isPending}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Drop zone */}
               <div

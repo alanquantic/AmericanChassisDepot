@@ -202,18 +202,34 @@ export default function ListingDetailPage({ slug }: Props) {
 
   const hasOwnImages = !!(listing.primaryImageUrl || listing.images?.length);
   
+  // Check if reference image should be shown (from specs)
+  const specs = typeof listing.specs === 'string' ? JSON.parse(listing.specs) : (listing.specs || {});
+  const showReferenceImage = specs?.showReferenceImage || false;
+  const referenceImageUrl = getReferenceImage(listing.chassisType, listing.chassisSize);
+  
   // Build images array without duplicates
   const buildImageArray = () => {
+    const imageUrls: string[] = [];
+    
+    // Add uploaded images first
     if (listing.images?.length) {
-      // Use images from listing_images table (already ordered)
-      // Each image object has { url, thumbnailUrl, isPrimary, ... }
-      const imageUrls = listing.images.map((img: any) => img.url || img).filter(Boolean);
-      return imageUrls.length > 0 ? imageUrls : [getReferenceImage(listing.chassisType, listing.chassisSize)];
+      const uploadedUrls = listing.images.map((img: any) => img.url || img).filter(Boolean);
+      imageUrls.push(...uploadedUrls);
+    } else if (listing.primaryImageUrl) {
+      imageUrls.push(listing.primaryImageUrl);
     }
-    if (listing.primaryImageUrl) {
-      return [listing.primaryImageUrl];
+    
+    // Add reference image if enabled and we have other images
+    if (showReferenceImage && imageUrls.length > 0) {
+      imageUrls.push(referenceImageUrl);
     }
-    return [getReferenceImage(listing.chassisType, listing.chassisSize)];
+    
+    // If no images at all, use reference image as fallback
+    if (imageUrls.length === 0) {
+      imageUrls.push(referenceImageUrl);
+    }
+    
+    return imageUrls;
   };
   const images = buildImageArray();
 
