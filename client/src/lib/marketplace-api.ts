@@ -147,10 +147,42 @@ export function clearTokens() {
   localStorage.removeItem('marketplace_user');
 }
 
-// API helper
+// Flag to prevent multiple simultaneous refresh attempts
+let isRefreshing = false;
+let refreshPromise: Promise<string | null> | null = null;
+
+// Try to refresh the access token
+async function tryRefreshToken(): Promise<string | null> {
+  const refresh = getRefreshToken();
+  if (!refresh) return null;
+  
+  try {
+    const response = await fetch(`${API_BASE}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken: refresh }),
+    });
+    
+    if (!response.ok) {
+      return null;
+    }
+    
+    const data = await response.json();
+    if (data.accessToken) {
+      setAccessToken(data.accessToken);
+      return data.accessToken;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+// API helper with auto-refresh
 async function apiRequest<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  isRetry = false
 ): Promise<T> {
   const token = getAccessToken();
   
@@ -167,6 +199,30 @@ async function apiRequest<T>(
     ...options,
     headers,
   });
+
+  // Handle token expiration (401 or 403)
+  if ((response.status === 401 || response.status === 403) && !isRetry && !endpoint.includes('/auth/')) {
+    // Try to refresh the token
+    if (!isRefreshing) {
+      isRefreshing = true;
+      refreshPromise = tryRefreshToken();
+    }
+    
+    const newToken = await refreshPromise;
+    isRefreshing = false;
+    refreshPromise = null;
+    
+    if (newToken) {
+      // Retry the request with new token
+      return apiRequest<T>(endpoint, options, true);
+    } else {
+      // Refresh failed - clear tokens and redirect to login
+      clearTokens();
+      const lang = window.location.pathname.split('/')[1] || 'en';
+      window.location.href = `/${lang}/marketplace/login`;
+      throw new Error('Session expired. Please log in again.');
+    }
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Request failed' }));
