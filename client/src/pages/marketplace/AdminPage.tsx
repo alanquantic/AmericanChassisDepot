@@ -144,24 +144,32 @@ export default function AdminPage() {
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['marketplace-stats'],
     queryFn: getMarketplaceStats,
+    staleTime: 30000, // Keep data fresh for 30 seconds
+    refetchOnMount: true,
   });
 
   // Fetch pending listings
   const { data: pendingListings, isLoading: pendingLoading } = useQuery({
     queryKey: ['pending-listings'],
     queryFn: getPendingListings,
+    staleTime: 30000,
+    refetchOnMount: true,
   });
 
   // Fetch users
   const { data: usersData, isLoading: usersLoading } = useQuery({
     queryKey: ['admin-users', userFilters],
     queryFn: () => getAllUsers(userFilters),
+    staleTime: 30000,
+    refetchOnMount: true,
   });
 
   // Fetch all listings (admin)
   const { data: listingsData, isLoading: listingsLoading } = useQuery({
     queryKey: ['admin-listings', listingFilters],
     queryFn: () => getAllListingsAdmin(listingFilters),
+    staleTime: 30000, // Keep data fresh for 30 seconds
+    refetchOnMount: true, // Always refetch when coming back to page
   });
 
   // Approve mutation

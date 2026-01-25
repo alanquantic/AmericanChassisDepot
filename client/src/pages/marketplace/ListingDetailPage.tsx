@@ -201,11 +201,21 @@ export default function ListingDetailPage({ slug }: Props) {
   }
 
   const hasOwnImages = !!(listing.primaryImageUrl || listing.images?.length);
-  const images = listing.images?.length 
-    ? [listing.primaryImageUrl, ...listing.images.map((img: any) => img.url || img)].filter(Boolean)
-    : listing.primaryImageUrl 
-      ? [listing.primaryImageUrl] 
-      : [getReferenceImage(listing.chassisType, listing.chassisSize)]; // Use reference image as fallback
+  
+  // Build images array without duplicates
+  const buildImageArray = () => {
+    if (listing.images?.length) {
+      // Use images from listing_images table (already ordered)
+      // Each image object has { url, thumbnailUrl, isPrimary, ... }
+      const imageUrls = listing.images.map((img: any) => img.url || img).filter(Boolean);
+      return imageUrls.length > 0 ? imageUrls : [getReferenceImage(listing.chassisType, listing.chassisSize)];
+    }
+    if (listing.primaryImageUrl) {
+      return [listing.primaryImageUrl];
+    }
+    return [getReferenceImage(listing.chassisType, listing.chassisSize)];
+  };
+  const images = buildImageArray();
 
   const conditionColors: Record<string, string> = {
     'ASIS': 'bg-red-500',
