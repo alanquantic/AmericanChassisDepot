@@ -27,7 +27,8 @@ import {
   Phone,
   Building2,
   MapPin,
-  Calendar
+  Calendar,
+  ImageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -730,6 +731,11 @@ export default function AdminPage() {
                                 <DropdownMenuItem onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.slug}`)}>
                                   <Eye className="w-4 h-4 mr-2" />
                                   {lang === 'es' ? 'Ver Detalles' : 'View Details'}
+                                </DropdownMenuItem>
+                                
+                                <DropdownMenuItem onClick={() => navigate(`/${lang}/marketplace/seller/listings/${listing.id}/images`)}>
+                                  <ImageIcon className="w-4 h-4 mr-2" />
+                                  {lang === 'es' ? 'Gestionar Fotos' : 'Manage Photos'}
                                 </DropdownMenuItem>
                                 
                                 <DropdownMenuSeparator />
