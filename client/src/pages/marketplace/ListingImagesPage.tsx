@@ -617,29 +617,30 @@ export default function ListingImagesPage() {
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           {!image.isPrimary && (
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               onClick={() => setPrimaryMutation.mutate(image.id)}
                               disabled={setPrimaryMutation.isPending}
-                              title={lang === 'es' ? 'Hacer principal' : 'Make primary'}
+                              className="text-xs"
                             >
-                              <Star className="w-4 h-4" />
+                              <Star className="w-3 h-3 mr-1" />
+                              {lang === 'es' ? 'Principal' : 'Primary'}
                             </Button>
                           )}
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => {
                               setSelectedImage(image);
                               setDeleteDialogOpen(true);
                             }}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            title={lang === 'es' ? 'Eliminar' : 'Delete'}
+                            className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 text-xs"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3 h-3 mr-1" />
+                            {lang === 'es' ? 'Eliminar' : 'Delete'}
                           </Button>
                         </div>
                       </Reorder.Item>
