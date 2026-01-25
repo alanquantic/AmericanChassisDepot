@@ -323,6 +323,21 @@ export async function deleteListing(id: number) {
     .where(eq(marketplaceListings.id, id));
 }
 
+export async function updateListingStatus(id: number, status: string) {
+  const db = getMarketplaceDb();
+  
+  const [listing] = await db
+    .update(marketplaceListings)
+    .set({
+      status,
+      updatedAt: new Date(),
+    })
+    .where(eq(marketplaceListings.id, id))
+    .returning();
+
+  return listing;
+}
+
 // =============================================
 // CONVERSATIONS & MESSAGES
 // =============================================

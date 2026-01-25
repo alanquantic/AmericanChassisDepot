@@ -421,6 +421,34 @@ export async function getMarketplaceStats(): Promise<any> {
   return apiRequest('/admin/stats');
 }
 
+export async function getAllListingsAdmin(filters: {
+  status?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<{ listings: MarketplaceListing[]; total: number; page: number; totalPages: number }> {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      params.append(key, String(value));
+    }
+  });
+  return apiRequest(`/admin/listings?${params.toString()}`);
+}
+
+export async function updateListingStatus(listingId: number, status: 'active' | 'inactive' | 'sold'): Promise<{ message: string }> {
+  return apiRequest(`/admin/listings/${listingId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+  });
+}
+
+export async function deleteListingAdmin(listingId: number): Promise<{ message: string }> {
+  return apiRequest(`/admin/listings/${listingId}`, {
+    method: 'DELETE',
+  });
+}
+
 // =============================================
 // STRIPE PAYMENTS
 // =============================================

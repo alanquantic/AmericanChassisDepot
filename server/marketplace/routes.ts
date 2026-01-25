@@ -866,8 +866,9 @@ router.get('/admin/listings', authenticateToken, requireAdmin, async (req: Authe
   try {
     const filters = {
       status: req.query.status as string || 'all',
+      search: req.query.search as string,
       page: req.query.page ? Number(req.query.page) : 1,
-      limit: 50,
+      limit: req.query.limit ? Math.min(Number(req.query.limit), 100) : 20,
     };
     
     const result = await storage.getListings(filters);
@@ -875,6 +876,43 @@ router.get('/admin/listings', authenticateToken, requireAdmin, async (req: Authe
   } catch (error) {
     console.error('Error fetching admin listings:', error);
     res.status(500).json({ message: 'Failed to fetch listings' });
+  }
+});
+
+// Update listing status (admin)
+router.put('/admin/listings/:id/status', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const listingId = Number(req.params.id);
+    const { status } = req.body;
+    
+    if (!['active', 'inactive', 'sold', 'pending'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+    
+    const listing = await storage.updateListingStatus(listingId, status);
+    
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+    
+    res.json({ message: 'Listing status updated', listing });
+  } catch (error) {
+    console.error('Error updating listing status:', error);
+    res.status(500).json({ message: 'Failed to update listing status' });
+  }
+});
+
+// Delete listing (admin)
+router.delete('/admin/listings/:id', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const listingId = Number(req.params.id);
+    
+    await storage.deleteListing(listingId);
+    
+    res.json({ message: 'Listing deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting listing:', error);
+    res.status(500).json({ message: 'Failed to delete listing' });
   }
 });
 

@@ -86,8 +86,12 @@ import {
   suspendUser,
   activateUser,
   deleteUser,
+  getAllListingsAdmin,
+  updateListingStatus,
+  deleteListingAdmin,
   type AdminUser,
   type UserFilters,
+  type MarketplaceListing,
 } from '@/lib/marketplace-api';
 import { t, formatPrice, formatDate } from '@/lib/marketplace-i18n';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
@@ -115,6 +119,12 @@ export default function AdminPage() {
   const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
   const [suspendReason, setSuspendReason] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  // Listings management states
+  const [listingFilters, setListingFilters] = useState<{ status?: string; search?: string; page: number }>({ page: 1 });
+  const [listingSearchTerm, setListingSearchTerm] = useState('');
+  const [selectedListingForAction, setSelectedListingForAction] = useState<MarketplaceListing | null>(null);
+  const [deleteListingDialogOpen, setDeleteListingDialogOpen] = useState(false);
 
   // Redirect if not admin
   useEffect(() => {
@@ -145,6 +155,12 @@ export default function AdminPage() {
   const { data: usersData, isLoading: usersLoading } = useQuery({
     queryKey: ['admin-users', userFilters],
     queryFn: () => getAllUsers(userFilters),
+  });
+
+  // Fetch all listings (admin)
+  const { data: listingsData, isLoading: listingsLoading } = useQuery({
+    queryKey: ['admin-listings', listingFilters],
+    queryFn: () => getAllListingsAdmin(listingFilters),
   });
 
   // Approve mutation
@@ -257,6 +273,41 @@ export default function AdminPage() {
     },
   });
 
+  // Listing mutations
+  const updateListingStatusMutation = useMutation({
+    mutationFn: ({ listingId, status }: { listingId: number; status: 'active' | 'inactive' | 'sold' }) => 
+      updateListingStatus(listingId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+      queryClient.invalidateQueries({ queryKey: ['marketplace-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['pending-listings'] });
+      toast({ 
+        title: lang === 'es' ? 'Estado Actualizado' : 'Status Updated', 
+        description: lang === 'es' ? 'El listing ha sido actualizado.' : 'The listing has been updated.' 
+      });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    },
+  });
+
+  const deleteListingMutation = useMutation({
+    mutationFn: (listingId: number) => deleteListingAdmin(listingId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+      queryClient.invalidateQueries({ queryKey: ['marketplace-stats'] });
+      setDeleteListingDialogOpen(false);
+      setSelectedListingForAction(null);
+      toast({ 
+        title: lang === 'es' ? 'Listing Eliminado' : 'Listing Deleted', 
+        description: lang === 'es' ? 'El listing ha sido eliminado permanentemente.' : 'The listing has been permanently deleted.' 
+      });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    },
+  });
+
   const handleReject = () => {
     if (!selectedListing || !rejectReason.trim()) return;
     rejectMutation.mutate({ id: selectedListing.id, reason: rejectReason });
@@ -294,6 +345,30 @@ export default function AdminPage() {
   const openDelete = (u: AdminUser) => {
     setSelectedUser(u);
     setDeleteDialogOpen(true);
+  };
+
+  // Listing helper functions
+  const handleListingSearch = () => {
+    setListingFilters({ ...listingFilters, search: listingSearchTerm, page: 1 });
+  };
+
+  const handleListingStatusChange = (listing: MarketplaceListing, newStatus: 'active' | 'inactive' | 'sold') => {
+    updateListingStatusMutation.mutate({ listingId: listing.id, status: newStatus });
+  };
+
+  const openDeleteListing = (listing: MarketplaceListing) => {
+    setSelectedListingForAction(listing);
+    setDeleteListingDialogOpen(true);
+  };
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'active': return 'default';
+      case 'pending': return 'secondary';
+      case 'sold': return 'outline';
+      case 'inactive': return 'destructive';
+      default: return 'outline';
+    }
   };
 
   if (!user || !['admin', 'super_admin'].includes(user.role)) {
@@ -514,22 +589,235 @@ export default function AdminPage() {
           <TabsContent value="listings">
             <Card>
               <CardHeader>
-                <CardTitle>All Listings</CardTitle>
-                <CardDescription>View and manage all marketplace listings</CardDescription>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Package className="w-5 h-5" />
+                      {lang === 'es' ? 'Todos los Listings' : 'All Listings'}
+                    </CardTitle>
+                    <CardDescription>
+                      {lang === 'es' ? 'Gestiona todos los listings del marketplace' : 'Manage all marketplace listings'}
+                    </CardDescription>
+                  </div>
+                  
+                  {/* Filters */}
+                  <div className="flex flex-wrap gap-2">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder={lang === 'es' ? 'Buscar...' : 'Search...'}
+                        value={listingSearchTerm}
+                        onChange={(e) => setListingSearchTerm(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleListingSearch()}
+                        className="w-48"
+                      />
+                      <Button variant="outline" size="icon" onClick={handleListingSearch}>
+                        <Search className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <Select
+                      value={listingFilters.status || 'all'}
+                      onValueChange={(value) => setListingFilters({ ...listingFilters, status: value === 'all' ? undefined : value, page: 1 })}
+                    >
+                      <SelectTrigger className="w-36">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{lang === 'es' ? 'Todos' : 'All Status'}</SelectItem>
+                        <SelectItem value="active">{lang === 'es' ? 'Activos' : 'Active'}</SelectItem>
+                        <SelectItem value="pending">{lang === 'es' ? 'Pendientes' : 'Pending'}</SelectItem>
+                        <SelectItem value="sold">{lang === 'es' ? 'Vendidos' : 'Sold'}</SelectItem>
+                        <SelectItem value="inactive">{lang === 'es' ? 'Inactivos' : 'Inactive'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12 text-gray-500">
-                  <Activity className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                  <p>Full listing management coming soon</p>
-                  <Button 
-                    variant="outline" 
-                    className="mt-4"
-                    onClick={() => navigate(`/${lang}/chassis-marketplace`)}
-                  >
-                    View Marketplace
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </Button>
+                {/* Listing Stats */}
+                <div className="grid grid-cols-4 gap-4 mb-6">
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <p className="text-3xl font-bold text-green-600">{stats?.listings?.activeListings || 0}</p>
+                      <p className="text-sm text-gray-500">{lang === 'es' ? 'Activos' : 'Active'}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <p className="text-3xl font-bold text-amber-600">{stats?.listings?.pendingListings || 0}</p>
+                      <p className="text-sm text-gray-500">{lang === 'es' ? 'Pendientes' : 'Pending'}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <p className="text-3xl font-bold text-purple-600">{stats?.listings?.soldListings || 0}</p>
+                      <p className="text-sm text-gray-500">{lang === 'es' ? 'Vendidos' : 'Sold'}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <p className="text-3xl font-bold text-gray-600">{stats?.listings?.totalListings || 0}</p>
+                      <p className="text-sm text-gray-500">Total</p>
+                    </CardContent>
+                  </Card>
                 </div>
+
+                {/* Listings List */}
+                {listingsLoading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <div key={i} className="h-20 bg-gray-100 rounded-lg animate-pulse" />
+                    ))}
+                  </div>
+                ) : listingsData?.listings && listingsData.listings.length > 0 ? (
+                  <>
+                    <div className="space-y-3">
+                      {listingsData.listings.map((listing: MarketplaceListing) => (
+                        <motion.div
+                          key={listing.id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50"
+                        >
+                          <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            {listing.primaryImageUrl ? (
+                              <img src={listing.primaryImageUrl} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <Package className="w-6 h-6 text-gray-400" />
+                            )}
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-semibold truncate">{listing.title}</span>
+                              <Badge variant="outline" className="text-xs">{listing.listingNumber}</Badge>
+                              <Badge variant={getStatusBadgeVariant(listing.status)} className="capitalize">
+                                {listing.status}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                              <span>{listing.chassisType} • {listing.chassisSize}</span>
+                              <span>{listing.condition}</span>
+                              {listing.city && listing.state && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" />
+                                  {listing.city}, {listing.state}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="text-right hidden md:block">
+                            <p className="text-lg font-bold text-[#0A3161]">{formatPrice(listing.pricePerUnit)}</p>
+                            <p className="text-sm text-gray-500">{listing.quantityAvailable} {lang === 'es' ? 'unidades' : 'units'}</p>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.id}`)}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreVertical className="w-4 h-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.id}`)}>
+                                  <Eye className="w-4 h-4 mr-2" />
+                                  {lang === 'es' ? 'Ver Detalles' : 'View Details'}
+                                </DropdownMenuItem>
+                                
+                                <DropdownMenuSeparator />
+                                
+                                {listing.status !== 'active' && (
+                                  <DropdownMenuItem 
+                                    onClick={() => handleListingStatusChange(listing, 'active')}
+                                    className="text-green-600"
+                                  >
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    {lang === 'es' ? 'Activar' : 'Activate'}
+                                  </DropdownMenuItem>
+                                )}
+                                
+                                {listing.status === 'active' && (
+                                  <DropdownMenuItem 
+                                    onClick={() => handleListingStatusChange(listing, 'inactive')}
+                                    className="text-amber-600"
+                                  >
+                                    <XCircle className="w-4 h-4 mr-2" />
+                                    {lang === 'es' ? 'Desactivar' : 'Deactivate'}
+                                  </DropdownMenuItem>
+                                )}
+                                
+                                {listing.status !== 'sold' && (
+                                  <DropdownMenuItem 
+                                    onClick={() => handleListingStatusChange(listing, 'sold')}
+                                    className="text-purple-600"
+                                  >
+                                    <DollarSign className="w-4 h-4 mr-2" />
+                                    {lang === 'es' ? 'Marcar Vendido' : 'Mark as Sold'}
+                                  </DropdownMenuItem>
+                                )}
+                                
+                                <DropdownMenuSeparator />
+                                
+                                <DropdownMenuItem 
+                                  onClick={() => openDeleteListing(listing)}
+                                  className="text-red-600"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  {lang === 'es' ? 'Eliminar' : 'Delete'}
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {listingsData.totalPages > 1 && (
+                      <div className="flex justify-center gap-2 mt-6">
+                        <Button
+                          variant="outline"
+                          disabled={listingFilters.page === 1}
+                          onClick={() => setListingFilters({ ...listingFilters, page: listingFilters.page - 1 })}
+                        >
+                          {lang === 'es' ? 'Anterior' : 'Previous'}
+                        </Button>
+                        <span className="flex items-center px-4 text-sm text-gray-500">
+                          {lang === 'es' ? 'Página' : 'Page'} {listingFilters.page} {lang === 'es' ? 'de' : 'of'} {listingsData.totalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          disabled={listingFilters.page >= listingsData.totalPages}
+                          onClick={() => setListingFilters({ ...listingFilters, page: listingFilters.page + 1 })}
+                        >
+                          {lang === 'es' ? 'Siguiente' : 'Next'}
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">
+                      {lang === 'es' ? 'No se encontraron listings' : 'No listings found'}
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-4"
+                      onClick={() => setListingFilters({ page: 1 })}
+                    >
+                      {lang === 'es' ? 'Limpiar Filtros' : 'Clear Filters'}
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -1034,6 +1322,31 @@ export default function AdminPage() {
               onClick={() => selectedUser && deleteUserMutation.mutate(selectedUser.id)}
             >
               {deleteUserMutation.isPending ? (lang === 'es' ? 'Eliminando...' : 'Deleting...') : (lang === 'es' ? 'Eliminar' : 'Delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Listing Confirmation */}
+      <AlertDialog open={deleteListingDialogOpen} onOpenChange={setDeleteListingDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {lang === 'es' ? '¿Eliminar listing permanentemente?' : 'Permanently delete listing?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {lang === 'es' 
+                ? `Esta acción no se puede deshacer. Se eliminará permanentemente "${selectedListingForAction?.title}" y todos sus datos asociados.`
+                : `This action cannot be undone. This will permanently delete "${selectedListingForAction?.title}" and all associated data.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{lang === 'es' ? 'Cancelar' : 'Cancel'}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={() => selectedListingForAction && deleteListingMutation.mutate(selectedListingForAction.id)}
+            >
+              {deleteListingMutation.isPending ? (lang === 'es' ? 'Eliminando...' : 'Deleting...') : (lang === 'es' ? 'Eliminar' : 'Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
