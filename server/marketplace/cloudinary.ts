@@ -80,10 +80,18 @@ export async function uploadBase64Image(
     const uploadOptions: any = {
       folder: options.folder || 'marketplace/listings',
       resource_type: options.resourceType || 'image',
+      // Optimize on upload: resize large images, convert to WebP, compress
       transformation: [
-        { quality: 'auto:good' },
-        { fetch_format: 'auto' },
+        { width: 1920, height: 1920, crop: 'limit' }, // Max 1920px, maintain aspect ratio
+        { quality: 'auto:good' }, // Smart compression
+        { fetch_format: 'webp' }, // Force WebP for smaller file size
       ],
+      // Additional optimizations
+      eager: [
+        // Pre-generate thumbnail
+        { width: 400, height: 300, crop: 'fill', quality: 'auto:good', fetch_format: 'webp' },
+      ],
+      eager_async: true,
     };
 
     if (options.transformation) {
@@ -92,12 +100,12 @@ export async function uploadBase64Image(
 
     const result: UploadApiResponse = await cloudinary.uploader.upload(dataUri, uploadOptions);
 
-    // Generate thumbnail URL
+    // Generate thumbnail URL (WebP format)
     const thumbnailUrl = cloudinary.url(result.public_id, {
       transformation: [
-        { width: 300, height: 300, crop: 'fill' },
+        { width: 400, height: 300, crop: 'fill' },
         { quality: 'auto:good' },
-        { fetch_format: 'auto' },
+        { fetch_format: 'webp' },
       ],
     });
 
@@ -135,20 +143,26 @@ export async function uploadFromUrl(
     const uploadOptions: any = {
       folder: options.folder || 'marketplace/listings',
       resource_type: options.resourceType || 'image',
+      // Optimize on upload: resize large images, convert to WebP, compress
       transformation: [
+        { width: 1920, height: 1920, crop: 'limit' },
         { quality: 'auto:good' },
-        { fetch_format: 'auto' },
+        { fetch_format: 'webp' },
       ],
+      eager: [
+        { width: 400, height: 300, crop: 'fill', quality: 'auto:good', fetch_format: 'webp' },
+      ],
+      eager_async: true,
     };
 
     const result: UploadApiResponse = await cloudinary.uploader.upload(imageUrl, uploadOptions);
 
-    // Generate thumbnail URL
+    // Generate thumbnail URL (WebP format)
     const thumbnailUrl = cloudinary.url(result.public_id, {
       transformation: [
-        { width: 300, height: 300, crop: 'fill' },
+        { width: 400, height: 300, crop: 'fill' },
         { quality: 'auto:good' },
-        { fetch_format: 'auto' },
+        { fetch_format: 'webp' },
       ],
     });
 
@@ -253,7 +267,7 @@ export function getOptimizedUrl(
   }
 
   transformations.push({ quality: options.quality || 'auto:good' });
-  transformations.push({ fetch_format: 'auto' });
+  transformations.push({ fetch_format: 'webp' }); // Always use WebP for smaller files
 
   return cloudinary.url(publicId, { transformation: transformations });
 }

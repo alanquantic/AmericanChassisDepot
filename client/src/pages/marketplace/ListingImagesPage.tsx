@@ -61,6 +61,85 @@ import {
 } from '@/lib/marketplace-api';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
 
+// Image compression constants
+const MAX_FILE_SIZE = 500 * 1024; // 500KB
+const MAX_DIMENSION = 1920; // Max width/height
+const COMPRESSION_QUALITY = 0.85;
+
+// Compress image function
+async function compressImage(file: File): Promise<{ blob: Blob; wasCompressed: boolean }> {
+  return new Promise((resolve, reject) => {
+    // If file is already small enough and is JPEG/WebP, return as-is
+    if (file.size <= MAX_FILE_SIZE && (file.type === 'image/jpeg' || file.type === 'image/webp')) {
+      resolve({ blob: file, wasCompressed: false });
+      return;
+    }
+
+    const img = new Image();
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    img.onload = () => {
+      // Calculate new dimensions maintaining aspect ratio
+      let { width, height } = img;
+      
+      if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+        if (width > height) {
+          height = Math.round((height * MAX_DIMENSION) / width);
+          width = MAX_DIMENSION;
+        } else {
+          width = Math.round((width * MAX_DIMENSION) / height);
+          height = MAX_DIMENSION;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      // Draw with white background (for PNGs with transparency)
+      ctx!.fillStyle = '#FFFFFF';
+      ctx!.fillRect(0, 0, width, height);
+      ctx!.drawImage(img, 0, 0, width, height);
+
+      // Try to compress to target size
+      let quality = COMPRESSION_QUALITY;
+      const tryCompress = () => {
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Failed to compress image'));
+              return;
+            }
+
+            // If still too large and quality can be reduced
+            if (blob.size > MAX_FILE_SIZE && quality > 0.5) {
+              quality -= 0.1;
+              tryCompress();
+              return;
+            }
+
+            resolve({ blob, wasCompressed: true });
+          },
+          'image/jpeg',
+          quality
+        );
+      };
+
+      tryCompress();
+    };
+
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// Format file size for display
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export default function ListingImagesPage() {
   const [, navigate] = useLocation();
   const params = useParams<{ id: string }>();
@@ -80,6 +159,7 @@ export default function ListingImagesPage() {
   const [selectedImage, setSelectedImage] = useState<ListingImage | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus2, setUploadStatus2] = useState('');
   const [dragOver, setDragOver] = useState(false);
 
   // Redirect if not authenticated
@@ -166,37 +246,88 @@ export default function ListingImagesPage() {
     }
 
     setUploading(true);
+    setUploadStatus2('');
     const fileArray = Array.from(files);
     let completed = 0;
+    let compressed = 0;
 
     try {
       for (const file of fileArray) {
         // Validate file type
-        if (!file.type.startsWith('image/')) {
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+        if (!validTypes.includes(file.type)) {
           toast({ 
-            title: 'Error', 
-            description: `${file.name} ${lang === 'es' ? 'no es una imagen válida' : 'is not a valid image'}`,
+            title: lang === 'es' ? 'Formato no válido' : 'Invalid format', 
+            description: lang === 'es' 
+              ? `${file.name} debe ser JPG, PNG, WebP o GIF` 
+              : `${file.name} must be JPG, PNG, WebP or GIF`,
             variant: 'destructive'
           });
           continue;
         }
 
-        // Validate file size (max 10MB)
+        // Validate initial file size (max 10MB before compression)
         if (file.size > 10 * 1024 * 1024) {
           toast({ 
-            title: 'Error', 
-            description: `${file.name} ${lang === 'es' ? 'es demasiado grande (máx 10MB)' : 'is too large (max 10MB)'}`,
+            title: lang === 'es' ? 'Imagen muy grande' : 'Image too large', 
+            description: lang === 'es' 
+              ? `${file.name} supera los 10MB. Por favor usa una imagen más pequeña.` 
+              : `${file.name} exceeds 10MB. Please use a smaller image.`,
             variant: 'destructive'
           });
           continue;
+        }
+
+        // Update status for user
+        setUploadStatus2(
+          lang === 'es' 
+            ? `Procesando ${file.name}...` 
+            : `Processing ${file.name}...`
+        );
+
+        // Compress image if needed
+        let imageBlob: Blob = file;
+        try {
+          const originalSize = file.size;
+          
+          if (originalSize > MAX_FILE_SIZE) {
+            setUploadStatus2(
+              lang === 'es' 
+                ? `Optimizando ${file.name} (${formatFileSize(originalSize)})...` 
+                : `Optimizing ${file.name} (${formatFileSize(originalSize)})...`
+            );
+          }
+          
+          const { blob, wasCompressed } = await compressImage(file);
+          imageBlob = blob;
+          
+          if (wasCompressed) {
+            compressed++;
+            console.log(`Compressed ${file.name}: ${formatFileSize(originalSize)} → ${formatFileSize(blob.size)}`);
+          }
+        } catch (compressError) {
+          console.error('Compression failed, using original:', compressError);
+          // Continue with original file if compression fails
         }
 
         // Convert to base64 and upload
-        const base64 = await fileToBase64(file);
+        setUploadStatus2(
+          lang === 'es' 
+            ? `Subiendo ${file.name}...` 
+            : `Uploading ${file.name}...`
+        );
+        
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(imageBlob);
+        });
+
         await uploadImage({
           image: base64,
           listingId,
-          isPrimary: images.length === 0 && completed === 0, // First image is primary
+          isPrimary: images.length === 0 && completed === 0,
         });
 
         completed++;
@@ -205,15 +336,22 @@ export default function ListingImagesPage() {
 
       refetchImages();
       setUploadDialogOpen(false);
+      
+      // Success message
+      const successMsg = lang === 'es' 
+        ? `${completed} ${completed === 1 ? 'imagen subida' : 'imágenes subidas'}${compressed > 0 ? ` (${compressed} optimizadas automáticamente)` : ''}`
+        : `${completed} ${completed === 1 ? 'image uploaded' : 'images uploaded'}${compressed > 0 ? ` (${compressed} auto-optimized)` : ''}`;
+      
       toast({ 
-        title: lang === 'es' ? 'Imágenes subidas' : 'Images uploaded',
-        description: `${completed} ${lang === 'es' ? 'de' : 'of'} ${fileArray.length} ${lang === 'es' ? 'imágenes subidas' : 'images uploaded'}`
+        title: lang === 'es' ? 'Listo' : 'Done',
+        description: successMsg
       });
     } catch (error: any) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
     } finally {
       setUploading(false);
       setUploadProgress(0);
+      setUploadStatus2('');
     }
   };
 
@@ -345,6 +483,23 @@ export default function ListingImagesPage() {
               </div>
             </CardHeader>
             <CardContent>
+              {/* Info banner */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium mb-1">
+                      {lang === 'es' ? 'Optimización automática' : 'Auto-optimization'}
+                    </p>
+                    <p>
+                      {lang === 'es' 
+                        ? 'Las imágenes grandes se optimizan automáticamente para cargar rápido. Formatos: JPG, PNG, WebP, GIF.'
+                        : 'Large images are automatically optimized for fast loading. Formats: JPG, PNG, WebP, GIF.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Drop zone */}
               <div
                 onDrop={handleDrop}
@@ -353,16 +508,38 @@ export default function ListingImagesPage() {
                 className={`border-2 border-dashed rounded-lg p-8 mb-6 transition-colors ${
                   dragOver 
                     ? 'border-[#0A3161] bg-[#0A3161]/5' 
+                    : uploading
+                    ? 'border-[#0A3161] bg-[#0A3161]/5'
                     : 'border-gray-300 hover:border-gray-400'
                 }`}
               >
-                {images.length === 0 ? (
+                {uploading ? (
+                  <div className="text-center">
+                    <Loader2 className="w-12 h-12 text-[#0A3161] mx-auto mb-3 animate-spin" />
+                    <p className="text-[#0A3161] font-medium mb-1">
+                      {uploadStatus2 || (lang === 'es' ? 'Procesando...' : 'Processing...')}
+                    </p>
+                    {uploadProgress > 0 && (
+                      <div className="w-48 mx-auto bg-gray-200 rounded-full h-2 mt-3">
+                        <div 
+                          className="bg-[#0A3161] h-2 rounded-full transition-all" 
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : images.length === 0 ? (
                   <div className="text-center">
                     <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-600 mb-2">
+                    <p className="text-gray-600 mb-1">
                       {lang === 'es' 
                         ? 'Arrastra imágenes aquí o haz click para subir'
                         : 'Drag images here or click to upload'}
+                    </p>
+                    <p className="text-gray-400 text-sm mb-3">
+                      {lang === 'es' 
+                        ? 'JPG, PNG, WebP o GIF • Se optimizan automáticamente'
+                        : 'JPG, PNG, WebP or GIF • Auto-optimized'}
                     </p>
                     <Button 
                       variant="outline" 
@@ -374,7 +551,7 @@ export default function ListingImagesPage() {
                     <input
                       ref={fileInputRef}
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
                       multiple
                       className="hidden"
                       onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
