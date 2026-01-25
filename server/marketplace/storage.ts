@@ -1010,3 +1010,528 @@ export async function getConversationById(conversationId: number) {
     listing,
   };
 }
+
+// =============================================
+// USER MANAGEMENT (ADMIN/SUPER_ADMIN)
+// =============================================
+
+export interface UserFilters {
+  role?: string;
+  status?: 'all' | 'active' | 'suspended';
+  search?: string;
+  sortBy?: 'date_asc' | 'date_desc' | 'name' | 'email';
+  page?: number;
+  limit?: number;
+}
+
+export async function getAllUsers(filters: UserFilters = {}) {
+  const db = getMarketplaceDb();
+  const {
+    role,
+    status = 'all',
+    search,
+    sortBy = 'date_desc',
+    page = 1,
+    limit = 20
+  } = filters;
+
+  const conditions = [];
+
+  // Role filter
+  if (role && role !== 'all') {
+    conditions.push(eq(marketplaceUsers.role, role));
+  }
+
+  // Status filter
+  if (status === 'active') {
+    conditions.push(eq(marketplaceUsers.isActive, true));
+    conditions.push(eq(marketplaceUsers.isSuspended, false));
+  } else if (status === 'suspended') {
+    conditions.push(eq(marketplaceUsers.isSuspended, true));
+  }
+
+  // Search filter
+  if (search) {
+    conditions.push(
+      or(
+        ilike(marketplaceUsers.email, `%${search}%`),
+        ilike(marketplaceUsers.firstName, `%${search}%`),
+        ilike(marketplaceUsers.lastName, `%${search}%`),
+        ilike(marketplaceUsers.companyName, `%${search}%`)
+      )
+    );
+  }
+
+  // Build order by
+  let orderBy;
+  switch (sortBy) {
+    case 'date_asc':
+      orderBy = asc(marketplaceUsers.createdAt);
+      break;
+    case 'name':
+      orderBy = asc(marketplaceUsers.firstName);
+      break;
+    case 'email':
+      orderBy = asc(marketplaceUsers.email);
+      break;
+    case 'date_desc':
+    default:
+      orderBy = desc(marketplaceUsers.createdAt);
+  }
+
+  const offset = (page - 1) * limit;
+
+  const users = await db
+    .select({
+      id: marketplaceUsers.id,
+      email: marketplaceUsers.email,
+      role: marketplaceUsers.role,
+      firstName: marketplaceUsers.firstName,
+      lastName: marketplaceUsers.lastName,
+      companyName: marketplaceUsers.companyName,
+      phone: marketplaceUsers.phone,
+      city: marketplaceUsers.city,
+      state: marketplaceUsers.state,
+      isActive: marketplaceUsers.isActive,
+      isSuspended: marketplaceUsers.isSuspended,
+      suspensionReason: marketplaceUsers.suspensionReason,
+      emailVerified: marketplaceUsers.emailVerified,
+      sellerVerified: marketplaceUsers.sellerVerified,
+      createdAt: marketplaceUsers.createdAt,
+      lastLoginAt: marketplaceUsers.lastLoginAt,
+      loginCount: marketplaceUsers.loginCount,
+    })
+    .from(marketplaceUsers)
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(orderBy)
+    .limit(limit)
+    .offset(offset);
+
+  // Get total count
+  const [countResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(marketplaceUsers)
+    .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+  const total = Number(countResult?.count || 0);
+
+  return {
+    users,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      hasMore: page * limit < total
+    }
+  };
+}
+
+export async function getUserFullDetails(userId: number) {
+  const db = getMarketplaceDb();
+  
+  const [user] = await db
+    .select()
+    .from(marketplaceUsers)
+    .where(eq(marketplaceUsers.id, userId))
+    .limit(1);
+
+  if (!user) return null;
+
+  // Get user's listing count if seller
+  let listingStats = null;
+  if (user.role === 'seller' || user.role === 'admin' || user.role === 'super_admin') {
+    const [stats] = await db
+      .select({
+        total: sql<number>`count(*)`,
+        active: sql<number>`count(*) filter (where status = 'active')`,
+        pending: sql<number>`count(*) filter (where status = 'pending')`,
+        sold: sql<number>`count(*) filter (where status = 'sold')`,
+      })
+      .from(marketplaceListings)
+      .where(eq(marketplaceListings.sellerId, userId));
+    
+    listingStats = stats;
+  }
+
+  // Get user's offer stats
+  const [offerStats] = await db
+    .select({
+      sent: sql<number>`count(*) filter (where buyer_id = ${userId})`,
+      received: sql<number>`count(*) filter (where seller_id = ${userId})`,
+    })
+    .from(marketplaceOffers);
+
+  return {
+    ...user,
+    // Remove sensitive data
+    passwordHash: undefined,
+    passwordResetToken: undefined,
+    emailVerificationToken: undefined,
+    listingStats,
+    offerStats,
+  };
+}
+
+export async function updateUserByAdmin(userId: number, data: {
+  firstName?: string;
+  lastName?: string;
+  companyName?: string;
+  phone?: string;
+  city?: string;
+  state?: string;
+  bio?: string;
+}) {
+  const db = getMarketplaceDb();
+  
+  const [user] = await db
+    .update(marketplaceUsers)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(marketplaceUsers.id, userId))
+    .returning();
+
+  return user;
+}
+
+export async function updateUserRole(userId: number, newRole: string) {
+  const db = getMarketplaceDb();
+  
+  // Validate role
+  const validRoles = ['buyer', 'seller', 'admin', 'super_admin'];
+  if (!validRoles.includes(newRole)) {
+    throw new Error('Invalid role');
+  }
+
+  const [user] = await db
+    .update(marketplaceUsers)
+    .set({
+      role: newRole,
+      // If upgrading to seller, mark as seller verified
+      sellerVerified: newRole === 'seller' || newRole === 'admin' || newRole === 'super_admin' ? true : undefined,
+      sellerVerificationDate: newRole === 'seller' || newRole === 'admin' || newRole === 'super_admin' ? new Date() : undefined,
+      updatedAt: new Date(),
+    })
+    .where(eq(marketplaceUsers.id, userId))
+    .returning();
+
+  return user;
+}
+
+export async function suspendUser(userId: number, reason: string) {
+  const db = getMarketplaceDb();
+  
+  const [user] = await db
+    .update(marketplaceUsers)
+    .set({
+      isSuspended: true,
+      suspensionReason: reason,
+      updatedAt: new Date(),
+    })
+    .where(eq(marketplaceUsers.id, userId))
+    .returning();
+
+  return user;
+}
+
+export async function activateUser(userId: number) {
+  const db = getMarketplaceDb();
+  
+  const [user] = await db
+    .update(marketplaceUsers)
+    .set({
+      isSuspended: false,
+      isActive: true,
+      suspensionReason: null,
+      updatedAt: new Date(),
+    })
+    .where(eq(marketplaceUsers.id, userId))
+    .returning();
+
+  return user;
+}
+
+export async function deleteUser(userId: number) {
+  const db = getMarketplaceDb();
+  
+  // First check if user has any active listings
+  const [listingCheck] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.sellerId, userId),
+      eq(marketplaceListings.status, 'active')
+    ));
+
+  if (Number(listingCheck?.count || 0) > 0) {
+    throw new Error('Cannot delete user with active listings');
+  }
+
+  // Delete user (related records will cascade due to FK constraints)
+  await db
+    .delete(marketplaceUsers)
+    .where(eq(marketplaceUsers.id, userId));
+
+  return { success: true };
+}
+
+// =============================================
+// LISTING IMAGES MANAGEMENT
+// =============================================
+
+export async function addListingImage(listingId: number, imageData: {
+  url: string;
+  thumbnailUrl?: string;
+  altText?: string;
+  sortOrder?: number;
+  isPrimary?: boolean;
+}) {
+  const db = getMarketplaceDb();
+  
+  // If this is primary, unset other primaries
+  if (imageData.isPrimary) {
+    await db
+      .update(listingImages)
+      .set({ isPrimary: false })
+      .where(eq(listingImages.listingId, listingId));
+  }
+
+  // Get current max sort order
+  const [maxOrder] = await db
+    .select({ maxOrder: sql<number>`COALESCE(MAX(sort_order), -1)` })
+    .from(listingImages)
+    .where(eq(listingImages.listingId, listingId));
+
+  const [image] = await db
+    .insert(listingImages)
+    .values({
+      listingId,
+      url: imageData.url,
+      thumbnailUrl: imageData.thumbnailUrl,
+      altText: imageData.altText,
+      sortOrder: imageData.sortOrder ?? (Number(maxOrder?.maxOrder || 0) + 1),
+      isPrimary: imageData.isPrimary || false,
+      createdAt: new Date(),
+    })
+    .returning();
+
+  // Update listing primary image if this is primary
+  if (imageData.isPrimary) {
+    await db
+      .update(marketplaceListings)
+      .set({ primaryImageUrl: imageData.url, updatedAt: new Date() })
+      .where(eq(marketplaceListings.id, listingId));
+  }
+
+  return image;
+}
+
+export async function deleteListingImage(imageId: number) {
+  const db = getMarketplaceDb();
+  
+  // Get image info first
+  const [image] = await db
+    .select()
+    .from(listingImages)
+    .where(eq(listingImages.id, imageId))
+    .limit(1);
+
+  if (!image) {
+    throw new Error('Image not found');
+  }
+
+  // Delete image
+  await db
+    .delete(listingImages)
+    .where(eq(listingImages.id, imageId));
+
+  // If this was primary, set another image as primary
+  if (image.isPrimary && image.listingId) {
+    const [nextImage] = await db
+      .select()
+      .from(listingImages)
+      .where(eq(listingImages.listingId, image.listingId))
+      .orderBy(asc(listingImages.sortOrder))
+      .limit(1);
+
+    if (nextImage) {
+      await db
+        .update(listingImages)
+        .set({ isPrimary: true })
+        .where(eq(listingImages.id, nextImage.id));
+      
+      await db
+        .update(marketplaceListings)
+        .set({ primaryImageUrl: nextImage.url, updatedAt: new Date() })
+        .where(eq(marketplaceListings.id, image.listingId));
+    } else {
+      // No more images, clear primary
+      await db
+        .update(marketplaceListings)
+        .set({ primaryImageUrl: null, updatedAt: new Date() })
+        .where(eq(marketplaceListings.id, image.listingId));
+    }
+  }
+
+  return { success: true };
+}
+
+export async function setListingPrimaryImage(listingId: number, imageId: number) {
+  const db = getMarketplaceDb();
+  
+  // Unset all primaries for this listing
+  await db
+    .update(listingImages)
+    .set({ isPrimary: false })
+    .where(eq(listingImages.listingId, listingId));
+
+  // Set the new primary
+  const [image] = await db
+    .update(listingImages)
+    .set({ isPrimary: true })
+    .where(eq(listingImages.id, imageId))
+    .returning();
+
+  // Update listing primary image URL
+  if (image) {
+    await db
+      .update(marketplaceListings)
+      .set({ primaryImageUrl: image.url, updatedAt: new Date() })
+      .where(eq(marketplaceListings.id, listingId));
+  }
+
+  return image;
+}
+
+export async function reorderListingImages(listingId: number, imageIds: number[]) {
+  const db = getMarketplaceDb();
+  
+  // Update sort order for each image
+  for (let i = 0; i < imageIds.length; i++) {
+    await db
+      .update(listingImages)
+      .set({ sortOrder: i })
+      .where(and(
+        eq(listingImages.id, imageIds[i]),
+        eq(listingImages.listingId, listingId)
+      ));
+  }
+
+  return { success: true };
+}
+
+export async function getListingImages(listingId: number) {
+  const db = getMarketplaceDb();
+  
+  return db
+    .select()
+    .from(listingImages)
+    .where(eq(listingImages.listingId, listingId))
+    .orderBy(asc(listingImages.sortOrder));
+}
+
+// =============================================
+// SELLER LISTINGS MANAGEMENT
+// =============================================
+
+export async function getSellerListingsWithStats(sellerId: number, filters: {
+  status?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+} = {}) {
+  const db = getMarketplaceDb();
+  const { status = 'all', search, page = 1, limit = 20 } = filters;
+
+  const conditions = [eq(marketplaceListings.sellerId, sellerId)];
+
+  if (status && status !== 'all') {
+    conditions.push(eq(marketplaceListings.status, status));
+  }
+
+  if (search) {
+    conditions.push(
+      or(
+        ilike(marketplaceListings.title, `%${search}%`),
+        ilike(marketplaceListings.city, `%${search}%`),
+        ilike(marketplaceListings.listingNumber, `%${search}%`)
+      )
+    );
+  }
+
+  const offset = (page - 1) * limit;
+
+  const listings = await db
+    .select({
+      id: marketplaceListings.id,
+      listingNumber: marketplaceListings.listingNumber,
+      slug: marketplaceListings.slug,
+      title: marketplaceListings.title,
+      titleEs: marketplaceListings.titleEs,
+      description: marketplaceListings.description,
+      chassisType: marketplaceListings.chassisType,
+      chassisSize: marketplaceListings.chassisSize,
+      condition: marketplaceListings.condition,
+      manufacturer: marketplaceListings.manufacturer,
+      year: marketplaceListings.year,
+      state: marketplaceListings.state,
+      city: marketplaceListings.city,
+      zipCode: marketplaceListings.zipCode,
+      quantity: marketplaceListings.quantity,
+      quantityAvailable: marketplaceListings.quantityAvailable,
+      quantitySold: marketplaceListings.quantitySold,
+      pricePerUnit: marketplaceListings.pricePerUnit,
+      priceNegotiable: marketplaceListings.priceNegotiable,
+      primaryImageUrl: marketplaceListings.primaryImageUrl,
+      status: marketplaceListings.status,
+      featured: marketplaceListings.featured,
+      verified: marketplaceListings.verified,
+      viewsCount: marketplaceListings.viewsCount,
+      inquiriesCount: marketplaceListings.inquiriesCount,
+      offersCount: marketplaceListings.offersCount,
+      favoritesCount: marketplaceListings.favoritesCount,
+      createdAt: marketplaceListings.createdAt,
+      publishedAt: marketplaceListings.publishedAt,
+      rejectionReason: marketplaceListings.rejectionReason,
+    })
+    .from(marketplaceListings)
+    .where(and(...conditions))
+    .orderBy(desc(marketplaceListings.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  // Get total count
+  const [countResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(marketplaceListings)
+    .where(and(...conditions));
+
+  const total = Number(countResult?.count || 0);
+
+  // Get status counts
+  const [statusCounts] = await db
+    .select({
+      all: sql<number>`count(*)`,
+      active: sql<number>`count(*) filter (where status = 'active')`,
+      pending: sql<number>`count(*) filter (where status = 'pending')`,
+      draft: sql<number>`count(*) filter (where status = 'draft')`,
+      sold: sql<number>`count(*) filter (where status = 'sold')`,
+      rejected: sql<number>`count(*) filter (where status = 'rejected')`,
+    })
+    .from(marketplaceListings)
+    .where(eq(marketplaceListings.sellerId, sellerId));
+
+  return {
+    listings,
+    statusCounts,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      hasMore: page * limit < total
+    }
+  };
+}

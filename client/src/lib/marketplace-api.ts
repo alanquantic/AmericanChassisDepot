@@ -475,3 +475,263 @@ export async function rejectListing(id: number, reason: string): Promise<{ messa
     body: JSON.stringify({ reason }),
   });
 }
+
+// =============================================
+// ADMIN - USER MANAGEMENT
+// =============================================
+
+export interface AdminUser {
+  id: number;
+  email: string;
+  role: string;
+  firstName?: string;
+  lastName?: string;
+  companyName?: string;
+  phone?: string;
+  city?: string;
+  state?: string;
+  isActive: boolean;
+  isSuspended: boolean;
+  suspensionReason?: string;
+  emailVerified?: boolean;
+  sellerVerified?: boolean;
+  createdAt: string;
+  lastLoginAt?: string;
+  loginCount?: number;
+}
+
+export interface UserFilters {
+  role?: string;
+  status?: 'all' | 'active' | 'suspended';
+  search?: string;
+  sortBy?: 'date_asc' | 'date_desc' | 'name' | 'email';
+  page?: number;
+  limit?: number;
+}
+
+export interface UsersPaginatedResponse {
+  users: AdminUser[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasMore: boolean;
+  };
+}
+
+export async function getAllUsers(filters: UserFilters = {}): Promise<UsersPaginatedResponse> {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      params.append(key, String(value));
+    }
+  });
+  return apiRequest(`/admin/users?${params.toString()}`);
+}
+
+export async function getUserDetails(userId: number): Promise<AdminUser & { listingStats?: any; offerStats?: any }> {
+  return apiRequest(`/admin/users/${userId}`);
+}
+
+export async function updateUser(userId: number, data: {
+  firstName?: string;
+  lastName?: string;
+  companyName?: string;
+  phone?: string;
+  city?: string;
+  state?: string;
+  bio?: string;
+}): Promise<{ message: string; user: AdminUser }> {
+  return apiRequest(`/admin/users/${userId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function changeUserRole(userId: number, role: string): Promise<{ message: string; user: AdminUser }> {
+  return apiRequest(`/admin/users/${userId}/role`, {
+    method: 'PUT',
+    body: JSON.stringify({ role }),
+  });
+}
+
+export async function suspendUser(userId: number, reason: string): Promise<{ message: string; user: AdminUser }> {
+  return apiRequest(`/admin/users/${userId}/suspend`, {
+    method: 'PUT',
+    body: JSON.stringify({ reason }),
+  });
+}
+
+export async function activateUser(userId: number): Promise<{ message: string; user: AdminUser }> {
+  return apiRequest(`/admin/users/${userId}/activate`, {
+    method: 'PUT',
+  });
+}
+
+export async function deleteUser(userId: number): Promise<{ message: string }> {
+  return apiRequest(`/admin/users/${userId}`, {
+    method: 'DELETE',
+  });
+}
+
+// =============================================
+// SELLER - ENHANCED LISTINGS
+// =============================================
+
+export interface SellerListingsResponse {
+  listings: MarketplaceListing[];
+  statusCounts: {
+    all: number;
+    active: number;
+    pending: number;
+    draft: number;
+    sold: number;
+    rejected: number;
+  };
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasMore: boolean;
+  };
+}
+
+export async function getSellerListingsWithStats(filters: {
+  status?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<SellerListingsResponse> {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      params.append(key, String(value));
+    }
+  });
+  return apiRequest(`/seller/listings/stats?${params.toString()}`);
+}
+
+export async function getListingForEdit(listingId: number): Promise<MarketplaceListing & { images: ListingImage[] }> {
+  return apiRequest(`/seller/listings/${listingId}/edit`);
+}
+
+// =============================================
+// LISTING IMAGES
+// =============================================
+
+export interface ListingImage {
+  id: number;
+  listingId: number;
+  url: string;
+  thumbnailUrl?: string;
+  altText?: string;
+  sortOrder: number;
+  isPrimary: boolean;
+  createdAt: string;
+}
+
+export async function getListingImages(listingId: number): Promise<ListingImage[]> {
+  return apiRequest(`/listings/${listingId}/images`);
+}
+
+export async function addListingImage(listingId: number, data: {
+  url: string;
+  thumbnailUrl?: string;
+  altText?: string;
+  isPrimary?: boolean;
+}): Promise<{ message: string; image: ListingImage }> {
+  return apiRequest(`/listings/${listingId}/images`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteListingImage(listingId: number, imageId: number): Promise<{ message: string }> {
+  return apiRequest(`/listings/${listingId}/images/${imageId}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function setListingPrimaryImage(listingId: number, imageId: number): Promise<{ message: string; image: ListingImage }> {
+  return apiRequest(`/listings/${listingId}/images/${imageId}/primary`, {
+    method: 'PUT',
+  });
+}
+
+export async function reorderListingImages(listingId: number, imageIds: number[]): Promise<{ message: string }> {
+  return apiRequest(`/listings/${listingId}/images/reorder`, {
+    method: 'PUT',
+    body: JSON.stringify({ imageIds }),
+  });
+}
+
+// =============================================
+// IMAGE UPLOAD (Cloudinary)
+// =============================================
+
+export interface UploadedImage {
+  url: string;
+  thumbnailUrl?: string;
+  publicId?: string;
+  width?: number;
+  height?: number;
+  id?: number;
+}
+
+export async function checkUploadStatus(): Promise<{ configured: boolean; message: string }> {
+  return apiRequest('/upload/status');
+}
+
+export async function uploadImage(data: {
+  image: string; // base64 encoded image
+  listingId?: number;
+  isPrimary?: boolean;
+  altText?: string;
+}): Promise<{ message: string; image: UploadedImage }> {
+  return apiRequest('/upload/image', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function uploadImageFromUrl(data: {
+  url: string;
+  listingId?: number;
+  isPrimary?: boolean;
+  altText?: string;
+}): Promise<{ message: string; image: UploadedImage }> {
+  return apiRequest('/upload/image-url', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function getSignedUploadParams(): Promise<{
+  timestamp: number;
+  signature: string;
+  apiKey: string;
+  cloudName: string;
+  folder: string;
+}> {
+  return apiRequest('/upload/signed-params');
+}
+
+export async function deleteUploadedImage(publicId: string): Promise<{ message: string }> {
+  return apiRequest(`/upload/image/${encodeURIComponent(publicId)}`, {
+    method: 'DELETE',
+  });
+}
+
+/**
+ * Helper function to convert File to base64 for upload
+ */
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+}

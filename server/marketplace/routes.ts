@@ -28,6 +28,7 @@ import stripeRoutes from './stripe-routes.js';
 import sitemapRoutes from './sitemap.js';
 import { authRateLimiter, registerRateLimiter } from './rate-limiter.js';
 import { auditUser, auditListing, auditOffer, auditOrder } from './audit-logger.js';
+import * as cloudinaryService from './cloudinary.js';
 
 const router = Router();
 
@@ -874,6 +875,563 @@ router.get('/admin/listings', authenticateToken, requireAdmin, async (req: Authe
   } catch (error) {
     console.error('Error fetching admin listings:', error);
     res.status(500).json({ message: 'Failed to fetch listings' });
+  }
+});
+
+// =============================================
+// SUPER ADMIN - USER MANAGEMENT ROUTES
+// =============================================
+
+// Get all users (admin/super_admin)
+router.get('/admin/users', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const filters = {
+      role: req.query.role as string,
+      status: req.query.status as 'all' | 'active' | 'suspended',
+      search: req.query.search as string,
+      sortBy: req.query.sortBy as any,
+      page: req.query.page ? Number(req.query.page) : 1,
+      limit: req.query.limit ? Math.min(Number(req.query.limit), 100) : 20,
+    };
+    
+    const result = await storage.getAllUsers(filters);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Failed to fetch users' });
+  }
+});
+
+// Get single user details (admin)
+router.get('/admin/users/:id', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = Number(req.params.id);
+    const user = await storage.getUserFullDetails(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ message: 'Failed to fetch user details' });
+  }
+});
+
+// Update user info (admin)
+const updateUserSchema = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  companyName: z.string().optional(),
+  phone: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  bio: z.string().optional(),
+});
+
+router.put('/admin/users/:id', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = Number(req.params.id);
+    const data = updateUserSchema.parse(req.body);
+    
+    const user = await storage.updateUserByAdmin(userId, data);
+    
+    // Audit log
+    auditUser.update(req, userId, data);
+    
+    res.json({ message: 'User updated successfully', user });
+  } catch (error: any) {
+    console.error('Error updating user:', error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+    }
+    res.status(500).json({ message: 'Failed to update user' });
+  }
+});
+
+// Change user role (super_admin only)
+router.put('/admin/users/:id/role', authenticateToken, requireSuperAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = Number(req.params.id);
+    const { role } = req.body;
+    
+    if (!role) {
+      return res.status(400).json({ message: 'Role is required' });
+    }
+    
+    // Prevent changing own role
+    if (userId === req.user!.id) {
+      return res.status(400).json({ message: 'Cannot change your own role' });
+    }
+    
+    const user = await storage.updateUserRole(userId, role);
+    
+    // Audit log
+    auditUser.roleChange(req, userId, role);
+    
+    res.json({ message: `User role changed to ${role}`, user });
+  } catch (error: any) {
+    console.error('Error changing user role:', error);
+    res.status(500).json({ message: error.message || 'Failed to change user role' });
+  }
+});
+
+// Suspend user (admin)
+router.put('/admin/users/:id/suspend', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = Number(req.params.id);
+    const { reason } = req.body;
+    
+    if (!reason) {
+      return res.status(400).json({ message: 'Suspension reason is required' });
+    }
+    
+    // Prevent suspending self or super_admin
+    if (userId === req.user!.id) {
+      return res.status(400).json({ message: 'Cannot suspend yourself' });
+    }
+    
+    const targetUser = await storage.getUserById(userId);
+    if (targetUser?.role === 'super_admin' && req.user!.role !== 'super_admin') {
+      return res.status(403).json({ message: 'Cannot suspend a super admin' });
+    }
+    
+    const user = await storage.suspendUser(userId, reason);
+    
+    // Audit log
+    auditUser.suspend(req, userId, reason);
+    
+    res.json({ message: 'User suspended', user });
+  } catch (error) {
+    console.error('Error suspending user:', error);
+    res.status(500).json({ message: 'Failed to suspend user' });
+  }
+});
+
+// Activate user (admin)
+router.put('/admin/users/:id/activate', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = Number(req.params.id);
+    const user = await storage.activateUser(userId);
+    
+    // Audit log
+    auditUser.activate(req, userId);
+    
+    res.json({ message: 'User activated', user });
+  } catch (error) {
+    console.error('Error activating user:', error);
+    res.status(500).json({ message: 'Failed to activate user' });
+  }
+});
+
+// Delete user (super_admin only)
+router.delete('/admin/users/:id', authenticateToken, requireSuperAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = Number(req.params.id);
+    
+    // Prevent deleting self
+    if (userId === req.user!.id) {
+      return res.status(400).json({ message: 'Cannot delete yourself' });
+    }
+    
+    // Prevent deleting other super_admins
+    const targetUser = await storage.getUserById(userId);
+    if (targetUser?.role === 'super_admin') {
+      return res.status(403).json({ message: 'Cannot delete a super admin' });
+    }
+    
+    await storage.deleteUser(userId);
+    
+    // Audit log
+    auditUser.delete(req, userId);
+    
+    res.json({ message: 'User deleted successfully' });
+  } catch (error: any) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: error.message || 'Failed to delete user' });
+  }
+});
+
+// =============================================
+// SELLER MANAGEMENT ROUTES (Enhanced)
+// =============================================
+
+// Get seller's listings with stats
+router.get('/seller/listings/stats', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const filters = {
+      status: req.query.status as string,
+      search: req.query.search as string,
+      page: req.query.page ? Number(req.query.page) : 1,
+      limit: req.query.limit ? Number(req.query.limit) : 20,
+    };
+    
+    const result = await storage.getSellerListingsWithStats(req.user!.id, filters);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching seller listings:', error);
+    res.status(500).json({ message: 'Failed to fetch listings' });
+  }
+});
+
+// Get listing for editing (owner or admin)
+router.get('/seller/listings/:id/edit', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const listingId = Number(req.params.id);
+    const listing = await storage.getListingById(listingId);
+    
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+    
+    // Check ownership or admin
+    if (listing.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    
+    // Get images
+    const images = await storage.getListingImages(listingId);
+    
+    res.json({ ...listing, images });
+  } catch (error) {
+    console.error('Error fetching listing for edit:', error);
+    res.status(500).json({ message: 'Failed to fetch listing' });
+  }
+});
+
+// =============================================
+// LISTING IMAGES ROUTES
+// =============================================
+
+// Get listing images
+router.get('/listings/:id/images', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const listingId = Number(req.params.id);
+    const listing = await storage.getListingById(listingId);
+    
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+    
+    // Check ownership or admin
+    if (listing.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    
+    const images = await storage.getListingImages(listingId);
+    res.json(images);
+  } catch (error) {
+    console.error('Error fetching listing images:', error);
+    res.status(500).json({ message: 'Failed to fetch images' });
+  }
+});
+
+// Add image to listing
+const addImageSchema = z.object({
+  url: z.string().url(),
+  thumbnailUrl: z.string().url().optional(),
+  altText: z.string().optional(),
+  isPrimary: z.boolean().optional(),
+});
+
+router.post('/listings/:id/images', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const listingId = Number(req.params.id);
+    const listing = await storage.getListingById(listingId);
+    
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+    
+    // Check ownership or admin
+    if (listing.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    
+    const data = addImageSchema.parse(req.body);
+    const image = await storage.addListingImage(listingId, data);
+    
+    res.status(201).json({ message: 'Image added', image });
+  } catch (error: any) {
+    console.error('Error adding image:', error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+    }
+    res.status(500).json({ message: 'Failed to add image' });
+  }
+});
+
+// Delete image from listing
+router.delete('/listings/:listingId/images/:imageId', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const listingId = Number(req.params.listingId);
+    const imageId = Number(req.params.imageId);
+    
+    const listing = await storage.getListingById(listingId);
+    
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+    
+    // Check ownership or admin
+    if (listing.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    
+    await storage.deleteListingImage(imageId);
+    res.json({ message: 'Image deleted' });
+  } catch (error: any) {
+    console.error('Error deleting image:', error);
+    res.status(500).json({ message: error.message || 'Failed to delete image' });
+  }
+});
+
+// Set primary image
+router.put('/listings/:listingId/images/:imageId/primary', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const listingId = Number(req.params.listingId);
+    const imageId = Number(req.params.imageId);
+    
+    const listing = await storage.getListingById(listingId);
+    
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+    
+    // Check ownership or admin
+    if (listing.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    
+    const image = await storage.setListingPrimaryImage(listingId, imageId);
+    res.json({ message: 'Primary image updated', image });
+  } catch (error) {
+    console.error('Error setting primary image:', error);
+    res.status(500).json({ message: 'Failed to set primary image' });
+  }
+});
+
+// Reorder images
+router.put('/listings/:id/images/reorder', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const listingId = Number(req.params.id);
+    const { imageIds } = req.body;
+    
+    if (!Array.isArray(imageIds)) {
+      return res.status(400).json({ message: 'imageIds must be an array' });
+    }
+    
+    const listing = await storage.getListingById(listingId);
+    
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+    
+    // Check ownership or admin
+    if (listing.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    
+    await storage.reorderListingImages(listingId, imageIds);
+    res.json({ message: 'Images reordered' });
+  } catch (error) {
+    console.error('Error reordering images:', error);
+    res.status(500).json({ message: 'Failed to reorder images' });
+  }
+});
+
+// =============================================
+// IMAGE UPLOAD ROUTES (Cloudinary)
+// =============================================
+
+// Check if Cloudinary is configured
+router.get('/upload/status', authenticateToken, requireSeller, async (_req: AuthenticatedRequest, res: Response) => {
+  res.json({ 
+    configured: cloudinaryService.isCloudinaryConfigured(),
+    message: cloudinaryService.isCloudinaryConfigured() 
+      ? 'Image upload is available' 
+      : 'Image upload is not configured. Contact admin.'
+  });
+});
+
+// Upload image (base64)
+const uploadSchema = z.object({
+  image: z.string().min(1, 'Image data is required'),
+  listingId: z.number().optional(),
+  isPrimary: z.boolean().optional(),
+  altText: z.string().optional(),
+});
+
+router.post('/upload/image', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!cloudinaryService.isCloudinaryConfigured()) {
+      return res.status(503).json({ message: 'Image upload is not configured' });
+    }
+
+    const data = uploadSchema.parse(req.body);
+    
+    // Check listing ownership if listingId provided
+    if (data.listingId) {
+      const listing = await storage.getListingById(data.listingId);
+      if (!listing) {
+        return res.status(404).json({ message: 'Listing not found' });
+      }
+      if (listing.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+        return res.status(403).json({ message: 'Not authorized' });
+      }
+    }
+
+    // Upload to Cloudinary
+    const uploadResult = await cloudinaryService.uploadBase64Image(data.image, {
+      folder: `marketplace/listings/${req.user!.id}`,
+    });
+
+    if (!uploadResult.success) {
+      return res.status(500).json({ message: uploadResult.error || 'Upload failed' });
+    }
+
+    // If listingId provided, save to database
+    let savedImage = null;
+    if (data.listingId) {
+      savedImage = await storage.addListingImage(data.listingId, {
+        url: uploadResult.url!,
+        thumbnailUrl: uploadResult.thumbnailUrl,
+        altText: data.altText,
+        isPrimary: data.isPrimary,
+      });
+    }
+
+    res.status(201).json({
+      message: 'Image uploaded successfully',
+      image: {
+        url: uploadResult.url,
+        thumbnailUrl: uploadResult.thumbnailUrl,
+        publicId: uploadResult.publicId,
+        width: uploadResult.width,
+        height: uploadResult.height,
+        ...(savedImage && { id: savedImage.id }),
+      },
+    });
+  } catch (error: any) {
+    console.error('Error uploading image:', error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+    }
+    res.status(500).json({ message: error.message || 'Upload failed' });
+  }
+});
+
+// Upload image from URL
+router.post('/upload/image-url', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!cloudinaryService.isCloudinaryConfigured()) {
+      return res.status(503).json({ message: 'Image upload is not configured' });
+    }
+
+    const { url, listingId, isPrimary, altText } = req.body;
+    
+    if (!url) {
+      return res.status(400).json({ message: 'URL is required' });
+    }
+
+    // Check listing ownership if listingId provided
+    if (listingId) {
+      const listing = await storage.getListingById(listingId);
+      if (!listing) {
+        return res.status(404).json({ message: 'Listing not found' });
+      }
+      if (listing.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+        return res.status(403).json({ message: 'Not authorized' });
+      }
+    }
+
+    // Upload to Cloudinary
+    const uploadResult = await cloudinaryService.uploadFromUrl(url, {
+      folder: `marketplace/listings/${req.user!.id}`,
+    });
+
+    if (!uploadResult.success) {
+      return res.status(500).json({ message: uploadResult.error || 'Upload failed' });
+    }
+
+    // If listingId provided, save to database
+    let savedImage = null;
+    if (listingId) {
+      savedImage = await storage.addListingImage(listingId, {
+        url: uploadResult.url!,
+        thumbnailUrl: uploadResult.thumbnailUrl,
+        altText,
+        isPrimary,
+      });
+    }
+
+    res.status(201).json({
+      message: 'Image uploaded successfully',
+      image: {
+        url: uploadResult.url,
+        thumbnailUrl: uploadResult.thumbnailUrl,
+        publicId: uploadResult.publicId,
+        ...(savedImage && { id: savedImage.id }),
+      },
+    });
+  } catch (error: any) {
+    console.error('Error uploading image from URL:', error);
+    res.status(500).json({ message: error.message || 'Upload failed' });
+  }
+});
+
+// Get signed upload parameters for direct browser upload
+router.get('/upload/signed-params', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!cloudinaryService.isCloudinaryConfigured()) {
+      return res.status(503).json({ message: 'Image upload is not configured' });
+    }
+
+    const params = cloudinaryService.generateSignedUploadParams({
+      folder: `marketplace/listings/${req.user!.id}`,
+    });
+
+    if (!params) {
+      return res.status(503).json({ message: 'Could not generate upload parameters' });
+    }
+
+    res.json(params);
+  } catch (error: any) {
+    console.error('Error generating upload params:', error);
+    res.status(500).json({ message: 'Failed to generate upload parameters' });
+  }
+});
+
+// Delete uploaded image from Cloudinary
+router.delete('/upload/image/:publicId(*)', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!cloudinaryService.isCloudinaryConfigured()) {
+      return res.status(503).json({ message: 'Image upload is not configured' });
+    }
+
+    const publicId = req.params.publicId;
+    
+    if (!publicId) {
+      return res.status(400).json({ message: 'Public ID is required' });
+    }
+
+    // Verify the publicId belongs to the user's folder (security check)
+    const userFolder = `marketplace/listings/${req.user!.id}`;
+    if (!publicId.startsWith(userFolder) && !['admin', 'super_admin'].includes(req.user!.role)) {
+      return res.status(403).json({ message: 'Not authorized to delete this image' });
+    }
+
+    const result = await cloudinaryService.deleteImage(publicId);
+
+    if (!result.success) {
+      return res.status(500).json({ message: result.error || 'Delete failed' });
+    }
+
+    res.json({ message: 'Image deleted successfully' });
+  } catch (error: any) {
+    console.error('Error deleting image:', error);
+    res.status(500).json({ message: error.message || 'Delete failed' });
   }
 });
 

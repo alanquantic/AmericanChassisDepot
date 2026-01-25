@@ -17,7 +17,7 @@ import { usePageTracking } from "./hooks/use-page-tracking";
 import ElevenLabsWidget from "@/components/shared/ElevenLabsWidget";
 
 // Marketplace Pages
-import { MarketplacePage, ListingDetailPage, DashboardPage, AdminPage, MarketplaceLandingPage, LoginPage, RegisterPage } from "@/pages/marketplace";
+import { MarketplacePage, ListingDetailPage, DashboardPage, AdminPage, MarketplaceLandingPage, SellerListingsPage, ListingImagesPage, LoginPage, RegisterPage } from "@/pages/marketplace";
 
 function Router() {
   const [location, navigate] = useLocation();
@@ -145,6 +145,24 @@ function Router() {
           const lang = params.lang === 'es' ? 'es' : 'en';
           setLanguage(lang);
           return <DashboardPage key={`dashboard-${lang}`} />;
+        }}
+      </Route>
+      
+      {/* Seller listings management */}
+      <Route path="/:lang/marketplace/seller/listings">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <SellerListingsPage key={`seller-listings-${lang}`} />;
+        }}
+      </Route>
+      
+      {/* Listing images management */}
+      <Route path="/:lang/marketplace/seller/listings/:id/images">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <ListingImagesPage key={`listing-images-${params.id}`} />;
         }}
       </Route>
       

@@ -15,13 +15,27 @@ import {
   Eye,
   ChevronRight,
   Shield,
-  Activity
+  Activity,
+  Search,
+  UserCog,
+  Ban,
+  UserCheck,
+  Trash2,
+  Edit,
+  MoreVertical,
+  Mail,
+  Phone,
+  Building2,
+  MapPin,
+  Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -30,6 +44,31 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -40,6 +79,15 @@ import {
   getPendingListings,
   approveListing,
   rejectListing,
+  getAllUsers,
+  getUserDetails,
+  updateUser,
+  changeUserRole,
+  suspendUser,
+  activateUser,
+  deleteUser,
+  type AdminUser,
+  type UserFilters,
 } from '@/lib/marketplace-api';
 import { t, formatPrice, formatDate } from '@/lib/marketplace-i18n';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
@@ -51,9 +99,22 @@ export default function AdminPage() {
   const queryClient = useQueryClient();
   const user = getStoredUser();
 
+  // Dialog states
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<any>(null);
   const [rejectReason, setRejectReason] = useState('');
+
+  // User management states
+  const [userFilters, setUserFilters] = useState<UserFilters>({ page: 1, limit: 20 });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
+  const [editUserDialogOpen, setEditUserDialogOpen] = useState(false);
+  const [editUserData, setEditUserData] = useState<Partial<AdminUser>>({});
+  const [roleChangeDialogOpen, setRoleChangeDialogOpen] = useState(false);
+  const [newRole, setNewRole] = useState('');
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [suspendReason, setSuspendReason] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Redirect if not admin
   useEffect(() => {
@@ -66,6 +127,8 @@ export default function AdminPage() {
     }
   }, [user]);
 
+  const isSuperAdmin = user?.role === 'super_admin';
+
   // Fetch stats
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['marketplace-stats'],
@@ -76,6 +139,12 @@ export default function AdminPage() {
   const { data: pendingListings, isLoading: pendingLoading } = useQuery({
     queryKey: ['pending-listings'],
     queryFn: getPendingListings,
+  });
+
+  // Fetch users
+  const { data: usersData, isLoading: usersLoading } = useQuery({
+    queryKey: ['admin-users', userFilters],
+    queryFn: () => getAllUsers(userFilters),
   });
 
   // Approve mutation
@@ -120,9 +189,111 @@ export default function AdminPage() {
     },
   });
 
+  // User mutations
+  const updateUserMutation = useMutation({
+    mutationFn: ({ userId, data }: { userId: number; data: any }) => updateUser(userId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      setEditUserDialogOpen(false);
+      setSelectedUser(null);
+      toast({ title: 'User Updated', description: 'User information has been updated.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    },
+  });
+
+  const changeRoleMutation = useMutation({
+    mutationFn: ({ userId, role }: { userId: number; role: string }) => changeUserRole(userId, role),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      queryClient.invalidateQueries({ queryKey: ['marketplace-stats'] });
+      setRoleChangeDialogOpen(false);
+      setSelectedUser(null);
+      setNewRole('');
+      toast({ title: 'Role Changed', description: 'User role has been updated.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    },
+  });
+
+  const suspendUserMutation = useMutation({
+    mutationFn: ({ userId, reason }: { userId: number; reason: string }) => suspendUser(userId, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      setSuspendDialogOpen(false);
+      setSelectedUser(null);
+      setSuspendReason('');
+      toast({ title: 'User Suspended', description: 'The user account has been suspended.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    },
+  });
+
+  const activateUserMutation = useMutation({
+    mutationFn: (userId: number) => activateUser(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      toast({ title: 'User Activated', description: 'The user account has been reactivated.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: number) => deleteUser(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      queryClient.invalidateQueries({ queryKey: ['marketplace-stats'] });
+      setDeleteDialogOpen(false);
+      setSelectedUser(null);
+      toast({ title: 'User Deleted', description: 'The user has been permanently deleted.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    },
+  });
+
   const handleReject = () => {
     if (!selectedListing || !rejectReason.trim()) return;
     rejectMutation.mutate({ id: selectedListing.id, reason: rejectReason });
+  };
+
+  const handleSearch = () => {
+    setUserFilters({ ...userFilters, search: searchTerm, page: 1 });
+  };
+
+  const openEditUser = (u: AdminUser) => {
+    setSelectedUser(u);
+    setEditUserData({
+      firstName: u.firstName || '',
+      lastName: u.lastName || '',
+      companyName: u.companyName || '',
+      phone: u.phone || '',
+      city: u.city || '',
+      state: u.state || '',
+    });
+    setEditUserDialogOpen(true);
+  };
+
+  const openRoleChange = (u: AdminUser) => {
+    setSelectedUser(u);
+    setNewRole(u.role);
+    setRoleChangeDialogOpen(true);
+  };
+
+  const openSuspend = (u: AdminUser) => {
+    setSelectedUser(u);
+    setSuspendReason('');
+    setSuspendDialogOpen(true);
+  };
+
+  const openDelete = (u: AdminUser) => {
+    setSelectedUser(u);
+    setDeleteDialogOpen(true);
   };
 
   if (!user || !['admin', 'super_admin'].includes(user.role)) {
@@ -175,6 +346,15 @@ export default function AdminPage() {
     },
   ];
 
+  const getRoleBadgeVariant = (role: string) => {
+    switch (role) {
+      case 'super_admin': return 'destructive';
+      case 'admin': return 'default';
+      case 'seller': return 'secondary';
+      default: return 'outline';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -189,9 +369,12 @@ export default function AdminPage() {
           <div className="flex items-center gap-3 mb-2">
             <Shield className="w-8 h-8 text-[#0A3161]" />
             <h1 className="text-3xl font-bold text-gray-900">{t('adminPanel')}</h1>
+            {isSuperAdmin && (
+              <Badge variant="destructive" className="ml-2">Super Admin</Badge>
+            )}
           </div>
           <p className="text-gray-600">
-            Manage listings, users, and marketplace settings
+            {lang === 'es' ? 'Gestiona listings, usuarios y configuración del marketplace' : 'Manage listings, users, and marketplace settings'}
           </p>
         </motion.div>
 
@@ -229,7 +412,9 @@ export default function AdminPage() {
               )}
             </TabsTrigger>
             <TabsTrigger value="listings">All Listings</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="users">
+              {lang === 'es' ? 'Usuarios' : 'Users'}
+            </TabsTrigger>
             <TabsTrigger value="offers">Offers</TabsTrigger>
           </TabsList>
 
@@ -349,14 +534,68 @@ export default function AdminPage() {
             </Card>
           </TabsContent>
 
-          {/* Users */}
+          {/* Users Management */}
           <TabsContent value="users">
             <Card>
               <CardHeader>
-                <CardTitle>User Management</CardTitle>
-                <CardDescription>Manage buyers, sellers, and admins</CardDescription>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <UserCog className="w-5 h-5" />
+                      {lang === 'es' ? 'Gestión de Usuarios' : 'User Management'}
+                    </CardTitle>
+                    <CardDescription>
+                      {lang === 'es' ? 'Administra compradores, vendedores y administradores' : 'Manage buyers, sellers, and admins'}
+                    </CardDescription>
+                  </div>
+                  
+                  {/* Filters */}
+                  <div className="flex flex-wrap gap-2">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder={lang === 'es' ? 'Buscar...' : 'Search...'}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                        className="w-48"
+                      />
+                      <Button variant="outline" size="icon" onClick={handleSearch}>
+                        <Search className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <Select
+                      value={userFilters.role || 'all'}
+                      onValueChange={(value) => setUserFilters({ ...userFilters, role: value === 'all' ? undefined : value, page: 1 })}
+                    >
+                      <SelectTrigger className="w-32">
+                        <SelectValue placeholder="Role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{lang === 'es' ? 'Todos' : 'All Roles'}</SelectItem>
+                        <SelectItem value="buyer">Buyer</SelectItem>
+                        <SelectItem value="seller">Seller</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="super_admin">Super Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={userFilters.status || 'all'}
+                      onValueChange={(value) => setUserFilters({ ...userFilters, status: value as any, page: 1 })}
+                    >
+                      <SelectTrigger className="w-32">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{lang === 'es' ? 'Todos' : 'All Status'}</SelectItem>
+                        <SelectItem value="active">{lang === 'es' ? 'Activos' : 'Active'}</SelectItem>
+                        <SelectItem value="suspended">{lang === 'es' ? 'Suspendidos' : 'Suspended'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
+                {/* User Stats */}
                 <div className="grid grid-cols-4 gap-4 mb-6">
                   <Card>
                     <CardContent className="p-4 text-center">
@@ -383,10 +622,169 @@ export default function AdminPage() {
                     </CardContent>
                   </Card>
                 </div>
-                <div className="text-center py-8 text-gray-500">
-                  <Users className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                  <p>Full user management coming soon</p>
-                </div>
+
+                {/* Users List */}
+                {usersLoading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
+                    ))}
+                  </div>
+                ) : usersData?.users && usersData.users.length > 0 ? (
+                  <>
+                    <div className="space-y-3">
+                      {usersData.users.map((u: AdminUser) => (
+                        <motion.div
+                          key={u.id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className={`flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 ${u.isSuspended ? 'bg-red-50 border-red-200' : ''}`}
+                        >
+                          <Avatar className="w-12 h-12">
+                            <AvatarFallback className={`${u.isSuspended ? 'bg-red-200 text-red-700' : 'bg-[#0A3161] text-white'}`}>
+                              {(u.firstName?.[0] || u.email[0]).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-semibold truncate">
+                                {u.firstName ? `${u.firstName} ${u.lastName || ''}` : u.email}
+                              </span>
+                              <Badge variant={getRoleBadgeVariant(u.role)} className="capitalize">
+                                {u.role.replace('_', ' ')}
+                              </Badge>
+                              {u.isSuspended && (
+                                <Badge variant="destructive">
+                                  <Ban className="w-3 h-3 mr-1" />
+                                  {lang === 'es' ? 'Suspendido' : 'Suspended'}
+                                </Badge>
+                              )}
+                              {u.sellerVerified && u.role === 'seller' && (
+                                <Badge variant="outline" className="text-green-600 border-green-600">
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                  Verified
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                              <span className="flex items-center gap-1">
+                                <Mail className="w-3 h-3" />
+                                {u.email}
+                              </span>
+                              {u.companyName && (
+                                <span className="flex items-center gap-1">
+                                  <Building2 className="w-3 h-3" />
+                                  {u.companyName}
+                                </span>
+                              )}
+                              {u.city && u.state && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" />
+                                  {u.city}, {u.state}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="text-right text-sm text-gray-500 hidden md:block">
+                            <p className="flex items-center gap-1 justify-end">
+                              <Calendar className="w-3 h-3" />
+                              {lang === 'es' ? 'Registro' : 'Joined'}: {formatDate(u.createdAt)}
+                            </p>
+                            {u.lastLoginAt && (
+                              <p>{lang === 'es' ? 'Último acceso' : 'Last login'}: {formatDate(u.lastLoginAt)}</p>
+                            )}
+                          </div>
+
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreVertical className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => openEditUser(u)}>
+                                <Edit className="w-4 h-4 mr-2" />
+                                {lang === 'es' ? 'Editar Información' : 'Edit Info'}
+                              </DropdownMenuItem>
+                              
+                              {isSuperAdmin && u.id !== user.id && (
+                                <DropdownMenuItem onClick={() => openRoleChange(u)}>
+                                  <UserCog className="w-4 h-4 mr-2" />
+                                  {lang === 'es' ? 'Cambiar Rol' : 'Change Role'}
+                                </DropdownMenuItem>
+                              )}
+                              
+                              <DropdownMenuSeparator />
+                              
+                              {u.isSuspended ? (
+                                <DropdownMenuItem 
+                                  onClick={() => activateUserMutation.mutate(u.id)}
+                                  className="text-green-600"
+                                >
+                                  <UserCheck className="w-4 h-4 mr-2" />
+                                  {lang === 'es' ? 'Reactivar Usuario' : 'Activate User'}
+                                </DropdownMenuItem>
+                              ) : u.id !== user.id && (
+                                <DropdownMenuItem 
+                                  onClick={() => openSuspend(u)}
+                                  className="text-amber-600"
+                                >
+                                  <Ban className="w-4 h-4 mr-2" />
+                                  {lang === 'es' ? 'Suspender Usuario' : 'Suspend User'}
+                                </DropdownMenuItem>
+                              )}
+                              
+                              {isSuperAdmin && u.id !== user.id && u.role !== 'super_admin' && (
+                                <>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem 
+                                    onClick={() => openDelete(u)}
+                                    className="text-red-600"
+                                  >
+                                    <Trash2 className="w-4 h-4 mr-2" />
+                                    {lang === 'es' ? 'Eliminar Usuario' : 'Delete User'}
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {usersData.pagination.totalPages > 1 && (
+                      <div className="flex justify-center gap-2 mt-6">
+                        <Button
+                          variant="outline"
+                          disabled={userFilters.page === 1}
+                          onClick={() => setUserFilters({ ...userFilters, page: (userFilters.page || 1) - 1 })}
+                        >
+                          {lang === 'es' ? 'Anterior' : 'Previous'}
+                        </Button>
+                        <span className="flex items-center px-4 text-sm text-gray-500">
+                          {lang === 'es' ? 'Página' : 'Page'} {userFilters.page} {lang === 'es' ? 'de' : 'of'} {usersData.pagination.totalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          disabled={!usersData.pagination.hasMore}
+                          onClick={() => setUserFilters({ ...userFilters, page: (userFilters.page || 1) + 1 })}
+                        >
+                          {lang === 'es' ? 'Siguiente' : 'Next'}
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">
+                      {lang === 'es' ? 'No se encontraron usuarios' : 'No users found'}
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -429,7 +827,7 @@ export default function AdminPage() {
         </Tabs>
       </main>
 
-      {/* Reject Dialog */}
+      {/* Reject Listing Dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -462,6 +860,184 @@ export default function AdminPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit User Dialog */}
+      <Dialog open={editUserDialogOpen} onOpenChange={setEditUserDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{lang === 'es' ? 'Editar Usuario' : 'Edit User'}</DialogTitle>
+            <DialogDescription>
+              {selectedUser?.email}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>{lang === 'es' ? 'Nombre' : 'First Name'}</Label>
+                <Input
+                  value={editUserData.firstName || ''}
+                  onChange={(e) => setEditUserData({ ...editUserData, firstName: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>{lang === 'es' ? 'Apellido' : 'Last Name'}</Label>
+                <Input
+                  value={editUserData.lastName || ''}
+                  onChange={(e) => setEditUserData({ ...editUserData, lastName: e.target.value })}
+                />
+              </div>
+            </div>
+            <div>
+              <Label>{lang === 'es' ? 'Empresa' : 'Company'}</Label>
+              <Input
+                value={editUserData.companyName || ''}
+                onChange={(e) => setEditUserData({ ...editUserData, companyName: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>{lang === 'es' ? 'Teléfono' : 'Phone'}</Label>
+              <Input
+                value={editUserData.phone || ''}
+                onChange={(e) => setEditUserData({ ...editUserData, phone: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>{lang === 'es' ? 'Ciudad' : 'City'}</Label>
+                <Input
+                  value={editUserData.city || ''}
+                  onChange={(e) => setEditUserData({ ...editUserData, city: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>{lang === 'es' ? 'Estado' : 'State'}</Label>
+                <Input
+                  value={editUserData.state || ''}
+                  onChange={(e) => setEditUserData({ ...editUserData, state: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditUserDialogOpen(false)}>
+              {lang === 'es' ? 'Cancelar' : 'Cancel'}
+            </Button>
+            <Button 
+              onClick={() => selectedUser && updateUserMutation.mutate({ userId: selectedUser.id, data: editUserData })}
+              disabled={updateUserMutation.isPending}
+            >
+              {updateUserMutation.isPending ? (lang === 'es' ? 'Guardando...' : 'Saving...') : (lang === 'es' ? 'Guardar' : 'Save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Role Dialog */}
+      <Dialog open={roleChangeDialogOpen} onOpenChange={setRoleChangeDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{lang === 'es' ? 'Cambiar Rol de Usuario' : 'Change User Role'}</DialogTitle>
+            <DialogDescription>
+              {selectedUser?.email}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <Label>{lang === 'es' ? 'Nuevo Rol' : 'New Role'}</Label>
+            <Select value={newRole} onValueChange={setNewRole}>
+              <SelectTrigger className="mt-2">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="buyer">Buyer</SelectItem>
+                <SelectItem value="seller">Seller</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="super_admin">Super Admin</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-amber-600 mt-2">
+              {lang === 'es' 
+                ? 'Advertencia: Cambiar el rol puede afectar los permisos del usuario inmediatamente.'
+                : 'Warning: Changing the role will affect user permissions immediately.'}
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRoleChangeDialogOpen(false)}>
+              {lang === 'es' ? 'Cancelar' : 'Cancel'}
+            </Button>
+            <Button 
+              onClick={() => selectedUser && changeRoleMutation.mutate({ userId: selectedUser.id, role: newRole })}
+              disabled={changeRoleMutation.isPending || newRole === selectedUser?.role}
+            >
+              {changeRoleMutation.isPending ? (lang === 'es' ? 'Cambiando...' : 'Changing...') : (lang === 'es' ? 'Cambiar Rol' : 'Change Role')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Suspend User Dialog */}
+      <Dialog open={suspendDialogOpen} onOpenChange={setSuspendDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{lang === 'es' ? 'Suspender Usuario' : 'Suspend User'}</DialogTitle>
+            <DialogDescription>
+              {selectedUser?.email}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <Label>{lang === 'es' ? 'Razón de la suspensión' : 'Suspension Reason'}</Label>
+            <Textarea
+              className="mt-2"
+              placeholder={lang === 'es' ? 'Ingresa la razón...' : 'Enter reason...'}
+              value={suspendReason}
+              onChange={(e) => setSuspendReason(e.target.value)}
+              rows={3}
+            />
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSuspendDialogOpen(false)}>
+              {lang === 'es' ? 'Cancelar' : 'Cancel'}
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={() => selectedUser && suspendUserMutation.mutate({ userId: selectedUser.id, reason: suspendReason })}
+              disabled={suspendUserMutation.isPending || !suspendReason.trim()}
+            >
+              {suspendUserMutation.isPending ? (lang === 'es' ? 'Suspendiendo...' : 'Suspending...') : (lang === 'es' ? 'Suspender' : 'Suspend')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Confirmation */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {lang === 'es' ? '¿Eliminar usuario permanentemente?' : 'Permanently delete user?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {lang === 'es' 
+                ? `Esta acción no se puede deshacer. Se eliminará permanentemente la cuenta de ${selectedUser?.email} y todos sus datos asociados.`
+                : `This action cannot be undone. This will permanently delete ${selectedUser?.email}'s account and all associated data.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{lang === 'es' ? 'Cancelar' : 'Cancel'}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={() => selectedUser && deleteUserMutation.mutate(selectedUser.id)}
+            >
+              {deleteUserMutation.isPending ? (lang === 'es' ? 'Eliminando...' : 'Deleting...') : (lang === 'es' ? 'Eliminar' : 'Delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Footer />
     </div>

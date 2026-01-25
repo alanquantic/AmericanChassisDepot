@@ -44,7 +44,7 @@ export default function DashboardPage() {
   const [, navigate] = useLocation();
   const lang = getCurrentLanguage();
   const user = getStoredUser();
-  const [activeSection, setActiveSection] = useState<'dashboard' | 'listings' | 'offers' | 'messages' | 'favorites' | 'settings'>('dashboard');
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'offers' | 'messages' | 'favorites' | 'settings'>('dashboard');
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -189,8 +189,8 @@ export default function DashboardPage() {
                   
                   {isSeller && (
                     <button
-                      onClick={() => setActiveSection('listings')}
-                      className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg ${activeSection === 'listings' ? 'bg-[#0A3161]/10 text-[#0A3161] font-medium' : 'hover:bg-gray-100 text-gray-700'}`}
+                      onClick={() => navigate(`/${lang}/marketplace/seller/listings`)}
+                      className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
                     >
                       <Package className="w-5 h-5" />
                       {t('myListings')}
@@ -343,57 +343,6 @@ export default function DashboardPage() {
                   </CardContent>
                 </Card>
               </div>
-            )}
-
-            {activeSection === 'listings' && isSeller && (
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle>{t('myListings')}</CardTitle>
-                    <CardDescription>{t('manageListings')}</CardDescription>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {listings?.listings && listings.listings.length > 0 ? (
-                    <div className="space-y-4">
-                      {listings.listings.map((listing) => (
-                        <div 
-                          key={listing.id}
-                          className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100"
-                          onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.slug}`)}
-                        >
-                          <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200">
-                            {listing.primaryImageUrl ? (
-                              <img src={listing.primaryImageUrl} alt="" className="w-full h-full object-cover" />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center">
-                                <Package className="w-6 h-6 text-gray-400" />
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-medium">{listing.title}</p>
-                            <p className="text-sm text-gray-500">
-                              {listing.city}, {listing.state} • {listing.quantityAvailable} {t('units')}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-bold text-[#0A3161]">{formatPrice(listing.pricePerUnit)}</p>
-                            <Badge variant={listing.status === 'active' ? 'default' : 'secondary'}>
-                              {listing.status}
-                            </Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500 mb-4">{t('noListingsYet')}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
             )}
 
             {activeSection === 'offers' && (

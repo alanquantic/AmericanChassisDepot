@@ -128,6 +128,23 @@ export const auditUser = {
       severity: 'info',
     }),
 
+  update: (req: AuthenticatedRequest, userId: number, changes: any) =>
+    createAuditLog(req, {
+      action: 'user.update',
+      entityType: 'user',
+      entityId: userId,
+      newValue: changes,
+      severity: 'info',
+    }),
+
+  delete: (req: AuthenticatedRequest, userId: number) =>
+    createAuditLog(req, {
+      action: 'user.delete',
+      entityType: 'user',
+      entityId: userId,
+      severity: 'critical',
+    }),
+
   suspend: (req: AuthenticatedRequest, userId: number, reason: string) =>
     createAuditLog(req, {
       action: 'user.suspend',
@@ -145,12 +162,11 @@ export const auditUser = {
       severity: 'info',
     }),
 
-  roleChange: (req: AuthenticatedRequest, userId: number, oldRole: string, newRole: string, reason?: string) =>
+  roleChange: (req: AuthenticatedRequest, userId: number, newRole: string, reason?: string) =>
     createAuditLog(req, {
       action: 'user.role_change',
       entityType: 'user',
       entityId: userId,
-      previousValue: { role: oldRole },
       newValue: { role: newRole },
       severity: 'warning',
       reason,
