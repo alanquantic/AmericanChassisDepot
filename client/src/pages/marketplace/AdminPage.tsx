@@ -28,7 +28,8 @@ import {
   Building2,
   MapPin,
   Calendar,
-  ImageIcon
+  ImageIcon,
+  RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -141,36 +142,69 @@ export default function AdminPage() {
   const isSuperAdmin = user?.role === 'super_admin';
 
   // Fetch stats
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery({
     queryKey: ['marketplace-stats'],
     queryFn: getMarketplaceStats,
-    staleTime: 30000, // Keep data fresh for 30 seconds
-    refetchOnMount: true,
+    staleTime: 30000,
+    refetchOnMount: 'always', // Always refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    retry: 2, // Retry twice on failure
+    retryDelay: 1000,
   });
 
   // Fetch pending listings
-  const { data: pendingListings, isLoading: pendingLoading } = useQuery({
+  const { data: pendingListings, isLoading: pendingLoading, refetch: refetchPending } = useQuery({
     queryKey: ['pending-listings'],
     queryFn: getPendingListings,
     staleTime: 30000,
-    refetchOnMount: true,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   // Fetch users
-  const { data: usersData, isLoading: usersLoading } = useQuery({
+  const { data: usersData, isLoading: usersLoading, refetch: refetchUsers } = useQuery({
     queryKey: ['admin-users', userFilters],
     queryFn: () => getAllUsers(userFilters),
     staleTime: 30000,
-    refetchOnMount: true,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   // Fetch all listings (admin)
-  const { data: listingsData, isLoading: listingsLoading } = useQuery({
+  const { data: listingsData, isLoading: listingsLoading, refetch: refetchListings } = useQuery({
     queryKey: ['admin-listings', listingFilters],
     queryFn: () => getAllListingsAdmin(listingFilters),
-    staleTime: 30000, // Keep data fresh for 30 seconds
-    refetchOnMount: true, // Always refetch when coming back to page
+    staleTime: 30000,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    retry: 2,
+    retryDelay: 1000,
   });
+
+  // Manual refresh all data
+  const handleRefreshAll = () => {
+    refetchStats();
+    refetchPending();
+    refetchUsers();
+    refetchListings();
+    toast({ title: lang === 'es' ? 'Datos actualizados' : 'Data refreshed' });
+  };
+
+  // Show error if stats failed
+  useEffect(() => {
+    if (statsError) {
+      console.error('Stats error:', statsError);
+      toast({
+        title: 'Error',
+        description: lang === 'es' ? 'Error al cargar estadísticas. Reintentando...' : 'Failed to load stats. Retrying...',
+        variant: 'destructive',
+      });
+    }
+  }, [statsError]);
 
   // Approve mutation
   const approveMutation = useMutation({
@@ -450,12 +484,24 @@ export default function AdminPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <Shield className="w-8 h-8 text-[#0A3161]" />
-            <h1 className="text-3xl font-bold text-gray-900">{t('adminPanel')}</h1>
-            {isSuperAdmin && (
-              <Badge variant="destructive" className="ml-2">Super Admin</Badge>
-            )}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 mb-2">
+              <Shield className="w-8 h-8 text-[#0A3161]" />
+              <h1 className="text-3xl font-bold text-gray-900">{t('adminPanel')}</h1>
+              {isSuperAdmin && (
+                <Badge variant="destructive" className="ml-2">Super Admin</Badge>
+              )}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefreshAll}
+              disabled={statsLoading || pendingLoading || usersLoading || listingsLoading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${(statsLoading || listingsLoading) ? 'animate-spin' : ''}`} />
+              {lang === 'es' ? 'Actualizar' : 'Refresh'}
+            </Button>
           </div>
           <p className="text-gray-600">
             {lang === 'es' ? 'Gestiona listings, usuarios y configuración del marketplace' : 'Manage listings, users, and marketplace settings'}
