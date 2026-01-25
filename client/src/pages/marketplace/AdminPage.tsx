@@ -733,7 +733,7 @@ export default function AdminPage() {
                                   {lang === 'es' ? 'Ver Detalles' : 'View Details'}
                                 </DropdownMenuItem>
                                 
-                                <DropdownMenuItem onClick={() => navigate(`/${lang}/marketplace/seller/listings/${listing.id}/images`)}>
+                                <DropdownMenuItem onClick={() => navigate(`/${lang}/marketplace/seller/listings/${listing.id}/images?from=admin`)}>
                                   <ImageIcon className="w-4 h-4 mr-2" />
                                   {lang === 'es' ? 'Gestionar Fotos' : 'Manage Photos'}
                                 </DropdownMenuItem>

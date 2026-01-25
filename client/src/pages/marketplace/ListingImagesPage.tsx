@@ -150,6 +150,11 @@ export default function ListingImagesPage() {
   const user = getStoredUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Detect if coming from admin panel
+  const searchParams = new URLSearchParams(window.location.search);
+  const fromAdmin = searchParams.get('from') === 'admin';
+  const isAdminUser = user?.role === 'admin' || user?.role === 'super_admin';
+
   // State
   const [images, setImages] = useState<ListingImage[]>([]);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
@@ -412,15 +417,32 @@ export default function ListingImagesPage() {
       <Header />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Back button */}
-        <Button
-          variant="ghost"
-          onClick={() => navigate(`/${lang}/marketplace/seller/listings`)}
-          className="mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {lang === 'es' ? 'Volver a Mis Listings' : 'Back to My Listings'}
-        </Button>
+        {/* Back button - smart navigation based on origin */}
+        <div className="flex items-center gap-3 mb-4">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              if (fromAdmin || isAdminUser) {
+                navigate(`/${lang}/marketplace/admin`);
+              } else {
+                navigate(`/${lang}/marketplace/seller/listings`);
+              }
+            }}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {fromAdmin || isAdminUser
+              ? (lang === 'es' ? 'Volver al Panel Admin' : 'Back to Admin Panel')
+              : (lang === 'es' ? 'Volver a Mis Listings' : 'Back to My Listings')
+            }
+          </Button>
+          
+          {/* Show context badge for admin */}
+          {isAdminUser && (
+            <Badge variant="outline" className="text-[#0A3161] border-[#0A3161]">
+              {lang === 'es' ? 'Modo Admin' : 'Admin Mode'}
+            </Badge>
+          )}
+        </div>
 
         {/* Header */}
         <motion.div
