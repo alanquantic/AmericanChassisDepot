@@ -715,7 +715,7 @@ export default function AdminPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.id}`)}
+                              onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.slug}`)}
                             >
                               <Eye className="w-4 h-4" />
                             </Button>
@@ -727,7 +727,7 @@ export default function AdminPage() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.id}`)}>
+                                <DropdownMenuItem onClick={() => navigate(`/${lang}/chassis-marketplace/${listing.slug}`)}>
                                   <Eye className="w-4 h-4 mr-2" />
                                   {lang === 'es' ? 'Ver Detalles' : 'View Details'}
                                 </DropdownMenuItem>
