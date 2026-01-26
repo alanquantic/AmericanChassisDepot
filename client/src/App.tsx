@@ -17,7 +17,7 @@ import { usePageTracking } from "./hooks/use-page-tracking";
 import ElevenLabsWidget from "@/components/shared/ElevenLabsWidget";
 
 // Marketplace Pages
-import { MarketplacePage, ListingDetailPage, DashboardPage, AdminPage, MarketplaceLandingPage, SellerListingsPage, ListingImagesPage, ManualUserPage, ManualAdminPage, LoginPage, RegisterPage } from "@/pages/marketplace";
+import { MarketplacePage, ListingDetailPage, DashboardPage, AdminPage, MarketplaceLandingPage, SellerListingsPage, ListingImagesPage, CreateListingPage, ManualUserPage, ManualAdminPage, LoginPage, RegisterPage } from "@/pages/marketplace";
 
 function Router() {
   const [location, navigate] = useLocation();
@@ -154,6 +154,15 @@ function Router() {
           const lang = params.lang === 'es' ? 'es' : 'en';
           setLanguage(lang);
           return <SellerListingsPage key={`seller-listings-${lang}`} />;
+        }}
+      </Route>
+      
+      {/* Create new listing */}
+      <Route path="/:lang/marketplace/seller/create">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <CreateListingPage key={`create-listing-${lang}`} />;
         }}
       </Route>
       
