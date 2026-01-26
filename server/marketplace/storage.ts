@@ -144,7 +144,8 @@ export async function getListings(filters: ListingFilters = {}) {
       break;
     case 'date_desc':
     default:
-      orderBy = desc(marketplaceListings.createdAt);
+      // Use updatedAt to show recently modified listings first
+      orderBy = desc(marketplaceListings.updatedAt);
   }
 
   const offset = (page - 1) * limit;
