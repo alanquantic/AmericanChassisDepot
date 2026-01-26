@@ -118,6 +118,7 @@ export async function getListings(filters: ListingFilters = {}) {
   if (search) {
     conditions.push(
       or(
+        ilike(marketplaceListings.listingNumber, `%${search}%`),
         ilike(marketplaceListings.title, `%${search}%`),
         ilike(marketplaceListings.titleEs, `%${search}%`),
         ilike(marketplaceListings.city, `%${search}%`),
