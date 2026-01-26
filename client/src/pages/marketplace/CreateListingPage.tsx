@@ -204,7 +204,7 @@ export default function CreateListingPage() {
       titleEs: formData.titleEs || formData.title,
       description: formData.description,
       descriptionEs: formData.descriptionEs || formData.description,
-      pricePerUnit: formData.pricePerUnit,
+      pricePerUnit: parseFloat(formData.pricePerUnit),
       priceNegotiable: formData.priceNegotiable,
       quantity: formData.quantity,
       city: formData.city,
