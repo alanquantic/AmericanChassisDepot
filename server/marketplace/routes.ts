@@ -916,6 +916,24 @@ router.delete('/admin/listings/:id', authenticateToken, requireAdmin, async (req
   }
 });
 
+// Get all offers (admin)
+router.get('/admin/offers', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const filters = {
+      status: req.query.status as string,
+      search: req.query.search as string,
+      page: req.query.page ? Number(req.query.page) : 1,
+      limit: req.query.limit ? Math.min(Number(req.query.limit), 100) : 20,
+    };
+    
+    const result = await storage.getAllOffersAdmin(filters);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching admin offers:', error);
+    res.status(500).json({ message: 'Failed to fetch offers' });
+  }
+});
+
 // =============================================
 // SUPER ADMIN - USER MANAGEMENT ROUTES
 // =============================================

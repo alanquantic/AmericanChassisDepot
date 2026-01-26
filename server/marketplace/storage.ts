@@ -676,6 +676,105 @@ export async function updateOfferStatus(
   return offer;
 }
 
+// Get all offers for admin
+export async function getAllOffersAdmin(filters: { status?: string; search?: string; page?: number; limit?: number } = {}) {
+  const db = getMarketplaceDb();
+  const { status, search, page = 1, limit = 20 } = filters;
+  
+  const conditions = [];
+  
+  if (status && status !== 'all') {
+    conditions.push(eq(marketplaceOffers.status, status));
+  }
+  
+  if (search) {
+    conditions.push(
+      or(
+        ilike(marketplaceOffers.offerNumber, `%${search}%`),
+        ilike(marketplaceListings.title, `%${search}%`)
+      )
+    );
+  }
+  
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const offset = (page - 1) * limit;
+  
+  // Get offers with buyer, seller, and listing info
+  const offers = await db
+    .select({
+      id: marketplaceOffers.id,
+      offerNumber: marketplaceOffers.offerNumber,
+      listingId: marketplaceOffers.listingId,
+      buyerId: marketplaceOffers.buyerId,
+      sellerId: marketplaceOffers.sellerId,
+      quantity: marketplaceOffers.quantity,
+      pricePerUnit: marketplaceOffers.pricePerUnit,
+      totalAmount: marketplaceOffers.totalAmount,
+      status: marketplaceOffers.status,
+      buyerNotes: marketplaceOffers.buyerNotes,
+      sellerNotes: marketplaceOffers.sellerNotes,
+      counterPrice: marketplaceOffers.counterPrice,
+      counterQuantity: marketplaceOffers.counterQuantity,
+      createdAt: marketplaceOffers.createdAt,
+      expiresAt: marketplaceOffers.expiresAt,
+      respondedAt: marketplaceOffers.respondedAt,
+      listingTitle: marketplaceListings.title,
+      listingNumber: marketplaceListings.listingNumber,
+      listingSlug: marketplaceListings.slug,
+    })
+    .from(marketplaceOffers)
+    .leftJoin(marketplaceListings, eq(marketplaceOffers.listingId, marketplaceListings.id))
+    .where(whereClause)
+    .orderBy(desc(marketplaceOffers.createdAt))
+    .limit(limit)
+    .offset(offset);
+  
+  // Get total count
+  const countResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(marketplaceOffers)
+    .leftJoin(marketplaceListings, eq(marketplaceOffers.listingId, marketplaceListings.id))
+    .where(whereClause);
+  
+  const total = Number(countResult[0]?.count || 0);
+  
+  // Get buyer and seller info for each offer
+  const offersWithUsers = await Promise.all(
+    offers.map(async (offer) => {
+      const [buyer] = offer.buyerId ? await db
+        .select({ 
+          id: marketplaceUsers.id, 
+          firstName: marketplaceUsers.firstName, 
+          lastName: marketplaceUsers.lastName,
+          companyName: marketplaceUsers.companyName,
+          email: marketplaceUsers.email 
+        })
+        .from(marketplaceUsers)
+        .where(eq(marketplaceUsers.id, offer.buyerId)) : [null];
+      
+      const [seller] = offer.sellerId ? await db
+        .select({ 
+          id: marketplaceUsers.id, 
+          firstName: marketplaceUsers.firstName, 
+          lastName: marketplaceUsers.lastName,
+          companyName: marketplaceUsers.companyName,
+          email: marketplaceUsers.email 
+        })
+        .from(marketplaceUsers)
+        .where(eq(marketplaceUsers.id, offer.sellerId)) : [null];
+      
+      return { ...offer, buyer, seller };
+    })
+  );
+  
+  return {
+    offers: offersWithUsers,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
 // =============================================
 // FAVORITES
 // =============================================

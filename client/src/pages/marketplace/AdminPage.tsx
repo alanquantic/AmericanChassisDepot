@@ -92,9 +92,11 @@ import {
   updateListingStatus,
   deleteListingAdmin,
   updateListing,
+  getAllOffersAdmin,
   type AdminUser,
   type UserFilters,
   type MarketplaceListing,
+  type AdminOffer,
 } from '@/lib/marketplace-api';
 import { Switch } from '@/components/ui/switch';
 import { t, formatPrice, formatDate } from '@/lib/marketplace-i18n';
@@ -135,6 +137,10 @@ export default function AdminPage() {
   const [editListingData, setEditListingData] = useState<Partial<MarketplaceListing>>({});
   const [quickPriceDialogOpen, setQuickPriceDialogOpen] = useState(false);
   const [quickPrice, setQuickPrice] = useState('');
+  
+  // Offers management states
+  const [offerFilters, setOfferFilters] = useState<{ status?: string; search?: string; page: number }>({ page: 1 });
+  const [offerSearchTerm, setOfferSearchTerm] = useState('');
 
   // Redirect if not admin
   useEffect(() => {
@@ -193,12 +199,24 @@ export default function AdminPage() {
     retryDelay: 1000,
   });
 
+  // Fetch all offers (admin)
+  const { data: offersData, isLoading: offersLoading, refetch: refetchOffers } = useQuery({
+    queryKey: ['admin-offers', offerFilters],
+    queryFn: () => getAllOffersAdmin(offerFilters),
+    staleTime: 30000,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    retry: 2,
+    retryDelay: 1000,
+  });
+
   // Manual refresh all data
   const handleRefreshAll = () => {
     refetchStats();
     refetchPending();
     refetchUsers();
     refetchListings();
+    refetchOffers();
     toast({ title: lang === 'es' ? 'Datos actualizados' : 'Data refreshed' });
   };
 
@@ -480,6 +498,23 @@ export default function AdminPage() {
       case 'sold': return 'outline';
       case 'inactive': return 'destructive';
       default: return 'outline';
+    }
+  };
+
+  // Offer helpers
+  const handleOfferSearch = () => {
+    setOfferFilters({ ...offerFilters, search: offerSearchTerm, page: 1 });
+  };
+
+  const getOfferStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending': return { variant: 'secondary' as const, label: lang === 'es' ? 'Pendiente' : 'Pending', color: 'text-amber-600' };
+      case 'accepted': return { variant: 'default' as const, label: lang === 'es' ? 'Aceptada' : 'Accepted', color: 'text-green-600' };
+      case 'rejected': return { variant: 'destructive' as const, label: lang === 'es' ? 'Rechazada' : 'Rejected', color: 'text-red-600' };
+      case 'countered': return { variant: 'outline' as const, label: lang === 'es' ? 'Contraoferta' : 'Countered', color: 'text-blue-600' };
+      case 'expired': return { variant: 'outline' as const, label: lang === 'es' ? 'Expirada' : 'Expired', color: 'text-gray-500' };
+      case 'cancelled': return { variant: 'outline' as const, label: lang === 'es' ? 'Cancelada' : 'Cancelled', color: 'text-gray-500' };
+      default: return { variant: 'outline' as const, label: status, color: 'text-gray-600' };
     }
   };
 
@@ -1220,21 +1255,33 @@ export default function AdminPage() {
           <TabsContent value="offers">
             <Card>
               <CardHeader>
-                <CardTitle>Offer Overview</CardTitle>
-                <CardDescription>Monitor marketplace offers</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-green-600" />
+                  {lang === 'es' ? 'Gestión de Ofertas' : 'Offer Management'}
+                </CardTitle>
+                <CardDescription>
+                  {lang === 'es' ? 'Monitorea todas las ofertas del marketplace' : 'Monitor all marketplace offers'}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  <Card>
+                {/* Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <Card className="border-amber-200 bg-amber-50">
                     <CardContent className="p-4 text-center">
                       <p className="text-3xl font-bold text-amber-600">{stats?.offers?.pendingOffers || 0}</p>
-                      <p className="text-sm text-gray-500">Pending</p>
+                      <p className="text-sm text-amber-700">{lang === 'es' ? 'Pendientes' : 'Pending'}</p>
                     </CardContent>
                   </Card>
-                  <Card>
+                  <Card className="border-green-200 bg-green-50">
                     <CardContent className="p-4 text-center">
                       <p className="text-3xl font-bold text-green-600">{stats?.offers?.acceptedOffers || 0}</p>
-                      <p className="text-sm text-gray-500">Accepted</p>
+                      <p className="text-sm text-green-700">{lang === 'es' ? 'Aceptadas' : 'Accepted'}</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-red-200 bg-red-50">
+                    <CardContent className="p-4 text-center">
+                      <p className="text-3xl font-bold text-red-600">{stats?.offers?.rejectedOffers || 0}</p>
+                      <p className="text-sm text-red-700">{lang === 'es' ? 'Rechazadas' : 'Rejected'}</p>
                     </CardContent>
                   </Card>
                   <Card>
@@ -1244,10 +1291,224 @@ export default function AdminPage() {
                     </CardContent>
                   </Card>
                 </div>
-                <div className="text-center py-8 text-gray-500">
-                  <DollarSign className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                  <p>Full offer management coming soon</p>
+
+                {/* Search and Filters */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="flex-1 flex gap-2">
+                    <Input
+                      placeholder={lang === 'es' ? 'Buscar por # de oferta o listing...' : 'Search by offer # or listing...'}
+                      value={offerSearchTerm}
+                      onChange={(e) => setOfferSearchTerm(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleOfferSearch()}
+                      className="max-w-sm"
+                    />
+                    <Button variant="outline" size="icon" onClick={handleOfferSearch}>
+                      <Search className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <Select
+                    value={offerFilters.status || 'all'}
+                    onValueChange={(value) => setOfferFilters({ ...offerFilters, status: value === 'all' ? undefined : value, page: 1 })}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder={lang === 'es' ? 'Todos los estados' : 'All Status'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{lang === 'es' ? 'Todos' : 'All Status'}</SelectItem>
+                      <SelectItem value="pending">{lang === 'es' ? 'Pendientes' : 'Pending'}</SelectItem>
+                      <SelectItem value="accepted">{lang === 'es' ? 'Aceptadas' : 'Accepted'}</SelectItem>
+                      <SelectItem value="rejected">{lang === 'es' ? 'Rechazadas' : 'Rejected'}</SelectItem>
+                      <SelectItem value="countered">{lang === 'es' ? 'Contraoferta' : 'Countered'}</SelectItem>
+                      <SelectItem value="expired">{lang === 'es' ? 'Expiradas' : 'Expired'}</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+
+                {/* Offers List */}
+                {offersLoading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="h-32 bg-gray-100 rounded-lg animate-pulse" />
+                    ))}
+                  </div>
+                ) : offersData?.offers && offersData.offers.length > 0 ? (
+                  <>
+                    <div className="space-y-4">
+                      {offersData.offers.map((offer: AdminOffer) => {
+                        const statusBadge = getOfferStatusBadge(offer.status);
+                        return (
+                          <motion.div
+                            key={offer.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                              {/* Offer Info */}
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+                                    {offer.offerNumber}
+                                  </span>
+                                  <Badge variant={statusBadge.variant} className={statusBadge.color}>
+                                    {statusBadge.label}
+                                  </Badge>
+                                </div>
+                                
+                                <p className="font-medium text-gray-900 mb-1">
+                                  {offer.listingTitle}
+                                </p>
+                                <p className="text-sm text-gray-500 mb-2">
+                                  {offer.listingNumber}
+                                </p>
+                                
+                                {/* Buyer & Seller */}
+                                <div className="flex flex-wrap gap-4 text-sm">
+                                  <div className="flex items-center gap-1">
+                                    <Users className="w-4 h-4 text-blue-500" />
+                                    <span className="text-gray-600">{lang === 'es' ? 'Comprador:' : 'Buyer:'}</span>
+                                    <span className="font-medium">
+                                      {offer.buyer?.companyName || `${offer.buyer?.firstName} ${offer.buyer?.lastName}`}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Building2 className="w-4 h-4 text-green-500" />
+                                    <span className="text-gray-600">{lang === 'es' ? 'Vendedor:' : 'Seller:'}</span>
+                                    <span className="font-medium">
+                                      {offer.seller?.companyName || `${offer.seller?.firstName} ${offer.seller?.lastName}`}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Price & Quantity */}
+                              <div className="text-right space-y-1">
+                                <p className="text-2xl font-bold text-[#0A3161]">
+                                  {formatPrice(offer.totalAmount)}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  {offer.quantity} × {formatPrice(offer.pricePerUnit)} {lang === 'es' ? 'c/u' : 'each'}
+                                </p>
+                                {offer.counterPrice && (
+                                  <p className="text-sm text-blue-600">
+                                    {lang === 'es' ? 'Contraoferta:' : 'Counter:'} {formatPrice(offer.counterPrice)}
+                                    {offer.counterQuantity && ` × ${offer.counterQuantity}`}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Actions */}
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => navigate(`/${lang}/chassis-marketplace/${offer.listingSlug}`)}
+                                >
+                                  <Eye className="w-4 h-4 mr-1" />
+                                  {lang === 'es' ? 'Ver Listing' : 'View Listing'}
+                                </Button>
+                                {offer.buyer?.email && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => window.location.href = `mailto:${offer.buyer?.email}?subject=Re: Offer ${offer.offerNumber}`}
+                                  >
+                                    <Mail className="w-4 h-4" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Notes */}
+                            {(offer.buyerNotes || offer.sellerNotes) && (
+                              <div className="mt-4 pt-4 border-t grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {offer.buyerNotes && (
+                                  <div className="bg-blue-50 p-3 rounded-lg">
+                                    <p className="text-xs font-medium text-blue-700 mb-1">
+                                      {lang === 'es' ? 'Notas del comprador:' : 'Buyer notes:'}
+                                    </p>
+                                    <p className="text-sm text-blue-900">{offer.buyerNotes}</p>
+                                  </div>
+                                )}
+                                {offer.sellerNotes && (
+                                  <div className="bg-green-50 p-3 rounded-lg">
+                                    <p className="text-xs font-medium text-green-700 mb-1">
+                                      {lang === 'es' ? 'Respuesta del vendedor:' : 'Seller response:'}
+                                    </p>
+                                    <p className="text-sm text-green-900">{offer.sellerNotes}</p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Footer Info */}
+                            <div className="mt-3 pt-3 border-t flex flex-wrap gap-4 text-xs text-gray-500">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                {lang === 'es' ? 'Creada:' : 'Created:'} {formatDate(offer.createdAt, lang as 'en' | 'es')}
+                              </span>
+                              {offer.expiresAt && (
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {lang === 'es' ? 'Expira:' : 'Expires:'} {formatDate(offer.expiresAt, lang as 'en' | 'es')}
+                                </span>
+                              )}
+                              {offer.respondedAt && (
+                                <span className="flex items-center gap-1">
+                                  <CheckCircle className="w-3 h-3" />
+                                  {lang === 'es' ? 'Respondida:' : 'Responded:'} {formatDate(offer.respondedAt, lang as 'en' | 'es')}
+                                </span>
+                              )}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Pagination */}
+                    {offersData.totalPages > 1 && (
+                      <div className="flex justify-center gap-2 mt-6">
+                        <Button
+                          variant="outline"
+                          disabled={offerFilters.page === 1}
+                          onClick={() => setOfferFilters({ ...offerFilters, page: offerFilters.page - 1 })}
+                        >
+                          {lang === 'es' ? 'Anterior' : 'Previous'}
+                        </Button>
+                        <span className="flex items-center px-4 text-sm text-gray-500">
+                          {lang === 'es' ? 'Página' : 'Page'} {offerFilters.page} {lang === 'es' ? 'de' : 'of'} {offersData.totalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          disabled={offerFilters.page >= offersData.totalPages}
+                          onClick={() => setOfferFilters({ ...offerFilters, page: offerFilters.page + 1 })}
+                        >
+                          {lang === 'es' ? 'Siguiente' : 'Next'}
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <DollarSign className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">
+                      {offerFilters.search || offerFilters.status
+                        ? (lang === 'es' ? 'No se encontraron ofertas con estos filtros' : 'No offers found with these filters')
+                        : (lang === 'es' ? 'No hay ofertas aún' : 'No offers yet')}
+                    </p>
+                    {(offerFilters.search || offerFilters.status) && (
+                      <Button 
+                        variant="link" 
+                        onClick={() => {
+                          setOfferFilters({ page: 1 });
+                          setOfferSearchTerm('');
+                        }}
+                      >
+                        {lang === 'es' ? 'Limpiar filtros' : 'Clear filters'}
+                      </Button>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

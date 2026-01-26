@@ -505,6 +505,58 @@ export async function deleteListingAdmin(listingId: number): Promise<{ message: 
   });
 }
 
+// Admin offers
+export interface AdminOffer {
+  id: number;
+  offerNumber: string;
+  listingId: number;
+  buyerId: number;
+  sellerId: number;
+  quantity: number;
+  pricePerUnit: string;
+  totalAmount: string;
+  status: string;
+  buyerNotes?: string;
+  sellerNotes?: string;
+  counterPrice?: string;
+  counterQuantity?: number;
+  createdAt: string;
+  expiresAt?: string;
+  respondedAt?: string;
+  listingTitle: string;
+  listingNumber: string;
+  listingSlug: string;
+  buyer?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    companyName?: string;
+    email: string;
+  };
+  seller?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    companyName?: string;
+    email: string;
+  };
+}
+
+export async function getAllOffersAdmin(filters: { 
+  status?: string; 
+  search?: string; 
+  page?: number; 
+  limit?: number;
+} = {}): Promise<{ offers: AdminOffer[]; total: number; page: number; totalPages: number }> {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      params.append(key, String(value));
+    }
+  });
+  return apiRequest(`/admin/offers?${params.toString()}`);
+}
+
 // =============================================
 // STRIPE PAYMENTS
 // =============================================
