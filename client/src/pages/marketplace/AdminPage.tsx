@@ -1931,8 +1931,8 @@ export default function AdminPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="New">New</SelectItem>
-                      <SelectItem value="Road-worthy">Road-worthy</SelectItem>
-                      <SelectItem value="ASIS">As-Is</SelectItem>
+                      <SelectItem value="Road-Worthy">Road-Worthy</SelectItem>
+                      <SelectItem value="As-Is">As-Is</SelectItem>
                       <SelectItem value="Certified">Certified</SelectItem>
                     </SelectContent>
                   </Select>

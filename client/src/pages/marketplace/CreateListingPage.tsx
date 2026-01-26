@@ -67,11 +67,11 @@ const CHASSIS_SIZES = [
   { value: "40-45-48-53'", label: "40-45-48-53' (Extendable)" },
 ];
 
-// Conditions
+// Conditions (must match marketplace_conditions table)
 const CONDITIONS = [
   { value: 'New', label: { en: 'New', es: 'Nuevo' } },
-  { value: 'Road-worthy', label: { en: 'Road-worthy', es: 'Road-worthy' } },
-  { value: 'ASIS', label: { en: 'As-Is', es: 'As-Is' } },
+  { value: 'Road-Worthy', label: { en: 'Road-Worthy', es: 'Listo para Circular' } },
+  { value: 'As-Is', label: { en: 'As-Is', es: 'Como Está' } },
   { value: 'Certified', label: { en: 'Certified', es: 'Certificado' } },
 ];
 
