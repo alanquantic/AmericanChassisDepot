@@ -5,4 +5,6 @@ export { default as AdminPage } from './AdminPage';
 export { default as MarketplaceLandingPage } from './MarketplaceLandingPage';
 export { default as SellerListingsPage } from './SellerListingsPage';
 export { default as ListingImagesPage } from './ListingImagesPage';
+export { default as ManualUserPage } from './ManualUserPage';
+export { default as ManualAdminPage } from './ManualAdminPage';
 export { LoginPage, RegisterPage } from './AuthPages';

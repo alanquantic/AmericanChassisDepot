@@ -14,6 +14,7 @@ Disallow: /used-chassis$
 # Disallow private marketplace pages
 Disallow: /*/marketplace/dashboard
 Disallow: /*/marketplace/admin
+Disallow: /*/marketplace/manual/
 Disallow: /marketplace/login
 Disallow: /marketplace/register
 Disallow: /api/
