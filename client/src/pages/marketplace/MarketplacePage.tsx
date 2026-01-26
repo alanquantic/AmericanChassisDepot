@@ -247,7 +247,8 @@ function FilterSidebar({
 }) {
   const lang = getCurrentLanguage();
 
-  const sizes = ['20ft', '40ft', '45ft', '53ft', '20-40ft', '40-45ft', '40-45-48ft'];
+  // Sizes must match database values (with apostrophe format)
+  const sizes = ["20'", "40'", "45'", "53'", "20-40'", "40-45'", "40-45-48'", "40-45-48-53'"];
 
   return (
     <div className="space-y-6">
