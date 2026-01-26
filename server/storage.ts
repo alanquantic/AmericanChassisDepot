@@ -2722,11 +2722,25 @@ export class DatabaseStorage implements IStorage {
   async initializeDatabase(): Promise<void> {
     console.log("Starting database initialization...");
     
-    // FORCE RESEED - Always clear and reseed for now
-    console.log("FORCING COMPLETE RESEED...");
-    await this.forceReseed();
-    
-    console.log("Database initialization completed.");
+    try {
+      // Check if database already has data - DO NOT reseed if data exists
+      const existingConditions = await this.getAllConditions();
+      const existingModels = await this.getAllChassisModels();
+      
+      if (existingConditions.length > 0 || existingModels.length > 0) {
+        console.log(`Database already has data (${existingConditions.length} conditions, ${existingModels.length} models). Skipping seed.`);
+        return;
+      }
+      
+      // Only seed if database is empty
+      console.log("Database is empty. Seeding initial data...");
+      await this.seedData();
+      
+      console.log("Database initialization completed.");
+    } catch (error) {
+      console.error("Error checking database state:", error);
+      // Don't throw - just log and continue to avoid blocking server startup
+    }
   }
 
   // Seed initial data - Simplified version without external imports
