@@ -91,10 +91,12 @@ import {
   getAllListingsAdmin,
   updateListingStatus,
   deleteListingAdmin,
+  updateListing,
   type AdminUser,
   type UserFilters,
   type MarketplaceListing,
 } from '@/lib/marketplace-api';
+import { Switch } from '@/components/ui/switch';
 import { t, formatPrice, formatDate } from '@/lib/marketplace-i18n';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
 
@@ -127,6 +129,12 @@ export default function AdminPage() {
   const [listingSearchTerm, setListingSearchTerm] = useState('');
   const [selectedListingForAction, setSelectedListingForAction] = useState<MarketplaceListing | null>(null);
   const [deleteListingDialogOpen, setDeleteListingDialogOpen] = useState(false);
+  
+  // Listing edit states
+  const [editListingDialogOpen, setEditListingDialogOpen] = useState(false);
+  const [editListingData, setEditListingData] = useState<Partial<MarketplaceListing>>({});
+  const [quickPriceDialogOpen, setQuickPriceDialogOpen] = useState(false);
+  const [quickPrice, setQuickPrice] = useState('');
 
   // Redirect if not admin
   useEffect(() => {
@@ -351,6 +359,25 @@ export default function AdminPage() {
     },
   });
 
+  // Edit listing mutation (admin)
+  const editListingMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<MarketplaceListing> }) => updateListing(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+      queryClient.invalidateQueries({ queryKey: ['marketplace-stats'] });
+      setEditListingDialogOpen(false);
+      setQuickPriceDialogOpen(false);
+      setSelectedListingForAction(null);
+      toast({ 
+        title: lang === 'es' ? 'Listing Actualizado' : 'Listing Updated', 
+        description: lang === 'es' ? 'Los cambios han sido guardados.' : 'Changes have been saved.' 
+      });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    },
+  });
+
   const handleReject = () => {
     if (!selectedListing || !rejectReason.trim()) return;
     rejectMutation.mutate({ id: selectedListing.id, reason: rejectReason });
@@ -402,6 +429,48 @@ export default function AdminPage() {
   const openDeleteListing = (listing: MarketplaceListing) => {
     setSelectedListingForAction(listing);
     setDeleteListingDialogOpen(true);
+  };
+
+  const openEditListing = (listing: MarketplaceListing) => {
+    setSelectedListingForAction(listing);
+    setEditListingData({
+      title: listing.title,
+      titleEs: listing.titleEs,
+      description: listing.description,
+      descriptionEs: listing.descriptionEs,
+      pricePerUnit: listing.pricePerUnit,
+      priceNegotiable: listing.priceNegotiable,
+      quantity: listing.quantity,
+      quantityAvailable: listing.quantityAvailable,
+      city: listing.city,
+      state: listing.state,
+      // Admin-only fields
+      chassisType: listing.chassisType,
+      chassisSize: listing.chassisSize,
+      condition: listing.condition,
+      featured: listing.featured,
+      verified: listing.verified,
+    });
+    setEditListingDialogOpen(true);
+  };
+
+  const openQuickPrice = (listing: MarketplaceListing) => {
+    setSelectedListingForAction(listing);
+    setQuickPrice(listing.pricePerUnit);
+    setQuickPriceDialogOpen(true);
+  };
+
+  const handleSaveListingEdit = () => {
+    if (!selectedListingForAction) return;
+    editListingMutation.mutate({ id: selectedListingForAction.id, data: editListingData });
+  };
+
+  const handleSaveQuickPrice = () => {
+    if (!selectedListingForAction || !quickPrice) return;
+    editListingMutation.mutate({ 
+      id: selectedListingForAction.id, 
+      data: { pricePerUnit: quickPrice } 
+    });
   };
 
   const getStatusBadgeVariant = (status: string) => {
@@ -787,9 +856,19 @@ export default function AdminPage() {
                                   {lang === 'es' ? 'Ver Detalles' : 'View Details'}
                                 </DropdownMenuItem>
                                 
+                                <DropdownMenuItem onClick={() => openEditListing(listing)}>
+                                  <Edit className="w-4 h-4 mr-2" />
+                                  {lang === 'es' ? 'Editar Listing' : 'Edit Listing'}
+                                </DropdownMenuItem>
+                                
                                 <DropdownMenuItem onClick={() => navigate(`/${lang}/marketplace/seller/listings/${listing.id}/images?from=admin`)}>
                                   <ImageIcon className="w-4 h-4 mr-2" />
                                   {lang === 'es' ? 'Gestionar Fotos' : 'Manage Photos'}
+                                </DropdownMenuItem>
+                                
+                                <DropdownMenuItem onClick={() => openQuickPrice(listing)}>
+                                  <DollarSign className="w-4 h-4 mr-2" />
+                                  {lang === 'es' ? 'Cambiar Precio' : 'Change Price'}
                                 </DropdownMenuItem>
                                 
                                 <DropdownMenuSeparator />
@@ -1411,6 +1490,294 @@ export default function AdminPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Listing Dialog */}
+      <Dialog open={editListingDialogOpen} onOpenChange={setEditListingDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Edit className="w-5 h-5" />
+              {lang === 'es' ? 'Editar Listing' : 'Edit Listing'}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedListingForAction?.listingNumber} - {selectedListingForAction?.title}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Basic Info Section */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900 border-b pb-2">
+                {lang === 'es' ? 'Información Básica' : 'Basic Information'}
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>{lang === 'es' ? 'Título (Inglés)' : 'Title (English)'}</Label>
+                  <Input
+                    value={editListingData.title || ''}
+                    onChange={(e) => setEditListingData({ ...editListingData, title: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>{lang === 'es' ? 'Título (Español)' : 'Title (Spanish)'}</Label>
+                  <Input
+                    value={editListingData.titleEs || ''}
+                    onChange={(e) => setEditListingData({ ...editListingData, titleEs: e.target.value })}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label>{lang === 'es' ? 'Descripción (Inglés)' : 'Description (English)'}</Label>
+                <Textarea
+                  value={editListingData.description || ''}
+                  onChange={(e) => setEditListingData({ ...editListingData, description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+              
+              <div>
+                <Label>{lang === 'es' ? 'Descripción (Español)' : 'Description (Spanish)'}</Label>
+                <Textarea
+                  value={editListingData.descriptionEs || ''}
+                  onChange={(e) => setEditListingData({ ...editListingData, descriptionEs: e.target.value })}
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            {/* Pricing & Inventory Section */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900 border-b pb-2">
+                {lang === 'es' ? 'Precio e Inventario' : 'Pricing & Inventory'}
+              </h3>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <Label>{lang === 'es' ? 'Precio ($)' : 'Price ($)'}</Label>
+                  <Input
+                    type="number"
+                    value={editListingData.pricePerUnit || ''}
+                    onChange={(e) => setEditListingData({ ...editListingData, pricePerUnit: e.target.value })}
+                  />
+                </div>
+                <div className="flex items-center gap-2 pt-6">
+                  <Switch
+                    checked={editListingData.priceNegotiable || false}
+                    onCheckedChange={(checked) => setEditListingData({ ...editListingData, priceNegotiable: checked })}
+                  />
+                  <Label className="text-sm">{lang === 'es' ? 'Negociable' : 'Negotiable'}</Label>
+                </div>
+                <div>
+                  <Label>{lang === 'es' ? 'Cantidad Total' : 'Total Qty'}</Label>
+                  <Input
+                    type="number"
+                    value={editListingData.quantity || ''}
+                    onChange={(e) => setEditListingData({ ...editListingData, quantity: parseInt(e.target.value) || 0 })}
+                  />
+                </div>
+                <div>
+                  <Label>{lang === 'es' ? 'Disponible' : 'Available'}</Label>
+                  <Input
+                    type="number"
+                    value={editListingData.quantityAvailable || ''}
+                    onChange={(e) => setEditListingData({ ...editListingData, quantityAvailable: parseInt(e.target.value) || 0 })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Location Section */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900 border-b pb-2">
+                {lang === 'es' ? 'Ubicación' : 'Location'}
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>{lang === 'es' ? 'Ciudad' : 'City'}</Label>
+                  <Input
+                    value={editListingData.city || ''}
+                    onChange={(e) => setEditListingData({ ...editListingData, city: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>{lang === 'es' ? 'Estado' : 'State'}</Label>
+                  <Input
+                    value={editListingData.state || ''}
+                    onChange={(e) => setEditListingData({ ...editListingData, state: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Admin-Only Section */}
+            <div className="space-y-4 bg-amber-50 p-4 rounded-lg border border-amber-200">
+              <h3 className="font-semibold text-amber-800 border-b border-amber-300 pb-2 flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                {lang === 'es' ? 'Campos de Admin' : 'Admin Fields'}
+              </h3>
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <Label>{lang === 'es' ? 'Tipo de Chassis' : 'Chassis Type'}</Label>
+                  <Select
+                    value={editListingData.chassisType || ''}
+                    onValueChange={(value) => setEditListingData({ ...editListingData, chassisType: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Gooseneck">Gooseneck</SelectItem>
+                      <SelectItem value="Slider">Slider</SelectItem>
+                      <SelectItem value="Extendable">Extendable</SelectItem>
+                      <SelectItem value="Spread">Spread</SelectItem>
+                      <SelectItem value="Tank">Tank</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>{lang === 'es' ? 'Tamaño' : 'Size'}</Label>
+                  <Select
+                    value={editListingData.chassisSize || ''}
+                    onValueChange={(value) => setEditListingData({ ...editListingData, chassisSize: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="20'">20'</SelectItem>
+                      <SelectItem value="40'">40'</SelectItem>
+                      <SelectItem value="45'">45'</SelectItem>
+                      <SelectItem value="53'">53'</SelectItem>
+                      <SelectItem value="20-40'">20-40' (Extendable)</SelectItem>
+                      <SelectItem value="40-45'">40-45' (Extendable)</SelectItem>
+                      <SelectItem value="40-45-48'">40-45-48' (Extendable)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>{lang === 'es' ? 'Condición' : 'Condition'}</Label>
+                  <Select
+                    value={editListingData.condition || ''}
+                    onValueChange={(value) => setEditListingData({ ...editListingData, condition: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="New">New</SelectItem>
+                      <SelectItem value="Road-worthy">Road-worthy</SelectItem>
+                      <SelectItem value="ASIS">As-Is</SelectItem>
+                      <SelectItem value="Certified">Certified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6 pt-2">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={editListingData.featured || false}
+                    onCheckedChange={(checked) => setEditListingData({ ...editListingData, featured: checked })}
+                  />
+                  <Label className="text-sm">{lang === 'es' ? 'Destacado' : 'Featured'}</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={editListingData.verified || false}
+                    onCheckedChange={(checked) => setEditListingData({ ...editListingData, verified: checked })}
+                  />
+                  <Label className="text-sm">{lang === 'es' ? 'Verificado' : 'Verified'}</Label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditListingDialogOpen(false)}>
+              {lang === 'es' ? 'Cancelar' : 'Cancel'}
+            </Button>
+            <Button 
+              onClick={handleSaveListingEdit}
+              disabled={editListingMutation.isPending}
+              className="bg-[#0A3161] hover:bg-[#0A3161]/90"
+            >
+              {editListingMutation.isPending 
+                ? (lang === 'es' ? 'Guardando...' : 'Saving...') 
+                : (lang === 'es' ? 'Guardar Cambios' : 'Save Changes')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick Price Edit Dialog */}
+      <Dialog open={quickPriceDialogOpen} onOpenChange={setQuickPriceDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5" />
+              {lang === 'es' ? 'Cambiar Precio' : 'Change Price'}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedListingForAction?.title}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4 space-y-4">
+            <div>
+              <Label>{lang === 'es' ? 'Precio Actual' : 'Current Price'}</Label>
+              <p className="text-2xl font-bold text-gray-400 line-through">
+                {formatPrice(selectedListingForAction?.pricePerUnit || '0')}
+              </p>
+            </div>
+            
+            <div>
+              <Label>{lang === 'es' ? 'Nuevo Precio ($)' : 'New Price ($)'}</Label>
+              <Input
+                type="number"
+                value={quickPrice}
+                onChange={(e) => setQuickPrice(e.target.value)}
+                className="text-2xl font-bold"
+                autoFocus
+              />
+            </div>
+            
+            {quickPrice && selectedListingForAction?.pricePerUnit && (
+              <div className="text-sm text-gray-500">
+                {parseFloat(quickPrice) < parseFloat(selectedListingForAction.pricePerUnit) ? (
+                  <span className="text-red-600">
+                    ↓ {((1 - parseFloat(quickPrice) / parseFloat(selectedListingForAction.pricePerUnit)) * 100).toFixed(1)}% {lang === 'es' ? 'menos' : 'decrease'}
+                  </span>
+                ) : parseFloat(quickPrice) > parseFloat(selectedListingForAction.pricePerUnit) ? (
+                  <span className="text-green-600">
+                    ↑ {((parseFloat(quickPrice) / parseFloat(selectedListingForAction.pricePerUnit) - 1) * 100).toFixed(1)}% {lang === 'es' ? 'más' : 'increase'}
+                  </span>
+                ) : (
+                  <span>{lang === 'es' ? 'Sin cambio' : 'No change'}</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setQuickPriceDialogOpen(false)}>
+              {lang === 'es' ? 'Cancelar' : 'Cancel'}
+            </Button>
+            <Button 
+              onClick={handleSaveQuickPrice}
+              disabled={editListingMutation.isPending || !quickPrice}
+              className="bg-[#0A3161] hover:bg-[#0A3161]/90"
+            >
+              {editListingMutation.isPending 
+                ? (lang === 'es' ? 'Guardando...' : 'Saving...') 
+                : (lang === 'es' ? 'Actualizar Precio' : 'Update Price')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
