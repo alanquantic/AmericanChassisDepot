@@ -910,7 +910,7 @@ export default function AdminPage() {
                                 
                                 {listing.status !== 'active' && (
                                   <DropdownMenuItem 
-                                    onClick={() => handleListingStatusChange(listing, 'active')}
+                                    onSelect={() => handleListingStatusChange(listing, 'active')}
                                     className="text-green-600"
                                   >
                                     <CheckCircle className="w-4 h-4 mr-2" />
@@ -920,7 +920,7 @@ export default function AdminPage() {
                                 
                                 {listing.status === 'active' && (
                                   <DropdownMenuItem 
-                                    onClick={() => handleListingStatusChange(listing, 'inactive')}
+                                    onSelect={() => handleListingStatusChange(listing, 'inactive')}
                                     className="text-amber-600"
                                   >
                                     <XCircle className="w-4 h-4 mr-2" />
@@ -930,7 +930,7 @@ export default function AdminPage() {
                                 
                                 {listing.status !== 'sold' && (
                                   <DropdownMenuItem 
-                                    onClick={() => handleListingStatusChange(listing, 'sold')}
+                                    onSelect={() => handleListingStatusChange(listing, 'sold')}
                                     className="text-purple-600"
                                   >
                                     <DollarSign className="w-4 h-4 mr-2" />
