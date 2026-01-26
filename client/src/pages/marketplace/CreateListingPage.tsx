@@ -45,12 +45,13 @@ const US_STATES = [
   'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
 ];
 
-// Chassis types
+// Chassis types (must match marketplace_chassis_types table in database)
 const CHASSIS_TYPES = [
   { value: 'Gooseneck', label: 'Gooseneck' },
   { value: 'Slider', label: 'Slider' },
   { value: 'Extendable', label: 'Extendable' },
   { value: 'Spread', label: 'Spread' },
+  { value: 'Triaxle', label: 'Triaxle' },
   { value: 'Tank', label: 'Tank / ISO Tank' },
 ];
 

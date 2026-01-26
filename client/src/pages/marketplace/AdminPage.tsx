@@ -1895,6 +1895,7 @@ export default function AdminPage() {
                       <SelectItem value="Slider">Slider</SelectItem>
                       <SelectItem value="Extendable">Extendable</SelectItem>
                       <SelectItem value="Spread">Spread</SelectItem>
+                      <SelectItem value="Triaxle">Triaxle</SelectItem>
                       <SelectItem value="Tank">Tank</SelectItem>
                     </SelectContent>
                   </Select>
