@@ -153,7 +153,7 @@ export const marketplaceListings = pgTable("marketplace_listings", {
   videoUrl: text("video_url"),
   
   // Estado del listing
-  status: text("status").default("draft"), // 'draft', 'pending', 'active', 'sold', 'expired', 'rejected', 'suspended'
+  status: text("status").default("draft"), // 'draft', 'pending', 'active', 'inactive', 'sold', 'expired', 'rejected', 'suspended'
   featured: boolean("featured").default(false),
   featuredUntil: timestamp("featured_until"),
   verified: boolean("verified").default(false),
