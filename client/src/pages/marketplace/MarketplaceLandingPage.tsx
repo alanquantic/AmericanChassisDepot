@@ -72,7 +72,7 @@ const landingTranslations = {
     howStep1Title: 'Browse Listings',
     howStep1Desc: 'Search and filter through hundreds of chassis listings by type, condition, location, and price.',
     howStep2Title: 'Contact Seller',
-    howStep2Desc: 'Send a message or make an offer directly to the seller through our secure platform.',
+    howStep2Desc: 'Send a message directly to the seller through our secure platform to discuss details.',
     howStep3Title: 'Negotiate & Buy',
     howStep3Desc: 'Agree on terms and complete your purchase securely through Stripe.',
     
@@ -83,7 +83,7 @@ const landingTranslations = {
     
     // CTA sections
     buyerCtaTitle: 'Looking to Buy?',
-    buyerCtaDesc: 'Create a free buyer account to make offers, save favorites, and get notified about new listings.',
+    buyerCtaDesc: 'Create a free buyer account to contact sellers, save favorites, and get notified about new listings.',
     buyerCtaButton: 'Register as Buyer',
     
     sellerCtaTitle: 'Want to Sell?',
@@ -152,7 +152,7 @@ const landingTranslations = {
     howStep1Title: 'Explora Listings',
     howStep1Desc: 'Busca y filtra cientos de listings de chassis por tipo, condición, ubicación y precio.',
     howStep2Title: 'Contacta al Vendedor',
-    howStep2Desc: 'Envía un mensaje o haz una oferta directamente al vendedor.',
+    howStep2Desc: 'Envía un mensaje directamente al vendedor para discutir los detalles.',
     howStep3Title: 'Negocia y Compra',
     howStep3Desc: 'Acuerda términos y completa tu compra de forma segura con Stripe.',
     
@@ -163,7 +163,7 @@ const landingTranslations = {
     
     // CTA sections
     buyerCtaTitle: '¿Buscas Comprar?',
-    buyerCtaDesc: 'Crea una cuenta de comprador gratis para hacer ofertas, guardar favoritos y recibir notificaciones.',
+    buyerCtaDesc: 'Crea una cuenta de comprador gratis para contactar vendedores, guardar favoritos y recibir notificaciones.',
     buyerCtaButton: 'Registrarse como Comprador',
     
     sellerCtaTitle: '¿Quieres Vender?',

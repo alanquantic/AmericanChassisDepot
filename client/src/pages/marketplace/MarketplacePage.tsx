@@ -487,8 +487,8 @@ export default function MarketplacePage() {
           {
             question: lang === 'es' ? '¿Cómo compro un chassis?' : 'How do I buy a chassis?',
             answer: lang === 'es' 
-              ? 'Navega por los listings, contacta al vendedor y haz una oferta. Una vez aceptada, completa el pago de forma segura.'
-              : 'Browse listings, contact the seller, and make an offer. Once accepted, complete the payment securely.'
+              ? 'Navega por los listings, contacta al vendedor para discutir detalles y acordar términos de la compra.'
+              : 'Browse listings, contact the seller to discuss details and agree on purchase terms.'
           },
           {
             question: lang === 'es' ? '¿Los vendedores están verificados?' : 'Are sellers verified?',

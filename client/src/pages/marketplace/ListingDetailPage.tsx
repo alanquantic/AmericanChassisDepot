@@ -516,24 +516,27 @@ export default function ListingDetailPage({ slug }: Props) {
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
+                  {/* Primary CTA - Contact Seller */}
                   <Button 
-                    className="w-full bg-[#B22234] hover:bg-[#8B1A28]"
+                    className="w-full bg-[#B22234] hover:bg-[#8B1A28] text-lg font-semibold py-6"
+                    size="lg"
+                    onClick={handleContactSeller}
+                  >
+                    <MessageSquare className="w-6 h-6 mr-2" />
+                    {t('contactSeller')}
+                  </Button>
+                  
+                  {/* Make Offer - Hidden for now
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
                     size="lg"
                     onClick={handleMakeOffer}
                   >
                     <DollarSign className="w-5 h-5 mr-2" />
                     {t('makeOffer')}
                   </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    size="lg"
-                    onClick={handleContactSeller}
-                  >
-                    <MessageSquare className="w-5 h-5 mr-2" />
-                    {t('contactSeller')}
-                  </Button>
+                  */}
                 </div>
               </CardContent>
             </Card>
