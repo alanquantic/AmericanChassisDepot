@@ -209,18 +209,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Form submission expired" });
       }
       
-      // Save the brochure request to database with enhanced information
-      const contactMessage = await storage.createContactMessage({
+      const messageContent = message || `Brochure Request: ${chassisName} (${chassisSlug}) - User requested brochure for chassis`;
+      const contactData = {
         name,
         email,
         company: company || null,
         phone: phone || null,
         units: units || null,
         interest: interest || null,
-        message: message || `Brochure Request: ${chassisName} (${chassisSlug}) - User requested brochure for chassis`,
+        message: messageContent,
         sourceUrl: sourceUrl || null,
         createdAt: new Date().toISOString()
-      });
+      };
+
+      // Try to save to database (non-blocking if DB is unavailable)
+      let contactMessage: any = { ...contactData, id: 0 };
+      try {
+        contactMessage = await storage.createContactMessage(contactData);
+      } catch (dbError) {
+        console.warn('DB save failed for brochure request, continuing with email:', dbError);
+      }
 
       // Send customer confirmation email
       let customerEmailSent = false;
@@ -308,7 +316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Form submission expired" });
       }
 
-      // Add timestamp to the message
+      const messageContent = message || `Quote Request: ${chassisName} (${chassisSlug}) - User requested quote for chassis`;
       const messageData = {
         name,
         email,
@@ -316,7 +324,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phone: phone || null,
         units: units || null,
         interest: interest || null,
-        message: message || `Quote Request: ${chassisName} (${chassisSlug}) - User requested quote for chassis`,
+        message: messageContent,
         sourceUrl: sourceUrl || null,
         createdAt: new Date().toISOString(),
       };
@@ -324,8 +332,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate the request body
       const validatedData = insertContactMessageSchema.parse(messageData);
       
-      // Store the contact message
-      const newMessage = await storage.createContactMessage(validatedData);
+      // Try to save to database (non-blocking if DB is unavailable)
+      let newMessage: any = { ...validatedData, id: 0 };
+      try {
+        newMessage = await storage.createContactMessage(validatedData);
+      } catch (dbError) {
+        console.warn('DB save failed for contact form, continuing with email:', dbError);
+      }
       
       // Send customer confirmation email
       let customerEmailSent = false;
@@ -360,7 +373,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (internalEmailSent) {
           console.log('Internal notification email sent successfully');
         } else {
-          console.warn('Internal notification email was not sent (Mailgun might not be configured)');
+          console.warn('Internal notification email was not sent');
         }
       } catch (emailError) {
         console.error('Failed to send internal notification email:', emailError);
