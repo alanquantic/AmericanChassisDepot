@@ -48,6 +48,24 @@ interface ProductDataItem {
   gvwr?: string; // Opcional
 }
 
+// Fallback conditions when legacy DB is unavailable (IDs match PRODUCT_DATA.conditionId)
+const FALLBACK_CONDITIONS: Condition[] = [
+  {
+    id: 1,
+    name: "New Chassis",
+    slug: "new-chassis",
+    description: "Brand new chassis with full warranty and the latest features and technology.",
+    imageUrl: "/assets/new-chassis.jpg"
+  },
+  {
+    id: 2,
+    name: "Used Chassis",
+    slug: "used-chassis",
+    description: "Quality pre-owned chassis that have been thoroughly inspected and refurbished as needed.",
+    imageUrl: "/assets/used-chassis.jpg"
+  }
+];
+
 // Productos directamente en el código para evitar problemas de importación
 const PRODUCT_DATA: ProductDataItem[] = [
 {
@@ -2484,14 +2502,27 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // Condition operations
   async getAllConditions(): Promise<Condition[]> {
-    return await db.select().from(conditions);
+    try {
+      const result = await db.select().from(conditions);
+      if (result && result.length > 0) {
+        return result;
+      }
+    } catch (error) {
+      console.error("Error getting conditions from DB, using fallback:", error);
+    }
+    return FALLBACK_CONDITIONS;
   }
 
   async getConditionBySlug(slug: string): Promise<Condition | undefined> {
-    const [condition] = await db.select()
-      .from(conditions)
-      .where(eq(conditions.slug, slug));
-    return condition;
+    try {
+      const [condition] = await db.select()
+        .from(conditions)
+        .where(eq(conditions.slug, slug));
+      if (condition) return condition;
+    } catch (error) {
+      console.error(`Error getting condition "${slug}" from DB, using fallback:`, error);
+    }
+    return FALLBACK_CONDITIONS.find(c => c.slug === slug);
   }
 
   async createCondition(insertCondition: InsertCondition): Promise<Condition> {
