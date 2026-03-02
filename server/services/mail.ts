@@ -8,7 +8,11 @@ import { processFormSubmission } from './odoo.js';
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'sales@americanchassisdepot.com';
 const FROM_NAME = process.env.SENDGRID_FROM_NAME || 'American Chassis Depot';
-const ADMIN_EMAIL = process.env.MARKETPLACE_ADMIN_EMAIL || 'sales@americanchassisdepot.com';
+const NOTIFICATION_EMAILS = [
+  'sales@americanchassisdepot.com',
+  'alan@ceosnm.com',
+  'alan.diaz@alpha-tauro.com',
+];
 
 // Initialize SendGrid
 if (SENDGRID_API_KEY) {
@@ -17,12 +21,6 @@ if (SENDGRID_API_KEY) {
 } else {
   console.warn('⚠️ SendGrid API key not configured. Email notifications will be disabled.');
 }
-
-console.log('SendGrid Configuration Status:', {
-  hasApiKey: !!SENDGRID_API_KEY,
-  fromEmail: FROM_EMAIL,
-  adminEmail: ADMIN_EMAIL
-});
 
 // Generic email sender
 async function sendEmail(options: {
@@ -229,7 +227,7 @@ export async function sendContactNotification(
   `;
 
   return sendEmail({
-    to: ADMIN_EMAIL,
+    to: NOTIFICATION_EMAILS,
     subject: `📬 New Contact: ${contactMessage.name} - ${contactMessage.interest || 'General Inquiry'}`,
     html: getBaseEmailTemplate(adminContent),
     replyTo: contactMessage.email,

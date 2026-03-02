@@ -23,6 +23,7 @@ import {
   sendSellerApplicationEmail,
   sendSellerApprovalEmail,
   sendOfferResponseEmail,
+  sendListingInquiryEmail,
 } from './email.js';
 import stripeRoutes from './stripe-routes.js';
 import sitemapRoutes from './sitemap.js';
@@ -195,6 +196,49 @@ router.get('/listings/:slug', optionalAuth, async (req: AuthenticatedRequest, re
   } catch (error) {
     console.error('Error fetching listing:', error);
     res.status(500).json({ message: 'Failed to fetch listing' });
+  }
+});
+
+// Public inquiry on a listing (no auth required)
+const inquirySchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  phone: z.string().optional(),
+  company: z.string().optional(),
+  message: z.string().min(5),
+  language: z.enum(['en', 'es']).optional(),
+});
+
+router.post('/listings/:slug/inquire', async (req: Request, res: Response) => {
+  try {
+    const data = inquirySchema.parse(req.body);
+    const listing = await storage.getListingBySlug(req.params.slug);
+
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+
+    const language = data.language || 'en';
+
+    await sendListingInquiryEmail(
+      {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company,
+        message: data.message,
+      },
+      listing,
+      language
+    );
+
+    res.json({ message: 'Inquiry sent successfully' });
+  } catch (error: any) {
+    console.error('Error sending listing inquiry:', error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+    }
+    res.status(500).json({ message: 'Failed to send inquiry' });
   }
 });
 

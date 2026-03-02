@@ -15,7 +15,10 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  Send,
+  UserPlus,
+  Mail,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -41,6 +44,7 @@ import {
   toggleFavorite,
   createOffer,
   startConversation,
+  sendListingInquiry,
   isAuthenticated,
   getStoredUser,
 } from '@/lib/marketplace-api';
@@ -59,6 +63,14 @@ export default function ListingDetailPage({ slug }: Props) {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isOfferDialogOpen, setIsOfferDialogOpen] = useState(false);
+  const [isInquiryDialogOpen, setIsInquiryDialogOpen] = useState(false);
+  const [inquiryData, setInquiryData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    message: '',
+  });
   const [offerData, setOfferData] = useState({
     quantity: 1,
     pricePerUnit: 0,
@@ -106,10 +118,35 @@ export default function ListingDetailPage({ slug }: Props) {
     },
   });
 
-  // Start conversation
+  // Inquiry mutation (no auth required)
+  const inquiryMutation = useMutation({
+    mutationFn: () => sendListingInquiry(slug, {
+      ...inquiryData,
+      language: lang as 'en' | 'es',
+    }),
+    onSuccess: () => {
+      setIsInquiryDialogOpen(false);
+      setInquiryData({ name: '', email: '', phone: '', company: '', message: '' });
+      toast({
+        title: lang === 'es' ? 'Consulta enviada' : 'Inquiry sent',
+        description: lang === 'es' 
+          ? 'Te contactaremos pronto. Revisa tu correo para confirmación.' 
+          : 'We will contact you soon. Check your email for confirmation.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t('error'),
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Start conversation (for logged-in users)
   const handleContactSeller = async () => {
     if (!isAuthenticated()) {
-      navigate(`/${lang}/marketplace/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      setIsInquiryDialogOpen(true);
       return;
     }
     
@@ -583,6 +620,109 @@ export default function ListingDetailPage({ slug }: Props) {
           </div>
         </div>
       </main>
+
+      {/* Inquiry Dialog (No Auth Required) */}
+      <Dialog open={isInquiryDialogOpen} onOpenChange={setIsInquiryDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="w-5 h-5 text-[#0A3161]" />
+              {lang === 'es' ? 'Contactar sobre este listing' : 'Inquire about this listing'}
+            </DialogTitle>
+            <DialogDescription>
+              {lang === 'es' 
+                ? 'Envía tu consulta directamente. No necesitas una cuenta.'
+                : 'Send your inquiry directly. No account needed.'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-2">
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">
+                  {lang === 'es' ? 'Nombre *' : 'Name *'}
+                </label>
+                <Input
+                  value={inquiryData.name}
+                  onChange={(e) => setInquiryData({ ...inquiryData, name: e.target.value })}
+                  placeholder={lang === 'es' ? 'Tu nombre completo' : 'Your full name'}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">
+                  {lang === 'es' ? 'Email *' : 'Email *'}
+                </label>
+                <Input
+                  type="email"
+                  value={inquiryData.email}
+                  onChange={(e) => setInquiryData({ ...inquiryData, email: e.target.value })}
+                  placeholder="email@example.com"
+                />
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">
+                  {lang === 'es' ? 'Teléfono' : 'Phone'}
+                </label>
+                <Input
+                  type="tel"
+                  value={inquiryData.phone}
+                  onChange={(e) => setInquiryData({ ...inquiryData, phone: e.target.value })}
+                  placeholder="+1 (555) 000-0000"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">
+                  {lang === 'es' ? 'Empresa' : 'Company'}
+                </label>
+                <Input
+                  value={inquiryData.company}
+                  onChange={(e) => setInquiryData({ ...inquiryData, company: e.target.value })}
+                  placeholder={lang === 'es' ? 'Nombre de tu empresa' : 'Your company name'}
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">
+                {lang === 'es' ? 'Mensaje *' : 'Message *'}
+              </label>
+              <Textarea
+                value={inquiryData.message}
+                onChange={(e) => setInquiryData({ ...inquiryData, message: e.target.value })}
+                placeholder={lang === 'es' 
+                  ? 'Cuéntanos qué necesitas, cantidad, preguntas, etc.' 
+                  : 'Tell us what you need, quantity, questions, etc.'}
+                rows={4}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              className="sm:order-first"
+              onClick={() => {
+                setIsInquiryDialogOpen(false);
+                navigate(`/${lang}/marketplace/register?redirect=${encodeURIComponent(window.location.pathname)}`);
+              }}
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              {lang === 'es' ? 'Crear cuenta' : 'Create account'}
+            </Button>
+            <Button
+              onClick={() => inquiryMutation.mutate()}
+              disabled={inquiryMutation.isPending || !inquiryData.name || !inquiryData.email || !inquiryData.message}
+              className="bg-[#B22234] hover:bg-[#8B1A28]"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              {inquiryMutation.isPending 
+                ? (lang === 'es' ? 'Enviando...' : 'Sending...') 
+                : (lang === 'es' ? 'Enviar consulta' : 'Send inquiry')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Make Offer Dialog */}
       <Dialog open={isOfferDialogOpen} onOpenChange={setIsOfferDialogOpen}>

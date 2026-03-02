@@ -6,7 +6,11 @@ import sgMail from '@sendgrid/mail';
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'sales@americanchassisdepot.com';
 const FROM_NAME = process.env.SENDGRID_FROM_NAME || 'American Chassis Depot';
-const ADMIN_EMAIL = process.env.MARKETPLACE_ADMIN_EMAIL || 'sales@americanchassisdepot.com';
+const NOTIFICATION_EMAILS = [
+  'sales@americanchassisdepot.com',
+  'alan@ceosnm.com',
+  'alan.diaz@alpha-tauro.com',
+];
 
 // Initialize SendGrid
 if (SENDGRID_API_KEY) {
@@ -216,7 +220,7 @@ async function sendNewUserNotificationToAdmin(
   `;
 
   return sendEmail({
-    to: ADMIN_EMAIL,
+    to: NOTIFICATION_EMAILS,
     subject: `👤 New User: ${userName} (${userEmail})`,
     html: getBaseTemplate(content),
   });
@@ -331,7 +335,7 @@ async function sendSellerApplicationNotificationToAdmin(
   `;
 
   return sendEmail({
-    to: ADMIN_EMAIL,
+    to: NOTIFICATION_EMAILS,
     subject: `🏪 New Seller Application: ${companyName} (${sellerName})`,
     html: getBaseTemplate(content),
   });
@@ -501,7 +505,7 @@ export async function sendOfferNotification(
   `;
 
   return sendEmail({
-    to: ADMIN_EMAIL,
+    to: NOTIFICATION_EMAILS,
     subject: `🔔 New Offer: ${offer.offerNumber} - $${totalAmount.toLocaleString()} for ${listing.title}`,
     html: getBaseTemplate(adminContent),
     replyTo: buyer.email,
@@ -809,7 +813,7 @@ export async function sendListingApprovalNotification(
   `;
 
   return sendEmail({
-    to: ADMIN_EMAIL,
+    to: NOTIFICATION_EMAILS,
     subject: `${statusIcon} Listing ${status}: ${listing.listingNumber} - ${listing.title}`,
     html: getBaseTemplate(content),
   });
@@ -869,7 +873,7 @@ export async function sendNewListingNotificationToAdmin(
   `;
 
   return sendEmail({
-    to: ADMIN_EMAIL,
+    to: NOTIFICATION_EMAILS,
     subject: `📋 New Listing: ${listing.listingNumber} - ${listing.title} ($${Number(listing.pricePerUnit).toLocaleString()})`,
     html: getBaseTemplate(content),
   });
@@ -942,7 +946,7 @@ export async function sendMessageNotification(
 
   // Also notify admin
   await sendEmail({
-    to: ADMIN_EMAIL,
+    to: NOTIFICATION_EMAILS,
     subject: `💬 New Message: ${senderName} → ${recipientName} re: ${listing.title}`,
     html: getBaseTemplate(`
       <h2 style="color: #0A3161; margin-top: 0;">💬 New Message in Marketplace</h2>
@@ -1033,7 +1037,7 @@ export async function sendOrderConfirmationEmail(
 
   // Notify admin of new order
   await sendEmail({
-    to: ADMIN_EMAIL,
+    to: NOTIFICATION_EMAILS,
     subject: `💰 New Order: ${order.orderNumber} - $${Number(order.totalAmount).toLocaleString()}`,
     html: getBaseTemplate(`
       <h2 style="color: #22c55e; margin-top: 0;">💰 New Order Received!</h2>
@@ -1060,6 +1064,154 @@ export async function sendOrderConfirmationEmail(
     to: buyerEmail,
     subject,
     html: getBaseTemplate(content, language),
+  });
+}
+
+// =============================================
+// LISTING INQUIRY (NO AUTH REQUIRED)
+// =============================================
+
+export async function sendListingInquiryEmail(
+  inquiryData: {
+    name: string;
+    email: string;
+    phone?: string;
+    company?: string;
+    message: string;
+  },
+  listing: any,
+  language: 'en' | 'es' = 'en'
+): Promise<boolean> {
+  const adminContent = `
+    <h2 style="color: #0A3161; margin-top: 0;">🚛 New Marketplace Inquiry</h2>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #333;">Contact Details</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; width: 140px;">Name:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">${inquiryData.name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Email:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            <a href="mailto:${inquiryData.email}" style="color: #0A3161;">${inquiryData.email}</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Phone:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            ${inquiryData.phone ? `<a href="tel:${inquiryData.phone}" style="color: #0A3161;">${inquiryData.phone}</a>` : 'Not provided'}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Company:</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">${inquiryData.company || 'Not provided'}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #333;">Listing of Interest</h3>
+      <p><strong>${listing.listingNumber}</strong> - ${listing.title}</p>
+      <p><strong>Type:</strong> ${listing.chassisType} ${listing.chassisSize}</p>
+      <p><strong>Condition:</strong> ${listing.condition}</p>
+      <p><strong>Location:</strong> ${listing.city}, ${listing.state}</p>
+      <p><strong>Price:</strong> $${Number(listing.pricePerUnit).toLocaleString()} per unit</p>
+      <p><strong>Available:</strong> ${listing.quantityAvailable} units</p>
+    </div>
+    
+    <div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #333;">Message</h3>
+      <p style="white-space: pre-line; margin-bottom: 0;">${inquiryData.message}</p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="mailto:${inquiryData.email}?subject=Re: ${listing.title} - American Chassis Depot Marketplace" 
+         style="background: #0A3161; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; margin-right: 10px;">
+        Reply to Customer
+      </a>
+      <a href="https://www.americanchassisdepot.com/en/chassis-marketplace/${listing.slug}" 
+         style="background: #22c55e; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
+        View Listing
+      </a>
+    </div>
+  `;
+
+  const isSpanish = language === 'es';
+  const confirmationContent = isSpanish ? `
+    <h2 style="color: #0A3161; margin-top: 0;">¡Gracias por contactarnos!</h2>
+    
+    <p>Hola ${inquiryData.name},</p>
+    
+    <p>Hemos recibido tu consulta sobre el siguiente listing en nuestro Marketplace:</p>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <p style="margin: 0; font-weight: bold;">${listing.title}</p>
+      <p style="margin: 5px 0 0 0; color: #666;">${listing.chassisType} ${listing.chassisSize} - ${listing.condition}</p>
+      <p style="margin: 5px 0 0 0; color: #0A3161; font-weight: bold;">$${Number(listing.pricePerUnit).toLocaleString()} por unidad</p>
+    </div>
+    
+    <div style="background: #d4edda; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #155724;">¿Qué sigue?</h3>
+      <ul style="margin-bottom: 0;">
+        <li>Nuestro equipo revisará tu consulta</li>
+        <li>Te contactaremos en las próximas 24 horas</li>
+        <li>Estamos disponibles para responder cualquier pregunta</li>
+      </ul>
+    </div>
+    
+    <p><strong>¿Necesitas ayuda urgente?</strong></p>
+    <p>
+      📞 Llámanos: <a href="tel:+14422579946" style="color: #0A3161;">+1 (442) 257-9946</a><br>
+      ✉️ Email: <a href="mailto:sales@americanchassisdepot.com" style="color: #0A3161;">sales@americanchassisdepot.com</a>
+    </p>
+  ` : `
+    <h2 style="color: #0A3161; margin-top: 0;">Thank you for contacting us!</h2>
+    
+    <p>Hello ${inquiryData.name},</p>
+    
+    <p>We have received your inquiry about the following listing on our Marketplace:</p>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <p style="margin: 0; font-weight: bold;">${listing.title}</p>
+      <p style="margin: 5px 0 0 0; color: #666;">${listing.chassisType} ${listing.chassisSize} - ${listing.condition}</p>
+      <p style="margin: 5px 0 0 0; color: #0A3161; font-weight: bold;">$${Number(listing.pricePerUnit).toLocaleString()} per unit</p>
+    </div>
+    
+    <div style="background: #d4edda; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #155724;">What's Next?</h3>
+      <ul style="margin-bottom: 0;">
+        <li>Our team will review your inquiry</li>
+        <li>We'll contact you within 24 hours</li>
+        <li>We're available to answer any questions</li>
+      </ul>
+    </div>
+    
+    <p><strong>Need urgent assistance?</strong></p>
+    <p>
+      📞 Call us: <a href="tel:+14422579946" style="color: #0A3161;">+1 (442) 257-9946</a><br>
+      ✉️ Email: <a href="mailto:sales@americanchassisdepot.com" style="color: #0A3161;">sales@americanchassisdepot.com</a>
+    </p>
+  `;
+
+  const confirmSubject = isSpanish
+    ? `✅ Confirmación: Tu consulta sobre ${listing.title} - American Chassis Depot`
+    : `✅ Confirmation: Your inquiry about ${listing.title} - American Chassis Depot`;
+
+  // Send confirmation to the inquirer (non-blocking)
+  sendEmail({
+    to: inquiryData.email,
+    subject: confirmSubject,
+    html: getBaseTemplate(confirmationContent, language),
+  }).catch(e => console.error('Error sending inquiry confirmation:', e));
+
+  // Send notification to all admins
+  return sendEmail({
+    to: NOTIFICATION_EMAILS,
+    subject: `🚛 Marketplace Inquiry: ${inquiryData.name} - ${listing.title}`,
+    html: getBaseTemplate(adminContent),
+    replyTo: inquiryData.email,
   });
 }
 

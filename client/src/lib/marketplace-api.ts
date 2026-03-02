@@ -366,6 +366,20 @@ export async function getStates(): Promise<string[]> {
 }
 
 // =============================================
+// PUBLIC LISTING INQUIRY (NO AUTH)
+// =============================================
+
+export async function sendListingInquiry(
+  slug: string,
+  data: { name: string; email: string; phone?: string; company?: string; message: string; language?: string }
+): Promise<{ message: string }> {
+  return apiRequest(`/listings/${slug}/inquire`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+// =============================================
 // FAVORITES
 // =============================================
 
