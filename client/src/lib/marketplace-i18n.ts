@@ -462,8 +462,8 @@ export function formatPrice(price: number | string): string {
   }).format(numPrice);
 }
 
-export function formatDate(date: string | Date): string {
-  const lang = getCurrentLanguage();
+export function formatDate(date: string | Date, langOverride?: 'en' | 'es'): string {
+  const lang = langOverride || getCurrentLanguage();
   return new Intl.DateTimeFormat(lang === 'es' ? 'es-ES' : 'en-US', {
     year: 'numeric',
     month: 'long',

@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { eq, and, or, desc, asc, sql, ilike, gte, lte, inArray } from 'drizzle-orm';
 import { getMarketplaceDb } from './db.js';
 import {
@@ -243,10 +244,10 @@ export async function getListingBySlug(slug: string) {
     .where(eq(listingImages.listingId, listing.id))
     .orderBy(asc(listingImages.sortOrder));
 
-  // Increment view count
+  // Atomic view count increment
   await db
     .update(marketplaceListings)
-    .set({ viewsCount: (listing.viewsCount || 0) + 1 })
+    .set({ viewsCount: sql`COALESCE(${marketplaceListings.viewsCount}, 0) + 1` })
     .where(eq(marketplaceListings.id, listing.id));
 
   return {
@@ -268,24 +269,30 @@ export async function getListingById(id: number) {
   return listing || null;
 }
 
-export async function createListing(data: Partial<MarketplaceListing>) {
-  const db = getMarketplaceDb();
-  
-  // Generate listing number
-  const [countResult] = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(marketplaceListings);
-  
-  const listingNumber = `ACD-${new Date().getFullYear()}-${String(Number(countResult?.count || 0) + 1).padStart(4, '0')}`;
-  
-  // Generate slug
-  const baseSlug = `${data.chassisType}-${data.chassisSize}-${data.city}-${data.state}`
+function generateUniqueSlug(data: Partial<MarketplaceListing>): string {
+  const base = `${data.chassisType || ''}-${data.chassisSize || ''}-${data.city || ''}-${data.state || ''}`
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
-  
-  const slug = `${baseSlug}-${Date.now()}`;
+  return `${base}-${crypto.randomBytes(4).toString('hex')}`;
+}
+
+export async function createListing(data: Partial<MarketplaceListing>) {
+  const db = getMarketplaceDb();
+
+  // Atomic listing number via nextval (falls back to random hex if sequence unavailable)
+  let listingNumber: string;
+  try {
+    const result = await db.execute(sql`SELECT nextval(pg_get_serial_sequence('marketplace_listings', 'id')) as val`);
+    const rows = (result as any).rows || result;
+    const num = Number(Array.isArray(rows) ? rows[0]?.val : (rows as any)?.val);
+    listingNumber = `ACD-${new Date().getFullYear()}-${String(num).padStart(4, '0')}`;
+  } catch {
+    listingNumber = `ACD-${new Date().getFullYear()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+  }
+
+  const slug = generateUniqueSlug(data);
 
   const [listing] = await db
     .insert(marketplaceListings)
@@ -293,7 +300,7 @@ export async function createListing(data: Partial<MarketplaceListing>) {
       ...data,
       listingNumber,
       slug,
-      status: 'pending', // New listings require approval
+      status: 'pending',
       createdAt: new Date(),
       updatedAt: new Date(),
     } as any)
@@ -323,6 +330,105 @@ export async function deleteListing(id: number) {
   await db
     .delete(marketplaceListings)
     .where(eq(marketplaceListings.id, id));
+}
+
+// Bulk insert listings from CSV data — inserts in batches of BATCH_SIZE
+export interface BulkListingInput {
+  title: string;
+  titleEs?: string;
+  description?: string;
+  descriptionEs?: string;
+  chassisType: string;
+  chassisSize: string;
+  condition: string;
+  state: string;
+  city: string;
+  zipCode?: string;
+  quantity: number;
+  quantityAvailable?: number;
+  pricePerUnit: number;
+  priceNegotiable?: boolean;
+  minimumOrder?: number;
+  manufacturer?: string;
+  year?: number;
+  vin?: string;
+  primaryImageUrl?: string;
+  tags?: string[];
+  sellerId: number;
+  status?: string;
+}
+
+const BULK_BATCH_SIZE = 100;
+
+export async function createListingsBatch(items: BulkListingInput[]): Promise<{ inserted: number; errors: Array<{ index: number; error: string }> }> {
+  const db = getMarketplaceDb();
+  const now = new Date();
+  const year = now.getFullYear();
+  let inserted = 0;
+  const errors: Array<{ index: number; error: string }> = [];
+
+  for (let batchStart = 0; batchStart < items.length; batchStart += BULK_BATCH_SIZE) {
+    const batch = items.slice(batchStart, batchStart + BULK_BATCH_SIZE);
+
+    const values = batch.map((item, i) => {
+      const globalIndex = batchStart + i;
+      const hex = crypto.randomBytes(4).toString('hex');
+      const slug = `${item.chassisType}-${item.chassisSize}-${item.city}-${item.state}`
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+        + `-${hex}`;
+      const listingNumber = `ACD-${year}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+
+      return {
+        sellerId: item.sellerId,
+        listingNumber,
+        slug,
+        title: item.title,
+        titleEs: item.titleEs || null,
+        description: item.description || null,
+        descriptionEs: item.descriptionEs || null,
+        chassisType: item.chassisType,
+        chassisSize: item.chassisSize,
+        condition: item.condition,
+        state: item.state,
+        city: item.city,
+        zipCode: item.zipCode || null,
+        quantity: item.quantity,
+        quantityAvailable: item.quantityAvailable ?? item.quantity,
+        pricePerUnit: item.pricePerUnit.toString(),
+        priceNegotiable: item.priceNegotiable ?? true,
+        minimumOrder: item.minimumOrder ?? 1,
+        manufacturer: item.manufacturer || null,
+        year: item.year || null,
+        vin: item.vin || null,
+        primaryImageUrl: item.primaryImageUrl || null,
+        tags: item.tags || null,
+        status: item.status || 'active',
+        createdAt: now,
+        updatedAt: now,
+        publishedAt: (item.status || 'active') === 'active' ? now : null,
+      } as any;
+    });
+
+    try {
+      await db.insert(marketplaceListings).values(values);
+      inserted += batch.length;
+    } catch (err: any) {
+      // If batch fails, try one-by-one to identify the bad rows
+      for (let j = 0; j < batch.length; j++) {
+        try {
+          await db.insert(marketplaceListings).values(values[j]);
+          inserted++;
+        } catch (rowErr: any) {
+          errors.push({ index: batchStart + j, error: rowErr.message || 'Insert failed' });
+        }
+      }
+    }
+  }
+
+  return { inserted, errors };
 }
 
 export async function updateListingStatus(id: number, status: string) {
@@ -545,13 +651,9 @@ export async function createOffer(data: {
   buyerNotes?: string;
 }) {
   const db = getMarketplaceDb();
-  
-  // Generate offer number
-  const [countResult] = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(marketplaceOffers);
-  
-  const offerNumber = `OFF-${new Date().getFullYear()}-${String(Number(countResult?.count || 0) + 1).padStart(4, '0')}`;
+
+  // Atomic offer number generation
+  const offerNumber = `OFF-${new Date().getFullYear()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
   
   const totalAmount = data.quantity * data.pricePerUnit;
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
@@ -676,17 +778,21 @@ export async function updateOfferStatus(
   return offer;
 }
 
-// Get all offers for admin
+// Aliased user tables for buyer/seller JOINs
+const buyerUsers = marketplaceUsers;
+const sellerUsers = marketplaceUsers;
+
+// Get all offers for admin (single query with JOINs instead of N+1)
 export async function getAllOffersAdmin(filters: { status?: string; search?: string; page?: number; limit?: number } = {}) {
   const db = getMarketplaceDb();
   const { status, search, page = 1, limit = 20 } = filters;
-  
+
   const conditions = [];
-  
+
   if (status && status !== 'all') {
     conditions.push(eq(marketplaceOffers.status, status));
   }
-  
+
   if (search) {
     conditions.push(
       or(
@@ -695,78 +801,71 @@ export async function getAllOffersAdmin(filters: { status?: string; search?: str
       )
     );
   }
-  
+
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
   const offset = (page - 1) * limit;
-  
-  // Get offers with buyer, seller, and listing info
-  const offers = await db
-    .select({
-      id: marketplaceOffers.id,
-      offerNumber: marketplaceOffers.offerNumber,
-      listingId: marketplaceOffers.listingId,
-      buyerId: marketplaceOffers.buyerId,
-      sellerId: marketplaceOffers.sellerId,
-      quantity: marketplaceOffers.quantity,
-      pricePerUnit: marketplaceOffers.pricePerUnit,
-      totalAmount: marketplaceOffers.totalAmount,
-      status: marketplaceOffers.status,
-      buyerNotes: marketplaceOffers.buyerNotes,
-      sellerNotes: marketplaceOffers.sellerNotes,
-      counterPrice: marketplaceOffers.counterPrice,
-      counterQuantity: marketplaceOffers.counterQuantity,
-      createdAt: marketplaceOffers.createdAt,
-      expiresAt: marketplaceOffers.expiresAt,
-      respondedAt: marketplaceOffers.respondedAt,
-      listingTitle: marketplaceListings.title,
-      listingNumber: marketplaceListings.listingNumber,
-      listingSlug: marketplaceListings.slug,
-    })
-    .from(marketplaceOffers)
-    .leftJoin(marketplaceListings, eq(marketplaceOffers.listingId, marketplaceListings.id))
-    .where(whereClause)
-    .orderBy(desc(marketplaceOffers.createdAt))
-    .limit(limit)
-    .offset(offset);
-  
-  // Get total count
-  const countResult = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(marketplaceOffers)
-    .leftJoin(marketplaceListings, eq(marketplaceOffers.listingId, marketplaceListings.id))
-    .where(whereClause);
-  
-  const total = Number(countResult[0]?.count || 0);
-  
-  // Get buyer and seller info for each offer
-  const offersWithUsers = await Promise.all(
-    offers.map(async (offer) => {
-      const [buyer] = offer.buyerId ? await db
-        .select({ 
-          id: marketplaceUsers.id, 
-          firstName: marketplaceUsers.firstName, 
-          lastName: marketplaceUsers.lastName,
-          companyName: marketplaceUsers.companyName,
-          email: marketplaceUsers.email 
-        })
-        .from(marketplaceUsers)
-        .where(eq(marketplaceUsers.id, offer.buyerId)) : [null];
-      
-      const [seller] = offer.sellerId ? await db
-        .select({ 
-          id: marketplaceUsers.id, 
-          firstName: marketplaceUsers.firstName, 
-          lastName: marketplaceUsers.lastName,
-          companyName: marketplaceUsers.companyName,
-          email: marketplaceUsers.email 
-        })
-        .from(marketplaceUsers)
-        .where(eq(marketplaceUsers.id, offer.sellerId)) : [null];
-      
-      return { ...offer, buyer, seller };
-    })
-  );
-  
+
+  // Single query: offers + listing + buyer + seller via raw SQL aliases
+  const offers = await db.execute(sql`
+    SELECT
+      o.id, o.offer_number, o.listing_id, o.buyer_id, o.seller_id,
+      o.quantity, o.price_per_unit, o.total_amount, o.status,
+      o.buyer_notes, o.seller_notes, o.counter_price, o.counter_quantity,
+      o.created_at, o.expires_at, o.responded_at,
+      l.title as listing_title, l.listing_number as listing_number, l.slug as listing_slug,
+      b.id as buyer_user_id, b.first_name as buyer_first_name, b.last_name as buyer_last_name,
+      b.company_name as buyer_company_name, b.email as buyer_email,
+      s.id as seller_user_id, s.first_name as seller_first_name, s.last_name as seller_last_name,
+      s.company_name as seller_company_name, s.email as seller_email,
+      count(*) OVER() as total_count
+    FROM marketplace_offers o
+    LEFT JOIN marketplace_listings l ON o.listing_id = l.id
+    LEFT JOIN marketplace_users b ON o.buyer_id = b.id
+    LEFT JOIN marketplace_users s ON o.seller_id = s.id
+    ${whereClause ? sql`WHERE ${whereClause}` : sql``}
+    ORDER BY o.created_at DESC
+    LIMIT ${limit} OFFSET ${offset}
+  `);
+
+  const rows = (offers as any).rows || offers;
+  const total = Number(rows[0]?.total_count || 0);
+
+  const offersWithUsers = (Array.isArray(rows) ? rows : []).map((r: any) => ({
+    id: r.id,
+    offerNumber: r.offer_number,
+    listingId: r.listing_id,
+    buyerId: r.buyer_id,
+    sellerId: r.seller_id,
+    quantity: r.quantity,
+    pricePerUnit: r.price_per_unit,
+    totalAmount: r.total_amount,
+    status: r.status,
+    buyerNotes: r.buyer_notes,
+    sellerNotes: r.seller_notes,
+    counterPrice: r.counter_price,
+    counterQuantity: r.counter_quantity,
+    createdAt: r.created_at,
+    expiresAt: r.expires_at,
+    respondedAt: r.responded_at,
+    listingTitle: r.listing_title,
+    listingNumber: r.listing_number,
+    listingSlug: r.listing_slug,
+    buyer: r.buyer_user_id ? {
+      id: r.buyer_user_id,
+      firstName: r.buyer_first_name,
+      lastName: r.buyer_last_name,
+      companyName: r.buyer_company_name,
+      email: r.buyer_email,
+    } : null,
+    seller: r.seller_user_id ? {
+      id: r.seller_user_id,
+      firstName: r.seller_first_name,
+      lastName: r.seller_last_name,
+      companyName: r.seller_company_name,
+      email: r.seller_email,
+    } : null,
+  }));
+
   return {
     offers: offersWithUsers,
     total,
@@ -1523,17 +1622,16 @@ export async function setListingPrimaryImage(listingId: number, imageId: number)
 
 export async function reorderListingImages(listingId: number, imageIds: number[]) {
   const db = getMarketplaceDb();
-  
-  // Update sort order for each image
-  for (let i = 0; i < imageIds.length; i++) {
-    await db
-      .update(listingImages)
-      .set({ sortOrder: i })
-      .where(and(
-        eq(listingImages.id, imageIds[i]),
-        eq(listingImages.listingId, listingId)
-      ));
-  }
+
+  if (imageIds.length === 0) return { success: true };
+
+  // Batch update in a single query using CASE WHEN
+  const cases = imageIds.map((id, i) => sql`WHEN id = ${id} THEN ${i}`);
+  await db.execute(sql`
+    UPDATE listing_images
+    SET sort_order = CASE ${sql.join(cases, sql` `)} END
+    WHERE listing_id = ${listingId} AND id IN (${sql.join(imageIds.map(id => sql`${id}`), sql`, `)})
+  `);
 
   return { success: true };
 }
@@ -1568,13 +1666,12 @@ export async function getSellerListingsWithStats(sellerId: number, filters: {
   }
 
   if (search) {
-    conditions.push(
-      or(
-        ilike(marketplaceListings.title, `%${search}%`),
-        ilike(marketplaceListings.city, `%${search}%`),
-        ilike(marketplaceListings.listingNumber, `%${search}%`)
-      )
+    const searchCondition = or(
+      ilike(marketplaceListings.title, `%${search}%`),
+      ilike(marketplaceListings.city, `%${search}%`),
+      ilike(marketplaceListings.listingNumber, `%${search}%`)
     );
+    if (searchCondition) conditions.push(searchCondition);
   }
 
   const offset = (page - 1) * limit;

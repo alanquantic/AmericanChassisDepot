@@ -21,7 +21,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
 import { formatPrice } from '@/lib/marketplace-i18n';
-import { getListings } from '@/lib/marketplace-api';
+import { getListings, MarketplaceListing } from '@/lib/marketplace-api';
 import SEOHead from '@/components/marketplace/SEOHead';
 import { trackCTAClick, trackListingClick, trackListingImpressions } from '@/lib/marketplace-analytics';
 
@@ -198,27 +198,10 @@ function useLandingTranslation() {
   return (key: TranslationKey) => translations[key] || key;
 }
 
-interface Listing {
-  id: number;
-  slug: string;
-  title: string;
-  titleEs: string | null;
-  chassisType: string;
-  chassisSize: string;
-  condition: string;
-  state: string;
-  city: string;
-  quantity: number;
-  quantityAvailable: number;
-  pricePerUnit: string;
-  priceNegotiable: boolean;
-  primaryImageUrl: string | null;
-}
-
 export function MarketplaceLandingPage() {
   const t = useLandingTranslation();
   const lang = getCurrentLanguage();
-  const [listings, setListings] = useState<Listing[]>([]);
+  const [listings, setListings] = useState<MarketplaceListing[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -262,7 +245,7 @@ export function MarketplaceLandingPage() {
     { icon: Clock, title: t('benefit6Title'), desc: t('benefit6Desc') },
   ];
 
-  const getTitle = (listing: Listing) => {
+  const getTitle = (listing: MarketplaceListing) => {
     return lang === 'es' && listing.titleEs ? listing.titleEs : listing.title;
   };
 

@@ -16,10 +16,10 @@ import { neon } from '@neondatabase/serverless';
 import { eq } from 'drizzle-orm';
 import { marketplaceUsers } from '../shared/marketplace-schema.js';
 
-// Configuration - Change these values!
+// Configuration via environment variables
 const ADMIN_CONFIG = {
-  email: 'admin@americanchassis.com',
-  password: 'AmericanChassis2024!', // CHANGE THIS IN PRODUCTION!
+  email: process.env.ADMIN_EMAIL || 'admin@americanchassis.com',
+  password: process.env.ADMIN_PASSWORD || '',
   firstName: 'American',
   lastName: 'Chassis',
   companyName: 'AMERICAN CHASSIS DEPOT',
@@ -28,6 +28,12 @@ const ADMIN_CONFIG = {
   state: 'TX',
   bio: 'Official account for American Chassis Depot - Premium container chassis sales and marketplace.',
 };
+
+if (!ADMIN_CONFIG.password) {
+  console.error('❌ Error: ADMIN_PASSWORD environment variable is required.');
+  console.log('\nUsage: ADMIN_PASSWORD=YourSecurePassword npx tsx server/seed-super-admin.ts');
+  process.exit(1);
+}
 
 async function hashPassword(password: string): Promise<string> {
   const saltRounds = 12;
@@ -114,7 +120,6 @@ async function seedSuperAdmin() {
 
       console.log(`✅ Super Admin created successfully!\n`);
       console.log(`📧 Email: ${ADMIN_CONFIG.email}`);
-      console.log(`🔑 Password: ${ADMIN_CONFIG.password}`);
       console.log(`🏢 Company: ${ADMIN_CONFIG.companyName}`);
       console.log(`👤 User ID: ${newUser.id}`);
     }

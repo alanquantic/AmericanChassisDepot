@@ -6,7 +6,15 @@ import { getMarketplaceDb } from './db.js';
 import { marketplaceUsers } from '../../shared/marketplace-schema.js';
 
 // JWT Configuration
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+if (!process.env.JWT_SECRET) {
+  console.error('⚠️ CRITICAL: JWT_SECRET environment variable is not set. Authentication will not work securely.');
+}
+const JWT_SECRET = process.env.JWT_SECRET || (() => {
+  const crypto = require('crypto');
+  const generated = crypto.randomBytes(64).toString('hex');
+  console.warn('⚠️ Using randomly generated JWT_SECRET. Tokens will be invalidated on restart. Set JWT_SECRET in environment.');
+  return generated;
+})();
 const JWT_ACCESS_EXPIRY: SignOptions['expiresIn'] = (process.env.JWT_ACCESS_TOKEN_EXPIRY || '15m') as SignOptions['expiresIn'];
 const JWT_REFRESH_EXPIRY: SignOptions['expiresIn'] = (process.env.JWT_REFRESH_TOKEN_EXPIRY || '7d') as SignOptions['expiresIn'];
 

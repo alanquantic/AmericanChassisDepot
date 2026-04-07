@@ -13,7 +13,8 @@
 
 ### Connection String
 ```
-postgresql://neondb_owner:npg_nGUB9zco4kZj@ep-silent-wildflower-ahgv2edz-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require
+# Stored in MARKETPLACE_DATABASE_URL environment variable — never commit credentials to source control.
+# See env.example for the variable name.
 ```
 
 ---
@@ -206,7 +207,7 @@ idx_listing_views_date
 
 ### Conectar con psql
 ```bash
-psql "postgresql://neondb_owner:npg_nGUB9zco4kZj@ep-silent-wildflower-ahgv2edz-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require"
+psql "$MARKETPLACE_DATABASE_URL"
 ```
 
 ### Ver estadísticas del inventario

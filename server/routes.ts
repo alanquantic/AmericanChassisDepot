@@ -7,6 +7,7 @@ import { ZodError } from "zod";
 import { sendContactNotification, sendCustomerConfirmationEmail } from "./services/mail.js";
 import { processFormSubmission, testOdooConnection, getOdooLeadStats } from "./services/odoo.js";
 import marketplaceRoutes from "./marketplace/routes.js";
+import { authenticateToken, requireAdmin, type AuthenticatedRequest } from "./marketplace/auth.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API route prefix
@@ -399,10 +400,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ===== ENDPOINTS DE ODOO =====
+  // ===== ENDPOINTS DE ODOO (protected — admin only) =====
   
   // Test de conexión con Odoo
-  app.get(`${apiPrefix}/odoo/test`, async (_req, res) => {
+  app.get(`${apiPrefix}/odoo/test`, authenticateToken, requireAdmin, async (_req: AuthenticatedRequest, res) => {
     try {
       const result = await testOdooConnection();
       return res.json(result);
@@ -416,7 +417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Estadísticas de leads en Odoo
-  app.get(`${apiPrefix}/odoo/stats`, async (_req, res) => {
+  app.get(`${apiPrefix}/odoo/stats`, authenticateToken, requireAdmin, async (_req: AuthenticatedRequest, res) => {
     try {
       const result = await getOdooLeadStats();
       return res.json(result);
@@ -430,7 +431,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Procesar formulario y enviar a Odoo
-  app.post(`${apiPrefix}/odoo/submit`, async (req, res) => {
+  app.post(`${apiPrefix}/odoo/submit`, authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res) => {
     try {
       const {
         name,

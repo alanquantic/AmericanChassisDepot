@@ -1,11 +1,15 @@
 // Configuración de Odoo desde variables de entorno
 const ODOO_CONFIG = {
-  url: process.env.ODOO_URL || 'https://alpha-tauro.odoo.com',
-  username: process.env.ODOO_USERNAME || 'alan.avalos@alpha-tauro.com',
-  password: process.env.ODOO_PASSWORD || 'pqa6zxj-uej2zrz1GFP',
+  url: process.env.ODOO_URL || '',
+  username: process.env.ODOO_USERNAME || '',
+  password: process.env.ODOO_PASSWORD || '',
   companyId: parseInt(process.env.ODOO_COMPANY_ID || '1'),
-  database: process.env.ODOO_DATABASE || 'alpha-tauro'
+  database: process.env.ODOO_DATABASE || ''
 };
+
+if (!ODOO_CONFIG.url || !ODOO_CONFIG.username || !ODOO_CONFIG.password) {
+  console.warn('⚠️ Odoo credentials not configured. Set ODOO_URL, ODOO_USERNAME, ODOO_PASSWORD, and ODOO_DATABASE in environment variables.');
+}
 
 // Interfaz para la respuesta JSON-RPC de Odoo
 interface OdooJsonRpcResponse<T = any> {

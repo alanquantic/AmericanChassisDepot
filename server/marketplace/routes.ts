@@ -327,6 +327,28 @@ router.post('/listings', authenticateToken, requireSeller, async (req: Authentic
 });
 
 // Update listing (owner only)
+const updateListingSchema = z.object({
+  title: z.string().min(5).optional(),
+  titleEs: z.string().optional(),
+  description: z.string().optional(),
+  descriptionEs: z.string().optional(),
+  chassisType: z.string().optional(),
+  chassisSize: z.string().optional(),
+  condition: z.string().optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
+  zipCode: z.string().optional(),
+  quantity: z.number().min(1).optional(),
+  quantityAvailable: z.number().min(0).optional(),
+  pricePerUnit: z.number().min(1000).optional(),
+  priceNegotiable: z.boolean().optional(),
+  minimumOrder: z.number().optional(),
+  manufacturer: z.string().optional(),
+  year: z.number().optional(),
+  primaryImageUrl: z.string().optional(),
+  images: z.array(z.any()).optional(),
+});
+
 router.put('/listings/:id', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const listingId = Number(req.params.id);
@@ -341,10 +363,18 @@ router.put('/listings/:id', authenticateToken, requireSeller, async (req: Authen
       return res.status(403).json({ message: 'Not authorized to edit this listing' });
     }
     
-    const updatedListing = await storage.updateListing(listingId, req.body);
+    const data = updateListingSchema.parse(req.body);
+    const updatePayload: Record<string, any> = { ...data };
+    if (data.pricePerUnit !== undefined) {
+      updatePayload.pricePerUnit = data.pricePerUnit.toString();
+    }
+    const updatedListing = await storage.updateListing(listingId, updatePayload);
     res.json({ message: 'Listing updated', listing: updatedListing });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating listing:', error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+    }
     res.status(500).json({ message: 'Failed to update listing' });
   }
 });
@@ -444,6 +474,15 @@ router.get('/conversations/:id/messages', authenticateToken, async (req: Authent
     const conversationId = Number(req.params.id);
     const page = req.query.page ? Number(req.query.page) : 1;
     
+    // Verify user belongs to this conversation
+    const conversation = await storage.getConversationById(conversationId);
+    if (!conversation) {
+      return res.status(404).json({ message: 'Conversation not found' });
+    }
+    if (conversation.buyerId !== req.user!.id && conversation.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+      return res.status(403).json({ message: 'Not authorized to view this conversation' });
+    }
+    
     const messages = await storage.getConversationMessages(conversationId, page);
     
     // Mark messages as read
@@ -469,6 +508,15 @@ router.post('/conversations/:id/messages', authenticateToken, async (req: Authen
     const conversationId = Number(req.params.id);
     const data = sendMessageSchema.parse(req.body);
     
+    // Verify user belongs to this conversation
+    const conversationCheck = await storage.getConversationById(conversationId);
+    if (!conversationCheck) {
+      return res.status(404).json({ message: 'Conversation not found' });
+    }
+    if (conversationCheck.buyerId !== req.user!.id && conversationCheck.sellerId !== req.user!.id && !['admin', 'super_admin'].includes(req.user!.role)) {
+      return res.status(403).json({ message: 'Not authorized to send messages in this conversation' });
+    }
+    
     const newMessage = await storage.sendMessage({
       conversationId,
       senderId: req.user!.id,
@@ -477,7 +525,7 @@ router.post('/conversations/:id/messages', authenticateToken, async (req: Authen
     
     // Get conversation details to send email notification
     try {
-      const conversation = await storage.getConversationById(conversationId);
+      const conversation = conversationCheck;
       if (conversation && conversation.listing) {
         // Determine who is the recipient (the other party in the conversation)
         const recipientId = conversation.buyerId === req.user!.id 
@@ -1150,6 +1198,78 @@ router.delete('/admin/users/:id', authenticateToken, requireSuperAdmin, async (r
   } catch (error: any) {
     console.error('Error deleting user:', error);
     res.status(500).json({ message: error.message || 'Failed to delete user' });
+  }
+});
+
+// =============================================
+// BULK IMPORT ROUTE (Admin only)
+// =============================================
+
+const bulkListingItemSchema = z.object({
+  title: z.string().min(3),
+  titleEs: z.string().optional(),
+  description: z.string().optional(),
+  descriptionEs: z.string().optional(),
+  chassisType: z.string().min(1),
+  chassisSize: z.string().min(1),
+  condition: z.string().min(1),
+  state: z.string().min(1),
+  city: z.string().min(1),
+  zipCode: z.string().optional(),
+  quantity: z.number().int().min(1),
+  quantityAvailable: z.number().int().min(0).optional(),
+  pricePerUnit: z.number().min(0),
+  priceNegotiable: z.boolean().optional(),
+  minimumOrder: z.number().int().min(1).optional(),
+  manufacturer: z.string().optional(),
+  year: z.number().int().min(1900).max(2100).optional(),
+  vin: z.string().optional(),
+  primaryImageUrl: z.string().url().optional(),
+  tags: z.array(z.string()).optional(),
+  status: z.enum(['active', 'pending', 'draft']).optional(),
+});
+
+const bulkImportSchema = z.object({
+  listings: z.array(bulkListingItemSchema).min(1).max(5000),
+  sellerId: z.number().int().positive(),
+});
+
+router.post('/admin/bulk-import', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const data = bulkImportSchema.parse(req.body);
+
+    const seller = await storage.getUserById(data.sellerId);
+    if (!seller) {
+      return res.status(400).json({ message: `Seller with ID ${data.sellerId} not found` });
+    }
+
+    const items = data.listings.map(item => ({
+      ...item,
+      sellerId: data.sellerId,
+    }));
+
+    const startTime = Date.now();
+    const result = await storage.createListingsBatch(items);
+    const elapsed = Date.now() - startTime;
+
+    console.log(`[Bulk Import] ${result.inserted} listings inserted in ${elapsed}ms by admin ${req.user!.id}`);
+
+    res.json({
+      message: `Bulk import completed`,
+      inserted: result.inserted,
+      errors: result.errors,
+      totalRequested: data.listings.length,
+      elapsedMs: elapsed,
+    });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        message: 'Validation failed',
+        errors: error.errors.map(e => ({ path: e.path.join('.'), message: e.message })),
+      });
+    }
+    console.error('Bulk import error:', error);
+    res.status(500).json({ message: error.message || 'Bulk import failed' });
   }
 });
 

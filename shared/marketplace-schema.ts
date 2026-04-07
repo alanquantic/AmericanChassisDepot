@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, decimal, timestamp, jsonb, unique, check } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, decimal, timestamp, jsonb, unique, check, index } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -185,7 +185,15 @@ export const marketplaceListings = pgTable("marketplace_listings", {
   expiresAt: timestamp("expires_at"),
   soldAt: timestamp("sold_at"),
   lastRenewedAt: timestamp("last_renewed_at"),
-});
+}, (table) => ({
+  idxStatusCreated: index("idx_listings_status_created").on(table.status, table.createdAt),
+  idxStatusTypeCondState: index("idx_listings_status_type_cond_state").on(table.status, table.chassisType, table.condition, table.state),
+  idxStatusPrice: index("idx_listings_status_price").on(table.status, table.pricePerUnit),
+  idxSellerId: index("idx_listings_seller_id").on(table.sellerId),
+  idxSellerStatus: index("idx_listings_seller_status").on(table.sellerId, table.status),
+  idxFeatured: index("idx_listings_featured").on(table.featured, table.status),
+  idxUpdatedAt: index("idx_listings_updated_at").on(table.updatedAt),
+}));
 
 // =============================================
 // IMÁGENES DE LISTINGS
@@ -234,7 +242,11 @@ export const marketplaceConversations = pgTable("marketplace_conversations", {
   updatedAt: timestamp("updated_at").defaultNow(),
   closedAt: timestamp("closed_at"),
   closedBy: integer("closed_by").references(() => marketplaceUsers.id),
-});
+}, (table) => ({
+  idxConvBuyer: index("idx_conversations_buyer").on(table.buyerId),
+  idxConvSeller: index("idx_conversations_seller").on(table.sellerId),
+  idxConvListing: index("idx_conversations_listing").on(table.listingId),
+}));
 
 // =============================================
 // MENSAJES
@@ -270,7 +282,10 @@ export const marketplaceMessages = pgTable("marketplace_messages", {
   
   createdAt: timestamp("created_at").defaultNow(),
   editedAt: timestamp("edited_at"),
-});
+}, (table) => ({
+  idxMsgConversation: index("idx_messages_conversation").on(table.conversationId),
+  idxMsgSender: index("idx_messages_sender").on(table.senderId),
+}));
 
 // =============================================
 // OFERTAS FORMALES
@@ -316,7 +331,12 @@ export const marketplaceOffers = pgTable("marketplace_offers", {
   respondedAt: timestamp("responded_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table) => ({
+  idxOfferListing: index("idx_offers_listing").on(table.listingId),
+  idxOfferBuyer: index("idx_offers_buyer").on(table.buyerId),
+  idxOfferSeller: index("idx_offers_seller").on(table.sellerId),
+  idxOfferStatus: index("idx_offers_status").on(table.status),
+}));
 
 // =============================================
 // ÓRDENES
@@ -503,7 +523,10 @@ export const marketplaceNotifications = pgTable("marketplace_notifications", {
   
   createdAt: timestamp("created_at").defaultNow(),
   expiresAt: timestamp("expires_at"),
-});
+}, (table) => ({
+  idxNotifUser: index("idx_notifications_user").on(table.userId),
+  idxNotifUnread: index("idx_notifications_unread").on(table.userId, table.isRead),
+}));
 
 // =============================================
 // ACTIVITY LOG
@@ -618,7 +641,10 @@ export const marketplaceListingViews = pgTable("marketplace_listing_views", {
   city: text("city"),
   
   viewedAt: timestamp("viewed_at").defaultNow(),
-});
+}, (table) => ({
+  idxViewsListing: index("idx_listing_views_listing").on(table.listingId),
+  idxViewsDate: index("idx_listing_views_date").on(table.viewedAt),
+}));
 
 // =============================================
 // EMAIL TEMPLATES
