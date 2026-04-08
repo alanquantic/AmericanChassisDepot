@@ -372,17 +372,51 @@ function FilterSidebar({
   );
 }
 
+function parseFiltersFromUrl(): Omit<ListingFilters, 'page'> {
+  const params = new URLSearchParams(window.location.search);
+  const parsed: Omit<ListingFilters, 'page'> = { limit: 12, sortBy: 'date_desc' };
+  if (params.get('chassisType')) parsed.chassisType = params.get('chassisType')!;
+  if (params.get('chassisSize')) parsed.chassisSize = params.get('chassisSize')!;
+  if (params.get('condition')) parsed.condition = params.get('condition')!;
+  if (params.get('state')) parsed.state = params.get('state')!;
+  if (params.get('search')) parsed.search = params.get('search')!;
+  if (params.get('minPrice')) parsed.minPrice = Number(params.get('minPrice'));
+  if (params.get('maxPrice')) parsed.maxPrice = Number(params.get('maxPrice'));
+  if (params.get('sortBy')) parsed.sortBy = params.get('sortBy')!;
+  return parsed;
+}
+
+function filtersToQueryString(f: Omit<ListingFilters, 'page'>): string {
+  const params = new URLSearchParams();
+  if (f.chassisType) params.set('chassisType', f.chassisType);
+  if (f.chassisSize) params.set('chassisSize', f.chassisSize);
+  if (f.condition) params.set('condition', f.condition);
+  if (f.state) params.set('state', f.state);
+  if (f.search) params.set('search', f.search);
+  if (f.minPrice) params.set('minPrice', String(f.minPrice));
+  if (f.maxPrice) params.set('maxPrice', String(f.maxPrice));
+  if (f.sortBy && f.sortBy !== 'date_desc') params.set('sortBy', f.sortBy);
+  const qs = params.toString();
+  return qs ? `?${qs}` : '';
+}
+
 // Main Marketplace Page
 export default function MarketplacePage() {
   const [, navigate] = useLocation();
   const lang = getCurrentLanguage();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [filters, setFilters] = useState<Omit<ListingFilters, 'page'>>({
-    limit: 12,
-    sortBy: 'date_desc',
+  const [filters, setFilters] = useState<Omit<ListingFilters, 'page'>>(parseFiltersFromUrl);
+  const [searchQuery, setSearchQuery] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('search') || '';
   });
-  const [searchQuery, setSearchQuery] = useState('');
   const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const qs = filtersToQueryString(filters);
+    const newUrl = `/${lang}/chassis-marketplace${qs}`;
+    window.history.replaceState(null, '', newUrl);
+  }, [filters, lang]);
 
   // Infinite scroll query
   const { 
@@ -476,13 +510,20 @@ export default function MarketplacePage() {
       <SEOHead
         title={seo.title}
         description={seo.description}
-        canonicalPath={`/${lang}/chassis-marketplace`}
+        canonicalPath={`/${lang}/chassis-marketplace${filtersToQueryString(filters)}`}
         type="website"
         breadcrumbs={[
           { name: lang === 'es' ? 'Inicio' : 'Home', url: `/${lang}` },
           { name: 'Marketplace', url: `/${lang}/marketplace` },
           { name: lang === 'es' ? 'Catálogo' : 'Browse', url: `/${lang}/chassis-marketplace` },
         ]}
+        itemList={allListings.slice(0, 30).map(l => ({
+          name: l.title,
+          url: `/${lang}/chassis-marketplace/${l.slug}`,
+          image: l.primaryImageUrl || undefined,
+          price: parseFloat(l.pricePerUnit),
+          priceCurrency: 'USD',
+        }))}
         faqs={[
           {
             question: lang === 'es' ? '¿Cómo compro un chassis?' : 'How do I buy a chassis?',

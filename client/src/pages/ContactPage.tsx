@@ -6,13 +6,23 @@ import { MapPinIcon, PhoneIcon, EmailIcon } from '@/lib/icons';
 import { getContactInfo } from '@/lib/constants';
 import ContactForm from '@/components/shared/ContactForm';
 import { useLanguage } from '@/lib/i18n-simple';
+import Seo from '@/components/seo/Seo';
 
 const ContactPage: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const contactInfo = getContactInfo();
   
   return (
     <>
+      <Seo
+        title={language === 'es'
+          ? 'Contáctanos | American Chassis Depot'
+          : 'Contact Us | American Chassis Depot'}
+        description={language === 'es'
+          ? 'Comuníquese con American Chassis Depot en Houston, TX. Solicite cotizaciones, consulte disponibilidad de chassis para contenedores o hable con nuestro equipo de ventas.'
+          : 'Get in touch with American Chassis Depot in Houston, TX. Request quotes, check container chassis availability, or speak with our sales team.'}
+        canonicalPath={`/${language}/contact`}
+      />
       <Header />
       
       <main>

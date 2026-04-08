@@ -55,31 +55,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Dynamic sitemap by language
+  const SITE_BASE = 'https://www.americanchassisdepot.com';
+
+  // Sitemap index: references corporate + marketplace sitemaps
+  app.get('/sitemap-index.xml', (_req: Request, res: Response) => {
+    const now = new Date().toISOString();
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${SITE_BASE}/sitemap.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${SITE_BASE}/api/marketplace/sitemap-marketplace.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+</sitemapindex>`;
+    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    return res.send(xml);
+  });
+
+  // Corporate sitemap with full bilingual support and hreflang
   app.get('/sitemap.xml', async (_req: Request, res: Response) => {
     try {
       const models = await storage.getAllChassisModels();
-      const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://americanchassisdepot.com';
       const lastmod = new Date().toISOString().slice(0, 10);
-      const urls: string[] = [];
-      // EN static
-      urls.push(`${baseUrl}/en`, `${baseUrl}/en/products`, `${baseUrl}/en/about`, `${baseUrl}/en/contact`);
-      // ES home
-      urls.push(`${baseUrl}/es`);
-      // Products EN/ES
+
+      const staticPages = [
+        { path: '', changefreq: 'weekly', priority: '1.0' },
+        { path: '/products', changefreq: 'weekly', priority: '0.8' },
+        { path: '/new-chassis', changefreq: 'weekly', priority: '0.8' },
+        { path: '/used-chassis', changefreq: 'weekly', priority: '0.8' },
+        { path: '/about', changefreq: 'monthly', priority: '0.6' },
+        { path: '/contact', changefreq: 'monthly', priority: '0.6' },
+      ];
+
+      let urls = '';
+      for (const page of staticPages) {
+        const enUrl = `${SITE_BASE}/en${page.path}`;
+        const esUrl = `${SITE_BASE}/es${page.path}`;
+        urls += `  <url>
+    <loc>${enUrl}</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>
+    <xhtml:link rel="alternate" hreflang="es" href="${esUrl}"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}"/>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>
+  <url>
+    <loc>${esUrl}</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>
+    <xhtml:link rel="alternate" hreflang="es" href="${esUrl}"/>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${String(Math.max(0.5, Number(page.priority) - 0.1))}</priority>
+  </url>\n`;
+      }
+
       for (const m of models) {
         const enSlug = m.slug.endsWith('-esp') ? m.slug.slice(0, -4) : m.slug;
         const esSlug = m.slug.endsWith('-esp') ? m.slug : `${m.slug}-esp`;
-        urls.push(`${baseUrl}/en/products/${enSlug}`);
-        urls.push(`${baseUrl}/es/products/${esSlug}`);
+        const enUrl = `${SITE_BASE}/en/products/${enSlug}`;
+        const esUrl = `${SITE_BASE}/es/products/${esSlug}`;
+        urls += `  <url>
+    <loc>${enUrl}</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>
+    <xhtml:link rel="alternate" hreflang="es" href="${esUrl}"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}"/>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>${esUrl}</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>
+    <xhtml:link rel="alternate" hreflang="es" href="${esUrl}"/>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>\n`;
       }
-      const xml = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-        ...urls.map(u => `  <url><loc>${u}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>`),
-        '</urlset>'
-      ].join('\n');
+
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${urls}</urlset>`;
       res.setHeader('Content-Type', 'application/xml');
+      res.setHeader('Cache-Control', 'public, max-age=3600');
       return res.send(xml);
     } catch (e) {
       console.error('Error generating sitemap:', e);

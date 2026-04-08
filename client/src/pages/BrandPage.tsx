@@ -5,9 +5,10 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import { RulerIcon, WeightIcon } from '@/lib/icons';
-import { getCurrentLanguage } from '@/lib/i18n-simple';
+import { getCurrentLanguage, useLanguage } from '@/lib/i18n-simple';
 import { Skeleton } from '@/components/ui/skeleton';
 import ContactForm from '@/components/shared/ContactForm';
+import Seo from '@/components/seo/Seo';
 import type { ChassisModel } from '@shared/schema';
 
 // Define a type for the brand info
@@ -25,6 +26,7 @@ interface BrandPageProps {
 const BrandPage: React.FC<BrandPageProps> = ({ slug: propSlug }) => {
   const params = useParams();
   const slug = propSlug || params.slug;
+  const { language } = useLanguage();
   
   // Fetch brand data
   const { data: brand, isLoading: brandLoading, error: brandError } = useQuery<Brand>({
@@ -62,6 +64,14 @@ const BrandPage: React.FC<BrandPageProps> = ({ slug: propSlug }) => {
   
   return (
     <>
+      {brand && (
+        <Seo
+          title={`${brand.name} Container Chassis | American Chassis Depot`}
+          description={brand.description || `Browse ${brand.name} container chassis models available at American Chassis Depot. Quality chassis with competitive pricing.`}
+          canonicalPath={`/${language}/brands/${slug}`}
+          imageUrl={brand.imageUrl}
+        />
+      )}
       <Header />
       
       <main>

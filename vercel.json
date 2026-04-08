@@ -34,6 +34,14 @@
       "dest": "/dist/assets/triaxle_20_$1.webp"
     },
     {
+      "src": "/sitemap\\.xml",
+      "dest": "server/index.ts"
+    },
+    {
+      "src": "/sitemap-index\\.xml",
+      "dest": "server/index.ts"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "server/index.ts"
     },

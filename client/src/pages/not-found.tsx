@@ -3,16 +3,21 @@ import { Link, useLocation } from 'wouter';
 import { useLanguage } from '@/lib/i18n-simple';
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
+import Seo from '@/components/seo/Seo';
 
 const NotFound: React.FC = () => {
   const { t, language } = useLanguage();
   const [location] = useLocation();
   
-  // Determine language prefix from URL or current language
   const langPrefix = location.startsWith('/es') ? '/es' : location.startsWith('/en') ? '/en' : `/${language}`;
   
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <Seo
+        title={language === 'es' ? 'Página no encontrada | American Chassis Depot' : 'Page Not Found | American Chassis Depot'}
+        description="The page you are looking for does not exist."
+        noindex={true}
+      />
       <Card className="w-full max-w-md mx-4">
         <CardContent className="pt-6">
           <div className="flex mb-4 gap-2">

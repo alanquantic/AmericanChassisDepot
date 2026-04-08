@@ -25,9 +25,7 @@ Allow: /es/marketplace
 Allow: /en/chassis-marketplace
 Allow: /es/chassis-marketplace
 
-# Sitemaps
+# Sitemaps (index references both corporate and marketplace sitemaps)
+Sitemap: https://www.americanchassisdepot.com/sitemap-index.xml
 Sitemap: https://www.americanchassisdepot.com/sitemap.xml
 Sitemap: https://www.americanchassisdepot.com/api/marketplace/sitemap-marketplace.xml
-
-# Crawl-delay for respectful crawling
-Crawl-delay: 1

@@ -103,7 +103,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
           brand: { 
             '@type': 'Brand', 
             name: 'American Chassis Depot',
-            url: 'https://americanchassisdepot.com'
+            url: 'https://www.americanchassisdepot.com'
           },
           category: 'Container Chassis',
           url: `${window.location.origin}/${getLanguage()}/products/${model.slug}`,
@@ -118,7 +118,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ slug: propSlug }) => {
             seller: {
               '@type': 'Organization',
               name: 'American Chassis Depot',
-              url: 'https://americanchassisdepot.com'
+              url: 'https://www.americanchassisdepot.com'
             }
           },
           additionalProperty: [

@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { getCurrentLanguage } from '@/lib/i18n-simple'
 
+const SITE_BASE_URL = 'https://www.americanchassisdepot.com'
+
 type SeoProps = {
   title: string
   description: string
@@ -12,6 +14,7 @@ type SeoProps = {
   productCategory?: string
   productAvailability?: 'InStock' | 'OutOfStock' | 'PreOrder'
   isProduct?: boolean
+  noindex?: boolean
 }
 
 function upsertMeta(property: string, content: string, attr: 'name' | 'property' = 'name') {
@@ -58,6 +61,20 @@ function getAlternateSlug(slug: string, lang: 'en' | 'es'): string {
   }
 }
 
+function getAlternatePaths(canonicalPath: string, productSlug?: string): { en: string; es: string } {
+  if (productSlug) {
+    return {
+      en: `/en/products/${getAlternateSlug(productSlug, 'en')}`,
+      es: `/es/products/${getAlternateSlug(productSlug, 'es')}`,
+    }
+  }
+  const pathWithoutLang = canonicalPath.replace(/^\/(en|es)/, '')
+  return {
+    en: `/en${pathWithoutLang}`,
+    es: `/es${pathWithoutLang}`,
+  }
+}
+
 export const Seo: React.FC<SeoProps> = ({ 
   title, 
   description, 
@@ -68,19 +85,20 @@ export const Seo: React.FC<SeoProps> = ({
   productBrand = 'American Chassis Depot',
   productCategory = 'Container Chassis',
   productAvailability = 'InStock',
-  isProduct = false
+  isProduct = false,
+  noindex = false,
 }) => {
   useEffect(() => {
     const lang = getCurrentLanguage()
-    const baseUrl = (import.meta as any)?.env?.VITE_SITE_URL || window.location.origin
     const path = canonicalPath || window.location.pathname
-    const canonical = new URL(path, baseUrl).toString()
-    const absImage = ensureAbsolute(imageUrl || '/assets/og-image.jpg', baseUrl)
+    const canonical = `${SITE_BASE_URL}${path}`
+    const absImage = ensureAbsolute(imageUrl || '/assets/og-image.jpg', SITE_BASE_URL)
 
-    // Basic meta tags
     document.title = title
     upsertMeta('description', description)
-    upsertMeta('robots', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1')
+    upsertMeta('robots', noindex
+      ? 'noindex, nofollow'
+      : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1')
     upsertMeta('theme-color', '#0A3161')
     upsertMeta('author', 'American Chassis Depot')
     upsertMeta('keywords', lang === 'es' 
@@ -88,18 +106,16 @@ export const Seo: React.FC<SeoProps> = ({
       : 'container chassis, 20ft chassis, 40ft chassis, extendable chassis, triaxle chassis, gooseneck chassis, transportation equipment, intermodal chassis, shipping chassis, chassis dealer'
     )
 
-    // Canonical and alternate links
     upsertLink('canonical', canonical)
-    const altEnPath = productSlug ? `/en/products/${getAlternateSlug(productSlug, 'en')}` : '/en'
-    const altEsPath = productSlug ? `/es/products/${getAlternateSlug(productSlug, 'es')}` : '/es'
-    upsertLink('alternate', new URL(altEnPath, baseUrl).toString(), 'en')
-    upsertLink('alternate', new URL(altEsPath, baseUrl).toString(), 'es')
-    upsertLink('alternate', new URL(altEnPath, baseUrl).toString(), 'x-default')
+    const alt = getAlternatePaths(path, productSlug)
+    upsertLink('alternate', `${SITE_BASE_URL}${alt.en}`, 'en')
+    upsertLink('alternate', `${SITE_BASE_URL}${alt.es}`, 'es')
+    upsertLink('alternate', `${SITE_BASE_URL}${alt.en}`, 'x-default')
 
-    // Enhanced Open Graph tags
     upsertMeta('og:type', isProduct ? 'product' : 'website', 'property')
     upsertMeta('og:site_name', 'American Chassis Depot', 'property')
-    upsertMeta('og:locale', lang === 'es' ? 'es_US' : 'en_US', 'property')
+    upsertMeta('og:locale', lang === 'es' ? 'es_ES' : 'en_US', 'property')
+    upsertMeta('og:locale:alternate', lang === 'es' ? 'en_US' : 'es_ES', 'property')
     upsertMeta('og:title', title, 'property')
     upsertMeta('og:description', description, 'property')
     upsertMeta('og:url', canonical, 'property')
@@ -111,7 +127,6 @@ export const Seo: React.FC<SeoProps> = ({
       upsertMeta('og:image:alt', title, 'property')
     }
 
-    // Product-specific Open Graph tags
     if (isProduct) {
       upsertMeta('og:product:availability', productAvailability, 'property')
       if (productPrice) {
@@ -126,7 +141,6 @@ export const Seo: React.FC<SeoProps> = ({
       }
     }
 
-    // Enhanced Twitter Card tags
     upsertMeta('twitter:card', 'summary_large_image', 'name')
     upsertMeta('twitter:site', '@americanchassisdepot', 'name')
     upsertMeta('twitter:creator', '@americanchassisdepot', 'name')
@@ -138,13 +152,11 @@ export const Seo: React.FC<SeoProps> = ({
       upsertMeta('twitter:image:alt', title, 'name')
     }
 
-    // Additional SEO tags
     upsertMeta('geo.region', 'US-TX')
     upsertMeta('geo.placename', 'Houston')
     upsertMeta('geo.position', '29.8171;-95.4026')
     upsertMeta('ICBM', '29.8171, -95.4026')
 
-    // Language-specific meta tags
     if (lang === 'es') {
       upsertMeta('language', 'Spanish')
       upsertMeta('content-language', 'es')
@@ -153,7 +165,7 @@ export const Seo: React.FC<SeoProps> = ({
       upsertMeta('content-language', 'en')
     }
 
-  }, [title, description, imageUrl, canonicalPath, productSlug, productPrice, productBrand, productCategory, productAvailability, isProduct])
+  }, [title, description, imageUrl, canonicalPath, productSlug, productPrice, productBrand, productCategory, productAvailability, isProduct, noindex])
 
   return null
 }

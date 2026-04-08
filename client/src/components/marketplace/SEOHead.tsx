@@ -1,6 +1,32 @@
 import { Helmet } from 'react-helmet-async';
 import { getCurrentLanguage } from '@/lib/i18n-simple';
 
+const BASE_URL = 'https://www.americanchassisdepot.com';
+
+interface ProductSchema {
+  name: string;
+  description: string;
+  image: string;
+  price: number;
+  priceCurrency?: string;
+  availability: 'InStock' | 'OutOfStock' | 'PreOrder';
+  condition: 'NewCondition' | 'UsedCondition' | 'RefurbishedCondition';
+  brand?: string;
+  sku?: string;
+  category?: string;
+  seller?: { name: string; url?: string };
+  location?: { city: string; state: string; country?: string };
+  offers?: { priceValidUntil?: string; itemCondition?: string };
+}
+
+interface ItemListItem {
+  name: string;
+  url: string;
+  image?: string;
+  price?: number;
+  priceCurrency?: string;
+}
+
 interface SEOHeadProps {
   title: string;
   description: string;
@@ -8,42 +34,10 @@ interface SEOHeadProps {
   image?: string;
   type?: 'website' | 'article' | 'product';
   noindex?: boolean;
-  // Product specific (for Schema.org)
-  product?: {
-    name: string;
-    description: string;
-    image: string;
-    price: number;
-    priceCurrency?: string;
-    availability: 'InStock' | 'OutOfStock' | 'PreOrder';
-    condition: 'NewCondition' | 'UsedCondition' | 'RefurbishedCondition';
-    brand?: string;
-    sku?: string;
-    category?: string;
-    seller?: {
-      name: string;
-      url?: string;
-    };
-    location?: {
-      city: string;
-      state: string;
-      country?: string;
-    };
-    offers?: {
-      priceValidUntil?: string;
-      itemCondition?: string;
-    };
-  };
-  // Breadcrumbs for structured data
-  breadcrumbs?: Array<{
-    name: string;
-    url: string;
-  }>;
-  // FAQ for structured data
-  faqs?: Array<{
-    question: string;
-    answer: string;
-  }>;
+  product?: ProductSchema;
+  breadcrumbs?: Array<{ name: string; url: string }>;
+  faqs?: Array<{ question: string; answer: string }>;
+  itemList?: ItemListItem[];
 }
 
 export function SEOHead({
@@ -56,24 +50,21 @@ export function SEOHead({
   product,
   breadcrumbs,
   faqs,
+  itemList,
 }: SEOHeadProps) {
   const lang = getCurrentLanguage();
-  const baseUrl = 'https://www.americanchassisdepot.com';
-  const canonicalUrl = `${baseUrl}${canonicalPath}`;
-  const defaultImage = `${baseUrl}/og-marketplace.jpg`;
+  const canonicalUrl = `${BASE_URL}${canonicalPath}`;
+  const defaultImage = `${BASE_URL}/og-marketplace.jpg`;
   const ogImage = image || defaultImage;
+  const pathWithoutLang = canonicalPath.replace(/^\/(en|es)/, '');
 
-  // Generate Product Schema.org structured data
   const productSchema = product ? {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": product.name,
     "description": product.description,
     "image": product.image || defaultImage,
-    "brand": {
-      "@type": "Brand",
-      "name": product.brand || "American Chassis Depot"
-    },
+    "brand": { "@type": "Brand", "name": product.brand || "American Chassis Depot" },
     "sku": product.sku,
     "category": product.category || "Container Chassis",
     "offers": {
@@ -86,11 +77,9 @@ export function SEOHead({
       "seller": {
         "@type": "Organization",
         "name": product.seller?.name || "American Chassis Depot",
-        "url": product.seller?.url || baseUrl
+        "url": product.seller?.url || BASE_URL
       },
-      ...(product.offers?.priceValidUntil && {
-        "priceValidUntil": product.offers.priceValidUntil
-      })
+      ...(product.offers?.priceValidUntil && { "priceValidUntil": product.offers.priceValidUntil })
     },
     ...(product.location && {
       "areaServed": {
@@ -105,7 +94,6 @@ export function SEOHead({
     })
   } : null;
 
-  // Generate BreadcrumbList Schema.org structured data
   const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -113,69 +101,65 @@ export function SEOHead({
       "@type": "ListItem",
       "position": index + 1,
       "name": crumb.name,
-      "item": `${baseUrl}${crumb.url}`
+      "item": `${BASE_URL}${crumb.url}`
     }))
   } : null;
 
-  // Generate FAQ Schema.org structured data
   const faqSchema = faqs && faqs.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": faqs.map(faq => ({
       "@type": "Question",
       "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
+      "acceptedAnswer": { "@type": "Answer", "text": faq.answer }
     }))
   } : null;
 
-  // Organization Schema (for brand recognition)
-  const organizationSchema = {
+  const webSiteSchema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "American Chassis Depot",
-    "url": baseUrl,
-    "logo": `${baseUrl}/acn.png`,
-    "description": "The #1 B2B marketplace for container chassis in the USA",
-    "address": {
-      "@type": "PostalAddress",
-      "addressCountry": "US"
-    },
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+1-800-XXX-XXXX",
-      "contactType": "sales",
-      "availableLanguage": ["English", "Spanish"]
-    },
-    "sameAs": [
-      "https://www.facebook.com/americanchassisdepot",
-      "https://www.linkedin.com/company/american-chassis-depot"
-    ]
+    "@type": "WebSite",
+    "name": "American Chassis Depot Marketplace",
+    "url": `${BASE_URL}/en/chassis-marketplace`,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${BASE_URL}/en/chassis-marketplace?search={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
   };
+
+  const itemListSchema = itemList && itemList.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "numberOfItems": itemList.length,
+    "itemListElement": itemList.map((item, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": item.name,
+      "url": `${BASE_URL}${item.url}`,
+      ...(item.image && { "image": item.image }),
+    }))
+  } : null;
 
   return (
     <Helmet>
-      {/* Basic Meta Tags */}
       <html lang={lang} />
       <title>{title}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonicalUrl} />
       
-      {/* Alternate language URLs */}
-      <link rel="alternate" hrefLang="en" href={`${baseUrl}/en${canonicalPath.replace(/^\/(en|es)/, '')}`} />
-      <link rel="alternate" hrefLang="es" href={`${baseUrl}/es${canonicalPath.replace(/^\/(en|es)/, '')}`} />
-      <link rel="alternate" hrefLang="x-default" href={`${baseUrl}/en${canonicalPath.replace(/^\/(en|es)/, '')}`} />
+      <link rel="alternate" hrefLang="en" href={`${BASE_URL}/en${pathWithoutLang}`} />
+      <link rel="alternate" hrefLang="es" href={`${BASE_URL}/es${pathWithoutLang}`} />
+      <link rel="alternate" hrefLang="x-default" href={`${BASE_URL}/en${pathWithoutLang}`} />
       
-      {/* Robots */}
       {noindex ? (
         <meta name="robots" content="noindex, nofollow" />
       ) : (
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       )}
       
-      {/* Open Graph */}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonicalUrl} />
@@ -183,17 +167,15 @@ export function SEOHead({
       <meta property="og:image" content={ogImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content="American Chassis Depot Marketplace" />
+      <meta property="og:site_name" content="American Chassis Depot" />
       <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
       <meta property="og:locale:alternate" content={lang === 'es' ? 'en_US' : 'es_ES'} />
       
-      {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
       
-      {/* Product specific Open Graph */}
       {product && (
         <>
           <meta property="product:price:amount" content={product.price.toString()} />
@@ -204,15 +186,12 @@ export function SEOHead({
         </>
       )}
       
-      {/* Additional SEO meta tags */}
       <meta name="author" content="American Chassis Depot" />
-      <meta name="publisher" content="American Chassis Depot" />
-      <meta name="geo.region" content="US" />
-      <meta name="geo.placename" content="United States" />
+      <meta name="geo.region" content="US-TX" />
+      <meta name="geo.placename" content="Houston" />
       
-      {/* Schema.org structured data */}
       <script type="application/ld+json">
-        {JSON.stringify(organizationSchema)}
+        {JSON.stringify(webSiteSchema)}
       </script>
       
       {productSchema && (
@@ -230,6 +209,12 @@ export function SEOHead({
       {faqSchema && (
         <script type="application/ld+json">
           {JSON.stringify(faqSchema)}
+        </script>
+      )}
+
+      {itemListSchema && (
+        <script type="application/ld+json">
+          {JSON.stringify(itemListSchema)}
         </script>
       )}
     </Helmet>

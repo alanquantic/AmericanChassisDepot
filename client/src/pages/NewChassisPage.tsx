@@ -5,11 +5,23 @@ import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import ContactForm from '@/components/shared/ContactForm';
 import { RulerIcon, WeightIcon, ToolsIcon, CertificateIcon } from '@/lib/icons';
+import { useLanguage } from '@/lib/i18n-simple';
+import Seo from '@/components/seo/Seo';
 
 const NewChassisPage: React.FC = () => {
+  const { language } = useLanguage();
 
   return (
     <div className="flex flex-col min-h-screen">
+      <Seo
+        title={language === 'es'
+          ? 'Chassis Nuevos para Contenedores | American Chassis Depot'
+          : 'New Container Chassis | American Chassis Depot'}
+        description={language === 'es'
+          ? 'Descubra nuestros chassis nuevos de alta calidad con garantía completa del fabricante. Chassis gooseneck, slider, extensibles y triaxiales disponibles.'
+          : 'Discover our top-quality new chassis with full manufacturer warranties. Gooseneck, slider, extendable, and triaxle chassis available.'}
+        canonicalPath={`/${language}/new-chassis`}
+      />
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}

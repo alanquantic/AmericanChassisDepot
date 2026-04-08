@@ -97,7 +97,7 @@ function getBaseEmailTemplate(content: string, language: 'en' | 'es' = 'en'): st
     </head>
     <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
       <div style="background: linear-gradient(135deg, #0A3161 0%, #1a4a8a 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-        <img src="https://americanchassisdepot.com/assets/logo.png" alt="American Chassis Depot" style="max-width: 180px; height: auto;">
+        <img src="https://www.americanchassisdepot.com/assets/logo.png" alt="American Chassis Depot" style="max-width: 180px; height: auto;">
       </div>
       <div style="background: #fff; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         ${content}

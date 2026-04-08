@@ -3,10 +3,23 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingButton from '@/components/layout/FloatingButton';
 import { TruckIcon, ToolsIcon, CertificateIcon } from '@/lib/icons';
+import { useLanguage } from '@/lib/i18n-simple';
+import Seo from '@/components/seo/Seo';
 
 const AboutPage: React.FC = () => {
+  const { language } = useLanguage();
+
   return (
     <>
+      <Seo
+        title={language === 'es'
+          ? 'Sobre Nosotros | American Chassis Depot'
+          : 'About Us | American Chassis Depot'}
+        description={language === 'es'
+          ? 'Conozca American Chassis Depot, su socio de confianza para soluciones de chassis de contenedores de alta calidad desde 2010 en Houston, TX.'
+          : 'Learn about American Chassis Depot, your trusted partner for high-quality container chassis solutions since 2010 in Houston, TX.'}
+        canonicalPath={`/${language}/about`}
+      />
       <Header />
       
       <main>
