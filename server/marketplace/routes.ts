@@ -326,9 +326,9 @@ router.post('/listings', authenticateToken, requireSeller, async (req: Authentic
   }
 });
 
-// Update listing (owner only)
+// Update listing (owner or admin)
 const updateListingSchema = z.object({
-  title: z.string().min(5).optional(),
+  title: z.string().min(1).optional(),
   titleEs: z.string().optional(),
   description: z.string().optional(),
   descriptionEs: z.string().optional(),
@@ -340,13 +340,20 @@ const updateListingSchema = z.object({
   zipCode: z.string().optional(),
   quantity: z.number().min(1).optional(),
   quantityAvailable: z.number().min(0).optional(),
-  pricePerUnit: z.number().min(1000).optional(),
+  pricePerUnit: z.coerce.number().min(0).optional(),
   priceNegotiable: z.boolean().optional(),
   minimumOrder: z.number().optional(),
   manufacturer: z.string().optional(),
   year: z.number().optional(),
+  vin: z.string().optional(),
   primaryImageUrl: z.string().optional(),
   images: z.array(z.any()).optional(),
+  featured: z.boolean().optional(),
+  verified: z.boolean().optional(),
+  specs: z.record(z.any()).optional(),
+  tags: z.array(z.string()).optional(),
+  videoUrl: z.string().optional(),
+  locationDetails: z.string().optional(),
 });
 
 router.put('/listings/:id', authenticateToken, requireSeller, async (req: AuthenticatedRequest, res: Response) => {
@@ -367,6 +374,19 @@ router.put('/listings/:id', authenticateToken, requireSeller, async (req: Authen
     const updatePayload: Record<string, any> = { ...data };
     if (data.pricePerUnit !== undefined) {
       updatePayload.pricePerUnit = data.pricePerUnit.toString();
+    }
+    const isAdmin = ['admin', 'super_admin'].includes(req.user!.role);
+    if (!isAdmin) {
+      delete updatePayload.featured;
+      delete updatePayload.verified;
+    } else {
+      if (data.verified === true && !listing.verified) {
+        updatePayload.verifiedBy = req.user!.id;
+        updatePayload.verifiedAt = new Date();
+      } else if (data.verified === false) {
+        updatePayload.verifiedBy = null;
+        updatePayload.verifiedAt = null;
+      }
     }
     const updatedListing = await storage.updateListing(listingId, updatePayload);
     res.json({ message: 'Listing updated', listing: updatedListing });
