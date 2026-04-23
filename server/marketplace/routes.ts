@@ -201,11 +201,11 @@ router.get('/listings/:slug', optionalAuth, async (req: AuthenticatedRequest, re
 
 // Public inquiry on a listing (no auth required)
 const inquirySchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  message: z.string().min(5),
+  name: z.string().trim().min(2, 'Name must be at least 2 characters'),
+  email: z.string().trim().toLowerCase().email('Invalid email address'),
+  phone: z.string().trim().optional(),
+  company: z.string().trim().optional(),
+  message: z.string().trim().min(1, 'Message is required'),
   language: z.enum(['en', 'es']).optional(),
 });
 
@@ -236,7 +236,13 @@ router.post('/listings/:slug/inquire', async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error('Error sending listing inquiry:', error);
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      const first = error.errors[0];
+      const field = first?.path?.join('.') || 'field';
+      const msg = first?.message || 'Invalid data';
+      return res.status(400).json({
+        message: `${field}: ${msg}`,
+        errors: error.errors,
+      });
     }
     res.status(500).json({ message: 'Failed to send inquiry' });
   }

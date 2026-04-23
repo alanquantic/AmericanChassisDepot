@@ -247,8 +247,8 @@ function FilterSidebar({
 }) {
   const lang = getCurrentLanguage();
 
-  // Sizes must match database values (with apostrophe format)
-  const sizes = ["20'", "40'", "45'", "53'", "20-40'", "40-45'", "40-45-48'", "40-45-48-53'"];
+  // Canonical size buckets — backend normalizes DB variants (e.g. "40 ft", "40 ft 6 in") to match these
+  const sizes = ["20'", "40'", "45'", "48'", "53'", "20-40'", "40-45'", "40-45-48'", "40-45-48-53'"];
 
   return (
     <div className="space-y-6">

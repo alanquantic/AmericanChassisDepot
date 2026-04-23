@@ -77,9 +77,21 @@ export async function getListings(filters: ListingFilters = {}) {
     conditions.push(eq(marketplaceListings.chassisType, chassisType));
   }
 
-  // Size filter
+  // Size filter — match multiple storage formats for the same physical size
+  // Dropdown sends "40'", but imported listings may be stored as "40 ft", "40ft", "40 ft 6 in", etc.
   if (chassisSize && chassisSize !== 'all') {
-    conditions.push(eq(marketplaceListings.chassisSize, chassisSize));
+    const leadingNum = chassisSize.match(/^(\d+)/)?.[1];
+    if (leadingNum && !chassisSize.includes('-')) {
+      conditions.push(
+        or(
+          eq(marketplaceListings.chassisSize, chassisSize),
+          ilike(marketplaceListings.chassisSize, `${leadingNum} ft%`),
+          ilike(marketplaceListings.chassisSize, `${leadingNum}ft%`)
+        )!
+      );
+    } else {
+      conditions.push(eq(marketplaceListings.chassisSize, chassisSize));
+    }
   }
 
   // Condition filter
@@ -1047,22 +1059,74 @@ export async function markAllNotificationsAsRead(userId: number) {
 
 export async function getChassisTypes() {
   const db = getMarketplaceDb();
-  
-  return db
+
+  const refTypes = await db
     .select()
     .from(marketplaceChassisTypes)
     .where(eq(marketplaceChassisTypes.isActive, true))
     .orderBy(asc(marketplaceChassisTypes.sortOrder));
+
+  // Augment with types actually present in listings that aren't in the reference table,
+  // so every listing can be filtered regardless of how it was imported.
+  const distinct = await db
+    .selectDistinct({ name: marketplaceListings.chassisType })
+    .from(marketplaceListings)
+    .where(eq(marketplaceListings.status, 'active'));
+
+  const refNames = new Set(refTypes.map((t: any) => t.name));
+  const extras = distinct
+    .map((r: any) => r.name as string | null)
+    .filter((n): n is string => !!n && !refNames.has(n))
+    .sort()
+    .map((name, i) => ({
+      id: -1 - i,
+      name,
+      nameEs: name,
+      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      description: null,
+      descriptionEs: null,
+      icon: null,
+      sortOrder: 9000 + i,
+      isActive: true,
+      createdAt: new Date(),
+    }));
+
+  return [...refTypes, ...extras];
 }
 
 export async function getConditions() {
   const db = getMarketplaceDb();
-  
-  return db
+
+  const refConds = await db
     .select()
     .from(marketplaceConditions)
     .where(eq(marketplaceConditions.isActive, true))
     .orderBy(asc(marketplaceConditions.sortOrder));
+
+  const distinct = await db
+    .selectDistinct({ name: marketplaceListings.condition })
+    .from(marketplaceListings)
+    .where(eq(marketplaceListings.status, 'active'));
+
+  const refNames = new Set(refConds.map((c: any) => c.name));
+  const extras = distinct
+    .map((r: any) => r.name as string | null)
+    .filter((n): n is string => !!n && !refNames.has(n))
+    .sort()
+    .map((name, i) => ({
+      id: -1 - i,
+      name,
+      nameEs: name,
+      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      description: null,
+      descriptionEs: null,
+      color: '#6B7280',
+      sortOrder: 9000 + i,
+      isActive: true,
+      createdAt: new Date(),
+    }));
+
+  return [...refConds, ...extras];
 }
 
 export async function getStates() {
