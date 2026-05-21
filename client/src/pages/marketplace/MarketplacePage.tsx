@@ -247,8 +247,26 @@ function FilterSidebar({
 }) {
   const lang = getCurrentLanguage();
 
-  // Canonical size buckets — backend normalizes DB variants (e.g. "40 ft", "40 ft 6 in") to match these
-  const sizes = ["20'", "40'", "45'", "48'", "53'", "20-40'", "40-45'", "40-45-48'", "40-45-48-53'"];
+  // Size buckets — backend handles three patterns:
+  //  1. Standard "20'"-style: matches "20'", "20 ft", "20ft", "20 ft 6 in", etc.
+  //  2. Non-standard range "30-39 ft": expands to all integer sizes in the range, excluding standards.
+  //  3. Extendable combos with apostrophe "20-40'": exact match.
+  const sizes = [
+    "20'",
+    "20-29 ft",
+    "30-39 ft",
+    "40'",
+    "41-44 ft",
+    "45'",
+    "46-49 ft",
+    "48'",
+    "53'",
+    "54+ ft",
+    "20-40'",
+    "40-45'",
+    "40-45-48'",
+    "40-45-48-53'",
+  ];
 
   return (
     <div className="space-y-6">

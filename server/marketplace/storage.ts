@@ -26,6 +26,57 @@ import {
 } from '../../shared/marketplace-schema.js';
 
 // =============================================
+// SIZE FILTER HELPER
+// =============================================
+
+// Sizes that have their own dedicated dropdown bucket. Ranges exclude these
+// so e.g. "46-49 ft" does NOT pull in "48'" listings (those belong to the "48'" bucket).
+const STANDARD_SIZE_BUCKETS = new Set([20, 40, 45, 48, 53]);
+
+/**
+ * Build a Drizzle SQL condition for the chassisSize filter.
+ * Handles standard buckets (20', 40', …), non-standard ranges (30-39 ft, 41-44 ft),
+ * open ranges (54+ ft) and extendable combos (20-40', 40-45-48', …).
+ * Returns undefined if the value matches no possible listing (e.g. empty range after exclusions).
+ */
+function buildSizeFilterCondition(size: string) {
+  const sizeColumn = marketplaceListings.chassisSize;
+
+  // Closed range with " ft" suffix: "20-29 ft", "30-39 ft", "41-44 ft", "46-49 ft"
+  const rangeMatch = size.match(/^(\d+)\s*-\s*(\d+)\s*ft$/i);
+  // Open range: "54+ ft"
+  const openMatch = size.match(/^(\d+)\s*\+\s*ft$/i);
+
+  if (rangeMatch || openMatch) {
+    const start = parseInt(rangeMatch ? rangeMatch[1] : openMatch![1], 10);
+    const end = rangeMatch ? parseInt(rangeMatch[2], 10) : 999;
+    const parts: any[] = [];
+    for (let n = start; n <= end; n++) {
+      if (STANDARD_SIZE_BUCKETS.has(n)) continue; // skip — own bucket
+      parts.push(ilike(sizeColumn, `${n} ft%`));
+      parts.push(ilike(sizeColumn, `${n}ft%`));
+      parts.push(eq(sizeColumn, `${n}'`));
+    }
+    return parts.length ? or(...parts) : undefined;
+  }
+
+  // Standard bucket: single number with apostrophe like "40'"
+  // Match exact + format variants ("40 ft", "40ft", "40 ft 6 in", etc.)
+  const standardMatch = size.match(/^(\d+)'$/);
+  if (standardMatch) {
+    const n = standardMatch[1];
+    return or(
+      eq(sizeColumn, size),
+      ilike(sizeColumn, `${n} ft%`),
+      ilike(sizeColumn, `${n}ft%`)
+    );
+  }
+
+  // Extendable combo with apostrophe ("20-40'", "40-45-48'") — exact match only
+  return eq(sizeColumn, size);
+}
+
+// =============================================
 // LISTINGS
 // =============================================
 
@@ -77,21 +128,15 @@ export async function getListings(filters: ListingFilters = {}) {
     conditions.push(eq(marketplaceListings.chassisType, chassisType));
   }
 
-  // Size filter — match multiple storage formats for the same physical size
-  // Dropdown sends "40'", but imported listings may be stored as "40 ft", "40ft", "40 ft 6 in", etc.
+  // Size filter — dropdown sends one of:
+  //   - standard bucket with apostrophe: "20'", "40'", "45'", "48'", "53'"
+  //   - non-standard range with " ft": "20-29 ft", "30-39 ft", "41-44 ft", "46-49 ft"
+  //   - open range: "54+ ft"
+  //   - extendable combo with apostrophe: "20-40'", "40-45'", "40-45-48'", "40-45-48-53'"
+  // DB stores values in multiple formats: "40'", "40 ft", "40ft", "40 ft 6 in", etc.
   if (chassisSize && chassisSize !== 'all') {
-    const leadingNum = chassisSize.match(/^(\d+)/)?.[1];
-    if (leadingNum && !chassisSize.includes('-')) {
-      conditions.push(
-        or(
-          eq(marketplaceListings.chassisSize, chassisSize),
-          ilike(marketplaceListings.chassisSize, `${leadingNum} ft%`),
-          ilike(marketplaceListings.chassisSize, `${leadingNum}ft%`)
-        )!
-      );
-    } else {
-      conditions.push(eq(marketplaceListings.chassisSize, chassisSize));
-    }
+    const cond = buildSizeFilterCondition(chassisSize);
+    if (cond) conditions.push(cond);
   }
 
   // Condition filter
