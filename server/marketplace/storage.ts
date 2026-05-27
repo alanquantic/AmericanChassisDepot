@@ -1111,19 +1111,33 @@ export async function getChassisTypes() {
     .where(eq(marketplaceChassisTypes.isActive, true))
     .orderBy(asc(marketplaceChassisTypes.sortOrder));
 
-  // Augment with types actually present in listings that aren't in the reference table,
-  // so every listing can be filtered regardless of how it was imported.
-  const distinct = await db
-    .selectDistinct({ name: marketplaceListings.chassisType })
+  // Group active listings by chassisType to know which dropdown values actually have inventory.
+  const grouped = await db
+    .select({
+      name: marketplaceListings.chassisType,
+      count: sql<number>`count(*)::int`,
+    })
     .from(marketplaceListings)
-    .where(eq(marketplaceListings.status, 'active'));
+    .where(eq(marketplaceListings.status, 'active'))
+    .groupBy(marketplaceListings.chassisType);
 
-  const refNames = new Set(refTypes.map((t: any) => t.name));
-  const extras = distinct
-    .map((r: any) => r.name as string | null)
-    .filter((n): n is string => !!n && !refNames.has(n))
-    .sort()
-    .map((name, i) => ({
+  const countByName = new Map<string, number>();
+  for (const row of grouped) {
+    if (row.name) countByName.set(row.name, Number(row.count) || 0);
+  }
+
+  // Keep only reference types that actually have ≥1 listing (avoids dead options like
+  // "Triaxle" or "Tank" sitting next to "Tri-Axle Chassis" / "Tank Chassis").
+  const liveRefs = refTypes
+    .filter((t: any) => (countByName.get(t.name) || 0) > 0)
+    .map((t: any) => ({ ...t, count: countByName.get(t.name) || 0 }));
+
+  // Add DB-only values that aren't in the (filtered) reference table.
+  const refNames = new Set(liveRefs.map((t: any) => t.name));
+  const extras = Array.from(countByName.entries())
+    .filter(([name, count]) => !!name && !refNames.has(name) && count > 0)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, count], i) => ({
       id: -1 - i,
       name,
       nameEs: name,
@@ -1134,9 +1148,10 @@ export async function getChassisTypes() {
       sortOrder: 9000 + i,
       isActive: true,
       createdAt: new Date(),
+      count,
     }));
 
-  return [...refTypes, ...extras];
+  return [...liveRefs, ...extras];
 }
 
 export async function getConditions() {
@@ -1148,17 +1163,29 @@ export async function getConditions() {
     .where(eq(marketplaceConditions.isActive, true))
     .orderBy(asc(marketplaceConditions.sortOrder));
 
-  const distinct = await db
-    .selectDistinct({ name: marketplaceListings.condition })
+  const grouped = await db
+    .select({
+      name: marketplaceListings.condition,
+      count: sql<number>`count(*)::int`,
+    })
     .from(marketplaceListings)
-    .where(eq(marketplaceListings.status, 'active'));
+    .where(eq(marketplaceListings.status, 'active'))
+    .groupBy(marketplaceListings.condition);
 
-  const refNames = new Set(refConds.map((c: any) => c.name));
-  const extras = distinct
-    .map((r: any) => r.name as string | null)
-    .filter((n): n is string => !!n && !refNames.has(n))
-    .sort()
-    .map((name, i) => ({
+  const countByName = new Map<string, number>();
+  for (const row of grouped) {
+    if (row.name) countByName.set(row.name, Number(row.count) || 0);
+  }
+
+  const liveRefs = refConds
+    .filter((c: any) => (countByName.get(c.name) || 0) > 0)
+    .map((c: any) => ({ ...c, count: countByName.get(c.name) || 0 }));
+
+  const refNames = new Set(liveRefs.map((c: any) => c.name));
+  const extras = Array.from(countByName.entries())
+    .filter(([name, count]) => !!name && !refNames.has(name) && count > 0)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, count], i) => ({
       id: -1 - i,
       name,
       nameEs: name,
@@ -1169,9 +1196,10 @@ export async function getConditions() {
       sortOrder: 9000 + i,
       isActive: true,
       createdAt: new Date(),
+      count,
     }));
 
-  return [...refConds, ...extras];
+  return [...liveRefs, ...extras];
 }
 
 export async function getStates() {

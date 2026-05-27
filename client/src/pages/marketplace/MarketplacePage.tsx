@@ -251,6 +251,7 @@ function FilterSidebar({
   //  1. Standard "20'"-style: matches "20'", "20 ft", "20ft", "20 ft 6 in", etc.
   //  2. Non-standard range "30-39 ft": expands to all integer sizes in the range, excluding standards.
   //  3. Extendable combos with apostrophe "20-40'": exact match.
+  // Note: removed "40-45-48-53'" because no listings currently use it (dead option in dropdown).
   const sizes = [
     "20'",
     "20-29 ft",
@@ -265,7 +266,6 @@ function FilterSidebar({
     "20-40'",
     "40-45'",
     "40-45-48'",
-    "40-45-48-53'",
   ];
 
   return (
@@ -284,9 +284,10 @@ function FilterSidebar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t('allTypes')}</SelectItem>
-            {chassisTypes.map((type) => (
+            {chassisTypes.map((type: any) => (
               <SelectItem key={type.id} value={type.name}>
-                {lang === 'es' ? type.nameEs || type.name : type.name}
+                {(lang === 'es' ? type.nameEs || type.name : type.name)}
+                {typeof type.count === 'number' ? ` (${type.count})` : ''}
               </SelectItem>
             ))}
           </SelectContent>
@@ -328,9 +329,10 @@ function FilterSidebar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t('allConditions')}</SelectItem>
-            {conditions.map((cond) => (
+            {conditions.map((cond: any) => (
               <SelectItem key={cond.id} value={cond.name}>
-                {lang === 'es' ? cond.nameEs || cond.name : cond.name}
+                {(lang === 'es' ? cond.nameEs || cond.name : cond.name)}
+                {typeof cond.count === 'number' ? ` (${cond.count})` : ''}
               </SelectItem>
             ))}
           </SelectContent>
