@@ -168,6 +168,9 @@ router.get('/listings', optionalAuth, async (req: AuthenticatedRequest, res: Res
       yearMax: req.query.yearMax ? Number(req.query.yearMax) : undefined,
       axleConfig: req.query.axleConfig as string,
       suspension: req.query.suspension as string,
+      wheels: req.query.wheels as string,
+      configuration: req.query.configuration as string,
+      feature: req.query.feature as string,
       sortBy: req.query.sortBy as any,
       page: req.query.page ? Number(req.query.page) : 1,
       limit: req.query.limit ? Math.min(Number(req.query.limit), 50) : 20,
@@ -315,6 +318,39 @@ router.get('/reference/suspensions', async (_req: Request, res: Response) => {
   } catch (error) {
     console.error('Error fetching suspensions:', error);
     res.status(500).json({ message: 'Failed to fetch suspensions' });
+  }
+});
+
+// Wheels (Steel / Aluminum) sourced from specs.
+router.get('/reference/wheels', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getWheels();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching wheels:', error);
+    res.status(500).json({ message: 'Failed to fetch wheels' });
+  }
+});
+
+// Configuration (Fixed / Sliding / Extendable) sourced from specs.
+router.get('/reference/configurations', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getConfigurations();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching configurations:', error);
+    res.status(500).json({ message: 'Failed to fetch configurations' });
+  }
+});
+
+// Feature flags (Gooseneck, Lift Axle, Pintle Hook, ...) from specs.features array.
+router.get('/reference/features', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getFeaturesList();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching features:', error);
+    res.status(500).json({ message: 'Failed to fetch features' });
   }
 });
 

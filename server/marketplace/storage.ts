@@ -98,6 +98,9 @@ export interface ListingFilters {
   yearMax?: number;
   axleConfig?: string;   // matches specs->>'axleConfig'
   suspension?: string;   // matches specs->>'suspension'
+  wheels?: string;       // matches specs->>'wheels' (Steel/Aluminum)
+  configuration?: string;// matches specs->>'configuration' (Fixed/Sliding/Extendable)
+  feature?: string;      // matches a single value inside specs->'features' jsonb array
   sortBy?: 'price_asc' | 'price_desc' | 'date_asc' | 'date_desc' | 'views';
   page?: number;
   limit?: number;
@@ -122,6 +125,9 @@ export async function getListings(filters: ListingFilters = {}) {
     yearMax,
     axleConfig,
     suspension,
+    wheels,
+    configuration,
+    feature,
     sortBy = 'date_desc',
     page = 1,
     limit = 20
@@ -192,6 +198,16 @@ export async function getListings(filters: ListingFilters = {}) {
   }
   if (suspension && suspension !== 'all') {
     conditions.push(sql`specs->>'suspension' = ${suspension}`);
+  }
+  if (wheels && wheels !== 'all') {
+    conditions.push(sql`specs->>'wheels' = ${wheels}`);
+  }
+  if (configuration && configuration !== 'all') {
+    conditions.push(sql`specs->>'configuration' = ${configuration}`);
+  }
+  // Feature is matched against the `features` jsonb array inside specs.
+  if (feature && feature !== 'all') {
+    conditions.push(sql`specs->'features' ? ${feature}`);
   }
 
   // Seller filter
@@ -1313,6 +1329,65 @@ export async function getSuspensions() {
     .orderBy(sql`count(*) desc`);
 
   return rows.filter(r => !!r.name).map(r => ({ name: r.name, count: Number(r.count) || 0 }));
+}
+
+/** Distinct values present in `specs->>'wheels'` (Steel / Aluminum) + counts. */
+export async function getWheels() {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: sql<string>`specs->>'wheels'`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`specs ? 'wheels'`,
+    ))
+    .groupBy(sql`specs->>'wheels'`)
+    .orderBy(sql`count(*) desc`);
+  return rows.filter(r => !!r.name).map(r => ({ name: r.name, count: Number(r.count) || 0 }));
+}
+
+/** Distinct values present in `specs->>'configuration'` (Fixed / Sliding / Extendable) + counts. */
+export async function getConfigurations() {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: sql<string>`specs->>'configuration'`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`specs ? 'configuration'`,
+    ))
+    .groupBy(sql`specs->>'configuration'`)
+    .orderBy(sql`count(*) desc`);
+  return rows.filter(r => !!r.name).map(r => ({ name: r.name, count: Number(r.count) || 0 }));
+}
+
+/**
+ * Distinct feature flags present in the `specs.features` jsonb array, with counts.
+ * Uses jsonb_array_elements_text to flatten array entries across listings.
+ */
+export async function getFeaturesList() {
+  const db = getMarketplaceDb();
+  const rows = await db.execute(sql`
+    select feature_name as name, count(*)::int as count
+    from marketplace_listings,
+         jsonb_array_elements_text(specs->'features') as feature_name
+    where status = 'active' and specs ? 'features'
+    group by feature_name
+    order by count(*) desc
+  `);
+  // pg/Drizzle's execute returns { rows } on neon-serverless driver
+  const out: { name: string; count: number }[] = [];
+  const list: any[] = Array.isArray((rows as any).rows) ? (rows as any).rows : (rows as any);
+  for (const r of list) {
+    if (r?.name) out.push({ name: String(r.name), count: Number(r.count) || 0 });
+  }
+  return out;
 }
 
 /** Min/max year present in active listings (for slider/dropdown ranges). */

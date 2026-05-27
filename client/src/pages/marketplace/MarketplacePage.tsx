@@ -48,6 +48,9 @@ import {
   getAxleConfigs,
   getSuspensions,
   getYearRange,
+  getWheels,
+  getConfigurations,
+  getFeatures,
   toggleFavorite,
   isAuthenticated,
   type MarketplaceListing,
@@ -261,6 +264,9 @@ function FilterSidebar({
   manufacturers,
   axleConfigs,
   suspensions,
+  wheels,
+  configurations,
+  features,
   yearRange,
   onClear
 }: {
@@ -272,6 +278,9 @@ function FilterSidebar({
   manufacturers: { name: string; count: number }[];
   axleConfigs: { name: string; count: number }[];
   suspensions: { name: string; count: number }[];
+  wheels: { name: string; count: number }[];
+  configurations: { name: string; count: number }[];
+  features: { name: string; count: number }[];
   yearRange?: { minYear: number | null; maxYear: number | null };
   onClear: () => void;
 }) {
@@ -494,6 +503,81 @@ function FilterSidebar({
         </div>
       )}
 
+      {/* Wheels (Steel / Aluminum) */}
+      {wheels.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Ruedas' : 'Wheels'}
+          </label>
+          <Select
+            value={filters.wheels || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, wheels: value === 'all' ? undefined : value, page: 1 })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={lang === 'es' ? 'Todas' : 'All'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{lang === 'es' ? 'Todas' : 'All'}</SelectItem>
+              {wheels.map((w: any) => (
+                <SelectItem key={w.name} value={w.name}>
+                  {w.name}{typeof w.count === 'number' ? ` (${w.count})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Configuration (Fixed / Sliding / Extendable) */}
+      {configurations.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Configuración' : 'Configuration'}
+          </label>
+          <Select
+            value={filters.configuration || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, configuration: value === 'all' ? undefined : value, page: 1 })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={lang === 'es' ? 'Todas' : 'All'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{lang === 'es' ? 'Todas' : 'All'}</SelectItem>
+              {configurations.map((c: any) => (
+                <SelectItem key={c.name} value={c.name}>
+                  {c.name}{typeof c.count === 'number' ? ` (${c.count})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Feature flags (Gooseneck, Lift Axle, Pintle Hook, ISO Tank, ...) */}
+      {features.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Característica' : 'Feature'}
+          </label>
+          <Select
+            value={filters.feature || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, feature: value === 'all' ? undefined : value, page: 1 })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={lang === 'es' ? 'Todas' : 'All'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{lang === 'es' ? 'Todas' : 'All'}</SelectItem>
+              {features.map((f: any) => (
+                <SelectItem key={f.name} value={f.name}>
+                  {f.name}{typeof f.count === 'number' ? ` (${f.count})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       {/* Price Range */}
       <div>
         <label className="text-sm font-medium text-gray-700 mb-2 block">
@@ -541,6 +625,9 @@ function parseFiltersFromUrl(): Omit<ListingFilters, 'page'> {
   if (params.get('yearMax')) parsed.yearMax = Number(params.get('yearMax'));
   if (params.get('axleConfig')) parsed.axleConfig = params.get('axleConfig')!;
   if (params.get('suspension')) parsed.suspension = params.get('suspension')!;
+  if (params.get('wheels')) parsed.wheels = params.get('wheels')!;
+  if (params.get('configuration')) parsed.configuration = params.get('configuration')!;
+  if (params.get('feature')) parsed.feature = params.get('feature')!;
   if (params.get('sortBy')) parsed.sortBy = params.get('sortBy')!;
   return parsed;
 }
@@ -559,6 +646,9 @@ function filtersToQueryString(f: Omit<ListingFilters, 'page'>): string {
   if (f.yearMax) params.set('yearMax', String(f.yearMax));
   if (f.axleConfig) params.set('axleConfig', f.axleConfig);
   if (f.suspension) params.set('suspension', f.suspension);
+  if (f.wheels) params.set('wheels', f.wheels);
+  if (f.configuration) params.set('configuration', f.configuration);
+  if (f.feature) params.set('feature', f.feature);
   if (f.sortBy && f.sortBy !== 'date_desc') params.set('sortBy', f.sortBy);
   const qs = params.toString();
   return qs ? `?${qs}` : '';
@@ -663,6 +753,21 @@ export default function MarketplacePage() {
     queryFn: getYearRange,
   });
 
+  const { data: wheels = [] } = useQuery({
+    queryKey: ['wheels'],
+    queryFn: getWheels,
+  });
+
+  const { data: configurations = [] } = useQuery({
+    queryKey: ['configurations'],
+    queryFn: getConfigurations,
+  });
+
+  const { data: features = [] } = useQuery({
+    queryKey: ['features'],
+    queryFn: getFeatures,
+  });
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setFilters({ ...filters, search: searchQuery });
@@ -676,7 +781,8 @@ export default function MarketplacePage() {
   const hasActiveFilters = filters.chassisType || filters.chassisSize || filters.condition ||
     filters.state || filters.minPrice || filters.maxPrice || filters.search ||
     filters.manufacturer || filters.yearMin || filters.yearMax ||
-    filters.axleConfig || filters.suspension;
+    filters.axleConfig || filters.suspension ||
+    filters.wheels || filters.configuration || filters.feature;
 
   // SEO translations
   const seoContent = {
@@ -789,6 +895,9 @@ export default function MarketplacePage() {
                   manufacturers={manufacturers}
                   axleConfigs={axleConfigs}
                   suspensions={suspensions}
+                  wheels={wheels}
+                  configurations={configurations}
+                  features={features}
                   yearRange={yearRange}
                   onClear={clearFilters}
                 />
@@ -825,6 +934,9 @@ export default function MarketplacePage() {
                           manufacturers={manufacturers}
                           axleConfigs={axleConfigs}
                           suspensions={suspensions}
+                          wheels={wheels}
+                          configurations={configurations}
+                          features={features}
                           yearRange={yearRange}
                           onClear={clearFilters}
                         />

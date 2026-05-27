@@ -94,6 +94,9 @@ export interface ListingFilters {
   yearMax?: number;
   axleConfig?: string;
   suspension?: string;
+  wheels?: string;
+  configuration?: string;
+  feature?: string;
   sortBy?: string;
   page?: number;
   limit?: number;
@@ -404,6 +407,18 @@ export async function getAxleConfigs(): Promise<RefCount[]> {
 
 export async function getSuspensions(): Promise<RefCount[]> {
   return apiRequest('/reference/suspensions');
+}
+
+export async function getWheels(): Promise<RefCount[]> {
+  return apiRequest('/reference/wheels');
+}
+
+export async function getConfigurations(): Promise<RefCount[]> {
+  return apiRequest('/reference/configurations');
+}
+
+export async function getFeatures(): Promise<RefCount[]> {
+  return apiRequest('/reference/features');
 }
 
 export async function getYearRange(): Promise<{ minYear: number | null; maxYear: number | null }> {
