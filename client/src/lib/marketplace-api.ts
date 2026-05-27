@@ -88,6 +88,12 @@ export interface ListingFilters {
   minPrice?: number;
   maxPrice?: number;
   search?: string;
+  // Structured-spec / metadata filters added with the specs-extractor backfill
+  manufacturer?: string;
+  yearMin?: number;
+  yearMax?: number;
+  axleConfig?: string;
+  suspension?: string;
   sortBy?: string;
   page?: number;
   limit?: number;
@@ -384,6 +390,24 @@ export async function getConditions(): Promise<Condition[]> {
 
 export async function getStates(): Promise<string[]> {
   return apiRequest('/reference/states');
+}
+
+export interface RefCount { name: string; count: number; }
+
+export async function getManufacturers(limit = 30): Promise<RefCount[]> {
+  return apiRequest(`/reference/manufacturers?limit=${limit}`);
+}
+
+export async function getAxleConfigs(): Promise<RefCount[]> {
+  return apiRequest('/reference/axle-configs');
+}
+
+export async function getSuspensions(): Promise<RefCount[]> {
+  return apiRequest('/reference/suspensions');
+}
+
+export async function getYearRange(): Promise<{ minYear: number | null; maxYear: number | null }> {
+  return apiRequest('/reference/year-range');
 }
 
 // =============================================
