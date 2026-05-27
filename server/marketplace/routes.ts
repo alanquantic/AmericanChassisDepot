@@ -1300,6 +1300,37 @@ router.post('/admin/bulk-import', authenticateToken, requireAdmin, async (req: A
 });
 
 // =============================================
+// ADMIN: BACKFILL LISTING SPECS
+// =============================================
+// One-shot (idempotent) endpoint that walks every active listing, parses
+// title + description + tags through the specs-extractor, and writes the
+// resulting structured spec to the `specs` jsonb column. Safe to re-run.
+//
+// Body (optional JSON):
+//   { "overwrite"?: boolean, "dryRun"?: boolean, "limit"?: number }
+router.post('/admin/listings/backfill-specs', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const body = (req.body || {}) as { overwrite?: boolean; dryRun?: boolean; limit?: number };
+    const overwrite = body.overwrite === true;
+    const dryRun = body.dryRun === true;
+    const limit = Number.isFinite(body.limit) && body.limit && body.limit > 0 ? Number(body.limit) : undefined;
+
+    const t0 = Date.now();
+    const result = await storage.backfillListingSpecs({ overwrite, dryRun, limit });
+    const elapsedMs = Date.now() - t0;
+
+    console.log(`[Backfill Specs] admin=${req.user!.id} dryRun=${dryRun} overwrite=${overwrite} ` +
+      `scanned=${result.scanned} updated=${result.updated} skip_existing=${result.skipped_existing} ` +
+      `skip_no_data=${result.skipped_no_extraction} errors=${result.errors.length} elapsed=${elapsedMs}ms`);
+
+    res.json({ ok: true, elapsedMs, options: { overwrite, dryRun, limit }, ...result });
+  } catch (error: any) {
+    console.error('Backfill specs error:', error);
+    res.status(500).json({ message: 'Backfill failed', error: error?.message || String(error) });
+  }
+});
+
+// =============================================
 // SELLER MANAGEMENT ROUTES (Enhanced)
 // =============================================
 

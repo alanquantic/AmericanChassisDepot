@@ -1885,3 +1885,109 @@ export async function getSellerListingsWithStats(sellerId: number, filters: {
     }
   };
 }
+
+// =============================================
+// SPECS BACKFILL
+// =============================================
+
+import { extractSpecs, hasAnySpec } from './specs-extractor.js';
+
+export interface BackfillSpecsOptions {
+  /** If true, also overwrite specs that are already populated. Default false. */
+  overwrite?: boolean;
+  /** If true, only return what would be updated without writing. Default false. */
+  dryRun?: boolean;
+  /** Limit (for testing). 0/undefined = all. */
+  limit?: number;
+}
+
+export interface BackfillSpecsResult {
+  scanned: number;
+  updated: number;
+  skipped_no_extraction: number;
+  skipped_existing: number;
+  errors: { id: number; listingNumber?: string; error: string }[];
+  samples: { id: number; listingNumber: string; title: string; specs: any }[];
+}
+
+/**
+ * Walk every active listing, run the specs extractor, and write the result
+ * to the `specs` jsonb column. Idempotent; safe to re-run.
+ */
+export async function backfillListingSpecs(opts: BackfillSpecsOptions = {}): Promise<BackfillSpecsResult> {
+  const db = getMarketplaceDb();
+  const result: BackfillSpecsResult = {
+    scanned: 0, updated: 0, skipped_no_extraction: 0, skipped_existing: 0, errors: [], samples: [],
+  };
+
+  // Fetch all active listings with the inputs we need
+  const query = db
+    .select({
+      id: marketplaceListings.id,
+      listingNumber: marketplaceListings.listingNumber,
+      title: marketplaceListings.title,
+      description: marketplaceListings.description,
+      descriptionEs: marketplaceListings.descriptionEs,
+      tags: marketplaceListings.tags,
+      chassisType: marketplaceListings.chassisType,
+      specs: marketplaceListings.specs,
+    })
+    .from(marketplaceListings)
+    .where(eq(marketplaceListings.status, 'active'));
+
+  const rows = opts.limit ? await query.limit(opts.limit) : await query;
+  result.scanned = rows.length;
+
+  for (const row of rows) {
+    try {
+      const existing = (row.specs as Record<string, any>) || {};
+      const hasExisting = Object.keys(existing).length > 0;
+
+      if (hasExisting && !opts.overwrite) {
+        result.skipped_existing++;
+        continue;
+      }
+
+      const extracted = extractSpecs({
+        title: row.title,
+        description: row.description,
+        descriptionEs: row.descriptionEs,
+        tags: row.tags,
+        chassisType: row.chassisType,
+      });
+
+      if (!hasAnySpec(extracted)) {
+        result.skipped_no_extraction++;
+        continue;
+      }
+
+      // Merge: extracted on top of existing (when overwriting, extracted wins)
+      const merged = opts.overwrite ? { ...existing, ...extracted } : { ...extracted, ...existing };
+
+      if (!opts.dryRun) {
+        await db
+          .update(marketplaceListings)
+          .set({ specs: merged })
+          .where(eq(marketplaceListings.id, row.id));
+      }
+      result.updated++;
+
+      if (result.samples.length < 5) {
+        result.samples.push({
+          id: row.id,
+          listingNumber: row.listingNumber || '',
+          title: row.title || '',
+          specs: merged,
+        });
+      }
+    } catch (e: any) {
+      result.errors.push({
+        id: row.id,
+        listingNumber: row.listingNumber || undefined,
+        error: e?.message || String(e),
+      });
+    }
+  }
+
+  return result;
+}
