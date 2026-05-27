@@ -163,6 +163,11 @@ router.get('/listings', optionalAuth, async (req: AuthenticatedRequest, res: Res
       minPrice: req.query.minPrice ? Number(req.query.minPrice) : undefined,
       maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
       search: req.query.search as string,
+      manufacturer: req.query.manufacturer as string,
+      yearMin: req.query.yearMin ? Number(req.query.yearMin) : undefined,
+      yearMax: req.query.yearMax ? Number(req.query.yearMax) : undefined,
+      axleConfig: req.query.axleConfig as string,
+      suspension: req.query.suspension as string,
       sortBy: req.query.sortBy as any,
       page: req.query.page ? Number(req.query.page) : 1,
       limit: req.query.limit ? Math.min(Number(req.query.limit), 50) : 20,
@@ -276,6 +281,51 @@ router.get('/reference/states', async (_req: Request, res: Response) => {
   } catch (error) {
     console.error('Error fetching states:', error);
     res.status(500).json({ message: 'Failed to fetch states' });
+  }
+});
+
+// Top manufacturers among active listings (capped by ?limit, default 30).
+router.get('/reference/manufacturers', async (req: Request, res: Response) => {
+  try {
+    const limit = req.query.limit ? Math.min(Math.max(Number(req.query.limit), 1), 100) : 30;
+    const manufacturers = await storage.getManufacturers(limit);
+    res.json(manufacturers);
+  } catch (error) {
+    console.error('Error fetching manufacturers:', error);
+    res.status(500).json({ message: 'Failed to fetch manufacturers' });
+  }
+});
+
+// Distinct axle configurations sourced from specs (after the backfill is run).
+router.get('/reference/axle-configs', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getAxleConfigs();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching axle configs:', error);
+    res.status(500).json({ message: 'Failed to fetch axle configs' });
+  }
+});
+
+// Distinct suspension types sourced from specs.
+router.get('/reference/suspensions', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getSuspensions();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching suspensions:', error);
+    res.status(500).json({ message: 'Failed to fetch suspensions' });
+  }
+});
+
+// Min/max year present in active listings — frontend uses this for the year slider.
+router.get('/reference/year-range', async (_req: Request, res: Response) => {
+  try {
+    const range = await storage.getYearRange();
+    res.json(range);
+  } catch (error) {
+    console.error('Error fetching year range:', error);
+    res.status(500).json({ message: 'Failed to fetch year range' });
   }
 });
 

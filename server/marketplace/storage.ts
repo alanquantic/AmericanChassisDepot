@@ -92,6 +92,12 @@ export interface ListingFilters {
   sellerId?: number;
   featured?: boolean;
   search?: string;
+  // New filters backed by columns / specs jsonb populated by the extractor
+  manufacturer?: string;
+  yearMin?: number;
+  yearMax?: number;
+  axleConfig?: string;   // matches specs->>'axleConfig'
+  suspension?: string;   // matches specs->>'suspension'
   sortBy?: 'price_asc' | 'price_desc' | 'date_asc' | 'date_desc' | 'views';
   page?: number;
   limit?: number;
@@ -111,6 +117,11 @@ export async function getListings(filters: ListingFilters = {}) {
     sellerId,
     featured,
     search,
+    manufacturer,
+    yearMin,
+    yearMax,
+    axleConfig,
+    suspension,
     sortBy = 'date_desc',
     page = 1,
     limit = 20
@@ -160,6 +171,27 @@ export async function getListings(filters: ListingFilters = {}) {
   }
   if (maxPrice !== undefined) {
     conditions.push(lte(marketplaceListings.pricePerUnit, maxPrice.toString()));
+  }
+
+  // Manufacturer filter (case-insensitive exact match)
+  if (manufacturer && manufacturer !== 'all') {
+    conditions.push(ilike(marketplaceListings.manufacturer, manufacturer));
+  }
+
+  // Year range
+  if (yearMin !== undefined && Number.isFinite(yearMin)) {
+    conditions.push(gte(marketplaceListings.year, yearMin));
+  }
+  if (yearMax !== undefined && Number.isFinite(yearMax)) {
+    conditions.push(lte(marketplaceListings.year, yearMax));
+  }
+
+  // Spec filters (specs jsonb populated by the extractor / backfill)
+  if (axleConfig && axleConfig !== 'all') {
+    conditions.push(sql`specs->>'axleConfig' = ${axleConfig}`);
+  }
+  if (suspension && suspension !== 'all') {
+    conditions.push(sql`specs->>'suspension' = ${suspension}`);
   }
 
   // Seller filter
@@ -219,6 +251,12 @@ export async function getListings(filters: ListingFilters = {}) {
       chassisType: marketplaceListings.chassisType,
       chassisSize: marketplaceListings.chassisSize,
       condition: marketplaceListings.condition,
+      // Newly surfaced metadata so cards can show year/manufacturer/tags
+      // without a separate detail fetch.
+      manufacturer: marketplaceListings.manufacturer,
+      year: marketplaceListings.year,
+      tags: marketplaceListings.tags,
+      specs: marketplaceListings.specs,
       state: marketplaceListings.state,
       city: marketplaceListings.city,
       quantity: marketplaceListings.quantity,
@@ -1204,7 +1242,7 @@ export async function getConditions() {
 
 export async function getStates() {
   const db = getMarketplaceDb();
-  
+
   const result = await db
     .selectDistinct({ state: marketplaceListings.state })
     .from(marketplaceListings)
@@ -1212,6 +1250,89 @@ export async function getStates() {
     .orderBy(asc(marketplaceListings.state));
 
   return result.map(r => r.state);
+}
+
+/**
+ * Top manufacturers (by listing count) among active listings.
+ * Caller can pass `limit` to cap the result.
+ */
+export async function getManufacturers(limit = 30) {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: marketplaceListings.manufacturer,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`${marketplaceListings.manufacturer} is not null and trim(${marketplaceListings.manufacturer}) <> ''`,
+    ))
+    .groupBy(marketplaceListings.manufacturer)
+    .orderBy(sql`count(*) desc`)
+    .limit(limit);
+
+  return rows
+    .filter(r => !!r.name)
+    .map(r => ({ name: r.name as string, count: Number(r.count) || 0 }));
+}
+
+/** Distinct values present in `specs->>'axleConfig'` for active listings + counts. */
+export async function getAxleConfigs() {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: sql<string>`specs->>'axleConfig'`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`specs ? 'axleConfig'`,
+    ))
+    .groupBy(sql`specs->>'axleConfig'`)
+    .orderBy(sql`count(*) desc`);
+
+  return rows.filter(r => !!r.name).map(r => ({ name: r.name, count: Number(r.count) || 0 }));
+}
+
+/** Distinct values present in `specs->>'suspension'` for active listings + counts. */
+export async function getSuspensions() {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: sql<string>`specs->>'suspension'`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`specs ? 'suspension'`,
+    ))
+    .groupBy(sql`specs->>'suspension'`)
+    .orderBy(sql`count(*) desc`);
+
+  return rows.filter(r => !!r.name).map(r => ({ name: r.name, count: Number(r.count) || 0 }));
+}
+
+/** Min/max year present in active listings (for slider/dropdown ranges). */
+export async function getYearRange() {
+  const db = getMarketplaceDb();
+  const [row] = await db
+    .select({
+      minYear: sql<number>`min(year)::int`,
+      maxYear: sql<number>`max(year)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`year is not null`,
+    ));
+
+  return {
+    minYear: row?.minYear ?? null,
+    maxYear: row?.maxYear ?? null,
+  };
 }
 
 // =============================================
