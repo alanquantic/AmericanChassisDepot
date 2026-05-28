@@ -1040,10 +1040,74 @@ export default function MarketplacePage() {
                   {filters.search && (
                     <Badge variant="secondary" className="pl-3">
                       "{filters.search}"
-                      <button 
+                      <button
                         onClick={() => { setFilters({ ...filters, search: undefined }); setSearchQuery(''); }}
                         className="ml-2 hover:text-red-500"
                       >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.manufacturer && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.manufacturer}
+                      <button onClick={() => setFilters({ ...filters, manufacturer: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {(filters.yearMin || filters.yearMax) && (
+                    <Badge variant="secondary" className="pl-3">
+                      {lang === 'es' ? 'Año' : 'Year'}: {filters.yearMin || '*'}–{filters.yearMax || '*'}
+                      <button onClick={() => setFilters({ ...filters, yearMin: undefined, yearMax: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.axleConfig && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.axleConfig}
+                      <button onClick={() => setFilters({ ...filters, axleConfig: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.suspension && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.suspension}
+                      <button onClick={() => setFilters({ ...filters, suspension: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.wheels && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.wheels}
+                      <button onClick={() => setFilters({ ...filters, wheels: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.configuration && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.configuration}
+                      <button onClick={() => setFilters({ ...filters, configuration: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.feature && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.feature}
+                      <button onClick={() => setFilters({ ...filters, feature: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {(filters.minPrice || filters.maxPrice) && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.minPrice ? `$${filters.minPrice.toLocaleString()}` : '$0'}–{filters.maxPrice ? `$${filters.maxPrice.toLocaleString()}` : '∞'}
+                      <button onClick={() => setFilters({ ...filters, minPrice: undefined, maxPrice: undefined })} className="ml-2 hover:text-red-500">
                         <X className="w-3 h-3" />
                       </button>
                     </Badge>
