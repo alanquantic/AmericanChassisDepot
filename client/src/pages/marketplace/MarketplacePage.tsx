@@ -881,11 +881,12 @@ export default function MarketplacePage() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Desktop Sidebar */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
-              <div className="sticky top-4 bg-white rounded-xl p-6 shadow-sm border">
-                <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <div className="sticky top-4 bg-white rounded-xl shadow-sm border flex flex-col max-h-[calc(100vh-2rem)]">
+                <h2 className="font-semibold text-lg flex items-center gap-2 p-6 pb-4 border-b flex-shrink-0">
                   <Filter className="w-5 h-5" />
                   {t('filters')}
                 </h2>
+                <div className="overflow-y-auto p-6 pt-4">
                 <FilterSidebar
                   filters={filters}
                   setFilters={setFilters}
@@ -901,6 +902,7 @@ export default function MarketplacePage() {
                   yearRange={yearRange}
                   onClear={clearFilters}
                 />
+                </div>
               </div>
             </aside>
 
@@ -920,11 +922,11 @@ export default function MarketplacePage() {
                         )}
                       </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="w-80">
-                      <SheetHeader>
+                    <SheetContent side="left" className="w-80 flex flex-col">
+                      <SheetHeader className="flex-shrink-0">
                         <SheetTitle>{t('filters')}</SheetTitle>
                       </SheetHeader>
-                      <div className="mt-6">
+                      <div className="mt-6 overflow-y-auto flex-1 pr-1 -mr-2">
                         <FilterSidebar
                           filters={filters}
                           setFilters={setFilters}
