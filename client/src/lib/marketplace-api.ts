@@ -961,6 +961,7 @@ export interface CrmLead {
   message: string | null;
   notes: string | null;
   metadata: Record<string, any>;
+  archived: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -969,6 +970,7 @@ export async function getCrmLeads(filters: {
   status?: string;
   source?: string;
   search?: string;
+  archived?: boolean;
   page?: number;
   limit?: number;
 } = {}): Promise<{ leads: CrmLead[]; total: number; page: number; totalPages: number }> {
@@ -990,4 +992,50 @@ export async function updateCrmLead(id: number, data: { status?: string; notes?:
     method: 'PUT',
     body: JSON.stringify(data),
   });
+}
+
+export async function deleteCrmLead(id: number): Promise<{ message: string }> {
+  return apiRequest(`/admin/crm/leads/${id}`, { method: 'DELETE' });
+}
+
+export async function archiveCrmLead(id: number, archived: boolean): Promise<{ message: string; lead: CrmLead }> {
+  return apiRequest(`/admin/crm/leads/${id}/archive`, {
+    method: 'PATCH',
+    body: JSON.stringify({ archived }),
+  });
+}
+
+export interface CrmAnalytics {
+  total: number;
+  byStatus: Record<string, number>;
+  bySource: Record<string, number>;
+  perDay: { date: string; count: number }[];
+}
+
+export async function getCrmAnalytics(): Promise<CrmAnalytics> {
+  return apiRequest('/admin/crm/analytics');
+}
+
+// Downloads a CSV of the leads matching the given filters (auth-aware, no pagination)
+export async function exportCrmLeads(
+  filters: { status?: string; source?: string; search?: string; archived?: boolean } = {}
+): Promise<void> {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') params.append(key, String(value));
+  });
+  const token = localStorage.getItem('marketplace_access_token');
+  const res = await fetch(`${API_BASE}/admin/crm/leads/export?${params.toString()}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) throw new Error('Export failed');
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `crm-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
 }

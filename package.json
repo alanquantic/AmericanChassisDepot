@@ -10,6 +10,7 @@
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "db:push:marketplace": "drizzle-kit push --config=drizzle-marketplace.config.ts",
+    "db:crm": "tsx scripts/activate-crm.ts",
     "seed:admin": "tsx server/seed-super-admin.ts"
   },
   "dependencies": {

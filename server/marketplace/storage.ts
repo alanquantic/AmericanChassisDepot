@@ -2103,6 +2103,7 @@ export async function getCrmLeads(filters: {
   status?: string;
   source?: string;
   search?: string;
+  archived?: boolean;
   page?: number;
   limit?: number;
 } = {}): Promise<{ leads: CrmLead[]; total: number; page: number; totalPages: number }> {
@@ -2127,6 +2128,9 @@ export async function getCrmLeads(filters: {
       )
     );
   }
+
+  // Hide archived leads by default; pass archived=true to browse the archive
+  conditions.push(eq(crmLeads.archived, filters.archived === true));
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
@@ -2169,11 +2173,13 @@ export async function getCrmLeadStats(): Promise<{ byStatus: Record<string, numb
   const statusCounts = await db
     .select({ status: crmLeads.status, count: sql<number>`count(*)` })
     .from(crmLeads)
+    .where(eq(crmLeads.archived, false))
     .groupBy(crmLeads.status);
 
   const sourceCounts = await db
     .select({ source: crmLeads.source, count: sql<number>`count(*)` })
     .from(crmLeads)
+    .where(eq(crmLeads.archived, false))
     .groupBy(crmLeads.source);
 
   const byStatus: Record<string, number> = {};
@@ -2189,6 +2195,99 @@ export async function getCrmLeadStats(): Promise<{ byStatus: Record<string, numb
   }
 
   return { byStatus, bySource, total };
+}
+
+export async function deleteCrmLead(id: number): Promise<boolean> {
+  const db = getMarketplaceDb();
+  const result = await db.delete(crmLeads).where(eq(crmLeads.id, id)).returning({ id: crmLeads.id });
+  return result.length > 0;
+}
+
+export async function setCrmLeadArchived(id: number, archived: boolean): Promise<CrmLead | null> {
+  const db = getMarketplaceDb();
+  const [lead] = await db
+    .update(crmLeads)
+    .set({ archived, updatedAt: new Date() })
+    .where(eq(crmLeads.id, id))
+    .returning();
+  return lead || null;
+}
+
+// All matching leads (no pagination) for CSV export
+export async function getCrmLeadsForExport(filters: {
+  status?: string;
+  source?: string;
+  search?: string;
+  archived?: boolean;
+} = {}): Promise<CrmLead[]> {
+  const db = getMarketplaceDb();
+  const conditions: any[] = [];
+  if (filters.status) conditions.push(eq(crmLeads.status, filters.status));
+  if (filters.source) conditions.push(eq(crmLeads.source, filters.source));
+  if (filters.search) {
+    conditions.push(
+      or(
+        ilike(crmLeads.name, `%${filters.search}%`),
+        ilike(crmLeads.email, `%${filters.search}%`),
+        ilike(crmLeads.company, `%${filters.search}%`),
+      )
+    );
+  }
+  conditions.push(eq(crmLeads.archived, filters.archived === true));
+  return db
+    .select()
+    .from(crmLeads)
+    .where(and(...conditions))
+    .orderBy(desc(crmLeads.createdAt));
+}
+
+// Dashboard analytics: pipeline breakdown + last-30-days trend (non-archived)
+export async function getCrmAnalytics(): Promise<{
+  total: number;
+  byStatus: Record<string, number>;
+  bySource: Record<string, number>;
+  perDay: { date: string; count: number }[];
+}> {
+  const db = getMarketplaceDb();
+
+  const statusCounts = await db
+    .select({ status: crmLeads.status, count: sql<number>`count(*)` })
+    .from(crmLeads)
+    .where(eq(crmLeads.archived, false))
+    .groupBy(crmLeads.status);
+
+  const sourceCounts = await db
+    .select({ source: crmLeads.source, count: sql<number>`count(*)` })
+    .from(crmLeads)
+    .where(eq(crmLeads.archived, false))
+    .groupBy(crmLeads.source);
+
+  const perDayRows = await db
+    .select({
+      date: sql<string>`to_char(${crmLeads.createdAt}, 'YYYY-MM-DD')`,
+      count: sql<number>`count(*)`,
+    })
+    .from(crmLeads)
+    .where(and(
+      eq(crmLeads.archived, false),
+      gte(crmLeads.createdAt, sql`now() - interval '30 days'`),
+    ))
+    .groupBy(sql`to_char(${crmLeads.createdAt}, 'YYYY-MM-DD')`)
+    .orderBy(sql`to_char(${crmLeads.createdAt}, 'YYYY-MM-DD')`);
+
+  const byStatus: Record<string, number> = {};
+  let total = 0;
+  for (const row of statusCounts) {
+    byStatus[row.status] = Number(row.count);
+    total += Number(row.count);
+  }
+  const bySource: Record<string, number> = {};
+  for (const row of sourceCounts) {
+    bySource[row.source] = Number(row.count);
+  }
+  const perDay = perDayRows.map((r) => ({ date: r.date, count: Number(r.count) }));
+
+  return { total, byStatus, bySource, perDay };
 }
 
 // =============================================

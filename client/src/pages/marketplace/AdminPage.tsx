@@ -29,8 +29,17 @@ import {
   MapPin,
   Calendar,
   ImageIcon,
-  RefreshCw
+  RefreshCw,
+  Archive,
+  ArchiveRestore,
+  Download,
+  BarChart3
 } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
+  LineChart, Line, PieChart, Pie, Cell,
+} from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -96,11 +105,16 @@ import {
   getCrmLeads,
   getCrmStats,
   updateCrmLead,
+  deleteCrmLead,
+  archiveCrmLead,
+  getCrmAnalytics,
+  exportCrmLeads,
   type AdminUser,
   type UserFilters,
   type MarketplaceListing,
   type AdminOffer,
   type CrmLead,
+  type CrmAnalytics,
 } from '@/lib/marketplace-api';
 import { Switch } from '@/components/ui/switch';
 import { t, formatPrice, formatDate } from '@/lib/marketplace-i18n';
@@ -147,7 +161,8 @@ export default function AdminPage() {
   const [offerSearchTerm, setOfferSearchTerm] = useState('');
 
   // CRM states
-  const [crmFilters, setCrmFilters] = useState<{ status?: string; source?: string; search?: string; page: number }>({ page: 1 });
+  const [crmFilters, setCrmFilters] = useState<{ status?: string; source?: string; search?: string; archived?: boolean; page: number }>({ page: 1 });
+  const [crmExporting, setCrmExporting] = useState(false);
   const [crmSearchTerm, setCrmSearchTerm] = useState('');
   const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null);
   const [leadNotes, setLeadNotes] = useState('');
@@ -234,14 +249,81 @@ export default function AdminPage() {
     staleTime: 60000,
   });
 
+  const { data: crmAnalytics } = useQuery<CrmAnalytics>({
+    queryKey: ['crm-analytics'],
+    queryFn: getCrmAnalytics,
+    staleTime: 60000,
+  });
+
+  const invalidateCrm = () => {
+    queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
+    queryClient.invalidateQueries({ queryKey: ['crm-stats'] });
+    queryClient.invalidateQueries({ queryKey: ['crm-analytics'] });
+  };
+
   const updateLeadMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: { status?: string; notes?: string } }) => updateCrmLead(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
-      queryClient.invalidateQueries({ queryKey: ['crm-stats'] });
+      invalidateCrm();
       toast({ title: lang === 'es' ? 'Lead actualizado' : 'Lead updated' });
     },
   });
+
+  const archiveLeadMutation = useMutation({
+    mutationFn: ({ id, archived }: { id: number; archived: boolean }) => archiveCrmLead(id, archived),
+    onSuccess: (_res, vars) => {
+      invalidateCrm();
+      toast({ title: vars.archived ? (lang === 'es' ? 'Lead archivado' : 'Lead archived') : (lang === 'es' ? 'Lead restaurado' : 'Lead restored') });
+    },
+  });
+
+  const deleteLeadMutation = useMutation({
+    mutationFn: (id: number) => deleteCrmLead(id),
+    onSuccess: () => {
+      invalidateCrm();
+      setSelectedLead(null);
+      toast({ title: lang === 'es' ? 'Lead eliminado' : 'Lead deleted' });
+    },
+  });
+
+  const handleExportCrm = async () => {
+    try {
+      setCrmExporting(true);
+      await exportCrmLeads({ status: crmFilters.status, source: crmFilters.source, search: crmFilters.search, archived: crmFilters.archived });
+    } catch (e) {
+      toast({ title: lang === 'es' ? 'Error al exportar' : 'Export failed', variant: 'destructive' });
+    } finally {
+      setCrmExporting(false);
+    }
+  };
+
+  // CRM dashboard chart data
+  const CRM_STATUS_META = [
+    { key: 'new', labelEn: 'New', labelEs: 'Nuevo', color: '#3b82f6' },
+    { key: 'contacted', labelEn: 'Contacted', labelEs: 'Contactado', color: '#eab308' },
+    { key: 'qualified', labelEn: 'Qualified', labelEs: 'Calificado', color: '#a855f7' },
+    { key: 'closed_won', labelEn: 'Won', labelEs: 'Ganado', color: '#22c55e' },
+    { key: 'closed_lost', labelEn: 'Lost', labelEs: 'Perdido', color: '#9ca3af' },
+  ];
+  const CRM_SOURCE_META: Record<string, { labelEn: string; labelEs: string; color: string }> = {
+    corporate_contact: { labelEn: 'Contact', labelEs: 'Contacto', color: '#0ea5e9' },
+    corporate_brochure: { labelEn: 'Brochure', labelEs: 'Folleto', color: '#f97316' },
+    marketplace_inquiry: { labelEn: 'Marketplace', labelEs: 'Marketplace', color: '#6366f1' },
+  };
+  const crmStatusChart = CRM_STATUS_META.map((m) => ({
+    name: lang === 'es' ? m.labelEs : m.labelEn,
+    value: crmAnalytics?.byStatus?.[m.key] || 0,
+    color: m.color,
+  }));
+  const crmSourceChart = Object.entries(crmAnalytics?.bySource || {}).map(([key, value]) => ({
+    name: CRM_SOURCE_META[key] ? (lang === 'es' ? CRM_SOURCE_META[key].labelEs : CRM_SOURCE_META[key].labelEn) : key,
+    value: value as number,
+    color: CRM_SOURCE_META[key]?.color || '#94a3b8',
+  }));
+  const crmTrendChart = (crmAnalytics?.perDay || []).map((d) => ({
+    date: d.date.slice(5),
+    count: d.count,
+  }));
 
   // Manual refresh all data
   const handleRefreshAll = () => {
@@ -1586,6 +1668,60 @@ export default function AdminPage() {
                 )}
               </CardHeader>
               <CardContent>
+                {crmAnalytics && crmAnalytics.total > 0 && (
+                  <div className="mb-6">
+                    <div className="flex items-center gap-2 mb-3 text-sm font-medium text-gray-700">
+                      <BarChart3 className="w-4 h-4" />
+                      {lang === 'es' ? 'Panel de análisis' : 'Analytics dashboard'}
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      {/* Trend: leads last 30 days */}
+                      <div className="bg-white border rounded-lg p-3">
+                        <div className="text-xs text-gray-500 mb-2">{lang === 'es' ? 'Leads (últimos 30 días)' : 'Leads (last 30 days)'}</div>
+                        <ResponsiveContainer width="100%" height={180}>
+                          <LineChart data={crmTrendChart} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <XAxis dataKey="date" tick={{ fontSize: 10 }} interval="preserveStartEnd" />
+                            <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
+                            <RechartsTooltip />
+                            <Line type="monotone" dataKey="count" stroke="#6366f1" strokeWidth={2} dot={false} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                      {/* Pipeline by status */}
+                      <div className="bg-white border rounded-lg p-3">
+                        <div className="text-xs text-gray-500 mb-2">{lang === 'es' ? 'Embudo por status' : 'Pipeline by status'}</div>
+                        <ResponsiveContainer width="100%" height={180}>
+                          <BarChart data={crmStatusChart} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                            <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
+                            <RechartsTooltip />
+                            <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                              {crmStatusChart.map((entry, i) => (
+                                <Cell key={i} fill={entry.color} />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                      {/* By source */}
+                      <div className="bg-white border rounded-lg p-3">
+                        <div className="text-xs text-gray-500 mb-2">{lang === 'es' ? 'Por fuente' : 'By source'}</div>
+                        <ResponsiveContainer width="100%" height={180}>
+                          <PieChart>
+                            <Pie data={crmSourceChart} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} label={(e: any) => (e.value > 0 ? e.name : '')}>
+                              {crmSourceChart.map((entry, i) => (
+                                <Cell key={i} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <RechartsTooltip />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="flex gap-2 mb-4 flex-wrap">
                   <Input
                     placeholder={lang === 'es' ? 'Buscar por nombre o email...' : 'Search by name or email...'}
@@ -1630,6 +1766,24 @@ export default function AdminPage() {
                     onClick={() => setCrmFilters({ ...crmFilters, search: crmSearchTerm, page: 1 })}
                   >
                     {lang === 'es' ? 'Buscar' : 'Search'}
+                  </Button>
+                  <Button
+                    variant={crmFilters.archived ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setCrmFilters({ ...crmFilters, archived: !crmFilters.archived, page: 1 })}
+                  >
+                    <Archive className="w-4 h-4 mr-1" />
+                    {crmFilters.archived ? (lang === 'es' ? 'Ver activos' : 'View active') : (lang === 'es' ? 'Archivados' : 'Archived')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleExportCrm}
+                    disabled={crmExporting || !crmData || crmData.leads.length === 0}
+                    className="ml-auto"
+                  >
+                    <Download className="w-4 h-4 mr-1" />
+                    {crmExporting ? (lang === 'es' ? 'Exportando...' : 'Exporting...') : (lang === 'es' ? 'Exportar CSV' : 'Export CSV')}
                   </Button>
                 </div>
 
@@ -1686,13 +1840,41 @@ export default function AdminPage() {
                                 </Select>
                               </td>
                               <td className="py-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => { setSelectedLead(lead); setLeadNotes(lead.notes || ''); }}
-                                >
-                                  {lang === 'es' ? 'Ver' : 'View'}
-                                </Button>
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => { setSelectedLead(lead); setLeadNotes(lead.notes || ''); }}
+                                  >
+                                    {lang === 'es' ? 'Ver' : 'View'}
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    title={lead.archived ? (lang === 'es' ? 'Restaurar' : 'Restore') : (lang === 'es' ? 'Archivar' : 'Archive')}
+                                    disabled={archiveLeadMutation.isPending}
+                                    onClick={() => archiveLeadMutation.mutate({ id: lead.id, archived: !lead.archived })}
+                                  >
+                                    {lead.archived
+                                      ? <ArchiveRestore className="w-4 h-4 text-emerald-600" />
+                                      : <Archive className="w-4 h-4 text-gray-500" />}
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    title={lang === 'es' ? 'Eliminar' : 'Delete'}
+                                    disabled={deleteLeadMutation.isPending}
+                                    onClick={() => {
+                                      if (window.confirm(lang === 'es' ? '¿Eliminar este lead permanentemente? Esta acción no se puede deshacer.' : 'Delete this lead permanently? This cannot be undone.')) {
+                                        deleteLeadMutation.mutate(lead.id);
+                                      }
+                                    }}
+                                  >
+                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                  </Button>
+                                </div>
                               </td>
                             </tr>
                           ))}

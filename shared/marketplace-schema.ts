@@ -775,6 +775,7 @@ export const crmLeads = pgTable("crm_leads", {
   message: text("message"),
   notes: text("notes"),
   metadata: jsonb("metadata").default({}),
+  archived: boolean("archived").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
@@ -782,6 +783,7 @@ export const crmLeads = pgTable("crm_leads", {
   idxCrmSource: index("idx_crm_leads_source").on(table.source),
   idxCrmCreatedAt: index("idx_crm_leads_created_at").on(table.createdAt),
   idxCrmEmail: index("idx_crm_leads_email").on(table.email),
+  idxCrmArchived: index("idx_crm_leads_archived").on(table.archived),
 }));
 
 export const insertCrmLeadSchema = createInsertSchema(crmLeads).omit({

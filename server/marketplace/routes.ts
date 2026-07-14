@@ -1818,11 +1818,12 @@ router.delete('/upload/image/:publicId(*)', authenticateToken, requireSeller, as
 
 router.get('/admin/crm/leads', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { status, source, search, page, limit } = req.query;
+    const { status, source, search, archived, page, limit } = req.query;
     const result = await storage.getCrmLeads({
       status: status as string | undefined,
       source: source as string | undefined,
       search: search as string | undefined,
+      archived: archived === 'true',
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,
     });
@@ -1886,6 +1887,85 @@ router.post('/crm/lead', async (req: Request, res: Response) => {
     }
     console.error('Error creating CRM lead:', error);
     res.status(500).json({ message: 'Failed to create lead' });
+  }
+});
+
+// Export leads to CSV (respects current filters). GET-before-:id so path is unambiguous.
+router.get('/admin/crm/leads/export', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { status, source, search, archived } = req.query;
+    const leads = await storage.getCrmLeadsForExport({
+      status: status as string | undefined,
+      source: source as string | undefined,
+      search: search as string | undefined,
+      archived: archived === 'true',
+    });
+
+    const headers = ['ID', 'Date', 'Source', 'Status', 'Name', 'Email', 'Phone', 'Company', 'Message', 'Notes'];
+    const esc = (v: any) => {
+      const s = v === null || v === undefined ? '' : String(v);
+      return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const rows = leads.map((l) => [
+      l.id,
+      l.createdAt ? new Date(l.createdAt).toISOString() : '',
+      l.source,
+      l.status,
+      l.name,
+      l.email,
+      l.phone || '',
+      l.company || '',
+      l.message || '',
+      l.notes || '',
+    ].map(esc).join(','));
+    const csv = [headers.join(','), ...rows].join('\r\n');
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="crm-leads-${new Date().toISOString().slice(0, 10)}.csv"`);
+    res.send('﻿' + csv); // UTF-8 BOM so Excel renders accents correctly
+  } catch (error: any) {
+    console.error('Error exporting CRM leads:', error);
+    res.status(500).json({ message: 'Failed to export leads' });
+  }
+});
+
+// Dashboard analytics (pipeline breakdown + last-30-days trend)
+router.get('/admin/crm/analytics', authenticateToken, requireAdmin, async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    const analytics = await storage.getCrmAnalytics();
+    res.json(analytics);
+  } catch (error: any) {
+    console.error('Error fetching CRM analytics:', error);
+    res.status(500).json({ message: 'Failed to fetch analytics' });
+  }
+});
+
+// Archive / unarchive a lead (body: { archived: boolean }, defaults to archiving)
+router.patch('/admin/crm/leads/:id/archive', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const archived = req.body?.archived !== false;
+    const lead = await storage.setCrmLeadArchived(Number(req.params.id), archived);
+    if (!lead) {
+      return res.status(404).json({ message: 'Lead not found' });
+    }
+    res.json({ message: archived ? 'Lead archived' : 'Lead unarchived', lead });
+  } catch (error: any) {
+    console.error('Error archiving CRM lead:', error);
+    res.status(500).json({ message: 'Failed to archive lead' });
+  }
+});
+
+// Delete a lead permanently
+router.delete('/admin/crm/leads/:id', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const ok = await storage.deleteCrmLead(Number(req.params.id));
+    if (!ok) {
+      return res.status(404).json({ message: 'Lead not found' });
+    }
+    res.json({ message: 'Lead deleted' });
+  } catch (error: any) {
+    console.error('Error deleting CRM lead:', error);
+    res.status(500).json({ message: 'Failed to delete lead' });
   }
 });
 
