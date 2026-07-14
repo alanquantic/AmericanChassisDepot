@@ -93,10 +93,14 @@ import {
   deleteListingAdmin,
   updateListing,
   getAllOffersAdmin,
+  getCrmLeads,
+  getCrmStats,
+  updateCrmLead,
   type AdminUser,
   type UserFilters,
   type MarketplaceListing,
   type AdminOffer,
+  type CrmLead,
 } from '@/lib/marketplace-api';
 import { Switch } from '@/components/ui/switch';
 import { t, formatPrice, formatDate } from '@/lib/marketplace-i18n';
@@ -141,6 +145,12 @@ export default function AdminPage() {
   // Offers management states
   const [offerFilters, setOfferFilters] = useState<{ status?: string; search?: string; page: number }>({ page: 1 });
   const [offerSearchTerm, setOfferSearchTerm] = useState('');
+
+  // CRM states
+  const [crmFilters, setCrmFilters] = useState<{ status?: string; source?: string; search?: string; page: number }>({ page: 1 });
+  const [crmSearchTerm, setCrmSearchTerm] = useState('');
+  const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null);
+  const [leadNotes, setLeadNotes] = useState('');
 
   // Redirect if not admin
   useEffect(() => {
@@ -210,6 +220,29 @@ export default function AdminPage() {
     retryDelay: 1000,
   });
 
+  // CRM queries
+  const { data: crmData, isLoading: crmLoading } = useQuery({
+    queryKey: ['crm-leads', crmFilters],
+    queryFn: () => getCrmLeads(crmFilters),
+    staleTime: 30000,
+    refetchOnMount: 'always',
+  });
+
+  const { data: crmStats } = useQuery({
+    queryKey: ['crm-stats'],
+    queryFn: getCrmStats,
+    staleTime: 60000,
+  });
+
+  const updateLeadMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: { status?: string; notes?: string } }) => updateCrmLead(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
+      queryClient.invalidateQueries({ queryKey: ['crm-stats'] });
+      toast({ title: lang === 'es' ? 'Lead actualizado' : 'Lead updated' });
+    },
+  });
+
   // Manual refresh all data
   const handleRefreshAll = () => {
     refetchStats();
@@ -217,6 +250,8 @@ export default function AdminPage() {
     refetchUsers();
     refetchListings();
     refetchOffers();
+    queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
+    queryClient.invalidateQueries({ queryKey: ['crm-stats'] });
     toast({ title: lang === 'es' ? 'Datos actualizados' : 'Data refreshed' });
   };
 
@@ -650,6 +685,12 @@ export default function AdminPage() {
               {lang === 'es' ? 'Usuarios' : 'Users'}
             </TabsTrigger>
             <TabsTrigger value="offers">Offers</TabsTrigger>
+            <TabsTrigger value="crm" className="relative">
+              CRM
+              {crmStats && crmStats.byStatus?.new > 0 && (
+                <Badge className="ml-2 bg-blue-500">{crmStats.byStatus.new}</Badge>
+              )}
+            </TabsTrigger>
           </TabsList>
 
           {/* Pending Listings */}
@@ -1512,6 +1553,187 @@ export default function AdminPage() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* CRM Leads */}
+          <TabsContent value="crm">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  {lang === 'es' ? 'CRM - Gestión de Leads' : 'CRM - Lead Management'}
+                </CardTitle>
+                <CardDescription>
+                  {lang === 'es' ? 'Todos los contactos del sitio corporativo y marketplace' : 'All contacts from corporate site and marketplace'}
+                </CardDescription>
+                {crmStats && (
+                  <div className="flex gap-3 mt-3 flex-wrap">
+                    <Badge variant="outline" className="bg-blue-50 border-blue-200 text-blue-700">
+                      {lang === 'es' ? 'Nuevos' : 'New'}: {crmStats.byStatus?.new || 0}
+                    </Badge>
+                    <Badge variant="outline" className="bg-yellow-50 border-yellow-200 text-yellow-700">
+                      {lang === 'es' ? 'Contactados' : 'Contacted'}: {crmStats.byStatus?.contacted || 0}
+                    </Badge>
+                    <Badge variant="outline" className="bg-purple-50 border-purple-200 text-purple-700">
+                      {lang === 'es' ? 'Calificados' : 'Qualified'}: {crmStats.byStatus?.qualified || 0}
+                    </Badge>
+                    <Badge variant="outline" className="bg-green-50 border-green-200 text-green-700">
+                      {lang === 'es' ? 'Ganados' : 'Won'}: {crmStats.byStatus?.closed_won || 0}
+                    </Badge>
+                    <Badge variant="outline" className="bg-gray-50 border-gray-200 text-gray-500">
+                      {lang === 'es' ? 'Perdidos' : 'Lost'}: {crmStats.byStatus?.closed_lost || 0}
+                    </Badge>
+                  </div>
+                )}
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-2 mb-4 flex-wrap">
+                  <Input
+                    placeholder={lang === 'es' ? 'Buscar por nombre o email...' : 'Search by name or email...'}
+                    value={crmSearchTerm}
+                    onChange={(e) => setCrmSearchTerm(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && setCrmFilters({ ...crmFilters, search: crmSearchTerm, page: 1 })}
+                    className="max-w-xs"
+                  />
+                  <Select
+                    value={crmFilters.status || 'all'}
+                    onValueChange={(v) => setCrmFilters({ ...crmFilters, status: v === 'all' ? undefined : v, page: 1 })}
+                  >
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{lang === 'es' ? 'Todos' : 'All'}</SelectItem>
+                      <SelectItem value="new">{lang === 'es' ? 'Nuevo' : 'New'}</SelectItem>
+                      <SelectItem value="contacted">{lang === 'es' ? 'Contactado' : 'Contacted'}</SelectItem>
+                      <SelectItem value="qualified">{lang === 'es' ? 'Calificado' : 'Qualified'}</SelectItem>
+                      <SelectItem value="closed_won">{lang === 'es' ? 'Ganado' : 'Won'}</SelectItem>
+                      <SelectItem value="closed_lost">{lang === 'es' ? 'Perdido' : 'Lost'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    value={crmFilters.source || 'all'}
+                    onValueChange={(v) => setCrmFilters({ ...crmFilters, source: v === 'all' ? undefined : v, page: 1 })}
+                  >
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{lang === 'es' ? 'Todas las fuentes' : 'All sources'}</SelectItem>
+                      <SelectItem value="corporate_contact">{lang === 'es' ? 'Contacto Corp.' : 'Corporate Contact'}</SelectItem>
+                      <SelectItem value="corporate_brochure">{lang === 'es' ? 'Folleto Corp.' : 'Corporate Brochure'}</SelectItem>
+                      <SelectItem value="marketplace_inquiry">{lang === 'es' ? 'Marketplace' : 'Marketplace'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCrmFilters({ ...crmFilters, search: crmSearchTerm, page: 1 })}
+                  >
+                    {lang === 'es' ? 'Buscar' : 'Search'}
+                  </Button>
+                </div>
+
+                {crmLoading ? (
+                  <div className="text-center py-8 text-gray-500">{lang === 'es' ? 'Cargando...' : 'Loading...'}</div>
+                ) : crmData && crmData.leads.length > 0 ? (
+                  <>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b text-left">
+                            <th className="py-2 pr-3">{lang === 'es' ? 'Fecha' : 'Date'}</th>
+                            <th className="py-2 pr-3">{lang === 'es' ? 'Nombre' : 'Name'}</th>
+                            <th className="py-2 pr-3">Email</th>
+                            <th className="py-2 pr-3">{lang === 'es' ? 'Fuente' : 'Source'}</th>
+                            <th className="py-2 pr-3">Status</th>
+                            <th className="py-2">{lang === 'es' ? 'Acciones' : 'Actions'}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {crmData.leads.map((lead) => (
+                            <tr key={lead.id} className="border-b hover:bg-gray-50">
+                              <td className="py-2 pr-3 text-gray-500 whitespace-nowrap">
+                                {new Date(lead.createdAt).toLocaleDateString()}
+                              </td>
+                              <td className="py-2 pr-3 font-medium">{lead.name}</td>
+                              <td className="py-2 pr-3 text-gray-600">{lead.email}</td>
+                              <td className="py-2 pr-3">
+                                <Badge variant="outline" className={
+                                  lead.source === 'marketplace_inquiry' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
+                                  lead.source === 'corporate_brochure' ? 'bg-orange-50 text-orange-700 border-orange-200' :
+                                  'bg-sky-50 text-sky-700 border-sky-200'
+                                }>
+                                  {lead.source === 'marketplace_inquiry' ? 'Marketplace' :
+                                   lead.source === 'corporate_brochure' ? (lang === 'es' ? 'Folleto' : 'Brochure') :
+                                   (lang === 'es' ? 'Contacto' : 'Contact')}
+                                </Badge>
+                              </td>
+                              <td className="py-2 pr-3">
+                                <Select
+                                  value={lead.status}
+                                  onValueChange={(v) => updateLeadMutation.mutate({ id: lead.id, data: { status: v } })}
+                                >
+                                  <SelectTrigger className="h-7 w-32 text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="new">{lang === 'es' ? 'Nuevo' : 'New'}</SelectItem>
+                                    <SelectItem value="contacted">{lang === 'es' ? 'Contactado' : 'Contacted'}</SelectItem>
+                                    <SelectItem value="qualified">{lang === 'es' ? 'Calificado' : 'Qualified'}</SelectItem>
+                                    <SelectItem value="closed_won">{lang === 'es' ? 'Ganado' : 'Won'}</SelectItem>
+                                    <SelectItem value="closed_lost">{lang === 'es' ? 'Perdido' : 'Lost'}</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </td>
+                              <td className="py-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => { setSelectedLead(lead); setLeadNotes(lead.notes || ''); }}
+                                >
+                                  {lang === 'es' ? 'Ver' : 'View'}
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {crmData.totalPages > 1 && (
+                      <div className="flex justify-center gap-2 mt-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={crmFilters.page <= 1}
+                          onClick={() => setCrmFilters({ ...crmFilters, page: crmFilters.page - 1 })}
+                        >
+                          {lang === 'es' ? 'Anterior' : 'Previous'}
+                        </Button>
+                        <span className="text-sm py-1 px-3">
+                          {crmFilters.page} / {crmData.totalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={crmFilters.page >= crmData.totalPages}
+                          onClick={() => setCrmFilters({ ...crmFilters, page: crmFilters.page + 1 })}
+                        >
+                          {lang === 'es' ? 'Siguiente' : 'Next'}
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">
+                      {lang === 'es' ? 'No hay leads aún. Aparecerán aquí cuando alguien envíe un formulario.' : 'No leads yet. They will appear here when someone submits a form.'}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
 
@@ -2038,6 +2260,98 @@ export default function AdminPage() {
                 : (lang === 'es' ? 'Actualizar Precio' : 'Update Price')}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* CRM Lead Detail Dialog */}
+      <Dialog open={!!selectedLead} onOpenChange={(open) => { if (!open) setSelectedLead(null); }}>
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {lang === 'es' ? 'Detalle del Lead' : 'Lead Detail'}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedLead && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-gray-500 block">{lang === 'es' ? 'Nombre' : 'Name'}</span>
+                  <span className="font-medium">{selectedLead.name}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500 block">Email</span>
+                  <a href={`mailto:${selectedLead.email}`} className="font-medium text-blue-600 hover:underline">{selectedLead.email}</a>
+                </div>
+                {selectedLead.phone && (
+                  <div>
+                    <span className="text-gray-500 block">{lang === 'es' ? 'Teléfono' : 'Phone'}</span>
+                    <a href={`tel:${selectedLead.phone}`} className="font-medium text-blue-600 hover:underline">{selectedLead.phone}</a>
+                  </div>
+                )}
+                {selectedLead.company && (
+                  <div>
+                    <span className="text-gray-500 block">{lang === 'es' ? 'Empresa' : 'Company'}</span>
+                    <span className="font-medium">{selectedLead.company}</span>
+                  </div>
+                )}
+                <div>
+                  <span className="text-gray-500 block">{lang === 'es' ? 'Fuente' : 'Source'}</span>
+                  <Badge variant="outline">
+                    {selectedLead.source === 'marketplace_inquiry' ? 'Marketplace' :
+                     selectedLead.source === 'corporate_brochure' ? (lang === 'es' ? 'Folleto' : 'Brochure') :
+                     (lang === 'es' ? 'Contacto' : 'Contact')}
+                  </Badge>
+                </div>
+                <div>
+                  <span className="text-gray-500 block">{lang === 'es' ? 'Fecha' : 'Date'}</span>
+                  <span>{new Date(selectedLead.createdAt).toLocaleString()}</span>
+                </div>
+              </div>
+
+              {selectedLead.message && (
+                <div>
+                  <span className="text-gray-500 block text-sm mb-1">{lang === 'es' ? 'Mensaje' : 'Message'}</span>
+                  <div className="bg-gray-50 rounded p-3 text-sm whitespace-pre-wrap">{selectedLead.message}</div>
+                </div>
+              )}
+
+              {selectedLead.metadata && Object.keys(selectedLead.metadata).length > 0 && (
+                <div>
+                  <span className="text-gray-500 block text-sm mb-1">{lang === 'es' ? 'Datos adicionales' : 'Additional data'}</span>
+                  <div className="bg-gray-50 rounded p-3 text-xs space-y-1">
+                    {Object.entries(selectedLead.metadata).map(([k, v]) =>
+                      v ? <div key={k}><span className="font-medium">{k}:</span> {String(v)}</div> : null
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <Label className="text-sm">{lang === 'es' ? 'Notas internas' : 'Internal notes'}</Label>
+                <Textarea
+                  value={leadNotes}
+                  onChange={(e) => setLeadNotes(e.target.value)}
+                  rows={3}
+                  placeholder={lang === 'es' ? 'Agregar notas sobre este lead...' : 'Add notes about this lead...'}
+                />
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setSelectedLead(null)}>
+                  {lang === 'es' ? 'Cerrar' : 'Close'}
+                </Button>
+                <Button
+                  onClick={() => {
+                    updateLeadMutation.mutate({ id: selectedLead.id, data: { notes: leadNotes } });
+                    setSelectedLead(null);
+                  }}
+                  className="bg-[#0A3161] hover:bg-[#0A3161]/90"
+                >
+                  {lang === 'es' ? 'Guardar Notas' : 'Save Notes'}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

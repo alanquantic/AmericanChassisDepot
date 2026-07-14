@@ -46,6 +46,18 @@
       "dest": "server/index.ts"
     },
     {
+      "src": "/(en|es)/(marketplace/listing/[^/]+)$",
+      "dest": "server/index.ts"
+    },
+    {
+      "src": "/(en|es)/(marketplace|products|about|contact|new-chassis|used-chassis|brands/.+)$",
+      "dest": "server/index.ts"
+    },
+    {
+      "src": "/(en|es)/?$",
+      "dest": "server/index.ts"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }

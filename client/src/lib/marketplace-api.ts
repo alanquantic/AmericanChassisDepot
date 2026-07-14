@@ -906,3 +906,49 @@ export function fileToBase64(file: File): Promise<string> {
     reader.onerror = (error) => reject(error);
   });
 }
+
+// =============================================
+// CRM
+// =============================================
+
+export interface CrmLead {
+  id: number;
+  source: string;
+  status: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  company: string | null;
+  message: string | null;
+  notes: string | null;
+  metadata: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function getCrmLeads(filters: {
+  status?: string;
+  source?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<{ leads: CrmLead[]; total: number; page: number; totalPages: number }> {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      params.append(key, String(value));
+    }
+  });
+  return apiRequest(`/admin/crm/leads?${params.toString()}`);
+}
+
+export async function getCrmStats(): Promise<{ byStatus: Record<string, number>; bySource: Record<string, number>; total: number }> {
+  return apiRequest('/admin/crm/stats');
+}
+
+export async function updateCrmLead(id: number, data: { status?: string; notes?: string }): Promise<{ message: string; lead: CrmLead }> {
+  return apiRequest(`/admin/crm/leads/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}

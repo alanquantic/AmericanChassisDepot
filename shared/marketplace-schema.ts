@@ -760,3 +760,35 @@ export type MarketplaceSellerStats = typeof marketplaceSellerStats.$inferSelect;
 // Audit logs
 export type MarketplaceAuditLog = typeof marketplaceAuditLogs.$inferSelect;
 export type InsertAuditLog = typeof marketplaceAuditLogs.$inferInsert;
+
+// =============================================
+// CRM LEADS
+// =============================================
+export const crmLeads = pgTable("crm_leads", {
+  id: serial("id").primaryKey(),
+  source: text("source").notNull(),
+  status: text("status").notNull().default("new"),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  company: text("company"),
+  message: text("message"),
+  notes: text("notes"),
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  idxCrmStatus: index("idx_crm_leads_status").on(table.status),
+  idxCrmSource: index("idx_crm_leads_source").on(table.source),
+  idxCrmCreatedAt: index("idx_crm_leads_created_at").on(table.createdAt),
+  idxCrmEmail: index("idx_crm_leads_email").on(table.email),
+}));
+
+export const insertCrmLeadSchema = createInsertSchema(crmLeads).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type CrmLead = typeof crmLeads.$inferSelect;
+export type InsertCrmLead = z.infer<typeof insertCrmLeadSchema>;

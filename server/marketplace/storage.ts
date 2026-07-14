@@ -16,6 +16,7 @@ import {
   marketplaceActivityLog,
   marketplaceListingViews,
   listingImages,
+  crmLeads,
   type MarketplaceUser,
   type MarketplaceListing,
   type MarketplaceConversation,
@@ -23,6 +24,8 @@ import {
   type MarketplaceOffer,
   type MarketplaceOrder,
   type MarketplaceNotification,
+  type CrmLead,
+  type InsertCrmLead,
 } from '../../shared/marketplace-schema.js';
 
 // =============================================
@@ -1747,4 +1750,110 @@ export async function getSellerListingsWithStats(sellerId: number, filters: {
       hasMore: page * limit < total
     }
   };
+}
+
+// =============================================
+// CRM LEADS
+// =============================================
+
+export async function createCrmLead(data: InsertCrmLead): Promise<CrmLead> {
+  const db = getMarketplaceDb();
+  const [lead] = await db.insert(crmLeads).values({
+    ...data,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }).returning();
+  return lead;
+}
+
+export async function getCrmLeads(filters: {
+  status?: string;
+  source?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<{ leads: CrmLead[]; total: number; page: number; totalPages: number }> {
+  const db = getMarketplaceDb();
+  const page = filters.page || 1;
+  const limit = filters.limit || 25;
+  const offset = (page - 1) * limit;
+
+  const conditions: any[] = [];
+  if (filters.status) {
+    conditions.push(eq(crmLeads.status, filters.status));
+  }
+  if (filters.source) {
+    conditions.push(eq(crmLeads.source, filters.source));
+  }
+  if (filters.search) {
+    conditions.push(
+      or(
+        ilike(crmLeads.name, `%${filters.search}%`),
+        ilike(crmLeads.email, `%${filters.search}%`),
+        ilike(crmLeads.company, `%${filters.search}%`),
+      )
+    );
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const [countResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(crmLeads)
+    .where(whereClause);
+
+  const total = Number(countResult.count);
+
+  const leads = await db
+    .select()
+    .from(crmLeads)
+    .where(whereClause)
+    .orderBy(desc(crmLeads.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  return {
+    leads,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
+export async function updateCrmLead(id: number, data: Partial<Pick<CrmLead, 'status' | 'notes'>>): Promise<CrmLead | null> {
+  const db = getMarketplaceDb();
+  const [lead] = await db
+    .update(crmLeads)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(crmLeads.id, id))
+    .returning();
+  return lead || null;
+}
+
+export async function getCrmLeadStats(): Promise<{ byStatus: Record<string, number>; bySource: Record<string, number>; total: number }> {
+  const db = getMarketplaceDb();
+
+  const statusCounts = await db
+    .select({ status: crmLeads.status, count: sql<number>`count(*)` })
+    .from(crmLeads)
+    .groupBy(crmLeads.status);
+
+  const sourceCounts = await db
+    .select({ source: crmLeads.source, count: sql<number>`count(*)` })
+    .from(crmLeads)
+    .groupBy(crmLeads.source);
+
+  const byStatus: Record<string, number> = {};
+  let total = 0;
+  for (const row of statusCounts) {
+    byStatus[row.status] = Number(row.count);
+    total += Number(row.count);
+  }
+
+  const bySource: Record<string, number> = {};
+  for (const row of sourceCounts) {
+    bySource[row.source] = Number(row.count);
+  }
+
+  return { byStatus, bySource, total };
 }

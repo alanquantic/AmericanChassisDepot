@@ -88,3 +88,4 @@ export type InsertChassisModel = z.infer<typeof insertChassisModelSchema>;
 
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type InsertContactMessage = z.infer<typeof insertContactMessageSchema>;
+

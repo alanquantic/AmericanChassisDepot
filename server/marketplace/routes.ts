@@ -232,6 +232,20 @@ router.post('/listings/:slug/inquire', async (req: Request, res: Response) => {
       language
     );
 
+    try {
+      await storage.createCrmLead({
+        source: 'marketplace_inquiry',
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        company: data.company || null,
+        message: data.message,
+        metadata: { listingId: listing.id, listingTitle: listing.title, listingSlug: listing.slug },
+      });
+    } catch (crmErr) {
+      console.warn('CRM lead creation failed (non-blocking):', crmErr);
+    }
+
     res.json({ message: 'Inquiry sent successfully' });
   } catch (error: any) {
     console.error('Error sending listing inquiry:', error);
@@ -1672,6 +1686,83 @@ router.delete('/upload/image/:publicId(*)', authenticateToken, requireSeller, as
   } catch (error: any) {
     console.error('Error deleting image:', error);
     res.status(500).json({ message: error.message || 'Delete failed' });
+  }
+});
+
+// =============================================
+// CRM LEADS
+// =============================================
+
+router.get('/admin/crm/leads', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { status, source, search, page, limit } = req.query;
+    const result = await storage.getCrmLeads({
+      status: status as string | undefined,
+      source: source as string | undefined,
+      search: search as string | undefined,
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+    });
+    res.json(result);
+  } catch (error: any) {
+    console.error('Error fetching CRM leads:', error);
+    res.status(500).json({ message: 'Failed to fetch leads' });
+  }
+});
+
+router.get('/admin/crm/stats', authenticateToken, requireAdmin, async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    const stats = await storage.getCrmLeadStats();
+    res.json(stats);
+  } catch (error: any) {
+    console.error('Error fetching CRM stats:', error);
+    res.status(500).json({ message: 'Failed to fetch stats' });
+  }
+});
+
+const updateLeadSchema = z.object({
+  status: z.enum(['new', 'contacted', 'qualified', 'closed_won', 'closed_lost']).optional(),
+  notes: z.string().optional(),
+});
+
+router.put('/admin/crm/leads/:id', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const data = updateLeadSchema.parse(req.body);
+    const lead = await storage.updateCrmLead(Number(req.params.id), data);
+    if (!lead) {
+      return res.status(404).json({ message: 'Lead not found' });
+    }
+    res.json({ message: 'Lead updated', lead });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+    }
+    console.error('Error updating CRM lead:', error);
+    res.status(500).json({ message: 'Failed to update lead' });
+  }
+});
+
+// Public endpoint for corporate site to create leads
+router.post('/crm/lead', async (req: Request, res: Response) => {
+  try {
+    const leadSchema = z.object({
+      source: z.string(),
+      name: z.string().min(1),
+      email: z.string().email(),
+      phone: z.string().optional(),
+      company: z.string().optional(),
+      message: z.string().optional(),
+      metadata: z.record(z.any()).optional(),
+    });
+    const data = leadSchema.parse(req.body);
+    const lead = await storage.createCrmLead(data);
+    res.status(201).json({ message: 'Lead created', id: lead.id });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Invalid data' });
+    }
+    console.error('Error creating CRM lead:', error);
+    res.status(500).json({ message: 'Failed to create lead' });
   }
 });
 

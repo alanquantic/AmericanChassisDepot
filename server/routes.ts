@@ -8,6 +8,9 @@ import { sendContactNotification, sendCustomerConfirmationEmail } from "./servic
 import { processFormSubmission, testOdooConnection, getOdooLeadStats } from "./services/odoo.js";
 import marketplaceRoutes from "./marketplace/routes.js";
 import { authenticateToken, requireAdmin, type AuthenticatedRequest } from "./marketplace/auth.js";
+import { createCrmLead, getListingBySlug } from "./marketplace/storage.js";
+import path from "path";
+import fs from "fs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API route prefix
@@ -295,6 +298,20 @@ ${urls}</urlset>`;
         console.warn('DB save failed for brochure request, continuing with email:', dbError);
       }
 
+      try {
+        await createCrmLead({
+          source: 'corporate_brochure',
+          name,
+          email,
+          phone: phone || null,
+          company: company || null,
+          message: messageContent,
+          metadata: { chassisName, chassisSlug, actionType: 'brochure', sourceUrl },
+        });
+      } catch (crmErr) {
+        console.warn('CRM lead creation failed (non-blocking):', crmErr);
+      }
+
       // Send customer confirmation email
       let customerEmailSent = false;
       try {
@@ -404,7 +421,21 @@ ${urls}</urlset>`;
       } catch (dbError) {
         console.warn('DB save failed for contact form, continuing with email:', dbError);
       }
-      
+
+      try {
+        await createCrmLead({
+          source: 'corporate_contact',
+          name,
+          email,
+          phone: phone || null,
+          company: company || null,
+          message: messageContent,
+          metadata: { chassisName, chassisSlug, actionType: actionType || 'quote', sourceUrl, units, interest },
+        });
+      } catch (crmErr) {
+        console.warn('CRM lead creation failed (non-blocking):', crmErr);
+      }
+
       // Send customer confirmation email
       let customerEmailSent = false;
       try {
@@ -555,6 +586,165 @@ ${urls}</urlset>`;
         message: "Error interno del servidor"
       });
     }
+  });
+
+  // Dynamic rendering for SEO — serve HTML with proper meta tags for bots
+  const BOT_AGENTS = /googlebot|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkshare|w3c_validator|whatsapp|telegram/i;
+  const SITE = 'https://www.americanchassisdepot.com';
+
+  function isBot(ua: string | undefined): boolean {
+    return BOT_AGENTS.test(ua || '');
+  }
+
+  function esc(s: string): string {
+    return s.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function buildMetaHtml(opts: { title: string; description: string; url: string; image?: string; lang: string; jsonLd?: object }): string {
+    const altLang = opts.lang === 'es' ? 'en' : 'es';
+    const altUrl = opts.url.replace(`/${opts.lang}/`, `/${altLang}/`);
+    const img = opts.image || `${SITE}/attached_assets/triaxle_20.webp`;
+    const ld = opts.jsonLd ? `<script type="application/ld+json">${JSON.stringify(opts.jsonLd)}</script>` : '';
+    return `<!DOCTYPE html>
+<html lang="${opts.lang}">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>${esc(opts.title)}</title>
+<meta name="description" content="${esc(opts.description)}"/>
+<link rel="canonical" href="${opts.url}"/>
+<link rel="alternate" hreflang="${opts.lang}" href="${opts.url}"/>
+<link rel="alternate" hreflang="${altLang}" href="${altUrl}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="${esc(opts.title)}"/>
+<meta property="og:description" content="${esc(opts.description)}"/>
+<meta property="og:url" content="${opts.url}"/>
+<meta property="og:image" content="${img}"/>
+<meta property="og:locale" content="${opts.lang === 'es' ? 'es_MX' : 'en_US'}"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="${esc(opts.title)}"/>
+<meta name="twitter:description" content="${esc(opts.description)}"/>
+<meta name="twitter:image" content="${img}"/>
+${ld}
+</head>
+<body>
+<div id="root"></div>
+<script>window.location.href="${opts.url}";</script>
+</body>
+</html>`;
+  }
+
+  function serveSpaFallback(_req: Request, res: Response, next: () => void) {
+    if (process.env.VERCEL) {
+      const indexPath = path.resolve(import.meta.dirname, '..', 'index.html');
+      if (fs.existsSync(indexPath)) return res.sendFile(indexPath);
+    }
+    return next();
+  }
+
+  app.get('/:lang(en|es)/marketplace/listing/:slug', async (req: Request, res: Response, next: any) => {
+    if (!isBot(req.headers['user-agent'])) return serveSpaFallback(req, res, next);
+
+    try {
+      const { lang, slug } = req.params;
+      const listing = await getListingBySlug(slug);
+      if (!listing) return serveSpaFallback(req, res, next);
+
+      const title = lang === 'es'
+        ? `${listing.titleEs || listing.title} | American Chassis Depot`
+        : `${listing.title} | American Chassis Depot`;
+      const desc = lang === 'es'
+        ? (listing.descriptionEs || listing.description || '').slice(0, 160)
+        : (listing.description || '').slice(0, 160);
+
+      const html = buildMetaHtml({
+        title,
+        description: desc,
+        url: `${SITE}/${lang}/marketplace/listing/${slug}`,
+        image: listing.primaryImageUrl || undefined,
+        lang,
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: listing.title,
+          description: listing.description,
+          image: listing.primaryImageUrl,
+          offers: {
+            '@type': 'Offer',
+            price: listing.pricePerUnit,
+            priceCurrency: 'USD',
+            availability: 'https://schema.org/InStock',
+            itemCondition: listing.condition === 'New' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
+          },
+        },
+      });
+      res.set('Content-Type', 'text/html').send(html);
+    } catch {
+      serveSpaFallback(req, res, next);
+    }
+  });
+
+  const STATIC_PAGES: Record<string, { en: { title: string; desc: string }; es: { title: string; desc: string } }> = {
+    '': {
+      en: { title: 'American Chassis Depot | Container Chassis for Sale', desc: 'Premium new and used intermodal container chassis. Tandem and triaxle chassis for 20ft, 40ft, 45ft, and 53ft containers.' },
+      es: { title: 'American Chassis Depot | Chasis de Contenedor en Venta', desc: 'Chasis intermodales nuevos y usados premium. Chasis tandem y triaxle para contenedores de 20, 40, 45 y 53 pies.' },
+    },
+    'marketplace': {
+      en: { title: 'Chassis Marketplace | Buy & Sell Container Chassis', desc: 'Browse hundreds of new and used container chassis listings from verified sellers across the United States.' },
+      es: { title: 'Marketplace de Chasis | Compra y Venta de Chasis', desc: 'Explora cientos de listados de chasis de contenedor nuevos y usados de vendedores verificados en Estados Unidos.' },
+    },
+    'products': {
+      en: { title: 'All Chassis Models | American Chassis Depot', desc: 'Explore our complete catalog of intermodal container chassis models from top manufacturers.' },
+      es: { title: 'Todos los Modelos de Chasis | American Chassis Depot', desc: 'Explora nuestro catálogo completo de modelos de chasis intermodales de los mejores fabricantes.' },
+    },
+    'about': {
+      en: { title: 'About Us | American Chassis Depot', desc: 'Learn about American Chassis Depot, your trusted source for intermodal container chassis solutions.' },
+      es: { title: 'Sobre Nosotros | American Chassis Depot', desc: 'Conoce American Chassis Depot, tu fuente confiable de soluciones de chasis intermodales.' },
+    },
+    'contact': {
+      en: { title: 'Contact Us | American Chassis Depot', desc: 'Get in touch with our sales team for quotes, support, and chassis inquiries.' },
+      es: { title: 'Contáctanos | American Chassis Depot', desc: 'Comunícate con nuestro equipo de ventas para cotizaciones, soporte y consultas sobre chasis.' },
+    },
+    'new-chassis': {
+      en: { title: 'New Container Chassis | American Chassis Depot', desc: 'Browse our selection of brand new intermodal container chassis from leading manufacturers.' },
+      es: { title: 'Chasis Nuevos de Contenedor | American Chassis Depot', desc: 'Explora nuestra selección de chasis intermodales nuevos de los principales fabricantes.' },
+    },
+    'used-chassis': {
+      en: { title: 'Used Container Chassis | American Chassis Depot', desc: 'Quality pre-owned intermodal container chassis at competitive prices.' },
+      es: { title: 'Chasis Usados de Contenedor | American Chassis Depot', desc: 'Chasis intermodales usados de calidad a precios competitivos.' },
+    },
+  };
+
+  app.get('/:lang(en|es)/:page(*)', (req: Request, res: Response, next: any) => {
+    if (!isBot(req.headers['user-agent'])) return serveSpaFallback(req, res, next);
+
+    const { lang, page } = req.params;
+    const pageKey = page.replace(/\/$/, '');
+    const meta = STATIC_PAGES[pageKey];
+    if (!meta) return serveSpaFallback(req, res, next);
+
+    const data = meta[lang as 'en' | 'es'] || meta.en;
+    const html = buildMetaHtml({
+      title: data.title,
+      description: data.desc,
+      url: `${SITE}/${lang}/${pageKey}`,
+      lang,
+    });
+    res.set('Content-Type', 'text/html').send(html);
+  });
+
+  app.get('/:lang(en|es)', (req: Request, res: Response, next: any) => {
+    if (!isBot(req.headers['user-agent'])) return serveSpaFallback(req, res, next);
+
+    const { lang } = req.params;
+    const data = STATIC_PAGES[''][lang as 'en' | 'es'] || STATIC_PAGES[''].en;
+    const html = buildMetaHtml({
+      title: data.title,
+      description: data.desc,
+      url: `${SITE}/${lang}`,
+      lang,
+    });
+    res.set('Content-Type', 'text/html').send(html);
   });
 
   const httpServer = createServer(app);
