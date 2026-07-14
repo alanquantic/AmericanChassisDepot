@@ -471,7 +471,75 @@ export default function ListingDetailPage({ slug }: Props) {
                       <span className="font-medium">{listing.year}</span>
                     </div>
                   )}
+                  {specs?.axleConfig && (
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-500">{lang === 'es' ? 'Configuración de ejes' : 'Axle Configuration'}</span>
+                      <span className="font-medium">{specs.axleConfig}</span>
+                    </div>
+                  )}
+                  {specs?.suspension && (
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-500">{lang === 'es' ? 'Suspensión' : 'Suspension'}</span>
+                      <span className="font-medium">{specs.suspension}</span>
+                    </div>
+                  )}
+                  {specs?.wheels && (
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-500">{lang === 'es' ? 'Ruedas' : 'Wheels'}</span>
+                      <span className="font-medium">{specs.wheels}</span>
+                    </div>
+                  )}
+                  {specs?.configuration && (
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-500">{lang === 'es' ? 'Configuración' : 'Configuration'}</span>
+                      <span className="font-medium">{specs.configuration}</span>
+                    </div>
+                  )}
+                  {specs?.widthInches && (
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-500">{lang === 'es' ? 'Ancho' : 'Width'}</span>
+                      <span className="font-medium">{specs.widthInches}"</span>
+                    </div>
+                  )}
+                  {specs?.brakes && (
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-500">{lang === 'es' ? 'Frenos' : 'Brakes'}</span>
+                      <span className="font-medium">{specs.brakes}</span>
+                    </div>
+                  )}
+                  {specs?.tires && (
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-500">{lang === 'es' ? 'Llantas' : 'Tires'}</span>
+                      <span className="font-medium">{specs.tires}</span>
+                    </div>
+                  )}
+                  {specs?.gvwrLb && (
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-500">GVWR</span>
+                      <span className="font-medium">{Number(specs.gvwrLb).toLocaleString()} lb</span>
+                    </div>
+                  )}
+                  {listing.vin && (
+                    <div className="flex justify-between py-2 border-b sm:col-span-2">
+                      <span className="text-gray-500">VIN</span>
+                      <span className="font-medium font-mono text-sm">{listing.vin}</span>
+                    </div>
+                  )}
                 </div>
+
+                {/* Features (Gooseneck, Lift Axle, Pintle Hook, etc.) */}
+                {Array.isArray(specs?.features) && specs.features.length > 0 && (
+                  <div className="mt-4 pt-4 border-t">
+                    <p className="text-sm text-gray-500 mb-2">{lang === 'es' ? 'Características' : 'Features'}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {specs.features.map((f: string, i: number) => (
+                        <Badge key={i} variant="outline" className="bg-[#0A3161]/5 border-[#0A3161]/20 text-[#0A3161]">
+                          {f}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

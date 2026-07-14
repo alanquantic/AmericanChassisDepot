@@ -29,6 +29,57 @@ import {
 } from '../../shared/marketplace-schema.js';
 
 // =============================================
+// SIZE FILTER HELPER
+// =============================================
+
+// Sizes that have their own dedicated dropdown bucket. Ranges exclude these
+// so e.g. "46-49 ft" does NOT pull in "48'" listings (those belong to the "48'" bucket).
+const STANDARD_SIZE_BUCKETS = new Set([20, 40, 45, 48, 53]);
+
+/**
+ * Build a Drizzle SQL condition for the chassisSize filter.
+ * Handles standard buckets (20', 40', …), non-standard ranges (30-39 ft, 41-44 ft),
+ * open ranges (54+ ft) and extendable combos (20-40', 40-45-48', …).
+ * Returns undefined if the value matches no possible listing (e.g. empty range after exclusions).
+ */
+function buildSizeFilterCondition(size: string) {
+  const sizeColumn = marketplaceListings.chassisSize;
+
+  // Closed range with " ft" suffix: "20-29 ft", "30-39 ft", "41-44 ft", "46-49 ft"
+  const rangeMatch = size.match(/^(\d+)\s*-\s*(\d+)\s*ft$/i);
+  // Open range: "54+ ft"
+  const openMatch = size.match(/^(\d+)\s*\+\s*ft$/i);
+
+  if (rangeMatch || openMatch) {
+    const start = parseInt(rangeMatch ? rangeMatch[1] : openMatch![1], 10);
+    const end = rangeMatch ? parseInt(rangeMatch[2], 10) : 999;
+    const parts: any[] = [];
+    for (let n = start; n <= end; n++) {
+      if (STANDARD_SIZE_BUCKETS.has(n)) continue; // skip — own bucket
+      parts.push(ilike(sizeColumn, `${n} ft%`));
+      parts.push(ilike(sizeColumn, `${n}ft%`));
+      parts.push(eq(sizeColumn, `${n}'`));
+    }
+    return parts.length ? or(...parts) : undefined;
+  }
+
+  // Standard bucket: single number with apostrophe like "40'"
+  // Match exact + format variants ("40 ft", "40ft", "40 ft 6 in", etc.)
+  const standardMatch = size.match(/^(\d+)'$/);
+  if (standardMatch) {
+    const n = standardMatch[1];
+    return or(
+      eq(sizeColumn, size),
+      ilike(sizeColumn, `${n} ft%`),
+      ilike(sizeColumn, `${n}ft%`)
+    );
+  }
+
+  // Extendable combo with apostrophe ("20-40'", "40-45-48'") — exact match only
+  return eq(sizeColumn, size);
+}
+
+// =============================================
 // LISTINGS
 // =============================================
 
@@ -44,6 +95,15 @@ export interface ListingFilters {
   sellerId?: number;
   featured?: boolean;
   search?: string;
+  // New filters backed by columns / specs jsonb populated by the extractor
+  manufacturer?: string;
+  yearMin?: number;
+  yearMax?: number;
+  axleConfig?: string;   // matches specs->>'axleConfig'
+  suspension?: string;   // matches specs->>'suspension'
+  wheels?: string;       // matches specs->>'wheels' (Steel/Aluminum)
+  configuration?: string;// matches specs->>'configuration' (Fixed/Sliding/Extendable)
+  feature?: string;      // matches a single value inside specs->'features' jsonb array
   sortBy?: 'price_asc' | 'price_desc' | 'date_asc' | 'date_desc' | 'views';
   page?: number;
   limit?: number;
@@ -63,6 +123,14 @@ export async function getListings(filters: ListingFilters = {}) {
     sellerId,
     featured,
     search,
+    manufacturer,
+    yearMin,
+    yearMax,
+    axleConfig,
+    suspension,
+    wheels,
+    configuration,
+    feature,
     sortBy = 'date_desc',
     page = 1,
     limit = 20
@@ -80,9 +148,15 @@ export async function getListings(filters: ListingFilters = {}) {
     conditions.push(eq(marketplaceListings.chassisType, chassisType));
   }
 
-  // Size filter
+  // Size filter — dropdown sends one of:
+  //   - standard bucket with apostrophe: "20'", "40'", "45'", "48'", "53'"
+  //   - non-standard range with " ft": "20-29 ft", "30-39 ft", "41-44 ft", "46-49 ft"
+  //   - open range: "54+ ft"
+  //   - extendable combo with apostrophe: "20-40'", "40-45'", "40-45-48'", "40-45-48-53'"
+  // DB stores values in multiple formats: "40'", "40 ft", "40ft", "40 ft 6 in", etc.
   if (chassisSize && chassisSize !== 'all') {
-    conditions.push(eq(marketplaceListings.chassisSize, chassisSize));
+    const cond = buildSizeFilterCondition(chassisSize);
+    if (cond) conditions.push(cond);
   }
 
   // Condition filter
@@ -106,6 +180,37 @@ export async function getListings(filters: ListingFilters = {}) {
   }
   if (maxPrice !== undefined) {
     conditions.push(lte(marketplaceListings.pricePerUnit, maxPrice.toString()));
+  }
+
+  // Manufacturer filter (case-insensitive exact match)
+  if (manufacturer && manufacturer !== 'all') {
+    conditions.push(ilike(marketplaceListings.manufacturer, manufacturer));
+  }
+
+  // Year range
+  if (yearMin !== undefined && Number.isFinite(yearMin)) {
+    conditions.push(gte(marketplaceListings.year, yearMin));
+  }
+  if (yearMax !== undefined && Number.isFinite(yearMax)) {
+    conditions.push(lte(marketplaceListings.year, yearMax));
+  }
+
+  // Spec filters (specs jsonb populated by the extractor / backfill)
+  if (axleConfig && axleConfig !== 'all') {
+    conditions.push(sql`specs->>'axleConfig' = ${axleConfig}`);
+  }
+  if (suspension && suspension !== 'all') {
+    conditions.push(sql`specs->>'suspension' = ${suspension}`);
+  }
+  if (wheels && wheels !== 'all') {
+    conditions.push(sql`specs->>'wheels' = ${wheels}`);
+  }
+  if (configuration && configuration !== 'all') {
+    conditions.push(sql`specs->>'configuration' = ${configuration}`);
+  }
+  // Feature is matched against the `features` jsonb array inside specs.
+  if (feature && feature !== 'all') {
+    conditions.push(sql`specs->'features' ? ${feature}`);
   }
 
   // Seller filter
@@ -165,6 +270,12 @@ export async function getListings(filters: ListingFilters = {}) {
       chassisType: marketplaceListings.chassisType,
       chassisSize: marketplaceListings.chassisSize,
       condition: marketplaceListings.condition,
+      // Newly surfaced metadata so cards can show year/manufacturer/tags
+      // without a separate detail fetch.
+      manufacturer: marketplaceListings.manufacturer,
+      year: marketplaceListings.year,
+      tags: marketplaceListings.tags,
+      specs: marketplaceListings.specs,
       state: marketplaceListings.state,
       city: marketplaceListings.city,
       quantity: marketplaceListings.quantity,
@@ -1050,27 +1161,107 @@ export async function markAllNotificationsAsRead(userId: number) {
 
 export async function getChassisTypes() {
   const db = getMarketplaceDb();
-  
-  return db
+
+  const refTypes = await db
     .select()
     .from(marketplaceChassisTypes)
     .where(eq(marketplaceChassisTypes.isActive, true))
     .orderBy(asc(marketplaceChassisTypes.sortOrder));
+
+  // Group active listings by chassisType to know which dropdown values actually have inventory.
+  const grouped = await db
+    .select({
+      name: marketplaceListings.chassisType,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(eq(marketplaceListings.status, 'active'))
+    .groupBy(marketplaceListings.chassisType);
+
+  const countByName = new Map<string, number>();
+  for (const row of grouped) {
+    if (row.name) countByName.set(row.name, Number(row.count) || 0);
+  }
+
+  // Keep only reference types that actually have ≥1 listing (avoids dead options like
+  // "Triaxle" or "Tank" sitting next to "Tri-Axle Chassis" / "Tank Chassis").
+  const liveRefs = refTypes
+    .filter((t: any) => (countByName.get(t.name) || 0) > 0)
+    .map((t: any) => ({ ...t, count: countByName.get(t.name) || 0 }));
+
+  // Add DB-only values that aren't in the (filtered) reference table.
+  const refNames = new Set(liveRefs.map((t: any) => t.name));
+  const extras = Array.from(countByName.entries())
+    .filter(([name, count]) => !!name && !refNames.has(name) && count > 0)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, count], i) => ({
+      id: -1 - i,
+      name,
+      nameEs: name,
+      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      description: null,
+      descriptionEs: null,
+      icon: null,
+      sortOrder: 9000 + i,
+      isActive: true,
+      createdAt: new Date(),
+      count,
+    }));
+
+  return [...liveRefs, ...extras];
 }
 
 export async function getConditions() {
   const db = getMarketplaceDb();
-  
-  return db
+
+  const refConds = await db
     .select()
     .from(marketplaceConditions)
     .where(eq(marketplaceConditions.isActive, true))
     .orderBy(asc(marketplaceConditions.sortOrder));
+
+  const grouped = await db
+    .select({
+      name: marketplaceListings.condition,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(eq(marketplaceListings.status, 'active'))
+    .groupBy(marketplaceListings.condition);
+
+  const countByName = new Map<string, number>();
+  for (const row of grouped) {
+    if (row.name) countByName.set(row.name, Number(row.count) || 0);
+  }
+
+  const liveRefs = refConds
+    .filter((c: any) => (countByName.get(c.name) || 0) > 0)
+    .map((c: any) => ({ ...c, count: countByName.get(c.name) || 0 }));
+
+  const refNames = new Set(liveRefs.map((c: any) => c.name));
+  const extras = Array.from(countByName.entries())
+    .filter(([name, count]) => !!name && !refNames.has(name) && count > 0)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, count], i) => ({
+      id: -1 - i,
+      name,
+      nameEs: name,
+      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      description: null,
+      descriptionEs: null,
+      color: '#6B7280',
+      sortOrder: 9000 + i,
+      isActive: true,
+      createdAt: new Date(),
+      count,
+    }));
+
+  return [...liveRefs, ...extras];
 }
 
 export async function getStates() {
   const db = getMarketplaceDb();
-  
+
   const result = await db
     .selectDistinct({ state: marketplaceListings.state })
     .from(marketplaceListings)
@@ -1078,6 +1269,148 @@ export async function getStates() {
     .orderBy(asc(marketplaceListings.state));
 
   return result.map(r => r.state);
+}
+
+/**
+ * Top manufacturers (by listing count) among active listings.
+ * Caller can pass `limit` to cap the result.
+ */
+export async function getManufacturers(limit = 30) {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: marketplaceListings.manufacturer,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`${marketplaceListings.manufacturer} is not null and trim(${marketplaceListings.manufacturer}) <> ''`,
+    ))
+    .groupBy(marketplaceListings.manufacturer)
+    .orderBy(sql`count(*) desc`)
+    .limit(limit);
+
+  return rows
+    .filter(r => !!r.name)
+    .map(r => ({ name: r.name as string, count: Number(r.count) || 0 }));
+}
+
+/** Distinct values present in `specs->>'axleConfig'` for active listings + counts. */
+export async function getAxleConfigs() {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: sql<string>`specs->>'axleConfig'`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`specs ? 'axleConfig'`,
+    ))
+    .groupBy(sql`specs->>'axleConfig'`)
+    .orderBy(sql`count(*) desc`);
+
+  return rows.filter(r => !!r.name).map(r => ({ name: r.name, count: Number(r.count) || 0 }));
+}
+
+/** Distinct values present in `specs->>'suspension'` for active listings + counts. */
+export async function getSuspensions() {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: sql<string>`specs->>'suspension'`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`specs ? 'suspension'`,
+    ))
+    .groupBy(sql`specs->>'suspension'`)
+    .orderBy(sql`count(*) desc`);
+
+  return rows.filter(r => !!r.name).map(r => ({ name: r.name, count: Number(r.count) || 0 }));
+}
+
+/** Distinct values present in `specs->>'wheels'` (Steel / Aluminum) + counts. */
+export async function getWheels() {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: sql<string>`specs->>'wheels'`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`specs ? 'wheels'`,
+    ))
+    .groupBy(sql`specs->>'wheels'`)
+    .orderBy(sql`count(*) desc`);
+  return rows.filter(r => !!r.name).map(r => ({ name: r.name, count: Number(r.count) || 0 }));
+}
+
+/** Distinct values present in `specs->>'configuration'` (Fixed / Sliding / Extendable) + counts. */
+export async function getConfigurations() {
+  const db = getMarketplaceDb();
+  const rows = await db
+    .select({
+      name: sql<string>`specs->>'configuration'`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`specs ? 'configuration'`,
+    ))
+    .groupBy(sql`specs->>'configuration'`)
+    .orderBy(sql`count(*) desc`);
+  return rows.filter(r => !!r.name).map(r => ({ name: r.name, count: Number(r.count) || 0 }));
+}
+
+/**
+ * Distinct feature flags present in the `specs.features` jsonb array, with counts.
+ * Uses jsonb_array_elements_text to flatten array entries across listings.
+ */
+export async function getFeaturesList() {
+  const db = getMarketplaceDb();
+  const rows = await db.execute(sql`
+    select feature_name as name, count(*)::int as count
+    from marketplace_listings,
+         jsonb_array_elements_text(specs->'features') as feature_name
+    where status = 'active' and specs ? 'features'
+    group by feature_name
+    order by count(*) desc
+  `);
+  // pg/Drizzle's execute returns { rows } on neon-serverless driver
+  const out: { name: string; count: number }[] = [];
+  const list: any[] = Array.isArray((rows as any).rows) ? (rows as any).rows : (rows as any);
+  for (const r of list) {
+    if (r?.name) out.push({ name: String(r.name), count: Number(r.count) || 0 });
+  }
+  return out;
+}
+
+/** Min/max year present in active listings (for slider/dropdown ranges). */
+export async function getYearRange() {
+  const db = getMarketplaceDb();
+  const [row] = await db
+    .select({
+      minYear: sql<number>`min(year)::int`,
+      maxYear: sql<number>`max(year)::int`,
+    })
+    .from(marketplaceListings)
+    .where(and(
+      eq(marketplaceListings.status, 'active'),
+      sql`year is not null`,
+    ));
+
+  return {
+    minYear: row?.minYear ?? null,
+    maxYear: row?.maxYear ?? null,
+  };
 }
 
 // =============================================
@@ -1856,4 +2189,110 @@ export async function getCrmLeadStats(): Promise<{ byStatus: Record<string, numb
   }
 
   return { byStatus, bySource, total };
+}
+
+// =============================================
+// SPECS BACKFILL
+// =============================================
+
+import { extractSpecs, hasAnySpec } from './specs-extractor.js';
+
+export interface BackfillSpecsOptions {
+  /** If true, also overwrite specs that are already populated. Default false. */
+  overwrite?: boolean;
+  /** If true, only return what would be updated without writing. Default false. */
+  dryRun?: boolean;
+  /** Limit (for testing). 0/undefined = all. */
+  limit?: number;
+}
+
+export interface BackfillSpecsResult {
+  scanned: number;
+  updated: number;
+  skipped_no_extraction: number;
+  skipped_existing: number;
+  errors: { id: number; listingNumber?: string; error: string }[];
+  samples: { id: number; listingNumber: string; title: string; specs: any }[];
+}
+
+/**
+ * Walk every active listing, run the specs extractor, and write the result
+ * to the `specs` jsonb column. Idempotent; safe to re-run.
+ */
+export async function backfillListingSpecs(opts: BackfillSpecsOptions = {}): Promise<BackfillSpecsResult> {
+  const db = getMarketplaceDb();
+  const result: BackfillSpecsResult = {
+    scanned: 0, updated: 0, skipped_no_extraction: 0, skipped_existing: 0, errors: [], samples: [],
+  };
+
+  // Fetch all active listings with the inputs we need
+  const query = db
+    .select({
+      id: marketplaceListings.id,
+      listingNumber: marketplaceListings.listingNumber,
+      title: marketplaceListings.title,
+      description: marketplaceListings.description,
+      descriptionEs: marketplaceListings.descriptionEs,
+      tags: marketplaceListings.tags,
+      chassisType: marketplaceListings.chassisType,
+      specs: marketplaceListings.specs,
+    })
+    .from(marketplaceListings)
+    .where(eq(marketplaceListings.status, 'active'));
+
+  const rows = opts.limit ? await query.limit(opts.limit) : await query;
+  result.scanned = rows.length;
+
+  for (const row of rows) {
+    try {
+      const existing = (row.specs as Record<string, any>) || {};
+      const hasExisting = Object.keys(existing).length > 0;
+
+      if (hasExisting && !opts.overwrite) {
+        result.skipped_existing++;
+        continue;
+      }
+
+      const extracted = extractSpecs({
+        title: row.title,
+        description: row.description,
+        descriptionEs: row.descriptionEs,
+        tags: row.tags,
+        chassisType: row.chassisType,
+      });
+
+      if (!hasAnySpec(extracted)) {
+        result.skipped_no_extraction++;
+        continue;
+      }
+
+      // Merge: extracted on top of existing (when overwriting, extracted wins)
+      const merged = opts.overwrite ? { ...existing, ...extracted } : { ...extracted, ...existing };
+
+      if (!opts.dryRun) {
+        await db
+          .update(marketplaceListings)
+          .set({ specs: merged })
+          .where(eq(marketplaceListings.id, row.id));
+      }
+      result.updated++;
+
+      if (result.samples.length < 5) {
+        result.samples.push({
+          id: row.id,
+          listingNumber: row.listingNumber || '',
+          title: row.title || '',
+          specs: merged,
+        });
+      }
+    } catch (e: any) {
+      result.errors.push({
+        id: row.id,
+        listingNumber: row.listingNumber || undefined,
+        error: e?.message || String(e),
+      });
+    }
+  }
+
+  return result;
 }

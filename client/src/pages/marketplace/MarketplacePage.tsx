@@ -41,9 +41,16 @@ import Footer from '@/components/layout/Footer';
 import SEOHead from '@/components/marketplace/SEOHead';
 import { 
   getListings, 
-  getChassisTypes, 
-  getConditions, 
+  getChassisTypes,
+  getConditions,
   getStates,
+  getManufacturers,
+  getAxleConfigs,
+  getSuspensions,
+  getYearRange,
+  getWheels,
+  getConfigurations,
+  getFeatures,
   toggleFavorite,
   isAuthenticated,
   type MarketplaceListing,
@@ -154,11 +161,18 @@ function ListingCard({ listing, onFavoriteToggle }: {
         </div>
 
         <CardContent className="p-4">
+          {/* Year + Manufacturer chip (prominent) */}
+          {(listing.year || listing.manufacturer) && (
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#0A3161]/10 text-[#0A3161] text-xs font-semibold mb-1.5">
+              {listing.year || ''}{listing.year && listing.manufacturer ? ' · ' : ''}{listing.manufacturer || ''}
+            </div>
+          )}
+
           {/* Title & Location */}
           <h3 className="font-semibold text-lg text-gray-900 line-clamp-1 group-hover:text-[#0A3161] transition-colors">
             {getLocalizedField(listing, 'title')}
           </h3>
-          
+
           <div className="flex items-center gap-1 text-gray-500 text-sm mt-1">
             <MapPin className="w-4 h-4" />
             <span>{listing.city}, {listing.state}</span>
@@ -173,6 +187,17 @@ function ListingCard({ listing, onFavoriteToggle }: {
               {listing.chassisSize}
             </Badge>
           </div>
+
+          {/* Feature tags (axle, suspension, wheels — first 3) */}
+          {Array.isArray(listing.tags) && listing.tags.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1 mt-2">
+              {listing.tags.slice(0, 3).map((tag: string, i: number) => (
+                <span key={i} className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 text-[10px] font-medium uppercase tracking-wide">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Price & Quantity */}
           <div className="flex items-center justify-between mt-4 pt-3 border-t">
@@ -230,12 +255,19 @@ function ListingSkeleton() {
 }
 
 // Filter Sidebar Component
-function FilterSidebar({ 
-  filters, 
+function FilterSidebar({
+  filters,
   setFilters,
   chassisTypes,
   conditions,
   states,
+  manufacturers,
+  axleConfigs,
+  suspensions,
+  wheels,
+  configurations,
+  features,
+  yearRange,
   onClear
 }: {
   filters: ListingFilters;
@@ -243,12 +275,37 @@ function FilterSidebar({
   chassisTypes: any[];
   conditions: any[];
   states: string[];
+  manufacturers: { name: string; count: number }[];
+  axleConfigs: { name: string; count: number }[];
+  suspensions: { name: string; count: number }[];
+  wheels: { name: string; count: number }[];
+  configurations: { name: string; count: number }[];
+  features: { name: string; count: number }[];
+  yearRange?: { minYear: number | null; maxYear: number | null };
   onClear: () => void;
 }) {
   const lang = getCurrentLanguage();
 
-  // Sizes must match database values (with apostrophe format)
-  const sizes = ["20'", "40'", "45'", "53'", "20-40'", "40-45'", "40-45-48'", "40-45-48-53'"];
+  // Size buckets — backend handles three patterns:
+  //  1. Standard "20'"-style: matches "20'", "20 ft", "20ft", "20 ft 6 in", etc.
+  //  2. Non-standard range "30-39 ft": expands to all integer sizes in the range, excluding standards.
+  //  3. Extendable combos with apostrophe "20-40'": exact match.
+  // Note: removed "40-45-48-53'" because no listings currently use it (dead option in dropdown).
+  const sizes = [
+    "20'",
+    "20-29 ft",
+    "30-39 ft",
+    "40'",
+    "41-44 ft",
+    "45'",
+    "46-49 ft",
+    "48'",
+    "53'",
+    "54+ ft",
+    "20-40'",
+    "40-45'",
+    "40-45-48'",
+  ];
 
   return (
     <div className="space-y-6">
@@ -266,9 +323,10 @@ function FilterSidebar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t('allTypes')}</SelectItem>
-            {chassisTypes.map((type) => (
+            {chassisTypes.map((type: any) => (
               <SelectItem key={type.id} value={type.name}>
-                {lang === 'es' ? type.nameEs || type.name : type.name}
+                {(lang === 'es' ? type.nameEs || type.name : type.name)}
+                {typeof type.count === 'number' ? ` (${type.count})` : ''}
               </SelectItem>
             ))}
           </SelectContent>
@@ -310,9 +368,10 @@ function FilterSidebar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t('allConditions')}</SelectItem>
-            {conditions.map((cond) => (
+            {conditions.map((cond: any) => (
               <SelectItem key={cond.id} value={cond.name}>
-                {lang === 'es' ? cond.nameEs || cond.name : cond.name}
+                {(lang === 'es' ? cond.nameEs || cond.name : cond.name)}
+                {typeof cond.count === 'number' ? ` (${cond.count})` : ''}
               </SelectItem>
             ))}
           </SelectContent>
@@ -339,6 +398,185 @@ function FilterSidebar({
           </SelectContent>
         </Select>
       </div>
+
+      {/* Manufacturer (only when reference returns ≥1) */}
+      {manufacturers.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Fabricante' : 'Manufacturer'}
+          </label>
+          <Select
+            value={filters.manufacturer || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, manufacturer: value === 'all' ? undefined : value, page: 1 })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={lang === 'es' ? 'Todos los fabricantes' : 'All Manufacturers'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{lang === 'es' ? 'Todos los fabricantes' : 'All Manufacturers'}</SelectItem>
+              {manufacturers.map((m: any) => (
+                <SelectItem key={m.name} value={m.name}>
+                  {m.name}{typeof m.count === 'number' ? ` (${m.count})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Year Range */}
+      {yearRange && yearRange.minYear && yearRange.maxYear && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Año' : 'Year'}
+          </label>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              placeholder={`${yearRange.minYear}+`}
+              min={yearRange.minYear}
+              max={yearRange.maxYear}
+              value={filters.yearMin || ''}
+              onChange={(e) => setFilters({ ...filters, yearMin: e.target.value ? Number(e.target.value) : undefined, page: 1 })}
+              className="w-1/2"
+            />
+            <Input
+              type="number"
+              placeholder={`≤${yearRange.maxYear}`}
+              min={yearRange.minYear}
+              max={yearRange.maxYear}
+              value={filters.yearMax || ''}
+              onChange={(e) => setFilters({ ...filters, yearMax: e.target.value ? Number(e.target.value) : undefined, page: 1 })}
+              className="w-1/2"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Axle Configuration (only when extractor has populated specs) */}
+      {axleConfigs.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Configuración de ejes' : 'Axle Configuration'}
+          </label>
+          <Select
+            value={filters.axleConfig || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, axleConfig: value === 'all' ? undefined : value, page: 1 })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={lang === 'es' ? 'Todas las configuraciones' : 'All'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{lang === 'es' ? 'Todas las configuraciones' : 'All'}</SelectItem>
+              {axleConfigs.map((a: any) => (
+                <SelectItem key={a.name} value={a.name}>
+                  {a.name}{typeof a.count === 'number' ? ` (${a.count})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Suspension */}
+      {suspensions.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Suspensión' : 'Suspension'}
+          </label>
+          <Select
+            value={filters.suspension || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, suspension: value === 'all' ? undefined : value, page: 1 })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={lang === 'es' ? 'Todas' : 'All'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{lang === 'es' ? 'Todas' : 'All'}</SelectItem>
+              {suspensions.map((s: any) => (
+                <SelectItem key={s.name} value={s.name}>
+                  {s.name}{typeof s.count === 'number' ? ` (${s.count})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Wheels (Steel / Aluminum) */}
+      {wheels.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Ruedas' : 'Wheels'}
+          </label>
+          <Select
+            value={filters.wheels || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, wheels: value === 'all' ? undefined : value, page: 1 })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={lang === 'es' ? 'Todas' : 'All'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{lang === 'es' ? 'Todas' : 'All'}</SelectItem>
+              {wheels.map((w: any) => (
+                <SelectItem key={w.name} value={w.name}>
+                  {w.name}{typeof w.count === 'number' ? ` (${w.count})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Configuration (Fixed / Sliding / Extendable) */}
+      {configurations.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Configuración' : 'Configuration'}
+          </label>
+          <Select
+            value={filters.configuration || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, configuration: value === 'all' ? undefined : value, page: 1 })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={lang === 'es' ? 'Todas' : 'All'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{lang === 'es' ? 'Todas' : 'All'}</SelectItem>
+              {configurations.map((c: any) => (
+                <SelectItem key={c.name} value={c.name}>
+                  {c.name}{typeof c.count === 'number' ? ` (${c.count})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Feature flags (Gooseneck, Lift Axle, Pintle Hook, ISO Tank, ...) */}
+      {features.length > 0 && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            {lang === 'es' ? 'Característica' : 'Feature'}
+          </label>
+          <Select
+            value={filters.feature || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, feature: value === 'all' ? undefined : value, page: 1 })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={lang === 'es' ? 'Todas' : 'All'} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{lang === 'es' ? 'Todas' : 'All'}</SelectItem>
+              {features.map((f: any) => (
+                <SelectItem key={f.name} value={f.name}>
+                  {f.name}{typeof f.count === 'number' ? ` (${f.count})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       {/* Price Range */}
       <div>
@@ -382,6 +620,14 @@ function parseFiltersFromUrl(): Omit<ListingFilters, 'page'> {
   if (params.get('search')) parsed.search = params.get('search')!;
   if (params.get('minPrice')) parsed.minPrice = Number(params.get('minPrice'));
   if (params.get('maxPrice')) parsed.maxPrice = Number(params.get('maxPrice'));
+  if (params.get('manufacturer')) parsed.manufacturer = params.get('manufacturer')!;
+  if (params.get('yearMin')) parsed.yearMin = Number(params.get('yearMin'));
+  if (params.get('yearMax')) parsed.yearMax = Number(params.get('yearMax'));
+  if (params.get('axleConfig')) parsed.axleConfig = params.get('axleConfig')!;
+  if (params.get('suspension')) parsed.suspension = params.get('suspension')!;
+  if (params.get('wheels')) parsed.wheels = params.get('wheels')!;
+  if (params.get('configuration')) parsed.configuration = params.get('configuration')!;
+  if (params.get('feature')) parsed.feature = params.get('feature')!;
   if (params.get('sortBy')) parsed.sortBy = params.get('sortBy')!;
   return parsed;
 }
@@ -395,6 +641,14 @@ function filtersToQueryString(f: Omit<ListingFilters, 'page'>): string {
   if (f.search) params.set('search', f.search);
   if (f.minPrice) params.set('minPrice', String(f.minPrice));
   if (f.maxPrice) params.set('maxPrice', String(f.maxPrice));
+  if (f.manufacturer) params.set('manufacturer', f.manufacturer);
+  if (f.yearMin) params.set('yearMin', String(f.yearMin));
+  if (f.yearMax) params.set('yearMax', String(f.yearMax));
+  if (f.axleConfig) params.set('axleConfig', f.axleConfig);
+  if (f.suspension) params.set('suspension', f.suspension);
+  if (f.wheels) params.set('wheels', f.wheels);
+  if (f.configuration) params.set('configuration', f.configuration);
+  if (f.feature) params.set('feature', f.feature);
   if (f.sortBy && f.sortBy !== 'date_desc') params.set('sortBy', f.sortBy);
   const qs = params.toString();
   return qs ? `?${qs}` : '';
@@ -479,6 +733,41 @@ export default function MarketplacePage() {
     queryFn: getStates,
   });
 
+  const { data: manufacturers = [] } = useQuery({
+    queryKey: ['manufacturers'],
+    queryFn: () => getManufacturers(30),
+  });
+
+  const { data: axleConfigs = [] } = useQuery({
+    queryKey: ['axle-configs'],
+    queryFn: getAxleConfigs,
+  });
+
+  const { data: suspensions = [] } = useQuery({
+    queryKey: ['suspensions'],
+    queryFn: getSuspensions,
+  });
+
+  const { data: yearRange } = useQuery({
+    queryKey: ['year-range'],
+    queryFn: getYearRange,
+  });
+
+  const { data: wheels = [] } = useQuery({
+    queryKey: ['wheels'],
+    queryFn: getWheels,
+  });
+
+  const { data: configurations = [] } = useQuery({
+    queryKey: ['configurations'],
+    queryFn: getConfigurations,
+  });
+
+  const { data: features = [] } = useQuery({
+    queryKey: ['features'],
+    queryFn: getFeatures,
+  });
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setFilters({ ...filters, search: searchQuery });
@@ -489,8 +778,11 @@ export default function MarketplacePage() {
     setSearchQuery('');
   };
 
-  const hasActiveFilters = filters.chassisType || filters.chassisSize || filters.condition || 
-    filters.state || filters.minPrice || filters.maxPrice || filters.search;
+  const hasActiveFilters = filters.chassisType || filters.chassisSize || filters.condition ||
+    filters.state || filters.minPrice || filters.maxPrice || filters.search ||
+    filters.manufacturer || filters.yearMin || filters.yearMax ||
+    filters.axleConfig || filters.suspension ||
+    filters.wheels || filters.configuration || filters.feature;
 
   // SEO translations
   const seoContent = {
@@ -589,19 +881,28 @@ export default function MarketplacePage() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Desktop Sidebar */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
-              <div className="sticky top-4 bg-white rounded-xl p-6 shadow-sm border">
-                <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <div className="sticky top-4 bg-white rounded-xl shadow-sm border flex flex-col max-h-[calc(100vh-2rem)]">
+                <h2 className="font-semibold text-lg flex items-center gap-2 p-6 pb-4 border-b flex-shrink-0">
                   <Filter className="w-5 h-5" />
                   {t('filters')}
                 </h2>
+                <div className="overflow-y-auto p-6 pt-4">
                 <FilterSidebar
                   filters={filters}
                   setFilters={setFilters}
                   chassisTypes={chassisTypes}
                   conditions={conditions}
                   states={states}
+                  manufacturers={manufacturers}
+                  axleConfigs={axleConfigs}
+                  suspensions={suspensions}
+                  wheels={wheels}
+                  configurations={configurations}
+                  features={features}
+                  yearRange={yearRange}
                   onClear={clearFilters}
                 />
+                </div>
               </div>
             </aside>
 
@@ -621,17 +922,24 @@ export default function MarketplacePage() {
                         )}
                       </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="w-80">
-                      <SheetHeader>
+                    <SheetContent side="left" className="w-80 flex flex-col">
+                      <SheetHeader className="flex-shrink-0">
                         <SheetTitle>{t('filters')}</SheetTitle>
                       </SheetHeader>
-                      <div className="mt-6">
+                      <div className="mt-6 overflow-y-auto flex-1 pr-1 -mr-2">
                         <FilterSidebar
                           filters={filters}
                           setFilters={setFilters}
                           chassisTypes={chassisTypes}
                           conditions={conditions}
                           states={states}
+                          manufacturers={manufacturers}
+                          axleConfigs={axleConfigs}
+                          suspensions={suspensions}
+                          wheels={wheels}
+                          configurations={configurations}
+                          features={features}
+                          yearRange={yearRange}
                           onClear={clearFilters}
                         />
                       </div>
@@ -734,10 +1042,74 @@ export default function MarketplacePage() {
                   {filters.search && (
                     <Badge variant="secondary" className="pl-3">
                       "{filters.search}"
-                      <button 
+                      <button
                         onClick={() => { setFilters({ ...filters, search: undefined }); setSearchQuery(''); }}
                         className="ml-2 hover:text-red-500"
                       >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.manufacturer && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.manufacturer}
+                      <button onClick={() => setFilters({ ...filters, manufacturer: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {(filters.yearMin || filters.yearMax) && (
+                    <Badge variant="secondary" className="pl-3">
+                      {lang === 'es' ? 'Año' : 'Year'}: {filters.yearMin || '*'}–{filters.yearMax || '*'}
+                      <button onClick={() => setFilters({ ...filters, yearMin: undefined, yearMax: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.axleConfig && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.axleConfig}
+                      <button onClick={() => setFilters({ ...filters, axleConfig: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.suspension && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.suspension}
+                      <button onClick={() => setFilters({ ...filters, suspension: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.wheels && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.wheels}
+                      <button onClick={() => setFilters({ ...filters, wheels: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.configuration && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.configuration}
+                      <button onClick={() => setFilters({ ...filters, configuration: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {filters.feature && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.feature}
+                      <button onClick={() => setFilters({ ...filters, feature: undefined })} className="ml-2 hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {(filters.minPrice || filters.maxPrice) && (
+                    <Badge variant="secondary" className="pl-3">
+                      {filters.minPrice ? `$${filters.minPrice.toLocaleString()}` : '$0'}–{filters.maxPrice ? `$${filters.maxPrice.toLocaleString()}` : '∞'}
+                      <button onClick={() => setFilters({ ...filters, minPrice: undefined, maxPrice: undefined })} className="ml-2 hover:text-red-500">
                         <X className="w-3 h-3" />
                       </button>
                     </Badge>

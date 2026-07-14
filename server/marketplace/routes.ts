@@ -163,6 +163,14 @@ router.get('/listings', optionalAuth, async (req: AuthenticatedRequest, res: Res
       minPrice: req.query.minPrice ? Number(req.query.minPrice) : undefined,
       maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
       search: req.query.search as string,
+      manufacturer: req.query.manufacturer as string,
+      yearMin: req.query.yearMin ? Number(req.query.yearMin) : undefined,
+      yearMax: req.query.yearMax ? Number(req.query.yearMax) : undefined,
+      axleConfig: req.query.axleConfig as string,
+      suspension: req.query.suspension as string,
+      wheels: req.query.wheels as string,
+      configuration: req.query.configuration as string,
+      feature: req.query.feature as string,
       sortBy: req.query.sortBy as any,
       page: req.query.page ? Number(req.query.page) : 1,
       limit: req.query.limit ? Math.min(Number(req.query.limit), 50) : 20,
@@ -201,11 +209,11 @@ router.get('/listings/:slug', optionalAuth, async (req: AuthenticatedRequest, re
 
 // Public inquiry on a listing (no auth required)
 const inquirySchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  message: z.string().min(5),
+  name: z.string().trim().min(2, 'Name must be at least 2 characters'),
+  email: z.string().trim().toLowerCase().email('Invalid email address'),
+  phone: z.string().trim().optional(),
+  company: z.string().trim().optional(),
+  message: z.string().trim().min(1, 'Message is required'),
   language: z.enum(['en', 'es']).optional(),
 });
 
@@ -250,7 +258,13 @@ router.post('/listings/:slug/inquire', async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error('Error sending listing inquiry:', error);
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      const first = error.errors[0];
+      const field = first?.path?.join('.') || 'field';
+      const msg = first?.message || 'Invalid data';
+      return res.status(400).json({
+        message: `${field}: ${msg}`,
+        errors: error.errors,
+      });
     }
     res.status(500).json({ message: 'Failed to send inquiry' });
   }
@@ -284,6 +298,84 @@ router.get('/reference/states', async (_req: Request, res: Response) => {
   } catch (error) {
     console.error('Error fetching states:', error);
     res.status(500).json({ message: 'Failed to fetch states' });
+  }
+});
+
+// Top manufacturers among active listings (capped by ?limit, default 30).
+router.get('/reference/manufacturers', async (req: Request, res: Response) => {
+  try {
+    const limit = req.query.limit ? Math.min(Math.max(Number(req.query.limit), 1), 100) : 30;
+    const manufacturers = await storage.getManufacturers(limit);
+    res.json(manufacturers);
+  } catch (error) {
+    console.error('Error fetching manufacturers:', error);
+    res.status(500).json({ message: 'Failed to fetch manufacturers' });
+  }
+});
+
+// Distinct axle configurations sourced from specs (after the backfill is run).
+router.get('/reference/axle-configs', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getAxleConfigs();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching axle configs:', error);
+    res.status(500).json({ message: 'Failed to fetch axle configs' });
+  }
+});
+
+// Distinct suspension types sourced from specs.
+router.get('/reference/suspensions', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getSuspensions();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching suspensions:', error);
+    res.status(500).json({ message: 'Failed to fetch suspensions' });
+  }
+});
+
+// Wheels (Steel / Aluminum) sourced from specs.
+router.get('/reference/wheels', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getWheels();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching wheels:', error);
+    res.status(500).json({ message: 'Failed to fetch wheels' });
+  }
+});
+
+// Configuration (Fixed / Sliding / Extendable) sourced from specs.
+router.get('/reference/configurations', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getConfigurations();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching configurations:', error);
+    res.status(500).json({ message: 'Failed to fetch configurations' });
+  }
+});
+
+// Feature flags (Gooseneck, Lift Axle, Pintle Hook, ...) from specs.features array.
+router.get('/reference/features', async (_req: Request, res: Response) => {
+  try {
+    const data = await storage.getFeaturesList();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching features:', error);
+    res.status(500).json({ message: 'Failed to fetch features' });
+  }
+});
+
+// Min/max year present in active listings — frontend uses this for the year slider.
+router.get('/reference/year-range', async (_req: Request, res: Response) => {
+  try {
+    const range = await storage.getYearRange();
+    res.json(range);
+  } catch (error) {
+    console.error('Error fetching year range:', error);
+    res.status(500).json({ message: 'Failed to fetch year range' });
   }
 });
 
@@ -1304,6 +1396,37 @@ router.post('/admin/bulk-import', authenticateToken, requireAdmin, async (req: A
     }
     console.error('Bulk import error:', error);
     res.status(500).json({ message: error.message || 'Bulk import failed' });
+  }
+});
+
+// =============================================
+// ADMIN: BACKFILL LISTING SPECS
+// =============================================
+// One-shot (idempotent) endpoint that walks every active listing, parses
+// title + description + tags through the specs-extractor, and writes the
+// resulting structured spec to the `specs` jsonb column. Safe to re-run.
+//
+// Body (optional JSON):
+//   { "overwrite"?: boolean, "dryRun"?: boolean, "limit"?: number }
+router.post('/admin/listings/backfill-specs', authenticateToken, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const body = (req.body || {}) as { overwrite?: boolean; dryRun?: boolean; limit?: number };
+    const overwrite = body.overwrite === true;
+    const dryRun = body.dryRun === true;
+    const limit = Number.isFinite(body.limit) && body.limit && body.limit > 0 ? Number(body.limit) : undefined;
+
+    const t0 = Date.now();
+    const result = await storage.backfillListingSpecs({ overwrite, dryRun, limit });
+    const elapsedMs = Date.now() - t0;
+
+    console.log(`[Backfill Specs] admin=${req.user!.id} dryRun=${dryRun} overwrite=${overwrite} ` +
+      `scanned=${result.scanned} updated=${result.updated} skip_existing=${result.skipped_existing} ` +
+      `skip_no_data=${result.skipped_no_extraction} errors=${result.errors.length} elapsed=${elapsedMs}ms`);
+
+    res.json({ ok: true, elapsedMs, options: { overwrite, dryRun, limit }, ...result });
+  } catch (error: any) {
+    console.error('Backfill specs error:', error);
+    res.status(500).json({ message: 'Backfill failed', error: error?.message || String(error) });
   }
 });
 
