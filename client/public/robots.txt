@@ -25,6 +25,28 @@ Allow: /es/marketplace
 Allow: /en/chassis-marketplace
 Allow: /es/chassis-marketplace
 
+# AI / answer-engine crawlers — explicitly welcomed for AEO (same limits as *)
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: anthropic-ai
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: Amazonbot
+User-agent: cohere-ai
+Allow: /
+Disallow: /*/marketplace/dashboard
+Disallow: /*/marketplace/admin
+Disallow: /*/marketplace/manual/
+Disallow: /marketplace/login
+Disallow: /marketplace/register
+Disallow: /api/
+
 # Sitemaps (index references both corporate and marketplace sitemaps)
 Sitemap: https://www.americanchassisdepot.com/sitemap-index.xml
 Sitemap: https://www.americanchassisdepot.com/sitemap.xml

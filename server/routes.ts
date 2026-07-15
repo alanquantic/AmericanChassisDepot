@@ -589,7 +589,7 @@ ${urls}</urlset>`;
   });
 
   // Dynamic rendering for SEO — serve HTML with proper meta tags for bots
-  const BOT_AGENTS = /googlebot|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkshare|w3c_validator|whatsapp|telegram/i;
+  const BOT_AGENTS = /googlebot|bingbot|yandex|baiduspider|duckduckbot|twitterbot|facebookexternalhit|facebookbot|meta-externalagent|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkshare|w3c_validator|whatsapp|telegram|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|perplexity-user|ccbot|bytespider|amazonbot|applebot|cohere-ai|youbot|diffbot|timpibot/i;
   const SITE = 'https://www.americanchassisdepot.com';
 
   function isBot(ua: string | undefined): boolean {
@@ -600,11 +600,15 @@ ${urls}</urlset>`;
     return s.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  function buildMetaHtml(opts: { title: string; description: string; url: string; image?: string; lang: string; jsonLd?: object }): string {
+  function buildMetaHtml(opts: { title: string; description: string; url: string; image?: string; lang: string; jsonLd?: object; body?: string }): string {
     const altLang = opts.lang === 'es' ? 'en' : 'es';
     const altUrl = opts.url.replace(`/${opts.lang}/`, `/${altLang}/`);
+    const xDefaultUrl = opts.url.replace(`/${opts.lang}`, `/en`);
     const img = opts.image || `${SITE}/attached_assets/triaxle_20.webp`;
     const ld = opts.jsonLd ? `<script type="application/ld+json">${JSON.stringify(opts.jsonLd)}</script>` : '';
+    // Bots (incl. AI crawlers) get real, JS-free content — not an empty shell.
+    const bodyContent = opts.body || `<main><h1>${esc(opts.title)}</h1><p>${esc(opts.description)}</p></main>`;
+    const nav = `<nav aria-label="Site"><a href="${SITE}/${opts.lang}">Home</a> | <a href="${SITE}/${opts.lang}/marketplace">Marketplace</a> | <a href="${SITE}/${opts.lang}/products">Products</a> | <a href="${SITE}/${opts.lang}/new-chassis">New Chassis</a> | <a href="${SITE}/${opts.lang}/used-chassis">Used Chassis</a> | <a href="${SITE}/${opts.lang}/contact">Contact</a></nav>`;
     return `<!DOCTYPE html>
 <html lang="${opts.lang}">
 <head>
@@ -615,6 +619,7 @@ ${urls}</urlset>`;
 <link rel="canonical" href="${opts.url}"/>
 <link rel="alternate" hreflang="${opts.lang}" href="${opts.url}"/>
 <link rel="alternate" hreflang="${altLang}" href="${altUrl}"/>
+<link rel="alternate" hreflang="x-default" href="${xDefaultUrl}"/>
 <meta property="og:type" content="website"/>
 <meta property="og:title" content="${esc(opts.title)}"/>
 <meta property="og:description" content="${esc(opts.description)}"/>
@@ -628,10 +633,62 @@ ${urls}</urlset>`;
 ${ld}
 </head>
 <body>
-<div id="root"></div>
-<script>window.location.href="${opts.url}";</script>
+${bodyContent}
+<hr/>
+${nav}
 </body>
 </html>`;
+  }
+
+  // Renders JS-free, semantic content for a marketplace listing so bots and AI
+  // crawlers see the actual specs/description/price, not an empty SPA shell.
+  function renderListingBody(listing: any, lang: string): string {
+    const title = lang === 'es' ? (listing.titleEs || listing.title) : listing.title;
+    const desc = lang === 'es' ? (listing.descriptionEs || listing.description || '') : (listing.description || '');
+    const rows: string[] = [];
+    const addRow = (label: string, val: any) => {
+      if (val !== undefined && val !== null && String(val).trim() !== '') {
+        rows.push(`<tr><th align="left">${esc(label)}</th><td>${esc(String(val))}</td></tr>`);
+      }
+    };
+    addRow(lang === 'es' ? 'Condición' : 'Condition', listing.condition);
+    addRow(lang === 'es' ? 'Tipo de chasis' : 'Chassis type', listing.chassisType);
+    addRow(lang === 'es' ? 'Tamaño' : 'Size', listing.chassisSize);
+    addRow(lang === 'es' ? 'Fabricante' : 'Manufacturer', listing.manufacturer);
+    addRow(lang === 'es' ? 'Año' : 'Year', listing.year);
+    addRow('VIN', listing.vin);
+    addRow(lang === 'es' ? 'Ubicación' : 'Location', [listing.city, listing.state].filter(Boolean).join(', '));
+    const specs = listing.specs && typeof listing.specs === 'object' ? listing.specs : null;
+    if (specs) {
+      const specLabels: Record<string, string> = {
+        axleConfig: lang === 'es' ? 'Configuración de ejes' : 'Axle configuration',
+        suspension: lang === 'es' ? 'Suspensión' : 'Suspension',
+        wheels: lang === 'es' ? 'Ruedas' : 'Wheels',
+        configuration: lang === 'es' ? 'Configuración' : 'Configuration',
+        widthInches: lang === 'es' ? 'Ancho (pulg.)' : 'Width (in)',
+        brakes: lang === 'es' ? 'Frenos' : 'Brakes',
+        tires: lang === 'es' ? 'Llantas' : 'Tires',
+        gvwrLb: 'GVWR (lb)',
+      };
+      for (const [k, label] of Object.entries(specLabels)) {
+        if (specs[k]) addRow(label, specs[k]);
+      }
+      if (Array.isArray(specs.features) && specs.features.length) {
+        addRow(lang === 'es' ? 'Características' : 'Features', specs.features.join(', '));
+      }
+    }
+    const priceNum = Number(listing.pricePerUnit);
+    const priceHtml = Number.isFinite(priceNum) && priceNum > 0
+      ? `<p><strong>${lang === 'es' ? 'Precio' : 'Price'}:</strong> $${priceNum.toLocaleString('en-US')} USD</p>`
+      : '';
+    const specsTable = rows.length
+      ? `<h2>${lang === 'es' ? 'Especificaciones' : 'Specifications'}</h2><table>${rows.join('')}</table>`
+      : '';
+    const descHtml = desc
+      ? `<h2>${lang === 'es' ? 'Descripción' : 'Description'}</h2><p>${esc(desc).replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br/>')}</p>`
+      : '';
+    const cta = `<p><a href="${SITE}/${lang}/contact">${lang === 'es' ? 'Contactar al vendedor para cotización' : 'Contact seller for a quote'}</a></p>`;
+    return `<main><h1>${esc(title)}</h1>${priceHtml}${specsTable}${descHtml}${cta}</main>`;
   }
 
   function serveSpaFallback(_req: Request, res: Response, next: () => void) {
@@ -663,6 +720,7 @@ ${ld}
         url: `${SITE}/${lang}/marketplace/listing/${slug}`,
         image: listing.primaryImageUrl || undefined,
         lang,
+        body: renderListingBody(listing, lang),
         jsonLd: {
           '@context': 'https://schema.org',
           '@type': 'Product',
@@ -684,34 +742,90 @@ ${ld}
     }
   });
 
-  const STATIC_PAGES: Record<string, { en: { title: string; desc: string }; es: { title: string; desc: string } }> = {
+  const STATIC_PAGES: Record<string, { en: { title: string; desc: string; body: string }; es: { title: string; desc: string; body: string } }> = {
     '': {
-      en: { title: 'American Chassis Depot | Container Chassis for Sale', desc: 'Premium new and used intermodal container chassis. Tandem and triaxle chassis for 20ft, 40ft, 45ft, and 53ft containers.' },
-      es: { title: 'American Chassis Depot | Chasis de Contenedor en Venta', desc: 'Chasis intermodales nuevos y usados premium. Chasis tandem y triaxle para contenedores de 20, 40, 45 y 53 pies.' },
+      en: {
+        title: 'American Chassis Depot | Container Chassis for Sale',
+        desc: 'Premium new and used intermodal container chassis. Tandem and triaxle chassis for 20ft, 40ft, 45ft, and 53ft containers.',
+        body: '<main><h1>Container Chassis for Sale &mdash; New &amp; Used</h1><p>American Chassis Depot is a Houston, Texas supplier of new and used intermodal container chassis for trucking, drayage, and logistics companies across the United States.</p><p>Our inventory covers 20ft, 33ft, 40ft, 45ft, 20-40ft extendable, and triaxle configurations, including gooseneck models. We offer direct purchase, chassis leasing, and lease-to-own financing, with fleet discounts on volume orders.</p></main>',
+      },
+      es: {
+        title: 'American Chassis Depot | Chasis de Contenedor en Venta',
+        desc: 'Chasis intermodales nuevos y usados premium. Chasis tandem y triaxle para contenedores de 20, 40, 45 y 53 pies.',
+        body: '<main><h1>Chasis de Contenedor en Venta &mdash; Nuevos y Usados</h1><p>American Chassis Depot es un proveedor en Houston, Texas de chasis intermodales nuevos y usados para empresas de transporte, drayage y logística en todo Estados Unidos.</p><p>Nuestro inventario incluye configuraciones de 20, 33, 40 y 45 pies, extendibles de 20-40 pies y triaxle, adem&aacute;s de modelos gooseneck. Ofrecemos compra directa, arrendamiento y lease-to-own, con descuentos por volumen.</p></main>',
+      },
     },
     'marketplace': {
-      en: { title: 'Chassis Marketplace | Buy & Sell Container Chassis', desc: 'Browse hundreds of new and used container chassis listings from verified sellers across the United States.' },
-      es: { title: 'Marketplace de Chasis | Compra y Venta de Chasis', desc: 'Explora cientos de listados de chasis de contenedor nuevos y usados de vendedores verificados en Estados Unidos.' },
+      en: {
+        title: 'Chassis Marketplace | Buy & Sell Container Chassis',
+        desc: 'Browse hundreds of new and used container chassis listings from verified sellers across the United States.',
+        body: '<main><h1>Chassis Marketplace</h1><p>Browse hundreds of new and used container chassis listings from verified sellers across the United States. Filter by chassis type, size, manufacturer, year, axle configuration, and location to find the right unit.</p><p>Every listing includes full specifications, pricing, and a direct line to contact the seller for a quote.</p></main>',
+      },
+      es: {
+        title: 'Marketplace de Chasis | Compra y Venta de Chasis',
+        desc: 'Explora cientos de listados de chasis de contenedor nuevos y usados de vendedores verificados en Estados Unidos.',
+        body: '<main><h1>Marketplace de Chasis</h1><p>Explora cientos de listados de chasis de contenedor nuevos y usados de vendedores verificados en todo Estados Unidos. Filtra por tipo, tama&ntilde;o, fabricante, a&ntilde;o, configuraci&oacute;n de ejes y ubicaci&oacute;n.</p><p>Cada listado incluye especificaciones completas, precio y contacto directo con el vendedor para cotizar.</p></main>',
+      },
     },
     'products': {
-      en: { title: 'All Chassis Models | American Chassis Depot', desc: 'Explore our complete catalog of intermodal container chassis models from top manufacturers.' },
-      es: { title: 'Todos los Modelos de Chasis | American Chassis Depot', desc: 'Explora nuestro catálogo completo de modelos de chasis intermodales de los mejores fabricantes.' },
+      en: {
+        title: 'All Chassis Models | American Chassis Depot',
+        desc: 'Explore our complete catalog of intermodal container chassis models from top manufacturers.',
+        body: '<main><h1>All Chassis Models</h1><p>Explore our complete catalog of intermodal container chassis: 20ft, 40ft, 45ft, 53ft, extendable, and triaxle models from leading manufacturers.</p><p>Each model page details dimensions, tare weight, GVWR, axles, suspension, and available financing.</p></main>',
+      },
+      es: {
+        title: 'Todos los Modelos de Chasis | American Chassis Depot',
+        desc: 'Explora nuestro catálogo completo de modelos de chasis intermodales de los mejores fabricantes.',
+        body: '<main><h1>Todos los Modelos de Chasis</h1><p>Explora nuestro cat&aacute;logo completo de chasis intermodales: modelos de 20, 40, 45 y 53 pies, extendibles y triaxle de los mejores fabricantes.</p><p>Cada p&aacute;gina de modelo detalla dimensiones, peso, GVWR, ejes, suspensi&oacute;n y opciones de financiamiento.</p></main>',
+      },
     },
     'about': {
-      en: { title: 'About Us | American Chassis Depot', desc: 'Learn about American Chassis Depot, your trusted source for intermodal container chassis solutions.' },
-      es: { title: 'Sobre Nosotros | American Chassis Depot', desc: 'Conoce American Chassis Depot, tu fuente confiable de soluciones de chasis intermodales.' },
+      en: {
+        title: 'About Us | American Chassis Depot',
+        desc: 'Learn about American Chassis Depot, your trusted source for intermodal container chassis solutions.',
+        body: '<main><h1>About American Chassis Depot</h1><p>American Chassis Depot is a Houston, Texas dealer specializing in new and used intermodal container chassis. We serve trucking, drayage, and logistics operators nationwide with sales, leasing, and lease-to-own programs.</p></main>',
+      },
+      es: {
+        title: 'Sobre Nosotros | American Chassis Depot',
+        desc: 'Conoce American Chassis Depot, tu fuente confiable de soluciones de chasis intermodales.',
+        body: '<main><h1>Sobre American Chassis Depot</h1><p>American Chassis Depot es un distribuidor en Houston, Texas especializado en chasis intermodales nuevos y usados. Atendemos a operadores de transporte, drayage y log&iacute;stica en todo el pa&iacute;s con venta, arrendamiento y lease-to-own.</p></main>',
+      },
     },
     'contact': {
-      en: { title: 'Contact Us | American Chassis Depot', desc: 'Get in touch with our sales team for quotes, support, and chassis inquiries.' },
-      es: { title: 'Contáctanos | American Chassis Depot', desc: 'Comunícate con nuestro equipo de ventas para cotizaciones, soporte y consultas sobre chasis.' },
+      en: {
+        title: 'Contact Us | American Chassis Depot',
+        desc: 'Get in touch with our sales team for quotes, support, and chassis inquiries.',
+        body: '<main><h1>Contact American Chassis Depot</h1><p>Get in touch with our Houston, Texas sales team for quotes, availability, leasing, and lease-to-own financing on new and used container chassis. Fleet discounts available on volume orders.</p></main>',
+      },
+      es: {
+        title: 'Contáctanos | American Chassis Depot',
+        desc: 'Comunícate con nuestro equipo de ventas para cotizaciones, soporte y consultas sobre chasis.',
+        body: '<main><h1>Contacta a American Chassis Depot</h1><p>Comun&iacute;cate con nuestro equipo de ventas en Houston, Texas para cotizaciones, disponibilidad, arrendamiento y financiamiento lease-to-own de chasis nuevos y usados. Descuentos por volumen disponibles.</p></main>',
+      },
     },
     'new-chassis': {
-      en: { title: 'New Container Chassis | American Chassis Depot', desc: 'Browse our selection of brand new intermodal container chassis from leading manufacturers.' },
-      es: { title: 'Chasis Nuevos de Contenedor | American Chassis Depot', desc: 'Explora nuestra selección de chasis intermodales nuevos de los principales fabricantes.' },
+      en: {
+        title: 'New Container Chassis | American Chassis Depot',
+        desc: 'Browse our selection of brand new intermodal container chassis from leading manufacturers.',
+        body: '<main><h1>New Container Chassis</h1><p>Browse brand-new intermodal container chassis from leading manufacturers &mdash; 20ft, 40ft, 45ft, extendable, gooseneck, and triaxle configurations. Available for purchase, leasing, or lease-to-own with fleet pricing.</p></main>',
+      },
+      es: {
+        title: 'Chasis Nuevos de Contenedor | American Chassis Depot',
+        desc: 'Explora nuestra selección de chasis intermodales nuevos de los principales fabricantes.',
+        body: '<main><h1>Chasis Nuevos de Contenedor</h1><p>Explora chasis intermodales nuevos de los principales fabricantes &mdash; configuraciones de 20, 40 y 45 pies, extendibles, gooseneck y triaxle. Disponibles para compra, arrendamiento o lease-to-own con precios de flota.</p></main>',
+      },
     },
     'used-chassis': {
-      en: { title: 'Used Container Chassis | American Chassis Depot', desc: 'Quality pre-owned intermodal container chassis at competitive prices.' },
-      es: { title: 'Chasis Usados de Contenedor | American Chassis Depot', desc: 'Chasis intermodales usados de calidad a precios competitivos.' },
+      en: {
+        title: 'Used Container Chassis | American Chassis Depot',
+        desc: 'Quality pre-owned intermodal container chassis at competitive prices.',
+        body: '<main><h1>Used Container Chassis</h1><p>Quality pre-owned intermodal container chassis at competitive prices &mdash; inspected units in 20ft, 40ft, 45ft, extendable, and triaxle configurations, with financing available.</p></main>',
+      },
+      es: {
+        title: 'Chasis Usados de Contenedor | American Chassis Depot',
+        desc: 'Chasis intermodales usados de calidad a precios competitivos.',
+        body: '<main><h1>Chasis Usados de Contenedor</h1><p>Chasis intermodales usados de calidad a precios competitivos &mdash; unidades inspeccionadas en configuraciones de 20, 40 y 45 pies, extendibles y triaxle, con financiamiento disponible.</p></main>',
+      },
     },
   };
 
@@ -729,6 +843,7 @@ ${ld}
       description: data.desc,
       url: `${SITE}/${lang}/${pageKey}`,
       lang,
+      body: data.body,
     });
     res.set('Content-Type', 'text/html').send(html);
   });
@@ -743,6 +858,7 @@ ${ld}
       description: data.desc,
       url: `${SITE}/${lang}`,
       lang,
+      body: data.body,
     });
     res.set('Content-Type', 'text/html').send(html);
   });
