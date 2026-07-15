@@ -9,6 +9,7 @@ import { processFormSubmission, testOdooConnection, getOdooLeadStats } from "./s
 import marketplaceRoutes from "./marketplace/routes.js";
 import { authenticateToken, requireAdmin, type AuthenticatedRequest } from "./marketplace/auth.js";
 import { createCrmLead, getListingBySlug } from "./marketplace/storage.js";
+import { getLandingPage, LANDING_PAGES, type LandingPage } from "../shared/landing-pages.js";
 import path from "path";
 import fs from "fs";
 
@@ -92,6 +93,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { path: '/used-chassis', changefreq: 'weekly', priority: '0.8' },
         { path: '/about', changefreq: 'monthly', priority: '0.6' },
         { path: '/contact', changefreq: 'monthly', priority: '0.6' },
+        ...LANDING_PAGES.map((p) => ({ path: `/${p.slug}`, changefreq: 'weekly', priority: '0.8' })),
       ];
 
       let urls = '';
@@ -691,6 +693,68 @@ ${nav}
     return `<main><h1>${esc(title)}</h1>${priceHtml}${specsTable}${descHtml}${cta}</main>`;
   }
 
+  // Renders JS-free content for an SEO landing page (Phase 2) from the shared registry.
+  function renderLandingBody(page: LandingPage, lang: 'en' | 'es'): string {
+    const c = page[lang];
+    const intro = c.intro.map((p) => `<p>${esc(p)}</p>`).join('');
+    const price = page.priceRange
+      ? `<p><strong>${lang === 'es' ? 'Rango de precio orientativo' : 'Typical price range'}:</strong> ${esc(page.priceRange)}</p>`
+      : '';
+    const specs = page.specs && page.specs.length
+      ? `<h2>${lang === 'es' ? 'Especificaciones' : 'Specifications'}</h2><table>${page.specs
+          .map((s) => `<tr><th align="left">${esc(lang === 'es' ? s.labelEs : s.label)}</th><td>${esc(s.value)}</td></tr>`)
+          .join('')}</table>`
+      : '';
+    const sections = c.sections
+      .map((sec) => `<h2>${esc(sec.heading)}</h2>${sec.body.map((p) => `<p>${esc(p)}</p>`).join('')}`)
+      .join('');
+    const faqs = c.faqs.length
+      ? `<h2>${lang === 'es' ? 'Preguntas Frecuentes' : 'Frequently Asked Questions'}</h2>${c.faqs
+          .map((f) => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`)
+          .join('')}`
+      : '';
+    const cta = `<p><a href="${SITE}/${lang}/contact">${esc(c.ctaHeading)}</a> — ${esc(c.ctaText)}</p>`;
+    return `<main><h1>${esc(c.h1)}</h1><p>${esc(c.heroSubtitle)}</p>${price}${intro}${specs}${sections}${faqs}${cta}</main>`;
+  }
+
+  function buildLandingJsonLd(page: LandingPage, lang: 'en' | 'es', url: string): object {
+    const c = page[lang];
+    const graph: any[] = [];
+    if (page.type === 'product') {
+      graph.push({
+        '@type': 'Product',
+        name: c.h1,
+        description: c.metaDescription,
+        category: 'Container Chassis',
+        brand: { '@type': 'Brand', name: 'American Chassis Depot' },
+        offers: {
+          '@type': 'AggregateOffer',
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+          seller: { '@type': 'Organization', name: 'American Chassis Depot' },
+        },
+      });
+    }
+    if (c.faqs.length) {
+      graph.push({
+        '@type': 'FAQPage',
+        mainEntity: c.faqs.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      });
+    }
+    graph.push({
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/${lang}` },
+        { '@type': 'ListItem', position: 2, name: c.h1, item: url },
+      ],
+    });
+    return { '@context': 'https://schema.org', '@graph': graph };
+  }
+
   function serveSpaFallback(_req: Request, res: Response, next: () => void) {
     if (process.env.VERCEL) {
       const indexPath = path.resolve(import.meta.dirname, '..', 'index.html');
@@ -834,6 +898,24 @@ ${nav}
 
     const { lang, page } = req.params;
     const pageKey = page.replace(/\/$/, '');
+    const langKey = (lang === 'es' ? 'es' : 'en') as 'en' | 'es';
+
+    // SEO intent landing pages (Phase 2) — served from the shared registry.
+    const landing = getLandingPage(pageKey);
+    if (landing) {
+      const url = `${SITE}/${lang}/${pageKey}`;
+      const c = landing[langKey];
+      const html = buildMetaHtml({
+        title: c.metaTitle,
+        description: c.metaDescription,
+        url,
+        lang,
+        body: renderLandingBody(landing, langKey),
+        jsonLd: buildLandingJsonLd(landing, langKey, url),
+      });
+      return res.set('Content-Type', 'text/html').send(html);
+    }
+
     const meta = STATIC_PAGES[pageKey];
     if (!meta) return serveSpaFallback(req, res, next);
 

@@ -54,6 +54,10 @@
       "dest": "server/index.ts"
     },
     {
+      "src": "/(en|es)/(container-chassis/.+)$",
+      "dest": "server/index.ts"
+    },
+    {
       "src": "/(en|es)/?$",
       "dest": "server/index.ts"
     },

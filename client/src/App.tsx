@@ -12,6 +12,7 @@ import AboutPage from "@/pages/AboutPage";
 import NewChassisPage from "@/pages/NewChassisPage";
 import UsedChassisPage from "@/pages/UsedChassisPage";
 import AllProductsPage from "@/pages/AllProductsPage";
+import LandingPage from "@/pages/LandingPage";
 import { getCurrentLanguage, setLanguage } from "@/lib/i18n-simple";
 import { usePageTracking } from "./hooks/use-page-tracking";
 import ElevenLabsWidget from "@/components/shared/ElevenLabsWidget";
@@ -93,7 +94,16 @@ function Router() {
           return <HomePage key={`size-${params.size}-${lang}`} initialSize={params.size} />;
         }}
       </Route>
-      
+
+      {/* SEO intent landing pages (Phase 2) — product pages */}
+      <Route path="/:lang/container-chassis/:size">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <LandingPage slug={`container-chassis/${params.size}`} key={`lp-${params.size}-${lang}`} />;
+        }}
+      </Route>
+
       {/* ========== MARKETPLACE ROUTES ========== */}
       {/* Marketplace Landing Page (Marketing) */}
       <Route path="/:lang/marketplace">
