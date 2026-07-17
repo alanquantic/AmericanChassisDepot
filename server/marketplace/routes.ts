@@ -172,8 +172,8 @@ router.get('/listings', optionalAuth, async (req: AuthenticatedRequest, res: Res
       configuration: req.query.configuration as string,
       feature: req.query.feature as string,
       sortBy: req.query.sortBy as any,
-      page: req.query.page ? Number(req.query.page) : 1,
-      limit: req.query.limit ? Math.min(Number(req.query.limit), 50) : 20,
+      page: Math.max(1, Number(req.query.page) || 1),
+      limit: Math.min(Math.max(1, Number(req.query.limit) || 20), 50),
     };
 
     const result = await storage.getListings(filters);
@@ -1903,7 +1903,9 @@ router.get('/admin/crm/leads/export', authenticateToken, requireAdmin, async (re
 
     const headers = ['ID', 'Date', 'Source', 'Status', 'Name', 'Email', 'Phone', 'Company', 'Message', 'Notes'];
     const esc = (v: any) => {
-      const s = v === null || v === undefined ? '' : String(v);
+      let s = v === null || v === undefined ? '' : String(v);
+      // Neutralize CSV formula injection: Excel/Sheets execute cells starting with = + - @ tab CR.
+      if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
       return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const rows = leads.map((l) => [

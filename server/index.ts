@@ -12,6 +12,15 @@ function log(message: string, source = "express") {
   });
   console.log(`${formattedTime} [${source}] ${message}`);
 }
+// Baseline security headers (CSP intentionally omitted — needs a tested allowlist
+// for GA / ElevenLabs / Cloudinary before it can be enabled without breaking the SPA).
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

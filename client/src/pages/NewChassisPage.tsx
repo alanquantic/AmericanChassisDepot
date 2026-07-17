@@ -32,8 +32,8 @@ const NewChassisPage: React.FC = () => {
               <p className="text-lg md:text-xl mb-8">
                 Discover our top-quality new chassis with full manufacturer warranties and the latest features and technology.
               </p>
-              <Link 
-                href="/contact" 
+              <Link
+                href={`/${language}/contact`}
                 className="bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 transform hover:scale-105 inline-block shadow-md"
               >
                 Request Quote
@@ -103,14 +103,14 @@ const NewChassisPage: React.FC = () => {
               Browse our complete inventory of new chassis options or contact us directly for personalized assistance.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link 
-                href="/products" 
+              <Link
+                href={`/${language}/products`}
                 className="inline-block bg-primary hover:bg-[#092a53] text-white font-montserrat font-medium px-8 py-3 rounded transition-all duration-300 transform hover:scale-105 shadow-md"
               >
                 View All Products
               </Link>
-              <Link 
-                href="/contact" 
+              <Link
+                href={`/${language}/contact`}
                 className="inline-block bg-[#E30D16] hover:bg-[#c70b13] text-white font-montserrat font-medium px-8 py-3 rounded transition-all duration-300 transform hover:scale-105 shadow-md"
               >
                 Contact Us

@@ -610,7 +610,8 @@ ${urls}</urlset>`;
     const altUrl = opts.url.replace(`/${opts.lang}/`, `/${altLang}/`);
     const xDefaultUrl = opts.url.replace(`/${opts.lang}`, `/en`);
     const img = opts.image || `${SITE}/attached_assets/triaxle_20.webp`;
-    const ld = opts.jsonLd ? `<script type="application/ld+json">${JSON.stringify(opts.jsonLd)}</script>` : '';
+    // Escape `<` so seller-controlled content can't break out of the ld+json <script> block.
+    const ld = opts.jsonLd ? `<script type="application/ld+json">${JSON.stringify(opts.jsonLd).replace(/</g, '\\u003c')}</script>` : '';
     // Bots (incl. AI crawlers) get real, JS-free content — not an empty shell.
     const bodyContent = opts.body || `<main><h1>${esc(opts.title)}</h1><p>${esc(opts.description)}</p></main>`;
     const nav = `<nav aria-label="Site"><a href="${SITE}/${opts.lang}">Home</a> | <a href="${SITE}/${opts.lang}/marketplace">Marketplace</a> | <a href="${SITE}/${opts.lang}/products">Products</a> | <a href="${SITE}/${opts.lang}/new-chassis">New Chassis</a> | <a href="${SITE}/${opts.lang}/used-chassis">Used Chassis</a> | <a href="${SITE}/${opts.lang}/contact">Contact</a></nav>`;

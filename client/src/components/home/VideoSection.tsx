@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { useLanguage } from '@/lib/i18n-simple';
 
 interface VideoSectionProps {
@@ -10,7 +11,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({
   videoUrl = "/assets/background-video.mp4", 
   fallbackImageUrl = "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
 }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   return (
     <section className="relative h-[80vh] overflow-hidden">
       {videoUrl ? (
@@ -46,12 +47,12 @@ const VideoSection: React.FC<VideoSectionProps> = ({
           
           {/* Call to action button */}
           <div className="mt-10">
-            <a 
-              href="/contact" 
+            <Link
+              href={`/${language}/contact`}
               className="bg-[#E30D16] text-white font-montserrat font-semibold px-8 py-3 rounded-md transition-all duration-300 hover:bg-[#c70b13] hover:scale-105 inline-block shadow-lg"
             >
               {t('partnerWithUs')}
-            </a>
+            </Link>
           </div>
         </div>
       </div>

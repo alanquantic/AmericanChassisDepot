@@ -901,22 +901,20 @@ export async function getAllOffersAdmin(filters: { status?: string; search?: str
   const db = getMarketplaceDb();
   const { status, search, page = 1, limit = 20 } = filters;
 
-  const conditions = [];
+  // Build WHERE against the o/l ALIASES used in the raw query below. Drizzle's
+  // eq/ilike emit the real table names, which Postgres rejects once aliased → 500.
+  const whereParts: any[] = [];
 
   if (status && status !== 'all') {
-    conditions.push(eq(marketplaceOffers.status, status));
+    whereParts.push(sql`o.status = ${status}`);
   }
 
   if (search) {
-    conditions.push(
-      or(
-        ilike(marketplaceOffers.offerNumber, `%${search}%`),
-        ilike(marketplaceListings.title, `%${search}%`)
-      )
-    );
+    const like = `%${search}%`;
+    whereParts.push(sql`(o.offer_number ILIKE ${like} OR l.title ILIKE ${like})`);
   }
 
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const whereClause = whereParts.length > 0 ? sql`WHERE ${sql.join(whereParts, sql` AND `)}` : sql``;
   const offset = (page - 1) * limit;
 
   // Single query: offers + listing + buyer + seller via raw SQL aliases
@@ -936,7 +934,7 @@ export async function getAllOffersAdmin(filters: { status?: string; search?: str
     LEFT JOIN marketplace_listings l ON o.listing_id = l.id
     LEFT JOIN marketplace_users b ON o.buyer_id = b.id
     LEFT JOIN marketplace_users s ON o.seller_id = s.id
-    ${whereClause ? sql`WHERE ${whereClause}` : sql``}
+    ${whereClause}
     ORDER BY o.created_at DESC
     LIMIT ${limit} OFFSET ${offset}
   `);

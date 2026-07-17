@@ -5,7 +5,7 @@ import { getContactInfo } from '@/lib/constants';
 import { useLanguage } from '@/lib/i18n-simple';
 
 const FloatingButton: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const contactInfo = getContactInfo();
   
   return (
@@ -20,7 +20,7 @@ const FloatingButton: React.FC = () => {
           <PhoneIcon className="w-6 h-6" />
         </a>
         <Link
-          href="/contact"
+          href={`/${language}/contact`}
           className="bg-[#F5A623] hover:bg-[#e09511] text-primary w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition duration-200"
           aria-label={t('emailAriaLabel')}
           title={t('emailTitle')}

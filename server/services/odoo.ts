@@ -63,7 +63,7 @@ async function makeOdooRequest<T = any>(
     
     console.log(`📤 Making JSON-RPC request to: ${requestUrl}`);
     console.log(`📤 Service: ${service}, Method: ${method}`);
-    console.log(`📤 Args:`, args);
+    // Do NOT log `args` — it contains ODOO_CONFIG.password in cleartext.
 
     const response = await fetch(requestUrl, {
       method: 'POST',

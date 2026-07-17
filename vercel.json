@@ -47,22 +47,22 @@
     },
     {
       "src": "/(en|es)/(marketplace/listing/[^/]+)$",
-      "has": [{ "type": "header", "key": "user-agent", "value": "(?i).*(googlebot|bingbot|yandex|baiduspider|duckduckbot|twitterbot|facebookexternalhit|facebookbot|linkedinbot|slackbot|whatsapp|telegram|applebot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|perplexity-user|ccbot|bytespider|amazonbot|cohere-ai|youbot|diffbot).*" }],
+      "has": [{ "type": "header", "key": "user-agent", "value": "(?i).*(googlebot|bingbot|yandex|baiduspider|duckduckbot|twitterbot|facebookexternalhit|facebookbot|meta-externalagent|linkedinbot|slackbot|discordbot|whatsapp|telegram|pinterest|embedly|rogerbot|w3c_validator|applebot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|perplexity-user|ccbot|bytespider|amazonbot|cohere-ai|youbot|diffbot).*" }],
       "dest": "server/index.ts"
     },
     {
       "src": "/(en|es)/(marketplace|products|about|contact|new-chassis|used-chassis|brands/.+)$",
-      "has": [{ "type": "header", "key": "user-agent", "value": "(?i).*(googlebot|bingbot|yandex|baiduspider|duckduckbot|twitterbot|facebookexternalhit|facebookbot|linkedinbot|slackbot|whatsapp|telegram|applebot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|perplexity-user|ccbot|bytespider|amazonbot|cohere-ai|youbot|diffbot).*" }],
+      "has": [{ "type": "header", "key": "user-agent", "value": "(?i).*(googlebot|bingbot|yandex|baiduspider|duckduckbot|twitterbot|facebookexternalhit|facebookbot|meta-externalagent|linkedinbot|slackbot|discordbot|whatsapp|telegram|pinterest|embedly|rogerbot|w3c_validator|applebot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|perplexity-user|ccbot|bytespider|amazonbot|cohere-ai|youbot|diffbot).*" }],
       "dest": "server/index.ts"
     },
     {
       "src": "/(en|es)/(container-chassis/.+|chassis-leasing|lease-to-own|fleet-sales|locations/.+|resources|resources/.+)$",
-      "has": [{ "type": "header", "key": "user-agent", "value": "(?i).*(googlebot|bingbot|yandex|baiduspider|duckduckbot|twitterbot|facebookexternalhit|facebookbot|linkedinbot|slackbot|whatsapp|telegram|applebot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|perplexity-user|ccbot|bytespider|amazonbot|cohere-ai|youbot|diffbot).*" }],
+      "has": [{ "type": "header", "key": "user-agent", "value": "(?i).*(googlebot|bingbot|yandex|baiduspider|duckduckbot|twitterbot|facebookexternalhit|facebookbot|meta-externalagent|linkedinbot|slackbot|discordbot|whatsapp|telegram|pinterest|embedly|rogerbot|w3c_validator|applebot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|perplexity-user|ccbot|bytespider|amazonbot|cohere-ai|youbot|diffbot).*" }],
       "dest": "server/index.ts"
     },
     {
       "src": "/(en|es)/?$",
-      "has": [{ "type": "header", "key": "user-agent", "value": "(?i).*(googlebot|bingbot|yandex|baiduspider|duckduckbot|twitterbot|facebookexternalhit|facebookbot|linkedinbot|slackbot|whatsapp|telegram|applebot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|perplexity-user|ccbot|bytespider|amazonbot|cohere-ai|youbot|diffbot).*" }],
+      "has": [{ "type": "header", "key": "user-agent", "value": "(?i).*(googlebot|bingbot|yandex|baiduspider|duckduckbot|twitterbot|facebookexternalhit|facebookbot|meta-externalagent|linkedinbot|slackbot|discordbot|whatsapp|telegram|pinterest|embedly|rogerbot|w3c_validator|applebot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|perplexity-user|ccbot|bytespider|amazonbot|cohere-ai|youbot|diffbot).*" }],
       "dest": "server/index.ts"
     },
     {
