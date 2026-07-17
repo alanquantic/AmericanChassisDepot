@@ -13,6 +13,8 @@ import NewChassisPage from "@/pages/NewChassisPage";
 import UsedChassisPage from "@/pages/UsedChassisPage";
 import AllProductsPage from "@/pages/AllProductsPage";
 import LandingPage from "@/pages/LandingPage";
+import ResourcesPage from "@/pages/ResourcesPage";
+import ArticlePage from "@/pages/ArticlePage";
 import { getCurrentLanguage, setLanguage } from "@/lib/i18n-simple";
 import { usePageTracking } from "./hooks/use-page-tracking";
 import ElevenLabsWidget from "@/components/shared/ElevenLabsWidget";
@@ -133,6 +135,22 @@ function Router() {
           const lang = params.lang === 'es' ? 'es' : 'en';
           setLanguage(lang);
           return <LandingPage slug={`locations/${params.place}`} key={`lp-loc-${params.place}-${lang}`} />;
+        }}
+      </Route>
+
+      {/* Resources blog (SEO Phase 3.2) */}
+      <Route path="/:lang/resources/:slug">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <ArticlePage slug={params.slug} key={`article-${params.slug}-${lang}`} />;
+        }}
+      </Route>
+      <Route path="/:lang/resources">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <ResourcesPage key={`resources-${lang}`} />;
         }}
       </Route>
 

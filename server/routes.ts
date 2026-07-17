@@ -10,6 +10,7 @@ import marketplaceRoutes from "./marketplace/routes.js";
 import { authenticateToken, requireAdmin, type AuthenticatedRequest } from "./marketplace/auth.js";
 import { createCrmLead, getListingBySlug } from "./marketplace/storage.js";
 import { getLandingPage, buildLandingJsonLdGraph, LANDING_PAGES, type LandingPage } from "../shared/landing-pages.js";
+import { getResourceArticle, buildArticleJsonLdGraph, RESOURCE_ARTICLES, type ResourceArticle } from "../shared/resources/index.js";
 import path from "path";
 import fs from "fs";
 
@@ -94,6 +95,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { path: '/about', changefreq: 'monthly', priority: '0.6' },
         { path: '/contact', changefreq: 'monthly', priority: '0.6' },
         ...LANDING_PAGES.map((p) => ({ path: `/${p.slug}`, changefreq: 'weekly', priority: '0.8' })),
+        { path: '/resources', changefreq: 'weekly', priority: '0.7' },
+        ...RESOURCE_ARTICLES.map((a) => ({ path: `/resources/${a.slug}`, changefreq: 'monthly', priority: '0.7' })),
       ];
 
       let urls = '';
@@ -724,6 +727,49 @@ ${nav}
 
   // JSON-LD comes from the shared buildLandingJsonLdGraph (same graph the client injects).
 
+  // Renders JS-free content for a /resources article (SEO Phase 3.2).
+  function renderArticleBody(article: ResourceArticle, lang: 'en' | 'es'): string {
+    const c = article[lang];
+    const takeaways = c.keyTakeaways.length
+      ? `<h2>${lang === 'es' ? 'Puntos Clave' : 'Key Takeaways'}</h2><ul>${c.keyTakeaways.map((k) => `<li>${esc(k)}</li>`).join('')}</ul>`
+      : '';
+    const sections = c.sections.map((sec) => {
+      const paras = sec.body.map((p) => `<p>${esc(p)}</p>`).join('');
+      const list = sec.list ? `<ul>${sec.list.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : '';
+      const table = sec.table
+        ? `<table><thead><tr>${sec.table.headers.map((h) => `<th align="left">${esc(h)}</th>`).join('')}</tr></thead><tbody>${sec.table.rows
+            .map((r) => `<tr>${r.map((cell) => `<td>${esc(cell)}</td>`).join('')}</tr>`)
+            .join('')}</tbody></table>`
+        : '';
+      return `<h2>${esc(sec.heading)}</h2>${paras}${list}${table}`;
+    }).join('');
+    const faqs = c.faqs.length
+      ? `<h2>${lang === 'es' ? 'Preguntas Frecuentes' : 'Frequently Asked Questions'}</h2>${c.faqs
+          .map((f) => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`)
+          .join('')}`
+      : '';
+    const related = article.relatedLanding
+      .map((s) => getLandingPage(s))
+      .filter((p): p is LandingPage => Boolean(p))
+      .map((p) => `<a href="${SITE}/${lang}/${p.slug}">${esc(p[lang].h1)}</a>`)
+      .join(' | ');
+    const relatedHtml = related ? `<p>${lang === 'es' ? 'Relacionado' : 'Related'}: ${related}</p>` : '';
+    return `<main><article><h1>${esc(c.title)}</h1><p><em>${esc(article.datePublished)}</em></p><p><strong>${esc(c.lead)}</strong></p>${takeaways}${sections}${faqs}${relatedHtml}</article></main>`;
+  }
+
+  // Renders the /resources index for bots: title + linked list of all articles.
+  function renderResourcesIndexBody(lang: 'en' | 'es'): string {
+    const title = lang === 'es' ? 'Recursos y Guías de Chasis' : 'Chassis Resources & Guides';
+    const intro = lang === 'es'
+      ? 'Guías de compra, comparativas, financiamiento y regulaciones de chasis de contenedor — escritas para transportistas y flotas de drayage.'
+      : 'Container chassis buying guides, comparisons, financing, and regulations — written for truckers and drayage fleets.';
+    const items = RESOURCE_ARTICLES.map((a) => {
+      const c = a[lang];
+      return `<li><a href="${SITE}/${lang}/resources/${a.slug}">${esc(c.title)}</a> — ${esc(c.metaDescription)}</li>`;
+    }).join('');
+    return `<main><h1>${esc(title)}</h1><p>${esc(intro)}</p><ul>${items}</ul></main>`;
+  }
+
   function serveSpaFallback(_req: Request, res: Response, next: () => void) {
     if (process.env.VERCEL) {
       const indexPath = path.resolve(import.meta.dirname, '..', 'index.html');
@@ -868,6 +914,53 @@ ${nav}
     const { lang, page } = req.params;
     const pageKey = page.replace(/\/$/, '');
     const langKey = (lang === 'es' ? 'es' : 'en') as 'en' | 'es';
+
+    // /resources blog (Phase 3.2) — index + articles from the shared registry.
+    if (pageKey === 'resources') {
+      const title = langKey === 'es' ? 'Recursos y Guías de Chasis | American Chassis Depot' : 'Chassis Resources & Guides | American Chassis Depot';
+      const desc = langKey === 'es'
+        ? 'Guías de compra, comparativas, financiamiento y regulaciones de chasis de contenedor — escritas para transportistas y flotas de drayage.'
+        : 'Container chassis buying guides, comparisons, financing, and regulations — written for truckers and drayage fleets.';
+      const html = buildMetaHtml({
+        title,
+        description: desc,
+        url: `${SITE}/${lang}/resources`,
+        lang,
+        body: renderResourcesIndexBody(langKey),
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: title,
+          url: `${SITE}/${lang}/resources`,
+          mainEntity: {
+            '@type': 'ItemList',
+            itemListElement: RESOURCE_ARTICLES.map((a, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              name: a[langKey].title,
+              url: `${SITE}/${lang}/resources/${a.slug}`,
+            })),
+          },
+        },
+      });
+      return res.set('Content-Type', 'text/html').send(html);
+    }
+    if (pageKey.startsWith('resources/')) {
+      const article = getResourceArticle(pageKey.slice('resources/'.length));
+      if (article) {
+        const c = article[langKey];
+        const html = buildMetaHtml({
+          title: c.metaTitle,
+          description: c.metaDescription,
+          url: `${SITE}/${lang}/${pageKey}`,
+          lang,
+          body: renderArticleBody(article, langKey),
+          jsonLd: buildArticleJsonLdGraph(article, langKey, SITE),
+        });
+        return res.set('Content-Type', 'text/html').send(html);
+      }
+      return serveSpaFallback(req, res, next);
+    }
 
     // SEO intent landing pages (Phase 2) — served from the shared registry.
     const landing = getLandingPage(pageKey);
