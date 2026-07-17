@@ -105,8 +105,16 @@ const Header: React.FC = () => {
             >
               {t('about')}
             </Link>
-            <Link 
-              href={`${langPrefix}/contact`} 
+            <Link
+              href={`${langPrefix}/resources`}
+              className={`font-montserrat font-medium ${location.startsWith(`${langPrefix}/resources`) ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
+              aria-label="Chassis resources and guides"
+              title="Buying guides, comparisons, and regulations"
+            >
+              {t('resources')}
+            </Link>
+            <Link
+              href={`${langPrefix}/contact`}
               className={`font-montserrat font-medium ${location === `${langPrefix}/contact` ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'} transition duration-200`}
               aria-label="Contact us"
               title="Get in touch with our team"
@@ -217,9 +225,17 @@ const Header: React.FC = () => {
             >
               {t('about')}
             </Link>
-            <Link 
-              href={`${langPrefix}/contact`} 
-              onClick={closeMobileMenu} 
+            <Link
+              href={`${langPrefix}/resources`}
+              onClick={closeMobileMenu}
+              className={`block py-2 font-montserrat font-medium ${location.startsWith(`${langPrefix}/resources`) ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'}`}
+              aria-label="Chassis resources and guides"
+            >
+              {t('resources')}
+            </Link>
+            <Link
+              href={`${langPrefix}/contact`}
+              onClick={closeMobileMenu}
               className={`block py-2 font-montserrat font-medium ${location === '/contact' ? 'text-[#B22234]' : 'text-primary hover:text-[#B22234]'}`}
               aria-label="Contact us"
             >

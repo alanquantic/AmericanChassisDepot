@@ -6,10 +6,11 @@ export const translations = {
   en: {
     // Navigation
     home: 'Home',
-    products: 'Products', 
+    products: 'Products',
     about: 'About',
     contact: 'Contact',
     marketplace: 'Marketplace',
+    resources: 'Resources',
     
     // Hero
     heroTitle: 'Premium Chassis Solutions for Every Need',
@@ -171,9 +172,10 @@ export const translations = {
     // Navigation  
     home: 'Inicio',
     products: 'Productos',
-    about: 'Acerca de', 
+    about: 'Acerca de',
     contact: 'Contacto',
     marketplace: 'Mercado',
+    resources: 'Recursos',
     
     // Hero
     heroTitle: 'Soluciones Premium de Chasis para Cada Necesidad',

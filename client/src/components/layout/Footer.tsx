@@ -46,6 +46,7 @@ const Footer: React.FC = () => {
               <li><Link href={`${location?.startsWith('/es') ? '/es' : '/en'}`} className="hover:text-[#E30D16] transition duration-200">{t('home')}</Link></li>
               <li><Link href={`${location?.startsWith('/es') ? '/es' : '/en'}/products`} className="hover:text-[#E30D16] transition duration-200">{t('products')}</Link></li>
               <li><Link href={`${location?.startsWith('/es') ? '/es' : '/en'}/about`} className="hover:text-[#E30D16] transition duration-200">{t('about')}</Link></li>
+              <li><Link href={`${location?.startsWith('/es') ? '/es' : '/en'}/resources`} className="hover:text-[#E30D16] transition duration-200">{t('resources')}</Link></li>
               <li><Link href={`${location?.startsWith('/es') ? '/es' : '/en'}/contact`} className="hover:text-[#E30D16] transition duration-200">{t('contact')}</Link></li>
             </ul>
           </div>
