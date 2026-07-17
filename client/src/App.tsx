@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -5,22 +6,47 @@ import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/HomePage";
-import BrandPage from "@/pages/BrandPage";
-import ProductPage from "@/pages/ProductPage";
-import ContactPage from "@/pages/ContactPage";
-import AboutPage from "@/pages/AboutPage";
-import NewChassisPage from "@/pages/NewChassisPage";
-import UsedChassisPage from "@/pages/UsedChassisPage";
-import AllProductsPage from "@/pages/AllProductsPage";
-import LandingPage from "@/pages/LandingPage";
-import ResourcesPage from "@/pages/ResourcesPage";
-import ArticlePage from "@/pages/ArticlePage";
 import { getCurrentLanguage, setLanguage } from "@/lib/i18n-simple";
 import { usePageTracking } from "./hooks/use-page-tracking";
 import ElevenLabsWidget from "@/components/shared/ElevenLabsWidget";
 
-// Marketplace Pages
-import { MarketplacePage, ListingDetailPage, DashboardPage, AdminPage, MarketplaceLandingPage, SellerListingsPage, ListingImagesPage, CreateListingPage, ManualUserPage, ManualAdminPage, LoginPage, RegisterPage } from "@/pages/marketplace";
+// Route-level code splitting: HomePage stays eager (primary entry), every
+// other page loads its own chunk on demand — keeps the initial bundle small
+// (Recharts/admin, marketplace, and blog code no longer ship to every visitor).
+const BrandPage = lazy(() => import("@/pages/BrandPage"));
+const ProductPage = lazy(() => import("@/pages/ProductPage"));
+const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const NewChassisPage = lazy(() => import("@/pages/NewChassisPage"));
+const UsedChassisPage = lazy(() => import("@/pages/UsedChassisPage"));
+const AllProductsPage = lazy(() => import("@/pages/AllProductsPage"));
+const LandingPage = lazy(() => import("@/pages/LandingPage"));
+const ResourcesPage = lazy(() => import("@/pages/ResourcesPage"));
+const ArticlePage = lazy(() => import("@/pages/ArticlePage"));
+
+// Marketplace pages — imported per-file (not via the barrel) so each route
+// becomes its own chunk instead of one mega-chunk.
+const MarketplacePage = lazy(() => import("@/pages/marketplace/MarketplacePage"));
+const ListingDetailPage = lazy(() => import("@/pages/marketplace/ListingDetailPage"));
+const DashboardPage = lazy(() => import("@/pages/marketplace/DashboardPage"));
+const AdminPage = lazy(() => import("@/pages/marketplace/AdminPage"));
+const MarketplaceLandingPage = lazy(() => import("@/pages/marketplace/MarketplaceLandingPage"));
+const SellerListingsPage = lazy(() => import("@/pages/marketplace/SellerListingsPage"));
+const ListingImagesPage = lazy(() => import("@/pages/marketplace/ListingImagesPage"));
+const CreateListingPage = lazy(() => import("@/pages/marketplace/CreateListingPage"));
+const ManualUserPage = lazy(() => import("@/pages/marketplace/ManualUserPage"));
+const ManualAdminPage = lazy(() => import("@/pages/marketplace/ManualAdminPage"));
+const LoginPage = lazy(() => import("@/pages/marketplace/AuthPages").then((m) => ({ default: m.LoginPage })));
+const RegisterPage = lazy(() => import("@/pages/marketplace/AuthPages").then((m) => ({ default: m.RegisterPage })));
+
+// Minimal neutral fallback shown while a route chunk downloads.
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-screen" role="status" aria-label="Loading">
+      <div className="w-10 h-10 border-4 border-neutral-200 border-t-[#0A3161] rounded-full animate-spin" />
+    </div>
+  );
+}
 
 function Router() {
   const [location, navigate] = useLocation();
@@ -35,6 +61,7 @@ function Router() {
   }
 
   return (
+    <Suspense fallback={<PageLoader />}>
     <Switch>
       {/* Language-prefixed routes */}
       <Route path="/:lang">
@@ -266,6 +293,7 @@ function Router() {
         {() => <NotFound />}
       </Route>
     </Switch>
+    </Suspense>
   );
 }
 
