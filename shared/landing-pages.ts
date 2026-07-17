@@ -41,6 +41,7 @@ export interface LandingPage {
   priceRange?: string;
   image?: string;
   keywords?: string;
+  serviceType?: string; // for type='service' — schema.org Service.serviceType
   specs?: LandingSpec[];
   en: LandingLocale;
   es: LandingLocale;
@@ -49,6 +50,65 @@ export interface LandingPage {
 export function getLandingPage(slug: string): LandingPage | undefined {
   const clean = slug.replace(/\/+$/, '');
   return LANDING_PAGES.find((p) => p.slug === clean);
+}
+
+// Shared JSON-LD builder so the React client and the server bot renderer emit
+// the exact same structured data (Product / Service / LocalBusiness + FAQ + Breadcrumb).
+export function buildLandingJsonLdGraph(page: LandingPage, lang: 'en' | 'es', siteBase: string): object {
+  const c = page[lang];
+  const url = `${siteBase}/${lang}/${page.slug}`;
+  const graph: any[] = [];
+  if (page.type === 'product') {
+    graph.push({
+      '@type': 'Product',
+      name: c.h1,
+      description: c.metaDescription,
+      category: 'Container Chassis',
+      brand: { '@type': 'Brand', name: 'American Chassis Depot' },
+      offers: {
+        '@type': 'AggregateOffer',
+        priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
+        seller: { '@type': 'Organization', name: 'American Chassis Depot' },
+      },
+    });
+  } else if (page.type === 'service') {
+    graph.push({
+      '@type': 'Service',
+      name: c.h1,
+      description: c.metaDescription,
+      serviceType: page.serviceType || c.h1,
+      provider: { '@type': 'Organization', name: 'American Chassis Depot' },
+      areaServed: { '@type': 'Country', name: 'United States' },
+    });
+  } else if (page.type === 'location') {
+    graph.push({
+      '@type': 'LocalBusiness',
+      name: 'American Chassis Depot',
+      description: c.metaDescription,
+      url,
+      address: { '@type': 'PostalAddress', addressLocality: 'Houston', addressRegion: 'TX', addressCountry: 'US' },
+      geo: { '@type': 'GeoCoordinates', latitude: 29.8171, longitude: -95.4026 },
+    });
+  }
+  if (c.faqs.length) {
+    graph.push({
+      '@type': 'FAQPage',
+      mainEntity: c.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    });
+  }
+  graph.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteBase}/${lang}` },
+      { '@type': 'ListItem', position: 2, name: c.h1, item: url },
+    ],
+  });
+  return { '@context': 'https://schema.org', '@graph': graph };
 }
 
 export const LANDING_PAGES: LandingPage[] = [
@@ -556,6 +616,424 @@ export const LANDING_PAGES: LandingPage[] = [
       ],
       ctaHeading: 'Cotiza un chasis triaxle',
       ctaText: 'Dinos el rating de peso objetivo, cantidad y lugar de entrega para precio y disponibilidad el mismo día.',
+    },
+  },
+
+  // ---------------------------------------------------------
+  // SERVICE — chassis leasing
+  // ---------------------------------------------------------
+  {
+    slug: 'chassis-leasing',
+    type: 'service',
+    serviceType: 'Container Chassis Leasing',
+    keywords: 'chassis leasing, container chassis rental, chassis lease program, lease intermodal chassis',
+    specs: [
+      { label: 'Equipment available', labelEs: 'Equipo disponible', value: '20ft, 40ft, 45ft, extendable, triaxle' },
+      { label: 'Lease terms', labelEs: 'Plazos', value: 'Flexible — short and long term' },
+      { label: 'Fleet volume', labelEs: 'Volumen de flota', value: 'Single units to full fleets' },
+      { label: 'Coverage', labelEs: 'Cobertura', value: 'Nationwide from Houston, TX' },
+    ],
+    en: {
+      metaTitle: 'Container Chassis Leasing | Flexible Terms | American Chassis Depot',
+      metaDescription: 'Lease container chassis instead of buying — flexible terms, low upfront cost, and nationwide delivery from Houston, TX. 20ft to triaxle units for trucking and drayage fleets.',
+      h1: 'Container Chassis Leasing',
+      heroSubtitle: 'Get the chassis your fleet needs without tying up capital.',
+      intro: [
+        'Leasing a container chassis lets you put equipment to work immediately while preserving cash for drivers, fuel, and growth. Instead of a large upfront purchase, you pay a predictable monthly rate for the term you actually need.',
+        'American Chassis Depot leases new and inspected used chassis — 20ft, 40ft gooseneck, 45ft, extendable, and triaxle — from Houston, Texas, with nationwide delivery. Terms flex from short-term surge capacity to multi-year fleet agreements.',
+      ],
+      sections: [
+        {
+          heading: 'When leasing beats buying',
+          body: [
+            'Leasing shines when demand is seasonal, when you are testing a new lane, or when capital is better spent elsewhere in the business. Port surges, retail peak season, and new customer contracts are classic moments to lease instead of buy: you scale capacity up while volumes are high and return units when the surge ends.',
+            'Leasing also removes resale risk. When the term ends you hand the equipment back — no wondering what a five-year-old chassis will fetch on the used market.',
+          ],
+        },
+        {
+          heading: 'How our lease program works',
+          body: [
+            'Tell us the sizes you run, how many units you need, and for how long. We quote a monthly rate, arrange delivery, and your fleet is rolling. Need to convert a lease into ownership later? Ask about our lease-to-own program — payments can build toward a purchase.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: 'What chassis types can I lease?', a: 'Every configuration we sell is also available to lease: 20ft, 40ft gooseneck, 45ft, 20-40 extendable, and triaxle units, new or used.' },
+        { q: 'What lease terms do you offer?', a: 'Terms are flexible — from short-term seasonal needs to multi-year fleet agreements. Rates improve with longer terms and higher unit counts.' },
+        { q: 'Is there a minimum number of units?', a: 'No. We lease single units to owner-operators as well as full fleets to carriers, with volume pricing as the count grows.' },
+        { q: 'Can a lease turn into ownership?', a: 'Yes — our lease-to-own program applies part of your payments toward the purchase, so you can build equity while you operate the equipment.' },
+        { q: 'Do you deliver leased chassis nationwide?', a: 'Yes. Units ship from Houston, TX to anywhere in the country; delivery time and cost depend on destination and quantity.' },
+      ],
+      ctaHeading: 'Get a leasing quote',
+      ctaText: 'Tell us the equipment, quantity, and term you need — we will send a monthly rate the same business day.',
+    },
+    es: {
+      metaTitle: 'Arrendamiento de Chasis de Contenedor | Plazos Flexibles | American Chassis Depot',
+      metaDescription: 'Arrienda chasis de contenedor en vez de comprar — plazos flexibles, baja inversión inicial y envío nacional desde Houston, TX. Unidades de 20ft a triaxle para flotas.',
+      h1: 'Arrendamiento de Chasis de Contenedor',
+      heroSubtitle: 'Consigue los chasis que tu flota necesita sin inmovilizar capital.',
+      intro: [
+        'Arrendar un chasis de contenedor te permite poner el equipo a trabajar de inmediato mientras conservas efectivo para conductores, combustible y crecimiento. En lugar de una compra grande por adelantado, pagas una renta mensual predecible por el plazo que realmente necesitas.',
+        'American Chassis Depot arrienda chasis nuevos y usados inspeccionados — 20ft, 40ft gooseneck, 45ft, extendibles y triaxle — desde Houston, Texas, con envío nacional. Los plazos van desde capacidad temporal hasta acuerdos de flota multianuales.',
+      ],
+      sections: [
+        {
+          heading: 'Cuándo conviene arrendar en vez de comprar',
+          body: [
+            'El arrendamiento brilla cuando la demanda es estacional, cuando pruebas una ruta nueva o cuando el capital rinde más en otra parte del negocio. Los picos de puerto, la temporada alta de retail y los contratos nuevos son momentos clásicos para arrendar: escalas capacidad mientras el volumen es alto y devuelves las unidades cuando baja.',
+            'Arrendar también elimina el riesgo de reventa. Al terminar el plazo entregas el equipo — sin preguntarte cuánto valdrá un chasis de cinco años en el mercado de usados.',
+          ],
+        },
+        {
+          heading: 'Cómo funciona nuestro programa',
+          body: [
+            'Dinos qué tamaños operas, cuántas unidades necesitas y por cuánto tiempo. Cotizamos una renta mensual, coordinamos la entrega y tu flota queda rodando. ¿Quieres convertir el arrendamiento en propiedad después? Pregunta por nuestro programa lease-to-own — los pagos pueden abonar a la compra.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: '¿Qué tipos de chasis puedo arrendar?', a: 'Toda configuración que vendemos también se arrienda: 20ft, 40ft gooseneck, 45ft, extendibles de 20-40 y triaxle, nuevos o usados.' },
+        { q: '¿Qué plazos ofrecen?', a: 'Los plazos son flexibles — desde necesidades estacionales de corto plazo hasta acuerdos de flota multianuales. La tarifa mejora con plazos más largos y más unidades.' },
+        { q: '¿Hay un mínimo de unidades?', a: 'No. Arrendamos desde una unidad para operadores independientes hasta flotas completas, con precio por volumen conforme crece la cantidad.' },
+        { q: '¿Un arrendamiento puede convertirse en propiedad?', a: 'Sí — nuestro programa lease-to-own aplica parte de tus pagos a la compra, así generas equity mientras operas el equipo.' },
+        { q: '¿Entregan chasis arrendados a todo el país?', a: 'Sí. Las unidades salen de Houston, TX hacia cualquier punto del país; el tiempo y costo dependen del destino y la cantidad.' },
+      ],
+      ctaHeading: 'Cotiza tu arrendamiento',
+      ctaText: 'Dinos equipo, cantidad y plazo — te enviamos la renta mensual el mismo día hábil.',
+    },
+  },
+
+  // ---------------------------------------------------------
+  // SERVICE — lease-to-own
+  // ---------------------------------------------------------
+  {
+    slug: 'lease-to-own',
+    type: 'service',
+    serviceType: 'Chassis Lease-to-Own Financing',
+    keywords: 'chassis lease to own, lease to own container chassis, chassis financing, rent to own chassis',
+    specs: [
+      { label: 'Path to ownership', labelEs: 'Camino a la propiedad', value: 'Payments build equity' },
+      { label: 'Equipment available', labelEs: 'Equipo disponible', value: '20ft, 40ft, 45ft, extendable, triaxle' },
+      { label: 'Terms', labelEs: 'Plazos', value: 'Structured to your cash flow' },
+      { label: 'End of term', labelEs: 'Al final del plazo', value: 'The chassis is yours' },
+    ],
+    en: {
+      metaTitle: 'Chassis Lease-to-Own Financing | Own While You Operate | American Chassis Depot',
+      metaDescription: 'Lease-to-own container chassis financing: predictable payments that build toward full ownership. New and used units from Houston, TX with nationwide delivery.',
+      h1: 'Chassis Lease-to-Own Financing',
+      heroSubtitle: 'Run the equipment today, own it at the end — payments that build equity.',
+      intro: [
+        'Lease-to-own combines the low entry cost of leasing with the long-term value of ownership. You start operating the chassis right away, make predictable payments, and at the end of the term the equipment is yours — no balloon surprise, no returning units you have already maintained and depended on.',
+        'It is the natural fit for owner-operators and growing carriers that want to build assets without draining working capital. American Chassis Depot structures lease-to-own on new and inspected used chassis in every configuration we carry.',
+      ],
+      sections: [
+        {
+          heading: 'How lease-to-own compares',
+          body: [
+            'Versus a straight lease, part of every payment builds toward ownership instead of being pure rent — at the end you hold an asset, not a return receipt. Versus a cash purchase, you keep capital free for fuel, drivers, insurance, and growth while the chassis earns its keep.',
+            'Because the equipment generates revenue while you pay for it, many operators find the chassis effectively pays for itself over the term.',
+          ],
+        },
+        {
+          heading: 'Getting started',
+          body: [
+            'Pick the configuration you need, tell us the term that matches your cash flow, and we structure the agreement. At the end of the schedule, title transfers to you. Fleet operators can combine lease-to-own with volume pricing on multi-unit orders.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: 'How does lease-to-own work?', a: 'You make fixed payments over an agreed term while operating the chassis. Payments build toward the purchase, and at the end of the term ownership transfers to you.' },
+        { q: 'Is lease-to-own available on used chassis?', a: 'Yes — both new and DOT-inspected used units qualify, across all configurations: 20ft, 40ft, 45ft, extendable, and triaxle.' },
+        { q: 'What happens at the end of the term?', a: 'The chassis is yours. Title transfers once the payment schedule is complete — no balloon payment surprises.' },
+        { q: 'Who is lease-to-own best for?', a: 'Owner-operators and growing fleets that want to build equity in their equipment while preserving working capital for operations.' },
+        { q: 'Can I do lease-to-own on multiple units?', a: 'Yes. Multi-unit agreements are common and can be combined with fleet pricing on 10+ unit orders.' },
+      ],
+      ctaHeading: 'Ask about lease-to-own',
+      ctaText: 'Tell us the equipment you need and the term that fits your cash flow — we will send a structured proposal.',
+    },
+    es: {
+      metaTitle: 'Financiamiento Lease-to-Own de Chasis | Opera y Sé Dueño | American Chassis Depot',
+      metaDescription: 'Financiamiento lease-to-own de chasis de contenedor: pagos predecibles que construyen la propiedad. Unidades nuevas y usadas desde Houston, TX con envío nacional.',
+      h1: 'Financiamiento Lease-to-Own de Chasis',
+      heroSubtitle: 'Opera el equipo hoy y sé el dueño al final — pagos que generan equity.',
+      intro: [
+        'El lease-to-own combina la baja inversión inicial del arrendamiento con el valor de largo plazo de la propiedad. Empiezas a operar el chasis de inmediato, haces pagos predecibles y al final del plazo el equipo es tuyo — sin sorpresas de pago final ni devolver unidades que ya mantuviste y de las que dependes.',
+        'Es la opción natural para operadores independientes y transportistas en crecimiento que quieren construir activos sin drenar capital de trabajo. American Chassis Depot estructura lease-to-own en chasis nuevos y usados inspeccionados de todas las configuraciones que manejamos.',
+      ],
+      sections: [
+        {
+          heading: 'Cómo se compara el lease-to-own',
+          body: [
+            'Frente a un arrendamiento puro, parte de cada pago abona a la propiedad en lugar de ser renta — al final tienes un activo, no un recibo de devolución. Frente a una compra de contado, mantienes capital libre para combustible, conductores, seguros y crecimiento mientras el chasis genera ingresos.',
+            'Como el equipo produce mientras lo pagas, muchos operadores encuentran que el chasis prácticamente se paga solo durante el plazo.',
+          ],
+        },
+        {
+          heading: 'Cómo empezar',
+          body: [
+            'Elige la configuración que necesitas, dinos el plazo que se ajusta a tu flujo y estructuramos el acuerdo. Al completar el calendario de pagos, el título pasa a tu nombre. Los operadores de flota pueden combinar lease-to-own con precio por volumen en pedidos de varias unidades.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: '¿Cómo funciona el lease-to-own?', a: 'Haces pagos fijos durante un plazo acordado mientras operas el chasis. Los pagos abonan a la compra y al final del plazo la propiedad se transfiere a ti.' },
+        { q: '¿Hay lease-to-own en chasis usados?', a: 'Sí — califican unidades nuevas y usadas inspeccionadas bajo DOT, en todas las configuraciones: 20ft, 40ft, 45ft, extendibles y triaxle.' },
+        { q: '¿Qué pasa al final del plazo?', a: 'El chasis es tuyo. El título se transfiere al completar el calendario de pagos — sin sorpresas de pago global.' },
+        { q: '¿Para quién es mejor el lease-to-own?', a: 'Operadores independientes y flotas en crecimiento que quieren generar equity en su equipo mientras conservan capital de trabajo para la operación.' },
+        { q: '¿Puedo hacer lease-to-own de varias unidades?', a: 'Sí. Los acuerdos multi-unidad son comunes y se combinan con precios de flota en pedidos de 10+ unidades.' },
+      ],
+      ctaHeading: 'Pregunta por lease-to-own',
+      ctaText: 'Dinos el equipo que necesitas y el plazo que se ajusta a tu flujo — te enviamos una propuesta estructurada.',
+    },
+  },
+
+  // ---------------------------------------------------------
+  // SERVICE — fleet sales (10+ units)
+  // ---------------------------------------------------------
+  {
+    slug: 'fleet-sales',
+    type: 'service',
+    serviceType: 'Fleet Chassis Sales',
+    keywords: 'fleet chassis sales, bulk container chassis, volume chassis discount, buy chassis fleet',
+    specs: [
+      { label: 'Volume threshold', labelEs: 'Umbral de volumen', value: '10+ units' },
+      { label: 'Mix and match', labelEs: 'Mezcla de modelos', value: 'Combine sizes and configurations' },
+      { label: 'Scheduling', labelEs: 'Programación', value: 'Staged deliveries available' },
+      { label: 'Financing', labelEs: 'Financiamiento', value: 'Purchase, lease, lease-to-own' },
+    ],
+    en: {
+      metaTitle: 'Fleet Chassis Sales — Volume Discounts on 10+ Units | American Chassis Depot',
+      metaDescription: 'Buying 10 or more container chassis? Get fleet pricing, mixed-model orders, staged nationwide delivery, and volume financing from American Chassis Depot in Houston, TX.',
+      h1: 'Fleet Chassis Sales — Volume Discounts',
+      heroSubtitle: 'Fleet pricing, mixed configurations, and staged delivery on orders of 10+ units.',
+      intro: [
+        'Outfitting or expanding a fleet is a different purchase than buying a single chassis. Volume unlocks better unit pricing, but it also demands consistent build quality, predictable delivery windows, and one accountable point of contact. That is what our fleet sales program is built around.',
+        'American Chassis Depot supplies fleets of new and inspected used chassis — mixing 20ft, 40ft gooseneck, 45ft, extendable, and triaxle configurations in a single order — with staged deliveries scheduled around your ramp-up.',
+      ],
+      sections: [
+        {
+          heading: 'What fleet buyers get',
+          body: [
+            'Fleet pricing starts at 10 units and improves with scale. You can mix configurations in one order — say, thirty 40ft goosenecks, ten 20ft units, and five triaxles — and stage deliveries across weeks or months so equipment arrives as drivers and freight come online, not all at once in your yard.',
+            'Every used unit is DOT-inspected before delivery, and new units carry full manufacturer warranties. One account manager owns your order end to end.',
+          ],
+        },
+        {
+          heading: 'Financing at volume',
+          body: [
+            'Fleet orders can be structured as direct purchase, lease, or lease-to-own — or a blend, such as buying the core fleet and leasing surge capacity. Tell us your growth plan and we will structure equipment and financing around it.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: 'How many units qualify for fleet pricing?', a: 'Fleet pricing starts at 10 units, and per-unit pricing improves as the order grows. Contact us with your target count for a volume quote.' },
+        { q: 'Can I mix chassis types in one fleet order?', a: 'Yes. Orders can combine 20ft, 40ft, 45ft, extendable, and triaxle units — new, used, or both — in whatever mix your freight requires.' },
+        { q: 'Can deliveries be staged?', a: 'Yes. We schedule staged deliveries across weeks or months so equipment arrives as you scale, anywhere in the country.' },
+        { q: 'Is financing available on fleet orders?', a: 'Yes — direct purchase, leasing, and lease-to-own can all be applied to volume orders, individually or blended.' },
+        { q: 'Do you supply both new and used units for fleets?', a: 'Yes. Many fleets blend new units for core lanes with DOT-inspected used units for surge or backup capacity.' },
+      ],
+      ctaHeading: 'Request a fleet quote',
+      ctaText: 'Tell us your unit count, configuration mix, and delivery timeline — we will send volume pricing the same business day.',
+    },
+    es: {
+      metaTitle: 'Venta de Flotas de Chasis — Descuentos por Volumen 10+ | American Chassis Depot',
+      metaDescription: '¿Compras 10 o más chasis de contenedor? Obtén precio de flota, pedidos con modelos mixtos, entregas programadas a todo el país y financiamiento por volumen. Houston, TX.',
+      h1: 'Venta de Flotas de Chasis — Descuentos por Volumen',
+      heroSubtitle: 'Precio de flota, configuraciones mixtas y entregas programadas en pedidos de 10+ unidades.',
+      intro: [
+        'Equipar o expandir una flota es una compra distinta a adquirir un solo chasis. El volumen desbloquea mejor precio por unidad, pero también exige calidad consistente, ventanas de entrega predecibles y un solo punto de contacto responsable. Alrededor de eso está construido nuestro programa de ventas de flota.',
+        'American Chassis Depot surte flotas de chasis nuevos y usados inspeccionados — mezclando configuraciones de 20ft, 40ft gooseneck, 45ft, extendibles y triaxle en un solo pedido — con entregas escalonadas según tu plan de crecimiento.',
+      ],
+      sections: [
+        {
+          heading: 'Qué recibe un comprador de flota',
+          body: [
+            'El precio de flota inicia en 10 unidades y mejora con la escala. Puedes mezclar configuraciones en un pedido — por ejemplo, treinta gooseneck de 40ft, diez unidades de 20ft y cinco triaxle — y escalonar entregas por semanas o meses para que el equipo llegue conforme suben conductores y carga, no todo de golpe en tu patio.',
+            'Cada unidad usada se inspecciona bajo DOT antes de la entrega, y las nuevas incluyen garantía completa del fabricante. Un gerente de cuenta es dueño de tu pedido de principio a fin.',
+          ],
+        },
+        {
+          heading: 'Financiamiento por volumen',
+          body: [
+            'Los pedidos de flota pueden estructurarse como compra directa, arrendamiento o lease-to-own — o una mezcla, como comprar la flota base y arrendar la capacidad pico. Cuéntanos tu plan de crecimiento y estructuramos equipo y financiamiento a su alrededor.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: '¿Cuántas unidades califican para precio de flota?', a: 'El precio de flota inicia en 10 unidades y el precio por unidad mejora conforme crece el pedido. Contáctanos con tu cantidad objetivo para una cotización por volumen.' },
+        { q: '¿Puedo mezclar tipos de chasis en un pedido de flota?', a: 'Sí. Los pedidos pueden combinar unidades de 20ft, 40ft, 45ft, extendibles y triaxle — nuevas, usadas o ambas — en la mezcla que tu carga requiera.' },
+        { q: '¿Las entregas pueden escalonarse?', a: 'Sí. Programamos entregas escalonadas por semanas o meses para que el equipo llegue conforme escalas, a cualquier punto del país.' },
+        { q: '¿Hay financiamiento en pedidos de flota?', a: 'Sí — compra directa, arrendamiento y lease-to-own aplican a pedidos por volumen, por separado o combinados.' },
+        { q: '¿Surten unidades nuevas y usadas para flotas?', a: 'Sí. Muchas flotas combinan unidades nuevas para rutas principales con usadas inspeccionadas bajo DOT para picos o respaldo.' },
+      ],
+      ctaHeading: 'Solicita una cotización de flota',
+      ctaText: 'Dinos cantidad de unidades, mezcla de configuraciones y calendario de entrega — enviamos precio por volumen el mismo día hábil.',
+    },
+  },
+
+  // ---------------------------------------------------------
+  // LOCATION — Houston, TX
+  // ---------------------------------------------------------
+  {
+    slug: 'locations/houston',
+    type: 'location',
+    keywords: 'container chassis Houston, chassis dealer Houston TX, buy chassis Houston, Port of Houston chassis',
+    specs: [
+      { label: 'Location', labelEs: 'Ubicación', value: 'Houston, Texas' },
+      { label: 'Serves', labelEs: 'Atiende', value: 'Port of Houston drayage & Gulf Coast' },
+      { label: 'Inventory', labelEs: 'Inventario', value: 'New & used, 20ft to triaxle' },
+      { label: 'Delivery', labelEs: 'Entrega', value: 'Local pickup & nationwide shipping' },
+    ],
+    en: {
+      metaTitle: 'Container Chassis in Houston, TX | Local Dealer | American Chassis Depot',
+      metaDescription: 'Houston-based container chassis dealer serving Port of Houston drayage and Gulf Coast fleets. New and used chassis in stock, local pickup, leasing, and nationwide delivery.',
+      h1: 'Container Chassis in Houston, Texas',
+      heroSubtitle: 'Your local chassis dealer serving the Port of Houston and the Gulf Coast.',
+      intro: [
+        'American Chassis Depot is headquartered in Houston, Texas — in the middle of one of the busiest container corridors in the country. If you run drayage at the Port of Houston, serve the petrochemical corridor, or move intermodal freight across the Gulf Coast, our inventory is minutes from your lanes, not weeks away on a production schedule.',
+        'We stock new and DOT-inspected used chassis in the configurations Houston freight actually demands: 20ft and 40ft goosenecks for container moves, triaxles for overweight loads out of the port, and extendables for mixed traffic.',
+      ],
+      sections: [
+        {
+          heading: 'Why buy local in Houston',
+          body: [
+            'Local stock means you can inspect units in person before committing, pick up the same week, and skip long-haul delivery fees entirely. When a customer contract starts Monday, equipment sitting in Houston beats equipment sitting in a factory queue.',
+            'Port of Houston drayage operators also value having a nearby source for rapid replacement — a damaged chassis does not have to sideline a power unit for weeks.',
+          ],
+        },
+        {
+          heading: 'Sales, leasing, and support from Houston',
+          body: [
+            'Every program we offer runs from our Houston base: direct purchase, leasing, lease-to-own, and fleet volume orders. Come inspect the yard, or send your specs and we will match units from current inventory.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: 'Where is American Chassis Depot located?', a: 'We are based in Houston, Texas, serving Port of Houston drayage operators and Gulf Coast fleets, with nationwide delivery from our Houston base.' },
+        { q: 'Can I inspect a chassis before buying?', a: 'Yes. Local buyers are welcome to inspect units in person in Houston before purchasing — contact us to schedule a visit.' },
+        { q: 'Do you serve Port of Houston drayage companies?', a: 'Yes — port drayage is our core local market. We stock the configurations port freight demands, including triaxles for overweight containers.' },
+        { q: 'Can I pick up locally instead of paying for delivery?', a: 'Yes. Local pickup in Houston is available on in-stock units, often the same week.' },
+        { q: 'Do you deliver outside the Houston area?', a: 'Yes. We arrange delivery across Texas and nationwide; cost and timing depend on destination and quantity.' },
+      ],
+      ctaHeading: 'Talk to our Houston team',
+      ctaText: 'Tell us what you need — inspect in person or get a quote with local pickup or delivery options.',
+    },
+    es: {
+      metaTitle: 'Chasis de Contenedor en Houston, TX | Distribuidor Local | American Chassis Depot',
+      metaDescription: 'Distribuidor de chasis de contenedor en Houston al servicio del drayage del Puerto de Houston y flotas de la Costa del Golfo. Chasis nuevos y usados en inventario, recolección local y envío nacional.',
+      h1: 'Chasis de Contenedor en Houston, Texas',
+      heroSubtitle: 'Tu distribuidor local de chasis para el Puerto de Houston y la Costa del Golfo.',
+      intro: [
+        'American Chassis Depot tiene su sede en Houston, Texas — en medio de uno de los corredores de contenedores más activos del país. Si haces drayage en el Puerto de Houston, atiendes el corredor petroquímico o mueves carga intermodal por la Costa del Golfo, nuestro inventario está a minutos de tus rutas, no a semanas en una cola de producción.',
+        'Tenemos en inventario chasis nuevos y usados inspeccionados bajo DOT en las configuraciones que la carga de Houston realmente exige: gooseneck de 20ft y 40ft para movimientos de contenedores, triaxle para cargas con sobrepeso saliendo del puerto y extendibles para tráfico mixto.',
+      ],
+      sections: [
+        {
+          heading: 'Por qué comprar local en Houston',
+          body: [
+            'El inventario local significa que puedes inspeccionar unidades en persona antes de comprometerte, recoger la misma semana y evitar por completo los fletes de larga distancia. Cuando un contrato arranca el lunes, el equipo en Houston le gana al equipo en una fila de fábrica.',
+            'Los operadores de drayage del Puerto de Houston también valoran tener una fuente cercana de reemplazo rápido — un chasis dañado no tiene que parar una unidad motriz por semanas.',
+          ],
+        },
+        {
+          heading: 'Venta, arrendamiento y soporte desde Houston',
+          body: [
+            'Todos nuestros programas operan desde nuestra base en Houston: compra directa, arrendamiento, lease-to-own y pedidos de flota por volumen. Ven a inspeccionar el patio, o envíanos tus especificaciones y te enlazamos con unidades del inventario actual.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: '¿Dónde está American Chassis Depot?', a: 'Nuestra sede está en Houston, Texas, al servicio de operadores de drayage del Puerto de Houston y flotas de la Costa del Golfo, con envío nacional desde nuestra base.' },
+        { q: '¿Puedo inspeccionar un chasis antes de comprar?', a: 'Sí. Los compradores locales pueden inspeccionar unidades en persona en Houston antes de comprar — contáctanos para agendar una visita.' },
+        { q: '¿Atienden empresas de drayage del Puerto de Houston?', a: 'Sí — el drayage de puerto es nuestro mercado local principal. Tenemos las configuraciones que la carga de puerto exige, incluidos triaxle para contenedores con sobrepeso.' },
+        { q: '¿Puedo recoger localmente en vez de pagar entrega?', a: 'Sí. La recolección local en Houston está disponible en unidades en inventario, con frecuencia la misma semana.' },
+        { q: '¿Entregan fuera del área de Houston?', a: 'Sí. Coordinamos entregas en todo Texas y a nivel nacional; el costo y el tiempo dependen del destino y la cantidad.' },
+      ],
+      ctaHeading: 'Habla con nuestro equipo de Houston',
+      ctaText: 'Dinos qué necesitas — inspecciona en persona u obtén una cotización con opciones de recolección local o entrega.',
+    },
+  },
+
+  // ---------------------------------------------------------
+  // LOCATION — Texas (statewide)
+  // ---------------------------------------------------------
+  {
+    slug: 'locations/texas',
+    type: 'location',
+    keywords: 'container chassis Texas, chassis dealer Texas, buy chassis Dallas, chassis Laredo border, Texas intermodal chassis',
+    specs: [
+      { label: 'Home base', labelEs: 'Base', value: 'Houston, TX' },
+      { label: 'Coverage', labelEs: 'Cobertura', value: 'Statewide — DFW, San Antonio, Austin, Laredo, El Paso' },
+      { label: 'Key markets', labelEs: 'Mercados clave', value: 'Ports, border crossings, intermodal ramps' },
+      { label: 'Delivery', labelEs: 'Entrega', value: 'Scheduled statewide from Houston' },
+    ],
+    en: {
+      metaTitle: 'Container Chassis Across Texas | Statewide Delivery | American Chassis Depot',
+      metaDescription: 'Container chassis for Texas fleets — Houston, Dallas-Fort Worth, San Antonio, Austin, Laredo, and El Paso. New and used units with statewide delivery from our Houston base.',
+      h1: 'Container Chassis Across Texas',
+      heroSubtitle: 'Statewide chassis supply for Texas ports, border crossings, and intermodal ramps.',
+      intro: [
+        'Texas moves more international freight than any other state — through the Port of Houston, the Laredo border crossing, and the intermodal ramps of Dallas-Fort Worth and San Antonio. American Chassis Depot supplies the chassis behind that freight, delivering new and inspected used units to every corner of the state from our Houston base.',
+        'Whether you run cross-border loads out of Laredo, ramp traffic in DFW, or Gulf drayage out of Houston, we stock the configurations your lanes demand — 20ft, 40ft gooseneck, 45ft, extendable, and triaxle.',
+      ],
+      sections: [
+        {
+          heading: 'Where we deliver in Texas',
+          body: [
+            'Scheduled deliveries run statewide: Houston and the Gulf Coast, Dallas-Fort Worth, San Antonio, Austin, Laredo and the border corridor, El Paso, and points between. Single units and staged fleet orders both ship from our Houston yard.',
+            'Cross-border operators appreciate one detail in particular: equipment sourced in Texas is positioned exactly where southbound and northbound freight actually flows, cutting repositioning miles.',
+          ],
+        },
+        {
+          heading: 'One supplier for the whole state',
+          body: [
+            'Every program — purchase, leasing, lease-to-own, and 10+ unit fleet pricing — is available anywhere in Texas. Centralizing your chassis supply with one Texas source simplifies maintenance records, warranty claims, and future expansion orders.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: 'Do you deliver chassis anywhere in Texas?', a: 'Yes — scheduled deliveries run statewide from our Houston base, including DFW, San Antonio, Austin, Laredo, El Paso, and the Gulf Coast.' },
+        { q: 'How long does delivery within Texas take?', a: 'In-stock units typically deliver within days, depending on destination and quantity. Staged schedules are available for fleet orders.' },
+        { q: 'Do you serve cross-border carriers in Laredo?', a: 'Yes. The Laredo corridor is a key market — Texas-positioned equipment cuts repositioning miles for cross-border freight.' },
+        { q: 'Can I combine Texas delivery with fleet pricing?', a: 'Yes. Orders of 10+ units get fleet pricing plus staged statewide delivery scheduled around your ramp-up.' },
+        { q: 'Where does the equipment ship from?', a: 'Our yard in Houston, TX. Local buyers can also pick up in person.' },
+      ],
+      ctaHeading: 'Get a quote with Texas delivery',
+      ctaText: 'Tell us your city, equipment, and quantity — we will quote unit pricing plus delivery to your location.',
+    },
+    es: {
+      metaTitle: 'Chasis de Contenedor en Todo Texas | Entrega Estatal | American Chassis Depot',
+      metaDescription: 'Chasis de contenedor para flotas de Texas — Houston, Dallas-Fort Worth, San Antonio, Austin, Laredo y El Paso. Unidades nuevas y usadas con entrega estatal desde Houston.',
+      h1: 'Chasis de Contenedor en Todo Texas',
+      heroSubtitle: 'Suministro estatal de chasis para puertos, cruces fronterizos y rampas intermodales de Texas.',
+      intro: [
+        'Texas mueve más carga internacional que cualquier otro estado — por el Puerto de Houston, el cruce fronterizo de Laredo y las rampas intermodales de Dallas-Fort Worth y San Antonio. American Chassis Depot suministra los chasis detrás de esa carga, entregando unidades nuevas y usadas inspeccionadas a todo el estado desde nuestra base en Houston.',
+        'Ya sea que muevas carga transfronteriza desde Laredo, tráfico de rampa en DFW o drayage del Golfo desde Houston, tenemos las configuraciones que tus rutas exigen — 20ft, 40ft gooseneck, 45ft, extendibles y triaxle.',
+      ],
+      sections: [
+        {
+          heading: 'Dónde entregamos en Texas',
+          body: [
+            'Las entregas programadas cubren todo el estado: Houston y la Costa del Golfo, Dallas-Fort Worth, San Antonio, Austin, Laredo y el corredor fronterizo, El Paso y puntos intermedios. Tanto unidades individuales como pedidos de flota escalonados salen de nuestro patio en Houston.',
+            'Los operadores transfronterizos aprecian un detalle en particular: el equipo adquirido en Texas queda posicionado exactamente donde fluye la carga hacia el sur y el norte, reduciendo millas de reposicionamiento.',
+          ],
+        },
+        {
+          heading: 'Un proveedor para todo el estado',
+          body: [
+            'Todos los programas — compra, arrendamiento, lease-to-own y precio de flota en 10+ unidades — están disponibles en cualquier punto de Texas. Centralizar tu suministro de chasis con una sola fuente en Texas simplifica registros de mantenimiento, garantías y pedidos de expansión futuros.',
+          ],
+        },
+      ],
+      faqs: [
+        { q: '¿Entregan chasis en cualquier punto de Texas?', a: 'Sí — las entregas programadas cubren todo el estado desde nuestra base en Houston, incluyendo DFW, San Antonio, Austin, Laredo, El Paso y la Costa del Golfo.' },
+        { q: '¿Cuánto tarda la entrega dentro de Texas?', a: 'Las unidades en inventario suelen entregarse en días, según destino y cantidad. Hay calendarios escalonados para pedidos de flota.' },
+        { q: '¿Atienden transportistas transfronterizos en Laredo?', a: 'Sí. El corredor de Laredo es un mercado clave — el equipo posicionado en Texas reduce millas de reposicionamiento para la carga transfronteriza.' },
+        { q: '¿Puedo combinar entrega en Texas con precio de flota?', a: 'Sí. Los pedidos de 10+ unidades obtienen precio de flota más entrega estatal escalonada según tu plan de crecimiento.' },
+        { q: '¿De dónde sale el equipo?', a: 'De nuestro patio en Houston, TX. Los compradores locales también pueden recoger en persona.' },
+      ],
+      ctaHeading: 'Cotiza con entrega en Texas',
+      ctaText: 'Dinos tu ciudad, equipo y cantidad — cotizamos precio por unidad más la entrega a tu ubicación.',
     },
   },
 ];

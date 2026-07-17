@@ -9,7 +9,7 @@ import { processFormSubmission, testOdooConnection, getOdooLeadStats } from "./s
 import marketplaceRoutes from "./marketplace/routes.js";
 import { authenticateToken, requireAdmin, type AuthenticatedRequest } from "./marketplace/auth.js";
 import { createCrmLead, getListingBySlug } from "./marketplace/storage.js";
-import { getLandingPage, LANDING_PAGES, type LandingPage } from "../shared/landing-pages.js";
+import { getLandingPage, buildLandingJsonLdGraph, LANDING_PAGES, type LandingPage } from "../shared/landing-pages.js";
 import path from "path";
 import fs from "fs";
 
@@ -700,8 +700,13 @@ ${nav}
     const price = page.priceRange
       ? `<p><strong>${lang === 'es' ? 'Rango de precio orientativo' : 'Typical price range'}:</strong> ${esc(page.priceRange)}</p>`
       : '';
+    const specsHeading = page.type === 'product'
+      ? (lang === 'es' ? 'Especificaciones' : 'Specifications')
+      : page.type === 'service'
+        ? (lang === 'es' ? 'Detalles del programa' : 'Program details')
+        : (lang === 'es' ? 'En resumen' : 'At a glance');
     const specs = page.specs && page.specs.length
-      ? `<h2>${lang === 'es' ? 'Especificaciones' : 'Specifications'}</h2><table>${page.specs
+      ? `<h2>${specsHeading}</h2><table>${page.specs
           .map((s) => `<tr><th align="left">${esc(lang === 'es' ? s.labelEs : s.label)}</th><td>${esc(s.value)}</td></tr>`)
           .join('')}</table>`
       : '';
@@ -717,43 +722,7 @@ ${nav}
     return `<main><h1>${esc(c.h1)}</h1><p>${esc(c.heroSubtitle)}</p>${price}${intro}${specs}${sections}${faqs}${cta}</main>`;
   }
 
-  function buildLandingJsonLd(page: LandingPage, lang: 'en' | 'es', url: string): object {
-    const c = page[lang];
-    const graph: any[] = [];
-    if (page.type === 'product') {
-      graph.push({
-        '@type': 'Product',
-        name: c.h1,
-        description: c.metaDescription,
-        category: 'Container Chassis',
-        brand: { '@type': 'Brand', name: 'American Chassis Depot' },
-        offers: {
-          '@type': 'AggregateOffer',
-          priceCurrency: 'USD',
-          availability: 'https://schema.org/InStock',
-          seller: { '@type': 'Organization', name: 'American Chassis Depot' },
-        },
-      });
-    }
-    if (c.faqs.length) {
-      graph.push({
-        '@type': 'FAQPage',
-        mainEntity: c.faqs.map((f) => ({
-          '@type': 'Question',
-          name: f.q,
-          acceptedAnswer: { '@type': 'Answer', text: f.a },
-        })),
-      });
-    }
-    graph.push({
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/${lang}` },
-        { '@type': 'ListItem', position: 2, name: c.h1, item: url },
-      ],
-    });
-    return { '@context': 'https://schema.org', '@graph': graph };
-  }
+  // JSON-LD comes from the shared buildLandingJsonLdGraph (same graph the client injects).
 
   function serveSpaFallback(_req: Request, res: Response, next: () => void) {
     if (process.env.VERCEL) {
@@ -911,7 +880,7 @@ ${nav}
         url,
         lang,
         body: renderLandingBody(landing, langKey),
-        jsonLd: buildLandingJsonLd(landing, langKey, url),
+        jsonLd: buildLandingJsonLdGraph(landing, langKey, SITE),
       });
       return res.set('Content-Type', 'text/html').send(html);
     }

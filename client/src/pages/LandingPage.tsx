@@ -7,7 +7,7 @@ import ContactForm from '@/components/shared/ContactForm';
 import Seo from '@/components/seo/Seo';
 import { useLanguage } from '@/lib/i18n-simple';
 import NotFound from '@/pages/not-found';
-import { getLandingPage, LANDING_PAGES } from '@shared/landing-pages';
+import { getLandingPage, buildLandingJsonLdGraph, LANDING_PAGES } from '@shared/landing-pages';
 
 const SITE = 'https://www.americanchassisdepot.com';
 
@@ -20,45 +20,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ slug }) => {
   const lang: 'en' | 'es' = language === 'es' ? 'es' : 'en';
   const page = getLandingPage(slug);
 
-  // JSON-LD (Product + FAQPage + BreadcrumbList) injected client-side for
-  // parity with the server-rendered version bots receive.
+  // JSON-LD (Product/Service/LocalBusiness + FAQPage + BreadcrumbList) — shared
+  // builder keeps this identical to the server-rendered version bots receive.
   useEffect(() => {
     if (!page) return;
-    const c = page[lang];
-    const url = `${SITE}/${lang}/${page.slug}`;
-    const graph: any[] = [];
-    if (page.type === 'product') {
-      graph.push({
-        '@type': 'Product',
-        name: c.h1,
-        description: c.metaDescription,
-        category: 'Container Chassis',
-        brand: { '@type': 'Brand', name: 'American Chassis Depot' },
-        offers: {
-          '@type': 'AggregateOffer',
-          priceCurrency: 'USD',
-          availability: 'https://schema.org/InStock',
-          seller: { '@type': 'Organization', name: 'American Chassis Depot' },
-        },
-      });
-    }
-    if (c.faqs?.length) {
-      graph.push({
-        '@type': 'FAQPage',
-        mainEntity: c.faqs.map((f) => ({
-          '@type': 'Question',
-          name: f.q,
-          acceptedAnswer: { '@type': 'Answer', text: f.a },
-        })),
-      });
-    }
-    graph.push({
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/${lang}` },
-        { '@type': 'ListItem', position: 2, name: c.h1, item: url },
-      ],
-    });
     const id = 'landing-jsonld';
     let el = document.getElementById(id) as HTMLScriptElement | null;
     if (!el) {
@@ -67,7 +32,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ slug }) => {
       el.type = 'application/ld+json';
       document.head.appendChild(el);
     }
-    el.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+    el.textContent = JSON.stringify(buildLandingJsonLdGraph(page, lang, SITE));
     return () => { el?.remove(); };
   }, [page, lang]);
 
@@ -75,6 +40,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ slug }) => {
 
   const c = page[lang];
   const related = LANDING_PAGES.filter((p) => p.slug !== page.slug).slice(0, 5);
+  const asideHeading = page.type === 'product'
+    ? (lang === 'es' ? 'Especificaciones' : 'Specifications')
+    : page.type === 'service'
+      ? (lang === 'es' ? 'Detalles del programa' : 'Program details')
+      : (lang === 'es' ? 'En resumen' : 'At a glance');
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -121,7 +91,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ slug }) => {
               {page.specs?.length ? (
                 <aside className="bg-neutral-50 rounded-lg p-5 border h-fit">
                   <h2 className="text-lg font-montserrat font-bold text-primary mb-3">
-                    {lang === 'es' ? 'Especificaciones' : 'Specifications'}
+                    {asideHeading}
                   </h2>
                   <table className="w-full text-sm">
                     <tbody>

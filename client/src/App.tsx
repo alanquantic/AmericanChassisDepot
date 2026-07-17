@@ -104,6 +104,38 @@ function Router() {
         }}
       </Route>
 
+      {/* SEO intent landing pages (Phase 2) — service pages */}
+      <Route path="/:lang/chassis-leasing">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <LandingPage slug="chassis-leasing" key={`lp-leasing-${lang}`} />;
+        }}
+      </Route>
+      <Route path="/:lang/lease-to-own">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <LandingPage slug="lease-to-own" key={`lp-lto-${lang}`} />;
+        }}
+      </Route>
+      <Route path="/:lang/fleet-sales">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <LandingPage slug="fleet-sales" key={`lp-fleet-${lang}`} />;
+        }}
+      </Route>
+
+      {/* SEO intent landing pages (Phase 2) — location pages */}
+      <Route path="/:lang/locations/:place">
+        {(params) => {
+          const lang = params.lang === 'es' ? 'es' : 'en';
+          setLanguage(lang);
+          return <LandingPage slug={`locations/${params.place}`} key={`lp-loc-${params.place}-${lang}`} />;
+        }}
+      </Route>
+
       {/* ========== MARKETPLACE ROUTES ========== */}
       {/* Marketplace Landing Page (Marketing) */}
       <Route path="/:lang/marketplace">
