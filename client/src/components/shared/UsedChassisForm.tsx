@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useLanguage } from '@/lib/i18n-simple';
 import { useToast } from '@/hooks/use-toast';
+import { useFormToken } from '@/hooks/use-form-token';
 
 const formSchema = z.object({
   name: z.string()
@@ -33,8 +34,7 @@ const formSchema = z.object({
   message: z.string()
     .min(10, { message: "Message must be at least 10 characters" })
     .max(1000, { message: "Message must be less than 1000 characters" }),
-  honeypot: z.string().max(0, { message: "Invalid submission" }),
-  timestamp: z.string()
+  company_website: z.string().optional()
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -42,6 +42,7 @@ type FormData = z.infer<typeof formSchema>;
 const UsedChassisForm: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { formToken, refreshFormToken } = useFormToken();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -53,18 +54,12 @@ const UsedChassisForm: React.FC = () => {
       chassisType: '',
       quantity: '',
       message: '',
-      honeypot: '',
-      timestamp: new Date().toISOString()
+      company_website: ''
     }
   });
 
   const onSubmit = async (data: FormData) => {
     try {
-      // Validate honeypot and timestamp
-      if (data.honeypot || !data.timestamp) {
-        throw new Error('Invalid submission');
-      }
-
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
@@ -72,6 +67,9 @@ const UsedChassisForm: React.FC = () => {
         },
         body: JSON.stringify({
           ...data,
+          units: data.quantity,
+          interest: data.chassisType,
+          formToken,
           chassisName: 'Used Chassis Inquiry',
           chassisSlug: 'used-chassis',
           actionType: 'quote',
@@ -85,7 +83,17 @@ const UsedChassisForm: React.FC = () => {
           title: t('success'),
           description: t('usedChassisInquirySent'),
         });
-        form.reset();
+        form.reset({
+          name: '',
+          email: '',
+          company: '',
+          phone: '',
+          chassisType: '',
+          quantity: '',
+          message: '',
+          company_website: ''
+        });
+        void refreshFormToken();
       } else {
         throw new Error('Failed to send inquiry');
       }
@@ -231,14 +239,19 @@ const UsedChassisForm: React.FC = () => {
             )}
           />
 
-          {/* Honeypot field */}
-          <input
-            type="text"
-            {...form.register('honeypot')}
-            style={{ display: 'none' }}
-            tabIndex={-1}
-            autoComplete="off"
-          />
+          <div
+            className="absolute left-[-9999px] top-[-9999px] h-px w-px overflow-hidden"
+            aria-hidden="true"
+          >
+            <label htmlFor="used-company-website">Company website</label>
+            <input
+              id="used-company-website"
+              type="text"
+              {...form.register('company_website')}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
 
           <Button 
             type="submit" 

@@ -1,6 +1,22 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
+import { initBotId } from "botid/client/core";
+
+initBotId({
+  protect: [
+    {
+      path: "/api/contact",
+      method: "POST",
+      advancedOptions: { checkLevel: "basic" },
+    },
+    {
+      path: "/api/download-brochure",
+      method: "POST",
+      advancedOptions: { checkLevel: "basic" },
+    },
+  ],
+});
 
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator && import.meta.env.PROD) {

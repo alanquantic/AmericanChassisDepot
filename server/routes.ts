@@ -13,6 +13,12 @@ import { getLandingPage, buildLandingJsonLdGraph, LANDING_PAGES, type LandingPag
 import { getResourceArticle, buildArticleJsonLdGraph, RESOURCE_ARTICLES, type ResourceArticle } from "../shared/resources/index.js";
 import path from "path";
 import fs from "fs";
+import {
+  isBotIdRequest,
+  issueFormToken,
+  logSpamRejection,
+  validateFormSubmission,
+} from "./anti-spam.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API route prefix
@@ -20,6 +26,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register marketplace routes
   app.use(`${apiPrefix}/marketplace`, marketplaceRoutes);
+
+  // Short-lived signed token used by public forms to detect automated submissions.
+  app.get(`${apiPrefix}/form-token`, (_req, res) => {
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).json({ token: issueFormToken() });
+  });
 
   // Get all conditions (new/used)
   app.get(`${apiPrefix}/conditions`, async (_req, res) => {
@@ -249,6 +261,22 @@ ${urls}</urlset>`;
   // Download brochure endpoint
   app.post(`${apiPrefix}/download-brochure`, async (req, res) => {
     try {
+      const successResponse = {
+        message: "Brochure request processed successfully",
+        customerEmailSent: false,
+        internalEmailSent: false,
+        data: null,
+      };
+      if (await isBotIdRequest(req)) {
+        logSpamRejection("BotID", req.body);
+        return res.status(200).json(successResponse);
+      }
+      const spamCheck = validateFormSubmission(req.body, ["name", "email", "company", "phone"]);
+      if (!spamCheck.valid) {
+        logSpamRejection(spamCheck.reason, req.body);
+        return res.status(200).json(successResponse);
+      }
+
       const { 
         name, 
         email, 
@@ -262,25 +290,7 @@ ${urls}</urlset>`;
         actionType,
         sourceUrl,
         userAgent,
-        timestamp,
-        honeypot 
       } = req.body;
-
-      // Security check: honeypot field should be empty
-      if (honeypot) {
-        console.warn("Bot detected via honeypot field");
-        return res.status(400).json({ message: "Invalid submission" });
-      }
-
-      // Security check: timestamp validation
-      const submissionTime = new Date(timestamp);
-      const now = new Date();
-      const timeDiff = now.getTime() - submissionTime.getTime();
-      const fiveMinutes = 5 * 60 * 1000;
-      
-      if (timeDiff > fiveMinutes) {
-        return res.status(400).json({ message: "Form submission expired" });
-      }
       
       const messageContent = message || `Brochure Request: ${chassisName} (${chassisSlug}) - User requested brochure for chassis`;
       const contactData = {
@@ -370,6 +380,30 @@ ${urls}</urlset>`;
   // Submit contact form
   app.post(`${apiPrefix}/contact`, async (req, res) => {
     try {
+      const successResponse = {
+        message: "Contact message submitted successfully",
+        customerEmailSent: false,
+        internalEmailSent: false,
+        data: null,
+      };
+      if (await isBotIdRequest(req)) {
+        logSpamRejection("BotID", req.body);
+        return res.status(200).json(successResponse);
+      }
+      const spamCheck = validateFormSubmission(req.body, [
+        "name",
+        "email",
+        "company",
+        "phone",
+        "units",
+        "interest",
+        "message",
+      ]);
+      if (!spamCheck.valid) {
+        logSpamRejection(spamCheck.reason, req.body);
+        return res.status(200).json(successResponse);
+      }
+
       const { 
         name, 
         email, 
@@ -383,25 +417,7 @@ ${urls}</urlset>`;
         actionType,
         sourceUrl,
         userAgent,
-        timestamp,
-        honeypot 
       } = req.body;
-
-      // Security check: honeypot field should be empty
-      if (honeypot) {
-        console.warn("Bot detected via honeypot field");
-        return res.status(400).json({ message: "Invalid submission" });
-      }
-
-      // Security check: timestamp validation
-      const submissionTime = new Date(timestamp);
-      const now = new Date();
-      const timeDiff = now.getTime() - submissionTime.getTime();
-      const fiveMinutes = 5 * 60 * 1000;
-      
-      if (timeDiff > fiveMinutes) {
-        return res.status(400).json({ message: "Form submission expired" });
-      }
 
       const messageContent = message || `Quote Request: ${chassisName} (${chassisSlug}) - User requested quote for chassis`;
       const messageData = {
@@ -480,7 +496,7 @@ ${urls}</urlset>`;
         console.error('Failed to send internal notification email:', emailError);
       }
       
-      return res.status(201).json({
+      return res.status(200).json({
         message: "Contact message submitted successfully",
         customerEmailSent,
         internalEmailSent,
