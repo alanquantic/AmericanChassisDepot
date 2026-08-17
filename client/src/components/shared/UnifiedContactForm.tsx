@@ -21,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DownloadIcon, FileTextIcon } from 'lucide-react';
+import { useFormToken } from '@/hooks/use-form-token';
 
 // Enhanced form schema with security validation
 const formSchema = z.object({
@@ -47,9 +48,7 @@ const formSchema = z.object({
     .min(10, { message: "Message must be at least 10 characters" })
     .max(1000, { message: "Message must be less than 1000 characters" }),
   sourceUrl: z.string().optional(),
-  // Security fields
-  honeypot: z.string().max(0, { message: "Invalid submission" }), // Hidden field to catch bots
-  timestamp: z.string()
+  company_website: z.string().optional()
 });
 
 type UnifiedFormValues = z.infer<typeof formSchema>;
@@ -73,9 +72,7 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [staticUrl, setStaticUrl] = useState<string | null>(null);
-  
-  // Debug logging
-  console.log('UnifiedContactForm render:', { chassisName, chassisSlug, actionType, triggerText });
+  const { formToken, refreshFormToken } = useFormToken();
   
   // Initialize form with security timestamp
   const form = useForm<UnifiedFormValues>({
@@ -89,13 +86,9 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
       interest: "",
       message: "",
       sourceUrl: window.location.href,
-      honeypot: "",
-      timestamp: new Date().toISOString()
+      company_website: ""
     }
   });
-  
-  // Debug form initialization
-  console.log('Form initialized:', form.formState);
 
   // Check for static PDF if action is brochure
   React.useEffect(() => {
@@ -111,25 +104,15 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
   // Submit mutation
   const mutation = useMutation({
     mutationFn: (values: UnifiedFormValues) => {
-      // Security check: ensure timestamp is recent (within 5 minutes)
-      const submissionTime = new Date(values.timestamp);
-      const now = new Date();
-      const timeDiff = now.getTime() - submissionTime.getTime();
-      const fiveMinutes = 5 * 60 * 1000;
-      
-      if (timeDiff > fiveMinutes) {
-        throw new Error('Form submission expired. Please refresh and try again.');
-      }
-
       // Include product information and action type
       const dataWithContext = {
         ...values,
+        formToken,
         chassisName,
         chassisSlug,
         actionType,
         sourceUrl: window.location.href,
-        userAgent: navigator.userAgent,
-        timestamp: new Date().toISOString()
+        userAgent: navigator.userAgent
       };
 
       const endpoint = actionType === 'quote' ? '/api/contact' : '/api/download-brochure';
@@ -200,9 +183,9 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
         interest: "",
         message: "",
         sourceUrl: window.location.href,
-        honeypot: "",
-        timestamp: new Date().toISOString()
+        company_website: ""
       });
+      void refreshFormToken();
       
       setIsOpen(false);
     },
@@ -222,14 +205,6 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
   });
   
   const onSubmit = (data: UnifiedFormValues) => {
-    // Security check: honeypot field should be empty
-    if (data.honeypot) {
-      console.warn("Bot detected via honeypot field");
-      return;
-    }
-    
-    // Update timestamp for security
-    data.timestamp = new Date().toISOString();
     mutation.mutate(data);
   };
 
@@ -283,14 +258,19 @@ export const UnifiedContactForm: React.FC<UnifiedContactFormProps> = ({
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-6">
-            {/* Hidden honeypot field for bot protection */}
-            <input 
-              type="text" 
-              {...form.register('honeypot')} 
-              style={{ display: 'none' }} 
-              tabIndex={-1}
-              autoComplete="off"
-            />
+            <div
+              className="absolute left-[-9999px] top-[-9999px] h-px w-px overflow-hidden"
+              aria-hidden="true"
+            >
+              <label htmlFor={`product-company-website-${chassisSlug}`}>Company website</label>
+              <input
+                id={`product-company-website-${chassisSlug}`}
+                type="text"
+                {...form.register('company_website')}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
