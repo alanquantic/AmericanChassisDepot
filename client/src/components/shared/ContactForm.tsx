@@ -9,6 +9,7 @@ import { getConditions } from '@/lib/constants';
 import { useLocation } from 'wouter';
 import { useLanguage, getCurrentLanguage } from '@/lib/i18n-simple';
 import { sendAnalyticsEvent, sendGoogleAdsConversion } from '@/lib/gtag';
+import { useFormToken } from '@/hooks/use-form-token';
 import { 
   Form,
   FormControl,
@@ -31,7 +32,8 @@ const formSchema = z.object({
   units: z.string().min(1, { message: "Number of units is required" }),
   interest: z.string().min(1, { message: "Please select an option" }),
   message: z.string().min(10, { message: "Message must be at least 10 characters" }),
-  sourceUrl: z.string().optional()
+  sourceUrl: z.string().optional(),
+  company_website: z.string().optional()
 });
 
 type ContactFormValues = z.infer<typeof formSchema>;
@@ -44,6 +46,8 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
   const { toast } = useToast();
   const [location] = useLocation();
   const { t } = useLanguage();
+  const { formToken, refreshFormToken } = useFormToken();
+  const honeypotId = React.useId();
   
   // Initialize form
   const form = useForm<ContactFormValues>({
@@ -56,7 +60,8 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
       units: "",
       interest: "",
       message: "",
-      sourceUrl: window.location.href
+      sourceUrl: window.location.href,
+      company_website: ""
     }
   });
   
@@ -66,7 +71,8 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
       // Include the current URL in the submission
       const dataWithSource = {
         ...values,
-        sourceUrl: window.location.href
+        sourceUrl: window.location.href,
+        formToken
       };
       return apiRequest('POST', '/api/contact', dataWithSource);
     },
@@ -104,8 +110,10 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
         units: "",
         interest: "",
         message: "",
-        sourceUrl: window.location.href
+        sourceUrl: window.location.href,
+        company_website: ""
       });
+      void refreshFormToken();
     },
     onError: (error) => {
       toast({
@@ -124,6 +132,19 @@ const ContactForm: React.FC<ContactFormProps> = ({ className = "" }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={className}>
+        <div
+          className="absolute left-[-9999px] top-[-9999px] h-px w-px overflow-hidden"
+          aria-hidden="true"
+        >
+          <label htmlFor={honeypotId}>Company website</label>
+          <input
+            id={honeypotId}
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            {...form.register('company_website')}
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <FormField
             control={form.control}

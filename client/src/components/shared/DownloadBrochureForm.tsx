@@ -11,12 +11,14 @@ import { useLanguage, getLanguage } from '@/lib/i18n-simple';
 import { useToast } from '@/hooks/use-toast';
 import { DownloadIcon } from 'lucide-react';
 import { sendAnalyticsEvent, sendGoogleAdsConversion } from '@/lib/gtag';
+import { useFormToken } from '@/hooks/use-form-token';
 
 const downloadFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Please enter a valid email address'),
   company: z.string().min(2, 'Company name must be at least 2 characters'),
-  phone: z.string().min(10, 'Phone number must be at least 10 characters')
+  phone: z.string().min(10, 'Phone number must be at least 10 characters'),
+  company_website: z.string().optional()
 });
 
 type DownloadFormData = z.infer<typeof downloadFormSchema>;
@@ -34,6 +36,7 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [staticUrl, setStaticUrl] = useState<string | null>(null);
+  const { formToken, refreshFormToken } = useFormToken();
   
   const form = useForm<DownloadFormData>({
     resolver: zodResolver(downloadFormSchema),
@@ -41,7 +44,8 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       name: '',
       email: '',
       company: '',
-      phone: ''
+      phone: '',
+      company_website: ''
     }
   });
 
@@ -61,7 +65,13 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+          ...data,
+          formToken,
+          sourceUrl: window.location.href,
+          userAgent: navigator.userAgent,
+          actionType: 'brochure'
+        })
       });
       
       if (!response.ok) {
@@ -108,6 +118,7 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       
       setIsOpen(false);
       form.reset();
+      void refreshFormToken();
     },
     onError: () => {
       toast({
@@ -144,6 +155,7 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
       toast({ title: t('downloadStartedTitle'), description: t('downloadStartedDesc') });
       setIsOpen(false);
       form.reset();
+      void refreshFormToken();
       return;
     }
     // Si no hay PDF estático, usar API (placeholder actual)
@@ -175,6 +187,19 @@ export const DownloadBrochureForm: React.FC<DownloadBrochureFormProps> = ({
         </DialogHeader>
         
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+          <div
+            className="absolute left-[-9999px] top-[-9999px] h-px w-px overflow-hidden"
+            aria-hidden="true"
+          >
+            <label htmlFor={`brochure-company-website-${chassisSlug}`}>Company website</label>
+            <input
+              id={`brochure-company-website-${chassisSlug}`}
+              type="text"
+              {...form.register('company_website')}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="name" className="font-montserrat font-medium">
               {t('fullName')} *
